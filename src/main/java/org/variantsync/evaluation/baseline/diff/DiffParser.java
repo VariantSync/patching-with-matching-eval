@@ -37,11 +37,11 @@ public class DiffParser {
         if (lines.get(0).startsWith("diff")) {
             // Several files were processed, the diff of each file starts with the 'diff' command that was used
             fileDiffStart = "diff";
-            fileDiffFollow = "---";
-        } else if (lines.get(0).startsWith("---")) {
+            fileDiffFollow = "--- ";
+        } else if (lines.get(0).startsWith("--- ")) {
             // Only one file was processed, the diff of the file starts with the hunk header
-            fileDiffStart = "---";
-            fileDiffFollow = "+++";
+            fileDiffStart = "--- ";
+            fileDiffFollow = "+++ ";
         }
 
         List<String> fileDiffContent = null;
@@ -96,9 +96,9 @@ public class DiffParser {
         {
             boolean atHeader = true;
             while (atHeader) {
-                if (nextLine.startsWith("---")) {
+                if (nextLine.startsWith("--- ")) {
                     oldFile = nextLine.split("\\s+")[1];
-                } else if (nextLine.startsWith("+++")) {
+                } else if (nextLine.startsWith("+++ ")) {
                     newFile = nextLine.split("\\s")[1];
                 }
                 header.add(nextLine);

@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.experiment;
+package org.variantsync.evaluation;
 
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -9,14 +9,11 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.variantsync.vevos.simulation.util.LogLevel;
 
 import java.io.File;
-import java.nio.file.Path;
 
 /**
  * Determines the configuration of our study.
  */
 public class StudyConfiguration {
-    // The name of the experimental subject
-    private static final String EXPERIMENT_SUBJECT = "experiment.subject";
     // The number of repetitions for each commit and source target combination
     private static final String EXPERIMENT_REPEATS = "experiment.repeats";
     // The number of generated variants
@@ -24,9 +21,9 @@ public class StudyConfiguration {
     // The working directory
     private static final String EXPERIMENT_DIR_MAIN = "experiment.dir.main";
     // The directory containing the ground truth
-    private static final String EXPERIMENT_DIR_DATASET = "experiment.dir.dataset";
-    // The directory containing the SPL (i.e., BusyBox)
-    private static final String EXPERIMENT_DIR_SPL = "experiment.dir.spl";
+    private static final String EXPERIMENT_DIR_GROUND_TRUTH = "experiment.dir.ground-truths";
+    // The file containing the list of datasets
+    private static final String EXPERIMENT_DATASETS = "experiment.datasets";
     // Enable saving of certain files (e.g., feature list, presence conditions, configurations) for additional debugging
     private static final String EXPERIMENT_DEBUG = "experiment.debug";
     // Log level
@@ -36,6 +33,8 @@ public class StudyConfiguration {
     private static final String EXPERIMENT_STARTID = "experiment.startid";
     // The directory for saving the results
     private static final String EXPERIMENT_DIR_RESULTS = "experiment.dir.results";
+    // The maximum number of commits in a dataset for it to be considered
+    private static final String EXPERIMENT_DATASET_MAX_SIZE = "experiment.dataset.max-size";
     // Configuration object holding key-value properties.
     private final Configuration config;
 
@@ -60,13 +59,6 @@ public class StudyConfiguration {
     }
 
     /**
-     * @return The name of the experimental subject
-     */
-    public String EXPERIMENT_SUBJECT() {
-        return config.getString(EXPERIMENT_SUBJECT);
-    }
-
-    /**
      * @return The number of repetitions for each commit pair and source-target combination
      */
     public int EXPERIMENT_REPEATS() {
@@ -88,17 +80,17 @@ public class StudyConfiguration {
     }
 
     /**
-     * @return The root directory of the ground truth dataset
+     * @return The root directory of the ground truth
      */
-    public String EXPERIMENT_DIR_DATASET() {
-        return config.getString(EXPERIMENT_DIR_DATASET);
+    public String EXPERIMENT_DIR_GROUND_TRUTH() {
+        return config.getString(EXPERIMENT_DIR_GROUND_TRUTH);
     }
 
     /**
-     * @return The root directory of the considered SPL
+     * @return The file with the list of datasets in Markdown format
      */
-    public String EXPERIMENT_DIR_SPL() {
-        return config.getString(EXPERIMENT_DIR_SPL);
+    public String EXPERIMENT_DATASETS() {
+        return config.getString(EXPERIMENT_DATASETS);
     }
 
     /**
@@ -128,5 +120,18 @@ public class StudyConfiguration {
      */
     public String EXPERIMENT_DIR_RESULTS() {
        return config.getString(EXPERIMENT_DIR_RESULTS);
+    }
+
+    /**
+     *
+     * @return Maximum number of commits in a repository for a dataset to be considered for the study. If a repository has
+     * more commits, it is simply ignored. Values of 0 or less are automatically converted to Integer.MAX_VALUE.
+     */
+    public int EXPERIMENT_DATASET_MAX_SIZE() {
+        var value = config.getInt(EXPERIMENT_DATASET_MAX_SIZE);
+        if (value <=0) {
+            value = Integer.MAX_VALUE;
+        }
+        return value;
     }
 }

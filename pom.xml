@@ -59,7 +59,7 @@
                             <finalName>ResultEval</finalName>
                             <archive>
                                 <manifest>
-                                    <mainClass>org.variantsync.evaluation.experiment.ResultAnalysis</mainClass>
+                                    <mainClass>org.variantsync.evaluation.ResultAnalysis</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

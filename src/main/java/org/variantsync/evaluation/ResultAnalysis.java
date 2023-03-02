@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.experiment;
+package org.variantsync.evaluation;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

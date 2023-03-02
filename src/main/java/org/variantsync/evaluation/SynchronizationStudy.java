@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.experiment;
+package org.variantsync.evaluation;
 
 import de.ovgu.featureide.fm.core.base.IFeatureModel;
 import de.ovgu.featureide.fm.core.base.IFeatureModelElement;
@@ -28,7 +28,6 @@ import org.variantsync.vevos.simulation.feature.sampling.Sampler;
 import org.variantsync.vevos.simulation.io.Resources;
 import org.variantsync.vevos.simulation.io.data.VariabilityDatasetLoader;
 import org.variantsync.vevos.simulation.repository.SPLRepository;
-import org.variantsync.vevos.simulation.util.LogLevel;
 import org.variantsync.vevos.simulation.util.Logger;
 import org.variantsync.vevos.simulation.util.fide.FeatureModelUtils;
 import org.variantsync.vevos.simulation.util.io.CaseSensitivePath;
@@ -42,14 +41,11 @@ import org.variantsync.vevos.simulation.variability.pc.options.ArtefactFilter;
 import org.variantsync.vevos.simulation.variability.pc.options.VariantGenerationOptions;
 import org.variantsync.vevos.simulation.variability.sequenceextraction.Domino;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.variantsync.vevos.simulation.VEVOS.Initialize;
 
 /**
  * This class contains the core workflow of our study as described in our paper.
@@ -85,20 +81,18 @@ public class SynchronizationStudy {
     protected final Path rejectsFilteredFile;
     // ShellExecutor for executing shell commands
     protected final ShellExecutor shell;
-    // Configured log level
-    protected final LogLevel logLevel;
     // Number of random repetitions for each commit pair. New variants are sampled for each repetition
-    protected final int randomRepeats;
+    protected final int numRepetitions;
     // Number of sampled variants
     protected final int numVariants;
     // The id of the first run that is to be executed. Required for the short installation validation.
     protected final int startID;
     // Name of the experimental subject
-    protected final String experimentalSubject;
+    protected final String datasetName;
     // Path to the subject's sources
-    protected final Path splRepositoryPath;
+    protected final Path repositoryPath;
     // Path to the ground truth dataset
-    protected final Path datasetPath;
+    protected final Path groundTruthPath;
     // Evolution history of the subject
     protected final VariabilityHistory history;
     // The variant sampler
@@ -113,45 +107,40 @@ public class SynchronizationStudy {
     /**
      * Initialize the study from the given configuration
      *
-     * @param config The study's configuration
      */
-    public SynchronizationStudy(final StudyConfiguration config) {
-        // Initialize the VEVOS Simulation library
-        Initialize();
-        final Path mainDir = Path.of(config.EXPERIMENT_DIR_MAIN());
+    public SynchronizationStudy(String datasetName, Path mainDir, Path resultsDir, Path repositoryPath, Path groundTruthPath, int numRepetitions, int numVariants, int startID, boolean inDebug) {
         try {
             if (mainDir.toFile().mkdirs()) {
                 Logger.status("Created main directory " + mainDir);
             }
-            workDir = Files.createTempDirectory(mainDir, "workdir");
+            this.workDir = Files.createTempDirectory(mainDir, "workdir");
         } catch (final IOException e) {
-            Logger.error("Was not able to initialize workdir", e);
+            Logger.error("Was not able to initialize this.workDir", e);
             throw new UncheckedIOException(e);
         }
-        resultsDir = Path.of(config.EXPERIMENT_DIR_RESULTS());
-        debugDir = resultsDir.resolve("DEBUG");
-        inDebug = config.EXPERIMENT_DEBUG();
-        resultFile = resultsDir.resolve("results.txt");
-        splRepositoryPath = Path.of(config.EXPERIMENT_DIR_SPL());
-        datasetPath = Path.of(config.EXPERIMENT_DIR_DATASET());
-        splCopyA = workDir.resolve("SPL-A");
-        splCopyB = workDir.resolve("SPL-B");
-        variantsDirV0 = new CaseSensitivePath(workDir.resolve("V0Variants"));
-        variantsDirV1 = new CaseSensitivePath(workDir.resolve("V1Variants"));
-        patchDir = workDir.resolve("TARGET/V0");
-        normalPatchFile = workDir.resolve("patch.txt");
-        filteredPatchFile = workDir.resolve("filtered-patch.txt");
-        rejectsNormalFile = workDir.resolve("rejects-normal.txt");
-        rejectsFilteredFile = workDir.resolve("rejects-filtered.txt");
-        shell = new ShellExecutor(Logger::debug, Logger::debug, workDir);
-        logLevel = config.EXPERIMENT_LOGGER_LEVEL();
-        randomRepeats = config.EXPERIMENT_REPEATS();
-        numVariants = config.EXPERIMENT_VARIANT_COUNT();
-        startID = config.EXPERIMENT_START_ID();
-        experimentalSubject = config.EXPERIMENT_SUBJECT();
-        sampler = FeatureIDESampler.CreateRandomSampler(numVariants);
+        this.resultsDir = resultsDir;
+        this.debugDir = resultsDir.resolve("DEBUG");
+        this.inDebug = inDebug;
+        this.resultFile = resultsDir.resolve("%s.txt".formatted(datasetName));
+        this.repositoryPath = repositoryPath;
+        this.groundTruthPath = groundTruthPath;
+        this.splCopyA = this.workDir.resolve("SPL-A");
+        this.splCopyB = this.workDir.resolve("SPL-B");
+        this.variantsDirV0 = new CaseSensitivePath(this.workDir.resolve("V0Variants"));
+        this.variantsDirV1 = new CaseSensitivePath(this.workDir.resolve("V1Variants"));
+        this.patchDir = this.workDir.resolve("TARGET/V0");
+        this.normalPatchFile = this.workDir.resolve("patch.txt");
+        this.filteredPatchFile = this.workDir.resolve("filtered-patch.txt");
+        this.rejectsNormalFile = this.workDir.resolve("rejects-normal.txt");
+        this.rejectsFilteredFile = this.workDir.resolve("rejects-filtered.txt");
+        this.shell = new ShellExecutor(Logger::debug, Logger::debug, this.workDir);
+        this.numRepetitions = numRepetitions;
+        this.numVariants = numVariants;
+        this.startID = startID;
+        this.datasetName = datasetName;
+        this.sampler = FeatureIDESampler.CreateRandomSampler(this.numVariants);
 
-        history = init();
+        this.history = init();
     }
 
     // Read a rejects file
@@ -204,8 +193,8 @@ public class SynchronizationStudy {
                 final SimpleFileFilter fileFilter = splRepoPreparation(parentRepo, childRepo, parentCommit, childCommit);
 
                 // While more random configurations to consider
-                for (int i = 0; i < randomRepeats; i++) {
-                    Logger.status("Starting repetition " + (i + 1) + " of " + randomRepeats + " with " + numVariants + " variants.");
+                for (int i = 0; i < numRepetitions; i++) {
+                    Logger.status("Starting repetition " + (i + 1) + " of " + numRepetitions + " with " + numVariants + " variants.");
                     if (inDebug && Files.exists(debugDir)) {
                         shell.execute(new RmCommand(debugDir).recursive());
                     }
@@ -317,7 +306,7 @@ public class SynchronizationStudy {
 
                             /* Result Evaluation */
                             final PatchOutcome patchOutcome = ResultAnalysis.processOutcome(
-                                    experimentalSubject,
+                                    datasetName,
                                     runID,
                                     source.getName(),
                                     target.getName(),
@@ -398,44 +387,6 @@ public class SynchronizationStudy {
             featureModelDebug(modelV0, modelV1);
         }
         return sampler.sample(currentModel);
-    }
-
-    /**
-     * Preprocess BusyBox' files by cleaning the repo before the next commit pair is checked out.
-     *
-     * @param splRepositoryV0 The path to BusyBox at the parent commit
-     * @param splRepositoryV1 The path to BusyBox at the child commit
-     */
-    protected void preprocessSPLRepositories(final SPLRepository splRepositoryV0, final SPLRepository splRepositoryV1) {
-        // Stash all changes and drop the stash. This is a workaround as the JGit API does not support restore.
-        Logger.status("Cleaning state of V0 repo.");
-        try {
-            splRepositoryV0.stashCreate(true);
-
-            splRepositoryV0.dropStash();
-            Logger.status("Cleaning state of V1 repo.");
-            splRepositoryV1.stashCreate(true);
-            splRepositoryV1.dropStash();
-        } catch (final IOException | GitAPIException e) {
-            panic("Was not able to preprocess SPL repository.", e);
-        }
-    }
-
-    /**
-     * Postprocess BusyBox files after the next commit pair has been checked out. This is required by KernelHaven.
-     *
-     * @param splRepositoryV0 The path to BusyBox at the parent commit
-     * @param splRepositoryV1 The path to BusyBox at the child commit
-     */
-    protected void postprocessSPLRepositories(final SPLRepository splRepositoryV0, final SPLRepository splRepositoryV1) {
-        Logger.status("Normalizing BusyBox files...");
-        try {
-            BusyboxPreparation.normalizeDir(splRepositoryV0.getPath().toFile());
-            BusyboxPreparation.normalizeDir(splRepositoryV1.getPath().toFile());
-        } catch (final IOException e) {
-            Logger.error("", e);
-            panic("Was not able to normalize BusyBox.", e);
-        }
     }
 
     // Save the features in the feature models
@@ -523,8 +474,6 @@ public class SynchronizationStudy {
         Logger.info("Next V1 commit: " + childCommit);
         // Checkout the commits in the SPL repository
         try {
-            preprocessSPLRepositories(parentRepo, childRepo);
-
             Logger.status("Checkout of commits in SPL repo.");
             parentRepo.checkoutCommit(parentCommit, true);
             childRepo.checkoutCommit(childCommit, true);
@@ -534,7 +483,7 @@ public class SynchronizationStudy {
         }
         Logger.info("Done.");
 
-        Logger.info("Diffing SPL commits for find changed files.");
+        Logger.info("Diffing SPL commits to find changed files.");
         final OriginalDiff diff = getOriginalDiff(splCopyA, splCopyB);
         final Set<Path> filesToKeep = new HashSet<>();
         for (final FileDiff fileDiff : diff.fileDiffs()) {
@@ -543,16 +492,12 @@ public class SynchronizationStudy {
             }
         }
 
-        postprocessSPLRepositories(parentRepo, childRepo);
-
         return new SimpleFileFilter(filesToKeep);
     }
 
 
     // Initialize the study by loading the required data
     private VariabilityHistory init() {
-        Logger.status("Starting experiment initialization.");
-        Logger.setLogLevel(logLevel);
         // Clean old SPL repo files
         Logger.status("Cleaning old repo files.");
         if (Files.exists(splCopyA)) {
@@ -563,8 +508,8 @@ public class SynchronizationStudy {
         }
         // Copy the SPL repo
         Logger.status("Creating new SPL repo copies.");
-        shell.execute(new CpCommand(splRepositoryPath, splCopyA).recursive()).expect("Was not able to copy SPL-V0.");
-        shell.execute(new CpCommand(splRepositoryPath, splCopyB).recursive()).expect("Was not able to copy SPL-V1.");
+        shell.execute(new CpCommand(repositoryPath, splCopyA).recursive()).expect("Was not able to copy SPL-V0.");
+        shell.execute(new CpCommand(repositoryPath, splCopyB).recursive()).expect("Was not able to copy SPL-V1.");
 
 
         // Load VariabilityDataset
@@ -574,7 +519,7 @@ public class SynchronizationStudy {
             final Resources instance = Resources.Instance();
             final VariabilityDatasetLoader datasetLoader = new VariabilityDatasetLoader();
             instance.registerLoader(VariabilityDataset.class, datasetLoader);
-            dataset = instance.load(VariabilityDataset.class, datasetPath);
+            dataset = instance.load(VariabilityDataset.class, groundTruthPath);
             Logger.status("Dataset loaded.");
         } catch (final Resources.ResourceIOException e) {
             panic("Was not able to load dataset.", e);
@@ -666,8 +611,24 @@ public class SynchronizationStudy {
 
     // Get the difference between two directories using UNIX diff
     protected OriginalDiff getOriginalDiff(final Path v0Path, final Path v1Path) {
-        final DiffCommand diffCommand = DiffCommand.Recommended(workDir.relativize(v0Path), workDir.relativize(v1Path));
-        final List<String> output = shell.execute(diffCommand, workDir).expect("Was not able to diff variants.");
+        final DiffCommand diffCommand = DiffCommand.Recommended(workDir.relativize(v0Path), this.workDir.relativize(v1Path));
+        final List<String> output = shell.execute(diffCommand, this.workDir).expect("Was not able to diff variants.");
+        if (inDebug) {
+            try {
+                Files.createDirectories(this.debugDir);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Path file = this.debugDir.resolve("latestDiff.txt");
+            try(PrintWriter writer = new PrintWriter(file.toFile())) {
+                for (String line : output) {
+                    writer.write(line);
+                    writer.write("\n");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return DiffParser.toOriginalDiff(output);
     }
 
