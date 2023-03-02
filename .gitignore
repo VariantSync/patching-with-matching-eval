@@ -10,3 +10,4 @@ target
 plots/__pycache__/
 simulation-files/busybox/
 /simulation-files/ground-truth/
+/log.txt
