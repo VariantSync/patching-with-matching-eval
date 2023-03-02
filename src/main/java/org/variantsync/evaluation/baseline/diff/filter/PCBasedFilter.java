@@ -79,7 +79,7 @@ public class PCBasedFilter implements IFileDiffFilter, ILineFilter {
         if (pc.isSuccess()) {
             return targetVariant.isImplementing(pc.getSuccess());
         } else {
-            Logger.error("Was not able to load PC for line " + index + " of " + filePath);
+            Logger.debug("There is no PC for line " + index + " of " + filePath);
             return false;
         }
     }
@@ -96,7 +96,7 @@ public class PCBasedFilter implements IFileDiffFilter, ILineFilter {
         filePath = filePath.subpath(strip, filePath.getNameCount());
         final Result<Node, Exception> result = traces.getPresenceConditionOf(new CaseSensitivePath(filePath));
         if (result.isFailure()) {
-            Logger.warning("No PC found for " + filePath);
+            Logger.debug("There is no PC found for " + filePath);
             return false;
         } else {
             final Node pc = result.getSuccess();

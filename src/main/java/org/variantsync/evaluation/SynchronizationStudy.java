@@ -380,9 +380,16 @@ public class SynchronizationStudy {
             commitV1Current = commitV1;
             final IFeatureModel modelV0 = commitV0.featureModel().run().orElseThrow();
             final IFeatureModel modelV1 = commitV1.featureModel().run().orElseThrow();
+
+            // We need the set of all features to create the union
+            HashSet<String> features = new HashSet<>(modelV0.getFeatureTable().keySet());
+            features.addAll(modelV1.getFeatureTable().keySet());
+            // Remove the default Root feature, which will be added again during creation
+            features.remove("Root");
+
             // We use the union of both models to sample configurations, so that all features are included
             Logger.status("Creating model union.");
-            currentModel = FeatureModelUtils.UnionModel(modelV0, modelV1);
+            currentModel = FeatureModelUtils.FromOptionalFeatures(features);
 
             featureModelDebug(modelV0, modelV1);
         }
