@@ -5,6 +5,7 @@ import de.ovgu.featureide.fm.core.base.IFeatureModelElement;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.variantsync.evaluation.baseline.diff.filter.DiffFilter;
 import org.variantsync.evaluation.baseline.shell.*;
 import org.variantsync.functjonal.Result;
 import org.variantsync.functjonal.list.NonEmptyList;
@@ -13,11 +14,6 @@ import org.variantsync.evaluation.baseline.diff.components.FileDiff;
 import org.variantsync.evaluation.baseline.diff.components.FineDiff;
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff;
 import org.variantsync.evaluation.baseline.diff.filter.CachedPCBasedFilter;
-import org.variantsync.evaluation.baseline.diff.filter.IFileDiffFilter;
-import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
-import org.variantsync.evaluation.baseline.diff.splitting.DefaultContextProvider;
-import org.variantsync.evaluation.baseline.diff.splitting.DiffSplitter;
-import org.variantsync.evaluation.baseline.diff.splitting.IContextProvider;
 import org.variantsync.evaluation.error.Panic;
 import org.variantsync.evaluation.error.ShellException;
 import org.variantsync.vevos.simulation.feature.Variant;
@@ -596,24 +592,16 @@ public class SynchronizationStudy {
         return skipped;
     }
 
-    // Get the line-level patches for a given difference
     @NotNull
     private FineDiff getFineDiff(final OriginalDiff originalDiff) {
-        final DefaultContextProvider contextProvider = new DefaultContextProvider(workDir);
-        return DiffSplitter.split(originalDiff, contextProvider);
+        // Simple conversion, we no longer separate line-wise
+        return new FineDiff(originalDiff.fileDiffs());
     }
 
-    // Get the filtered line-level patches for a given difference
+    // Get the filtered patch for a given difference
     private FineDiff getFilteredDiff(final OriginalDiff originalDiff, final Artefact tracesV0, final Artefact tracesV1, final Variant target, Path oldVersionRoot, Path newVersionRoot) {
         final CachedPCBasedFilter cachedPCBasedFilter = new CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, 2);
-        return getFilteredDiff(originalDiff, cachedPCBasedFilter);
-    }
-
-    // Get the filtered line-level patches for a given difference
-    private <T extends IFileDiffFilter & ILineFilter> FineDiff getFilteredDiff(final OriginalDiff originalDiff, final T filter) {
-        // Create target variant specific patch that respects PCs
-        final IContextProvider contextProvider = new DefaultContextProvider(workDir);
-        return DiffSplitter.split(originalDiff, filter, filter, contextProvider);
+        return DiffFilter.filter(originalDiff, cachedPCBasedFilter, cachedPCBasedFilter);
     }
 
     // Get the difference between two directories using UNIX diff
