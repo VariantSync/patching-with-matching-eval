@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -84,7 +84,7 @@ public class ShellExecutor {
         final Process process;
         final Future<?> outputFuture;
         final Future<?> errorFuture;
-        final List<String> output = new LinkedList<>();
+        final List<String> output = new ArrayList<>();
         final Consumer<String> shareOutput = s -> {
             output.add(s);
             outputReader.accept(s);

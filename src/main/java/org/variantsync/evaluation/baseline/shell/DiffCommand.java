@@ -5,7 +5,7 @@ import org.variantsync.evaluation.error.ShellException;
 
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,7 +14,7 @@ import java.util.List;
 public class DiffCommand extends ShellCommand {
     private static final String COMMAND = "diff";
     private final String[] files;
-    private final LinkedList<String> args = new LinkedList<>();
+    private final ArrayList<String> args = new ArrayList<>();
 
     public DiffCommand(final String... files) {
         this.files = files;

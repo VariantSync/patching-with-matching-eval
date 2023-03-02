@@ -11,7 +11,7 @@ import org.variantsync.evaluation.baseline.diff.filter.DefaultLineFilter;
 import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
 
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,7 +45,7 @@ public class DiffSplitter {
         lineFilter = lineFilter == null ? new DefaultLineFilter() : lineFilter;
 
         // The list in which we will collect the
-        final List<FileDiff> splitFileDiffs = new LinkedList<>();
+        final List<FileDiff> splitFileDiffs = new ArrayList<>();
 
         // Go over all FileDiff in diff
         for (final FileDiff fileDiff : originalDiff.fileDiffs()) {
@@ -62,7 +62,7 @@ public class DiffSplitter {
     // Split the hunks in the given difference into line-level patches while filtering certain patches depending on the
     // decision of the provided filters.
     private static List<FileDiff> split(final FileDiff fileDiff, final IContextProvider contextProvider, final ILineFilter lineFilter) {
-        final List<FileDiff> fileDiffs = new LinkedList<>();
+        final List<FileDiff> fileDiffs = new ArrayList<>();
 
         int hunkLocationOffset = 0;
         for (final Hunk hunk : fileDiff.hunks()) {
@@ -105,7 +105,7 @@ public class DiffSplitter {
                                               final int hunkLocationOffset) {
         final List<Line> leadingContext = contextProvider.leadingContext(lineFilter, fileDiff, leadContextStart);
         final List<Line> trailingContext = contextProvider.trailingContext(lineFilter, fileDiff, trailContextStart);
-        final List<Line> content = new LinkedList<>(leadingContext);
+        final List<Line> content = new ArrayList<>(leadingContext);
         content.add(line);
         content.addAll(trailingContext);
 

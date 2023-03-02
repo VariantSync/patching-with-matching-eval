@@ -2,14 +2,14 @@ package org.variantsync.evaluation.baseline.shell;
 
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Represents a shell 'patch' command that can be executed using a ShellExecutor
  */
 public class PatchCommand extends ShellCommand {
     private static final String COMMAND = "patch";
-    private final LinkedList<String> args = new LinkedList<>();
+    private final ArrayList<String> args = new ArrayList<>();
 
     /**
      * A PatchCommand configured as recommended in the documentation of 'patch'

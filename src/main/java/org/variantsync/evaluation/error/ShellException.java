@@ -1,7 +1,7 @@
 package org.variantsync.evaluation.error;
 
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +12,7 @@ public class ShellException extends Exception {
 
     public ShellException(final Exception e) {
         super(e);
-        this.output = new LinkedList<>();
+        this.output = new ArrayList<>();
     }
 
     public ShellException(final List<String> output) {

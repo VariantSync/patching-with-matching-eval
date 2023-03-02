@@ -8,7 +8,6 @@ import org.variantsync.evaluation.baseline.diff.components.OriginalDiff;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,7 +29,7 @@ public class DiffParser {
         if (lines.isEmpty()) {
             return new OriginalDiff(new ArrayList<>());
         }
-        final List<FileDiff> fileDiffs = new LinkedList<>();
+        final List<FileDiff> fileDiffs = new ArrayList<>();
         // Determine the substring which a FileDiff starts with
         String fileDiffStart = "";
         String fileDiffFollow = "";
@@ -54,7 +53,7 @@ public class DiffParser {
                     fileDiffs.add(parseFileDiff(fileDiffContent));
                 }
                 // Reset the lines that should go into the next FileDiff
-                fileDiffContent = new LinkedList<>();
+                fileDiffContent = new ArrayList<>();
             } else if (line.contains(fileDiffStart)) {
                 if (indexNext < lines.size()) {
                     final String nextLine = lines.get(indexNext);
@@ -66,7 +65,7 @@ public class DiffParser {
                             fileDiffs.add(parseFileDiff(fileDiffContent));
                         }
                         // Reset the lines that should go into the next FileDiff
-                        fileDiffContent = new LinkedList<>();
+                        fileDiffContent = new ArrayList<>();
                         fileDiffContent.add(line.substring(line.indexOf(fileDiffStart)));
                         continue;
                     }
@@ -90,7 +89,7 @@ public class DiffParser {
         String nextLine = fileDiffContent.get(index);
 
         // Parse the header
-        final List<String> header = new LinkedList<>();
+        final List<String> header = new ArrayList<>();
         String oldFile = null;
         String newFile = null;
         {
@@ -111,15 +110,15 @@ public class DiffParser {
         }
 
         // Parse the hunks
-        final List<Hunk> hunks = new LinkedList<>();
+        final List<Hunk> hunks = new ArrayList<>();
         {
-            List<String> hunkLines = new LinkedList<>();
+            List<String> hunkLines = new ArrayList<>();
             hunkLines.add(nextLine);
             for (index += 1; index < fileDiffContent.size(); index++) {
                 nextLine = fileDiffContent.get(index);
                 if (nextLine.startsWith(HUNK_START)) {
                     hunks.add(parseHunk(hunkLines));
-                    hunkLines = new LinkedList<>();
+                    hunkLines = new ArrayList<>();
                 }
                 hunkLines.add(nextLine);
             }
@@ -134,7 +133,7 @@ public class DiffParser {
     private static Hunk parseHunk(final List<String> lines) {
         // Parse the header
         final HunkLocation location = parseHunkHeader(lines.get(0));
-        final List<Line> content = new LinkedList<>();
+        final List<Line> content = new ArrayList<>();
         for (int i = 1; i < lines.size(); i++) {
             final String line = lines.get(i);
             if (line.startsWith("+")) {

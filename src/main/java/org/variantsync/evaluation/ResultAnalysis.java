@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -70,7 +70,7 @@ public class ResultAnalysis {
         int lineNormalFailed;
         if (rejectsNormal == null) {
             // If there is no rejects file, because all patches were applied successfully
-            rejectsNormal = new OriginalDiff(new LinkedList<>());
+            rejectsNormal = new OriginalDiff(new ArrayList<>());
         }
 
         // Determine the number of failed file-level patches (without filtering)
@@ -92,7 +92,7 @@ public class ResultAnalysis {
         int lineFilteredFailed;
         if (rejectsFiltered == null) {
             // If there is no rejects file, because all patches were applied successfully
-            rejectsFiltered = new OriginalDiff(new LinkedList<>());
+            rejectsFiltered = new OriginalDiff(new ArrayList<>());
         }
 
         // Determine the number of failed file-level patches (with filtering)
@@ -164,11 +164,11 @@ public class ResultAnalysis {
         List<Change> changesInEvolution = FineDiff.determineChangedLines(evolutionDiff);
 
         // Determine changes in the target variant's de.variantsync.studies.evolution that cannot be synchronized, because they are not part of the source variant and therefore not of the patch
-        final List<Change> unpatchableChanges = new LinkedList<>();
+        final List<Change> unpatchableChanges = new ArrayList<>();
         // Determine expected changes, i.e., changes in the target variant's de.variantsync.studies.evolution that can be synchronized
-        final List<Change> requiredChanges = new LinkedList<>();
+        final List<Change> requiredChanges = new ArrayList<>();
         {
-            final List<Change> tempChanges = new LinkedList<>(changesToClassify);
+            final List<Change> tempChanges = new ArrayList<>(changesToClassify);
             for (Change evolutionChange : changesInEvolution) {
                 if (!tempChanges.contains(evolutionChange)) {
                     unpatchableChanges.add(evolutionChange);
@@ -180,9 +180,9 @@ public class ResultAnalysis {
         }
 
         // Determine undesired changes, i.e., changes in the patch but not de.variantsync.studies.evolution
-        final List<Change> undesiredChanges = new LinkedList<>();
+        final List<Change> undesiredChanges = new ArrayList<>();
         {
-            final List<Change> tempChanges = new LinkedList<>(requiredChanges);
+            final List<Change> tempChanges = new ArrayList<>(requiredChanges);
             for (Change patchChange : changesToClassify) {
                 if (!tempChanges.contains(patchChange)) {
                     undesiredChanges.add(patchChange);
@@ -194,7 +194,7 @@ public class ResultAnalysis {
 
         // Determine actual differences between result and expected result,
         // i.e., changes that should have been synchronized but were not, or changes that should not have been synchronized
-        List<Change> actualDifferences = new LinkedList<>(changesInResult);
+        List<Change> actualDifferences = new ArrayList<>(changesInResult);
         unpatchableChanges.forEach(actualDifferences::remove);
 
         assert changesToClassify.size() >= changesInPatch.size();
@@ -204,8 +204,8 @@ public class ResultAnalysis {
         // We first want to account for the remaining differences between the actual and the expected result. They are either
         // false positives, i.e. changes in the patch that were applied but should not have been, or the mirror change
         // of a false negative that was applied to the wrong location.
-        List<Change> remainingDifferences = new LinkedList<>();
-        List<Change> fpChanges = new LinkedList<>();
+        List<Change> remainingDifferences = new ArrayList<>();
+        List<Change> fpChanges = new ArrayList<>();
         for (Change actualDifference : actualDifferences) {
             Change oppositeChange = getOppositeChange(actualDifference);
             if (undesiredChanges.contains(oppositeChange)) {
@@ -221,8 +221,8 @@ public class ResultAnalysis {
 
         // Now account for false negative
         actualDifferences = remainingDifferences;
-        remainingDifferences = new LinkedList<>();
-        List<Change> fnChanges = new LinkedList<>();
+        remainingDifferences = new ArrayList<>();
+        List<Change> fnChanges = new ArrayList<>();
         for (Change actualDifference : actualDifferences) {
             // Is it a false negative?
             if (requiredChanges.contains(actualDifference)) {
@@ -236,8 +236,8 @@ public class ResultAnalysis {
         }
 
         // Now account for the remaining lines in the patch file and determine whether they are true positive or true negative
-        List<Change> tpChanges = new LinkedList<>();
-        List<Change> tnChanges = new LinkedList<>();
+        List<Change> tpChanges = new ArrayList<>();
+        List<Change> tnChanges = new ArrayList<>();
         for (var patchLine : changesToClassify) {
             if (requiredChanges.contains(patchLine)) {
                 // In Patch & Expected: It is a true positive
@@ -417,7 +417,7 @@ public class ResultAnalysis {
         long lineSuccessFiltered = 0;
 
         try (BufferedReader reader = Files.newBufferedReader(path)) {
-            List<String> outcomeLines = new LinkedList<>();
+            List<String> outcomeLines = new ArrayList<>();
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 if (line.isEmpty()) {
                     PatchOutcome outcome = parseResult(outcomeLines);

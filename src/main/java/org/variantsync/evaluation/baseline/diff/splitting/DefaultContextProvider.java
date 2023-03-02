@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,10 +53,10 @@ public class DefaultContextProvider implements IContextProvider {
             if (Files.exists(rootDir.resolve(fileDiff.newFile()))) {
                 lines = Files.readAllLines(rootDir.resolve(fileDiff.newFile()));
                 if (lines.isEmpty()) {
-                    return new LinkedList<>();
+                    return new ArrayList<>();
                 }
             } else {
-                return new LinkedList<>();
+                return new ArrayList<>();
             }
 
             // Consider the lines coming before the considered change, until the start of the file has been reached, or
@@ -86,10 +87,10 @@ public class DefaultContextProvider implements IContextProvider {
             if (Files.exists(rootDir.resolve(fileDiff.oldFile()))) {
                 lines = Files.readAllLines(rootDir.resolve(fileDiff.oldFile()));
                 if (lines.isEmpty()) {
-                    return new LinkedList<>();
+                    return new ArrayList<>();
                 }
             } else {
-                return new LinkedList<>();
+                return new ArrayList<>();
             }
 
             // Consider the lines coming after the considered change, until the end of the file has been reached, or

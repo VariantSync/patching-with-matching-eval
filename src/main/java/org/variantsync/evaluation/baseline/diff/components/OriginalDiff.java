@@ -1,6 +1,6 @@
 package org.variantsync.evaluation.baseline.diff.components;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +13,7 @@ import java.util.List;
 public record OriginalDiff(List<FileDiff> fileDiffs) implements IDiffComponent {
     @Override
     public List<String> toLines() {
-        final List<String> lines = new LinkedList<>();
+        final List<String> lines = new ArrayList<>();
         fileDiffs.stream().map(IDiffComponent::toLines).forEach(lines::addAll);
         return lines;
     }

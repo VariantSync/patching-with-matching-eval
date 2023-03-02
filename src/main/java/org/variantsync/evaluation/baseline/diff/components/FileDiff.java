@@ -1,7 +1,7 @@
 package org.variantsync.evaluation.baseline.diff.components;
 
 import java.nio.file.Path;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +15,7 @@ import java.util.List;
 public record FileDiff(List<String> header, List<Hunk> hunks, Path oldFile, Path newFile) implements IDiffComponent {
     @Override
     public List<String> toLines() {
-        final List<String> lines = new LinkedList<>(header);
+        final List<String> lines = new ArrayList<>(header);
         hunks.stream().map(IDiffComponent::toLines).forEach(lines::addAll);
         return lines;
     }

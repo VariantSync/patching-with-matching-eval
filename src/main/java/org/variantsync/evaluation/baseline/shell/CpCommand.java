@@ -1,7 +1,7 @@
 package org.variantsync.evaluation.baseline.shell;
 
 import java.nio.file.Path;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Represent a shell 'cp' command that can be executed using the ShellExecutor
@@ -10,7 +10,7 @@ public class CpCommand extends ShellCommand {
     private static final String COMMAND = "cp";
     private final String from;
     private final String to;
-    private final LinkedList<String> args = new LinkedList<>();
+    private final ArrayList<String> args = new ArrayList<>();
 
 
     public CpCommand(final Path from, final Path to) {

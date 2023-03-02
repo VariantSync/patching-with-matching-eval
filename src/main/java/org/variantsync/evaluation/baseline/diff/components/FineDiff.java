@@ -4,7 +4,7 @@ import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
 import org.variantsync.evaluation.baseline.diff.lines.Change;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +23,7 @@ public record FineDiff(List<FileDiff> content) implements IDiffComponent {
      * @return A list of all changed lines (i.e., added and removed source code)
      */
     public static List<Change> determineChangedLines(FineDiff diff) {
-        final List<Change> changedLines = new LinkedList<>();
+        final List<Change> changedLines = new ArrayList<>();
         for (FileDiff fd : diff.content()) {
             // Filter the hunks of each patch to extract changed lines
             fd.hunks().stream().flatMap(hunk -> hunk.content().stream()).forEach(line -> {
@@ -40,7 +40,7 @@ public record FineDiff(List<FileDiff> content) implements IDiffComponent {
 
     @Override
     public List<String> toLines() {
-        final List<String> lines = new LinkedList<>();
+        final List<String> lines = new ArrayList<>();
         content.stream().map(IDiffComponent::toLines).forEach(lines::addAll);
         return lines;
     }

@@ -1,7 +1,7 @@
 package org.variantsync.evaluation.baseline.shell;
 
 import java.nio.file.Path;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Represents a shell 'rm' command that can be executed using a ShellExecutor
@@ -9,7 +9,7 @@ import java.util.LinkedList;
 public class RmCommand extends ShellCommand {
     private static final String COMMAND = "rm";
     private final String file;
-    private final LinkedList<String> args = new LinkedList<>();
+    private final ArrayList<String> args = new ArrayList<>();
 
     public RmCommand(final Path file) {
         this.file = file.toString();

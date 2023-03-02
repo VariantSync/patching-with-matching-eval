@@ -5,7 +5,7 @@ import org.variantsync.evaluation.baseline.diff.lines.Line;
 import org.variantsync.evaluation.baseline.diff.lines.MetaLine;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,7 +19,7 @@ public record Hunk(HunkLocation location, List<Line> content) implements IDiffCo
 
     @Override
     public List<String> toLines() {
-        final List<String> lines = new LinkedList<>();
+        final List<String> lines = new ArrayList<>();
         final int sourceSize = (int) content.stream().filter(l -> !(l instanceof AddedLine || l instanceof MetaLine)).count();
         final int targetSize = (int) content.stream().filter(l -> !(l instanceof RemovedLine || l instanceof MetaLine)).count();
         lines.add(String.format("@@ -%d,%d +%d,%d @@", location.startLineSource(), sourceSize, location.startLineTarget(), targetSize));
