@@ -1,0 +1,19 @@
+diff -Naur version-A/DiffParser.txt version-B/DiffParser.txt
+--- version-A/DiffParser.txt	2021-07-28 18:01:03.137025193 +0000
++++ version-B/DiffParser.txt	2021-07-28 18:01:03.147025193 +0000
+@@ -45,4 +46,3 @@
+-        return new OriginalDiff(fileDiffs);
+     }
+ 
+     private static FileDiff parseFileDiff(List<String> fileDiffContent) {
+diff -Naur version-A/DiffParser.txt version-B/DiffParser.txt
+--- version-A/DiffParser.txt	2021-07-28 18:01:03.137025193 +0000
++++ version-B/DiffParser.txt	2021-07-28 18:01:03.147025193 +0000
+@@ -111,6 +111,7 @@
+                 content.add(new ContextLine(line));
+             }
+         }
++        return new Hunk(location, content);
+     }
+ 
+     private static HunkLocation parseHunkHeader(String line) {

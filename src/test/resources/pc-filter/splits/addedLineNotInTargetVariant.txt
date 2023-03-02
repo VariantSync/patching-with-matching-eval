@@ -1,0 +1,46 @@
+diff -Naur version-A/DiffParser.txt version-B/DiffParser.txt
+--- version-A/DiffParser.txt	2021-07-28 18:01:03.137025193 +0000
++++ version-B/DiffParser.txt	2021-07-28 18:01:03.147025193 +0000
+@@ -45,7 +46,6 @@
+         // Parse the content of the last file diff
+         fileDiffs.add(parseFileDiff(fileDiffContent));
+ 
+-        return new OriginalDiff(fileDiffs);
+     }
+ 
+     private static FileDiff parseFileDiff(List<String> fileDiffContent) {
+diff -Naur version-A/DiffParser.txt version-B/DiffParser.txt
+--- version-A/DiffParser.txt	2021-07-28 18:01:03.137025193 +0000
++++ version-B/DiffParser.txt	2021-07-28 18:01:03.147025193 +0000
+@@ -111,6 +111,7 @@
+                 content.add(new ContextLine(line));
+             }
+         }
++        return new Hunk(location, content);
+     }
+ 
+     private static HunkLocation parseHunkHeader(String line) {
+diff -N -a -u -r version-A/first-file.txt version-B/first-file.txt
+--- version-A/first-file.txt    2021-07-26 12:54:11.414422539 +0000
++++ version-B/first-file.txt    2021-07-26 12:56:29.534417548 +0000
+@@ -9,6 +9,7 @@
+     cars.add("Ford");
+     cars.add("BMW");
+     cars.add("Mazda");
++    cars.add("ZumZum");
+     System.out.println(cars);
+   }
+ }
+\ No newline at end of file
+diff -N -a -u -r version-A/first-file.txt version-B/first-file.txt
+--- version-A/first-file.txt    2021-07-26 12:54:11.414422539 +0000
++++ version-B/first-file.txt    2021-07-26 12:56:29.534417548 +0000
+@@ -9,6 +9,7 @@
+     cars.add("BMW");
+     cars.add("Mazda");
+     cars.add("ZumZum");
++    cars.add("Blabla");
+     System.out.println(cars);
+   }
+ }
+\ No newline at end of file

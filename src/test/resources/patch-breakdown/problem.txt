@@ -1,0 +1,93 @@
+diff -Naur V0Variants/Variant1/coreutils/dos2unix.c V1Variants/Variant1/coreutils/dos2unix.c
+--- V0Variants/Variant1/coreutils/dos2unix.c	2021-08-12 18:51:07.521375968 +0000
++++ V1Variants/Variant1/coreutils/dos2unix.c	2021-08-12 18:51:07.551375967 +0000
+@@ -41,12 +41,10 @@
+ 		fstat(fileno(in), &st);
+ 
+ 		temp_fn = xasprintf("%sXXXXXX", resolved_fn);
+-		i = mkstemp(temp_fn);
+-		if (i == -1
+-		 || fchmod(i, st.st_mode) == -1
+-		) {
++		i = xmkstemp(temp_fn);
++		if (fchmod(i, st.st_mode) == -1)
+ 			bb_simple_perror_msg_and_die(temp_fn);
+-		}
++
+ 		out = xfdopen_for_write(i);
+ 	}
+ 
+diff -Naur V0Variants/Variant1/editors/diff.c V1Variants/Variant1/editors/diff.c
+--- V0Variants/Variant1/editors/diff.c	2021-08-12 18:51:07.524709301 +0000
++++ V1Variants/Variant1/editors/diff.c	2021-08-12 18:51:07.554709300 +0000
+@@ -659,9 +659,8 @@
+ 		 */
+ 		if (lseek(fd, 0, SEEK_SET) == -1 && errno == ESPIPE) {
+ 			char name[] = "/tmp/difXXXXXX";
+-			int fd_tmp = mkstemp(name);
+-			if (fd_tmp < 0)
+-				bb_perror_msg_and_die("mkstemp");
++			int fd_tmp = xmkstemp(name);
++
+ 			unlink(name);
+ 			if (bb_copyfd_eof(fd, fd_tmp) < 0)
+ 				xfunc_die();
+diff -Naur V0Variants/Variant1/editors/patch.c V1Variants/Variant1/editors/patch.c
+--- V0Variants/Variant1/editors/patch.c	2021-08-12 18:51:07.524709301 +0000
++++ V1Variants/Variant1/editors/patch.c	2021-08-12 18:51:07.554709300 +0000
+@@ -200,8 +200,7 @@
+ 	int fd;
+ 
+ 	*tempname = xasprintf("%sXXXXXX", name);
+-	fd = mkstemp(*tempname);
+-	if(-1 == fd) bb_perror_msg_and_die("no temp file");
++	fd = xmkstemp(*tempname);
+ 
+ 	// Set permissions of output file
+ 	fstat(fdin, &statbuf);
+diff -Naur V0Variants/Variant1/editors/sed.c V1Variants/Variant1/editors/sed.c
+--- V0Variants/Variant1/editors/sed.c	2021-08-12 18:51:07.524709301 +0000
++++ V1Variants/Variant1/editors/sed.c	2021-08-12 18:51:07.554709300 +0000
+@@ -1333,9 +1333,7 @@
+ 			}
+ 
+ 			G.outname = xasprintf("%sXXXXXX", argv[i]);
+-			nonstdoutfd = mkstemp(G.outname);
+-			if (-1 == nonstdoutfd)
+-				bb_perror_msg_and_die("can't create temp file %s", G.outname);
++			nonstdoutfd = xmkstemp(G.outname);
+ 			G.nonstdout = xfdopen_for_write(nonstdoutfd);
+ 
+ 			/* Set permissions/owner of output file */
+diff -Naur V0Variants/Variant1/libbb/xfuncs_printf.c V1Variants/Variant1/libbb/xfuncs_printf.c
+--- V0Variants/Variant1/libbb/xfuncs_printf.c	2021-08-12 18:51:07.531375967 +0000
++++ V1Variants/Variant1/libbb/xfuncs_printf.c	2021-08-12 18:51:07.564709297 +0000
+@@ -208,6 +208,14 @@
+ 	return off;
+ }
+ 
++int FAST_FUNC xmkstemp(char *template)
++{
++	int fd = mkstemp(template);
++	if (fd < 0)
++		bb_perror_msg_and_die("can't create temp file '%s'", template);
++	return fd;
++}
++
+ // Die with supplied filename if this FILE* has ferror set.
+ void FAST_FUNC die_if_ferror(FILE *fp, const char *fn)
+ {
+diff -Naur V0Variants/Variant1/printutils/lpr.c V1Variants/Variant1/printutils/lpr.c
+--- V0Variants/Variant1/printutils/lpr.c	2021-08-12 18:51:07.541375967 +0000
++++ V1Variants/Variant1/printutils/lpr.c	2021-08-12 18:51:07.574709299 +0000
+@@ -159,9 +159,7 @@
+ 		// if data file is stdin, we need to dump it first
+ 		if (LONE_DASH(*argv)) {
+ 			strcpy(tempfile, "/tmp/lprXXXXXX");
+-			dfd = mkstemp(tempfile);
+-			if (dfd < 0)
+-				bb_perror_msg_and_die("mkstemp");
++			dfd = xmkstemp(tempfile);
+ 			bb_copyfd_eof(STDIN_FILENO, dfd);
+ 			xlseek(dfd, 0, SEEK_SET);
+ 			*argv = (char*)bb_msg_standard_input;

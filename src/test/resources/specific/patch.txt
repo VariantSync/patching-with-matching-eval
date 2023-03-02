@@ -1,0 +1,45 @@
+diff -N -a -u -r V0Variants/Variant1/util-linux/mdev.c V1Variants/Variant1/util-linux/mdev.c
+--- V0Variants/Variant1/util-linux/mdev.c	2021-08-09 20:16:32.546683934 +0000
++++ V1Variants/Variant1/util-linux/mdev.c	2021-08-09 20:16:32.593350598 +0000
+@@ -1181,7 +1182,6 @@
+ 
+ 	xchdir("/dev");
+ 
+-	opt = getopt32(argv, "sS" 
+ );
+ 
+ 	G.filename = "/etc/mdev.conf";
+ 	if (opt & (MDEV_OPT_SCAN|MDEV_OPT_DAEMON)) {
+diff -N -a -u -r V0Variants/Variant1/util-linux/mdev.c V1Variants/Variant1/util-linux/mdev.c
+--- V0Variants/Variant1/util-linux/mdev.c	2021-08-09 20:16:32.546683934 +0000
++++ V1Variants/Variant1/util-linux/mdev.c	2021-08-09 20:16:32.593350598 +0000
+@@ -1181,7 +1182,6 @@
+ 
+ 	xchdir("/dev");
+ 
+-);
+ 
+ 	G.filename = "/etc/mdev.conf";
+ 	if (opt & (MDEV_OPT_SCAN|MDEV_OPT_DAEMON)) {
+diff -N -a -u -r V0Variants/Variant1/util-linux/mdev.c V1Variants/Variant1/util-linux/mdev.c
+--- V0Variants/Variant1/util-linux/mdev.c	2021-08-09 20:16:32.546683934 +0000
++++ V1Variants/Variant1/util-linux/mdev.c	2021-08-09 20:16:32.593350598 +0000
+@@ -1181,6 +1182,7 @@
+ 
+ 	xchdir("/dev");
+ 
++	opt = getopt32(argv, "^"
+ 
+ 	G.filename = "/etc/mdev.conf";
+ 	if (opt & (MDEV_OPT_SCAN|MDEV_OPT_DAEMON)) {
+diff -N -a -u -r V0Variants/Variant1/util-linux/mdev.c V1Variants/Variant1/util-linux/mdev.c
+--- V0Variants/Variant1/util-linux/mdev.c	2021-08-09 20:16:32.546683934 +0000
++++ V1Variants/Variant1/util-linux/mdev.c	2021-08-09 20:16:32.593350598 +0000
+@@ -1181,6 +1182,7 @@
+ 	xchdir("/dev");
+ 
+ 	opt = getopt32(argv, "^"
++		"sS" 
+ 
+ 	G.filename = "/etc/mdev.conf";
+ 	if (opt & (MDEV_OPT_SCAN|MDEV_OPT_DAEMON)) {

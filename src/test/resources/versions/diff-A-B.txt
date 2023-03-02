@@ -1,0 +1,49 @@
+diff -N -a -u -r version-A/first-file.txt version-B/first-file.txt
+--- version-A/first-file.txt    2021-07-26 12:54:11.414422539 +0000
++++ version-B/first-file.txt    2021-07-26 12:56:29.534417548 +0000
+@@ -9,6 +9,8 @@
+     cars.add("Ford");
+     cars.add("BMW");
+     cars.add("Mazda");
++    cars.add("ZumZum");
++    cars.add("Blabla");
+     System.out.println(cars);
+   }
+ }
+\ No newline at end of file
+diff -N -a -u -r version-A/second-file.txt version-B/second-file.txt
+--- version-A/second-file.txt   2021-07-26 12:54:22.274422140 +0000
++++ version-B/second-file.txt   2021-07-26 12:56:29.514417547 +0000
+@@ -9,13 +9,13 @@
+     ArrayList<String> cars = new ArrayList<String>();
+     cars.add("Volvo");
+     cars.add("BMW");
+-    cars.add("Ford");
+-    cars.add("Mazda");
+
+     // Get the iterator
+     Iterator<String> it = cars.iterator();
+
+     // Print the first item
+     System.out.println(it.next());
++    // Print the second item
++    System.out.println(it.next());
+   }
+ }
+\ No newline at end of file
+diff -N -a -u -r version-A/third-file.txt version-B/third-file.txt
+--- version-A/third-file.txt    2021-07-26 12:54:44.457754653 +0000
++++ version-B/third-file.txt    2021-07-26 12:56:29.524417548 +0000
+@@ -1,11 +1,4 @@
+ public class Main {
+   final int x = 10;
+   final double PI = 3.14;
+-
+-  public static void main(String[] args) {
+-    Main myObj = new Main();
+-    myObj.x = 50; // will generate an error: cannot assign a value to a final variable
+-    myObj.PI = 25; // will generate an error: cannot assign a value to a final variable
+-    System.out.println(myObj.x);
+-  }
+ }
+\ No newline at end of file

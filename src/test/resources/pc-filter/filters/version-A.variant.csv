@@ -1,0 +1,7 @@
+Path;File Condition;Block Condition;Presence Condition;start;end
+version-A/DiffParser.txt;True;True;True;1;124
+version-A/DiffParser.txt;True;A;A;14;49
+version-A/DiffParser.txt;True;UNRELATED;UNRELATED;56;75
+version-A/DiffParser.txt;True;B;B;98;114
+version-A/DiffParser.txt;True;TRAIL;TRAIL;116;122
+version-A/first-file.txt;(A && FILE);True;(A && FILE);1;14

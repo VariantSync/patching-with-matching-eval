@@ -1,0 +1,3 @@
+[submodule "SPLVariantEvolution"]
+	path = SPLVariantEvolution
+	url = git@gitlab.informatik.hu-berlin.de:mse/VariantSync/SPLVariantEvolution.git
