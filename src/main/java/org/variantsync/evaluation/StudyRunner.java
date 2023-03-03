@@ -59,6 +59,7 @@ public class StudyRunner {
 
             if (!Files.exists(repoGroundTruth)) {
                 Logger.warning("Found no ground truth for %s. Skipping the study for %s".formatted(dataset.name(), dataset.name()));
+                continue;
             }
 
             // Clone the repository if required

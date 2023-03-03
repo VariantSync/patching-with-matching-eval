@@ -84,4 +84,28 @@ public class DiffParserTest {
         List<FileDiff> fileDiffs = originalDiff.fileDiffs();
         assert fileDiffs.size() == 6;
     }
+
+    @Test
+    public void parseDiffWithMinusInText() throws Exception {
+        Path diff = Path.of("src/test/resources/troublesome-diffs/minus_in_text.txt");
+        List<String> lines = Files.readAllLines(diff);
+        OriginalDiff originalDiff = DiffParser.toOriginalDiff(lines);
+        assert !originalDiff.isEmpty();
+    }
+
+    @Test
+    public void parseRejects() throws Exception {
+        Path diff = Path.of("src/test/resources/troublesome-diffs/rejects-normal.txt");
+        List<String> lines = Files.readAllLines(diff);
+        OriginalDiff originalDiff = DiffParser.toOriginalDiff(lines);
+        assert !originalDiff.isEmpty();
+    }
+
+    @Test
+    public void parseRejectsFiltered() throws Exception {
+        Path diff = Path.of("src/test/resources/troublesome-diffs/rejects-filtered.txt");
+        List<String> lines = Files.readAllLines(diff);
+        OriginalDiff originalDiff = DiffParser.toOriginalDiff(lines);
+        assert !originalDiff.isEmpty();
+    }
 }

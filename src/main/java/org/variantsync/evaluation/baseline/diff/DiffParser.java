@@ -48,12 +48,17 @@ public class DiffParser {
         for (final String line : lines) {
             indexNext++;
             if (line.startsWith(fileDiffStart)) {
-                // Create a FileDiff from the collected lines
-                if (fileDiffContent != null) {
-                    fileDiffs.add(parseFileDiff(fileDiffContent));
+                if (indexNext < lines.size()) {
+                    final String nextLine = lines.get(indexNext);
+                    if (nextLine.startsWith(fileDiffFollow)) {
+                        // Create a FileDiff from the collected lines
+                        if (fileDiffContent != null) {
+                            fileDiffs.add(parseFileDiff(fileDiffContent));
+                        }
+                        // Reset the lines that should go into the next FileDiff
+                        fileDiffContent = new ArrayList<>();
+                    }
                 }
-                // Reset the lines that should go into the next FileDiff
-                fileDiffContent = new ArrayList<>();
             } else if (line.contains(fileDiffStart)) {
                 if (indexNext < lines.size()) {
                     final String nextLine = lines.get(indexNext);

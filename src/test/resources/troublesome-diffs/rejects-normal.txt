@@ -1,0 +1,428 @@
+--- src/charproc.c	2023-03-03 10:08:45.616342541 +0100
++++ src/charproc.c	2023-03-03 10:08:45.636341465 +0100
+@@ -968,15 +1093,56 @@
+ static int
+ one_if_default(int which)
+ {
+-    int result = (nparam > which) ? param[which] : 0;
++    int result = (nparam > which) ? GetParam(which) : 0;
+     if (result <= 0)
+ 	result = 1;
+     return result;
+ }
+ 
++/*
++ * Color palette changes using the OSC controls require a repaint of the
++ * screen - but not immediately.  Do the repaint as soon as we detect a
++ * state which will not lead to another color palette change.
++ */
++static void
++repaintWhenPaletteChanged(XtermWidget xw, struct ParseState *sp)
++{
++    Boolean ignore = False;
++
++    switch (sp->nextstate) {
++    case CASE_ESC:
++	ignore = ((sp->parsestate == ansi_table) ||
++		  (sp->parsestate == sos_table));
++	break;
++    case CASE_OSC:
++	ignore = ((sp->parsestate == ansi_table) ||
++		  (sp->parsestate == esc_table));
++	break;
++    case CASE_IGNORE:
++	ignore = (sp->parsestate == sos_table);
++	break;
++    case CASE_ST:
++	ignore = ((sp->parsestate == esc_table) ||
++		  (sp->parsestate == sos_table));
++	break;
++    case CASE_ESC_DIGIT:
++	ignore = (sp->parsestate == csi_table);
++	break;
++    case CASE_ESC_SEMI:
++	ignore = (sp->parsestate == csi2_table);
++	break;
++    }
++
++    if (!ignore) {
++	TRACE(("repaintWhenPaletteChanged\n"));
++	xw->misc.palette_changed = False;
++	xtermRepaint(xw);
++    }
++}
++
+ #define ParseSOS(screen) 0
+ 
+-#define ResetState(sp) (sp)->parsestate = (sp)->groundtable
++#define ResetState(sp) ParamsDone(), (sp)->parsestate = (sp)->groundtable
+ 
+ static void
+ illegal_parse(XtermWidget xw, unsigned c, struct ParseState *sp)
+@@ -2789,24 +2992,29 @@
+ 	case CASE_SET_MOD_FKEYS:
+ 	    TRACE(("CASE_SET_MOD_FKEYS\n"));
+ 	    if (nparam >= 1) {
+-		set_mod_fkeys(xw, param[0], nparam > 1 ? param[1] : DEFAULT, True);
++		set_mod_fkeys(xw,
++			      GetParam(0),
++			      ((nparam > 1)
++			       ? GetParam(1)
++			       : DEFAULT),
++			      True);
+ 	    } else {
+-		for (row = 1; row <= 5; ++row)
+-		    set_mod_fkeys(xw, row, DEFAULT, True);
++		for (value = 1; value <= 5; ++value)
++		    set_mod_fkeys(xw, value, DEFAULT, True);
+ 	    }
+ 	    break;
+ 	case CASE_SET_MOD_FKEYS0:
+ 	    TRACE(("CASE_SET_MOD_FKEYS0\n"));
+-	    if (nparam >= 1 && param[0] != DEFAULT) {
+-		set_mod_fkeys(xw, param[0], -1, False);
++	    if (nparam >= 1 && GetParam(0) != DEFAULT) {
++		set_mod_fkeys(xw, GetParam(0), -1, False);
+ 	    } else {
+ 		xw->keyboard.modify_now.function_keys = -1;
+ 	    }
+ 	    break;
+ 	case CASE_HIDE_POINTER:
+ 	    TRACE(("CASE_HIDE_POINTER\n"));
+-	    if (nparam >= 1 && param[0] != DEFAULT) {
+-		screen->pointer_mode = param[0];
++	    if (nparam >= 1 && GetParam(0) != DEFAULT) {
++		screen->pointer_mode = GetParam(0);
+ 	    } else {
+ 		screen->pointer_mode = DEF_POINTER_MODE;
+ 	    }
+@@ -4232,9 +4451,10 @@
+     XWindowChanges values;
+     XWindowAttributes win_attrs;
+     unsigned value_mask;
++    int code = zero_if_default(0);
+ 
+-    TRACE(("window_ops %d\n", param[0]));
+-    switch (param[0]) {
++    TRACE(("window_ops %d\n", code));
++    switch (code) {
+     case ewRestoreWin:		/* Restore (de-iconify) window */
+ 	if (AllowWindowOps(xw, ewRestoreWin)) {
+ 	    TRACE(("...de-iconify window\n"));
+@@ -5259,7 +5491,10 @@
+     init_Ires(screen.xmc_attributes);
+     init_Bres(screen.xmc_inline);
+     init_Bres(screen.move_sgr_ok);
+-    init_Bres(screen.cursor_underline);
++    /* resources allow for underline or block, not (yet) bar */
++    TScreenOf(wnew)->cursor_shape = request->screen.cursor_underline
++	? CURSOR_UNDERLINE
++	: CURSOR_BLOCK;
+     init_Ires(screen.border);
+     init_Bres(screen.jumpscroll);
+     init_Bres(screen.fastscroll);
+@@ -6287,7 +6653,7 @@
+      * whether the window has focus, since in that case we want just an
+      * outline for the cursor.
+      */
+-    filled = (screen->select || screen->always_highlight) && !screen->cursor_underline;
++    filled = (screen->select || screen->always_highlight) && isCursorBlock(screen);
+     use_selbg = isNotForeground(xw, fg_pix, bg_pix, selbg_pix);
+     use_selfg = isNotBackground(xw, fg_pix, bg_pix, selfg_pix);
+     if (filled) {
+--- src/input.c	2023-03-03 10:08:45.616342541 +0100
++++ src/input.c	2023-03-03 10:08:45.643007774 +0100
+@@ -329,7 +331,7 @@
+     (void) screen;
+     if (screen->vtXX_level != 0)
+     {
+-	if (IsCursorKey(kd->keysym) || IsEditFunctionKey(kd->keysym)) {
++	if (IsCursorKey(kd->keysym) || IsEditFunctionKey(xw, kd->keysym)) {
+ 	    result = LegacyAllows(2);
+ 	} else if (IsKeypadKey(kd->keysym)) {
+ 	    if (keypad_mode) {
+@@ -465,7 +467,7 @@
+      * Exclude the keys already covered by a modifier.
+      */
+     if (kd->is_fkey
+-	|| IsEditFunctionKey(kd->keysym)
++	|| IsEditFunctionKey(xw, kd->keysym)
+ 	|| IsKeypadKey(kd->keysym)
+ 	|| IsCursorKey(kd->keysym)
+ 	|| IsPFKey(kd->keysym)
+@@ -859,7 +861,7 @@
+ 	unparseseq(xw, &reply);
+     } else if (((kd.is_fkey
+ 		 || IsMiscFunctionKey(kd.keysym)
+-		 || IsEditFunctionKey(kd.keysym))
++		 || IsEditFunctionKey(xw, kd.keysym))
+ 		&& !ModifyOtherKeys(xw, evt_state, &kd, modify_parm)
+ 	       ) || (kd.keysym == XK_Delete
+ 		     && ((modify_parm != 0)
+--- src/misc.c	2023-03-03 10:08:45.623008849 +0100
++++ src/misc.c	2023-03-03 10:08:45.646340928 +0100
+@@ -2521,10 +2559,12 @@
+ 		    strcat(reply, ";8");
+ 		strcat(reply, "m");
+ 	    } else if (!strcmp(cp, " q")) {	/* DECSCUSR */
+-		int code = 0;
+-		if (screen->cursor_underline != 0)
+-		    code |= 2;
+-		sprintf(reply, "%d%s", code + 1, cp);
++		int code = STEADY_BLOCK;
++		if (isCursorUnderline(screen))
++		    code = STEADY_UNDERLINE;
++		else if (isCursorBar(screen))
++		    code = STEADY_BAR;
++		sprintf(reply, "%d%s", code, cp);
+ 	    } else
+ 		okay = False;
+ 
+--- src/ptyx.h	2023-03-03 10:08:45.623008849 +0100
++++ src/ptyx.h	2023-03-03 10:08:45.646340928 +0100
+@@ -267,6 +267,13 @@
+ 	String desc;
+ } OptionHelp;
+ 
++typedef	struct {
++	int	count;			/* number of values in params[]	*/
++	int	has_subparams;		/* true if there are any sub's	*/
++	int	is_sub[NPARAM];		/* true for subparam		*/
++	int	params[NPARAM];		/* parameter value		*/
++} PARAMS;
++
+ typedef short ParmType;
+ 
+ typedef struct {
+@@ -342,6 +349,8 @@
+ 
+ #define OPT_DEC_SOFTFONT 0 /* true if xterm is configured for VT220 softfonts */
+ 
++#define OPT_DOUBLE_BUFFER 0 /* true if using double-buffering */
++
+ #define OPT_EBCDIC 1
+ 
+ 
+@@ -527,13 +536,20 @@
+ } FullscreenOps;
+ 
+ typedef enum {
++    eiFalse = 0
++    , eiTrue
++    , eiDefault
++    , eiLAST
++} AIconOps;
++
++typedef enum {
+     etSetTcap = 1
+     , etGetTcap
+     , etLAST
+ } TcapOps;
+ 
+ typedef enum {
+-    /* 1-21 are chosen to be the same as the control-sequence coding */
++    /* 1-23 are chosen to be the same as the control-sequence coding */
+     ewRestoreWin = 1
+     , ewMinimizeWin = 2
+     , ewSetWinPosition = 3
+@@ -767,7 +783,7 @@
+ 	 * of widths.
+ 	 */
+ typedef struct {
+-    	Bool		mixed;
++	Bool		mixed;
+ 	Dimension	min_width;	/* nominal cell width for 0..255 */
+ 	Dimension	max_width;	/* maximum cell width */
+ } FontMap;
+@@ -791,6 +807,7 @@
+ 
+ 	/* indices into save_modes[] */
+ typedef enum {
++	DP_ALTERNATE_SCROLL,
+ 	DP_ALT_SENDS_ESC,
+ 	DP_BELL_IS_URGENT,
+ 	DP_CRS_VISIBLE,
+@@ -858,6 +875,7 @@
+ typedef struct {
+ 	String		resource;
+ 	Pixel		value;
++	unsigned short red, green, blue;
+ 	int		mode;		/* -1=invalid, 0=unset, 1=set   */
+ } ColorRes;
+ 
+@@ -901,7 +919,7 @@
+ } SavedCursor;
+ 
+ typedef struct _SaveTitle {
+-    	struct _SaveTitle *next;
++	struct _SaveTitle *next;
+ 	char		*iconName;
+ 	char		*windowName;
+ } SaveTitle;
+@@ -953,6 +971,26 @@
+ } SubResourceRec;
+ 
+ 
++typedef enum {
++	CURSOR_BLOCK = 2
++	, CURSOR_UNDERLINE = 4
++	, CURSOR_BAR = 6
++} XtCursorShape;
++
++#define isCursorBlock(s)	((s)->cursor_shape == CURSOR_BLOCK)
++#define isCursorUnderline(s)	((s)->cursor_shape == CURSOR_UNDERLINE)
++#define isCursorBar(s)		((s)->cursor_shape == CURSOR_BAR)
++
++typedef enum {
++	DEFAULT_STYLE = 0
++	, BLINK_BLOCK
++	, STEADY_BLOCK
++	, BLINK_UNDERLINE
++	, STEADY_UNDERLINE
++	, BLINK_BAR
++	, STEADY_BAR
++} XtCursorStyle;
++
+ typedef struct {
+ /* These parameters apply to both windows */
+ 	Display		*display;	/* X display for screen		*/
+@@ -1047,6 +1085,7 @@
+ /* VT window parameters */
+ 	Boolean		Vshow;		/* VT window showing		*/
+ 	VTwin		fullVwin;
++	int		needSwap;
+ 	VTwin		iconVwin;
+ 	VTwin		*whichVwin;
+ 
+@@ -1064,7 +1103,7 @@
+ 	Boolean		fnt_prop;	/* true if proportional fonts	*/
+ 	Boolean		fnt_boxes;	/* true if font has box-chars	*/
+ 	Boolean		force_packed;	/* true to override proportional */
+-	Boolean		force_box_chars;/* true if we assume that	*/
++	Boolean		force_box_chars;/* true if we assume no boxchars */
+ 	Boolean		force_all_chars;/* true to outline missing chars */
+ 	Boolean		allow_packing;	/* true to allow packed-fonts	*/
+ 	Dimension	fnt_wide;
+@@ -1082,6 +1121,7 @@
+ 	int		cursor_state;	/* ON, OFF, or BLINKED_OFF	*/
+ 	int		cursor_busy;	/* do not redraw...		*/
+ 	Boolean		cursor_underline; /* true if cursor is in underline mode */
++	XtCursorShape	cursor_shape;
+ 	Boolean		zIconBeep_flagged; /* True if icon name was changed */
+ 	int		cursor_GC;	/* see ShowCursor()		*/
+ 	int		cursor_set;	/* requested state		*/
+@@ -1109,6 +1149,7 @@
+ 	 * Working variables for getLineData().
+ 	 */
+ 	size_t		lineExtra;	/* extra space for combining chars */
++	Dimension	widestLine;	/* length of longest LineData	*/
+ 	/*
+ 	 * Pointer to the current visible buffer.
+ 	 */
+@@ -1133,6 +1174,7 @@
+ 	size_t		save_len;	/* ...and its length		*/
+ 
+ 	int		scrolllines;	/* number of lines to button scroll */
++	Boolean		alternateScroll; /* scroll-actions become keys */
+ 	Boolean		scrollttyoutput; /* scroll to bottom on tty output */
+ 	Boolean		scrollkey;	/* scroll to bottom on key	*/
+ 	Boolean		cursor_moved;	/* scrolling makes cursor move	*/
+@@ -1444,6 +1486,7 @@
+     int limit_resize;
+     Boolean log_on;
+     Boolean login_shell;
++    Boolean palette_changed;
+     Boolean re_verse;
+     Boolean re_verse0;		/* initial value of "-rv" */
+     XtGravity resizeGravity;
+@@ -1457,17 +1500,22 @@
+     Boolean Tshow;		/* Tek window showing		*/
+     Boolean scrollbar;
+     Boolean titeInhibit;
+-    Boolean tiXtraScroll;
++    Boolean tiXtraScroll;	/* scroll on ti/te */
++    Boolean cdXtraScroll;	/* scroll on cd (clear-display) */
+     Boolean appcursorDefault;
+     Boolean appkeypadDefault;
+     Boolean dynamicColors;
+-    Boolean shared_ic;
+-    Boolean active_icon;	/* use application icon window  */
++    char *active_icon_s;	/* use application icon window  */
+     unsigned icon_border_width;
+     Pixel icon_border_pixel;
+     Boolean font_loadable;
+ } Misc;
+ 
++typedef struct _Work {
++    int dummy;
++    int active_icon;		/* use application icon window  */
++} Work;
++
+ typedef struct {int foo;} XtermClassPart, TekClassPart;
+ 
+ typedef struct _XtermClassRec {
+@@ -1522,6 +1570,7 @@
+     unsigned	initflags;	/* initial mode flags		*/
+     Tabs	tabs;		/* tabstops of the terminal	*/
+     Misc	misc;		/* miscellaneous parameters	*/
++    Work	work;		/* workspace (no resources)	*/
+ } XtermWidgetRec, *XtermWidget;
+ 
+ typedef struct _TekWidgetRec {
+@@ -1650,8 +1699,8 @@
+ 
+ #define CursorX2(screen,col,fw) ((col) * (int)(fw) + OriginX(screen))
+ #define CursorX(screen,col)     CursorX2(screen, col, FontWidth(screen))
+-#define CursorY(screen,row)     ((INX2ROW(screen, row) * FontHeight(screen)) \
+-				  + screen->border)
++#define CursorY2(screen,row)    (((row) * FontHeight(screen)) + screen->border)
++#define CursorY(screen,row)     CursorY2(screen, INX2ROW(screen, row))
+ 
+ /*
+  * These definitions depend on whether xterm supports active-icon.
+@@ -1673,7 +1722,7 @@
+ /*
+  * Macro to check if we are iconified; do not use render for that case.
+  */
+-#define UsingRenderFont(xw)	(((xw)->misc.render_font == True) && !IsIcon(TScreenOf(xw)))
++#define UsingRenderFont(xw)	(((xw)->work.render_font == True) && !IsIcon(TScreenOf(xw)))
+ 
+ /*
+  * These definitions do not depend on whether xterm supports active-icon.
+@@ -1683,6 +1732,8 @@
+ #define TWindow(screen)		WhichTWin(screen)->window
+ #define TShellWindow		XtWindow(SHELL_OF(tekWidget))
+ 
++#define VDrawable(screen)	VWindow(screen)
++
+ #define Width(screen)		WhichVWin(screen)->width
+ #define Height(screen)		WhichVWin(screen)->height
+ #define FullWidth(screen)	WhichVWin(screen)->fullwidth
+--- src/screen.c	2023-03-03 10:08:45.626342004 +0100
++++ src/screen.c	2023-03-03 10:08:45.646340928 +0100
+@@ -1322,7 +1326,6 @@
+     int code, rows, cols;
+     int border = 2 * screen->border;
+     int move_down_by = 0;
+-    Window tw = VWindow(screen);
+ 
+     TRACE(("ScreenResize %dx%d border %d font %dx%d\n",
+ 	   height, width, border,
+--- src/xtermcfg.hin	2023-03-03 10:08:45.629675158 +0100
++++ src/xtermcfg.hin	2023-03-03 10:08:45.653007236 +0100
+@@ -55,6 +55,7 @@
+ #undef HAVE_GRANTPT_PTY_ISATTY	/* CF_FUNC_GRANTPT */
+ #undef HAVE_LANGINFO_CODESET	/* AM_LANGINFO_CODESET */
+ #undef HAVE_LASTLOG_H		/* CF_LASTLOG */
++#undef HAVE_LIBXPM		/* CF_WITH_XPM */
+ #undef HAVE_LIB_NEXTAW		/* CF_X_ATHENA(--with-neXtaw) */
+ #undef HAVE_LIB_PCRE		/* CF_WITH_PCRE */
+ #undef HAVE_LIB_XAW		/* CF_X_ATHENA */
+@@ -122,6 +123,7 @@
+ #undef OPT_DABBREV		/* CF_ARG_ENABLE(dabbrev) */
+ #undef OPT_DEC_CHRSET		/* CF_ARG_DISABLE(doublechars) */
+ #undef OPT_DEC_LOCATOR		/* CF_ARG_ENABLE(dec-locator) */
++#undef OPT_DOUBLE_BUFFER	/* CF_ARG_ENABLE(double-buffer) */
+ #undef OPT_DEC_RECTOPS		/* CF_ARG_ENABLE(rectangles) */
+ #undef OPT_EXEC_XTERM		/* CF_ARG_ENABLE(exec-xterm) */
+ #undef OPT_FIFO_LINES		/* CF_ARG_ENABLE(fifo-lines) */
