@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.variantsync.diffdetective.util.Assert;
+import org.variantsync.evaluation.baseline.diff.components.FileDiff;
 import org.variantsync.evaluation.baseline.diff.components.FineDiff;
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
@@ -66,7 +67,7 @@ public class ResultAnalysis {
         // number of tried file-level patches
         final int fileNormal = new HashSet<>(normalPatch.content().stream().map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
         // number of tried line-level patches
-        final int lineNormal = normalPatch.content().stream().mapToInt(fd -> fd.hunks().size()).sum();
+        final int lineNormal = normalPatch.content().stream().mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
         // number of failed patches
         int fileNormalFailed;
         int lineNormalFailed;
@@ -81,14 +82,14 @@ public class ResultAnalysis {
         Logger.info("" + fileNormalFailed + " of " + fileNormal + " normal file-sized patches failed.");
 
         // Determine the number of failed line-level patches (without filtering)
-        lineNormalFailed = rejectsNormal.fileDiffs().stream().mapToInt(fd -> fd.hunks().size()).sum();
-        lineNormalFailed += normalPatch.content().stream().filter(fd -> skippedFilesNormal.contains(fd.oldFile().toString())).mapToInt(fd -> fd.hunks().size()).sum();
+        lineNormalFailed = rejectsNormal.fileDiffs().stream().mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
+        lineNormalFailed += normalPatch.content().stream().filter(fd -> skippedFilesNormal.contains(fd.oldFile().toString())).mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
         Logger.info("" + lineNormalFailed + " of " + lineNormal + " normal line-sized patches failed");
 
         // Number of tried file-level patches (with filtering)
         final int fileFiltered = new HashSet<>(filteredPatch.content().stream().map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
         // Number of tried line-level patches (with filtering)
-        final int lineFiltered = filteredPatch.content().stream().mapToInt(fd -> fd.hunks().size()).sum();
+        final int lineFiltered = filteredPatch.content().stream().mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
         // Number of failed patches
         int fileFilteredFailed;
         int lineFilteredFailed;
@@ -104,7 +105,7 @@ public class ResultAnalysis {
 
         // Determine the number of failed line-level patches (with filtering)
         lineFilteredFailed = rejectsFiltered.fileDiffs().stream().mapToInt(fd -> fd.hunks().size()).sum();
-        lineFilteredFailed += filteredPatch.content().stream().filter(fd -> skippedFilesFiltered.contains(fd.oldFile().toString())).mapToInt(fd -> fd.hunks().size()).sum();
+        lineFilteredFailed += filteredPatch.content().stream().filter(fd -> skippedFilesFiltered.contains(fd.oldFile().toString())).mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
         Logger.info("" + lineFilteredFailed + " of " + lineFiltered + " filtered line-sized patches failed");
 
         // Calculate the condition table (without filtering): true positives, false positive, true negatives, and false negatives
@@ -156,6 +157,10 @@ public class ResultAnalysis {
                 filteredTN,
                 filteredFN,
                 filteredWrongLocation);
+    }
+
+    private static int numEditsInFileDiff(FileDiff fileDiff) {
+        return fileDiff.hunks().stream().mapToInt(h -> h.editedLines().size()).sum();
     }
 
     // Calculate true positives, false positives, true negatives, and false negatives

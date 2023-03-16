@@ -8,6 +8,7 @@ import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * A Hunk represents a changed text block in the difference between two versions of a file.
@@ -16,6 +17,10 @@ import java.util.Objects;
  * @param content  The content of the hunk (i.e., context and changed lines)
  */
 public record Hunk(HunkLocation location, List<Line> content) implements IDiffComponent {
+
+    public List<Line> editedLines() {
+        return content.stream().filter(l -> (l instanceof AddedLine || l instanceof RemovedLine)).collect(Collectors.toList());
+    }
 
     @Override
     public List<String> toLines() {
