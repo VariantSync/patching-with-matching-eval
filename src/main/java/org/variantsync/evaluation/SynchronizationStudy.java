@@ -102,7 +102,6 @@ public class SynchronizationStudy {
 
     /**
      * Initialize the study from the given configuration
-     *
      */
     public SynchronizationStudy(String datasetName, Path mainDir, Path resultsDir, Path repositoryPath, Path groundTruthPath, int numRepetitions, int numVariants, int startID, boolean inDebug) {
         try {
@@ -239,91 +238,94 @@ public class SynchronizationStudy {
                     Logger.info("Done.");
 
                     // Select each variant once as source
-                    for (Variant source : sample.variants()) {
-                        Logger.info("Starting diff application for source variant " + source.getName());
-                        if (Files.exists(normalPatchFile)) {
-                            Logger.info("Cleaning old patch file " + normalPatchFile);
-                            shell.execute(new RmCommand(normalPatchFile));
-                        }
-                        // Apply diff to both versions of source variant
-                        Logger.info("Diffing source...");
-                        final OriginalDiff originalDiff = getOriginalDiff(variantsDirV0.path().resolve(source.getName()), variantsDirV1.path().resolve(source.getName()));
-                        if (originalDiff.isEmpty()) {
-                            // There was no change to this variant, so we can skip it as source
-                            Logger.info("Skipping " + source.getName() + " as diff source. Diff is empty.");
-                            continue;
-                        } else if (inDebug) {
-                            try {
-                                Files.write(debugDir.resolve("diff.txt"), originalDiff.toLines());
-                            } catch (final IOException e) {
-                                Logger.error("Was not able to save diff", e);
-                            }
-                        }
-                        Logger.info("Converting diff...");
-                        // Convert the original diff into a fine diff
-                        final FineDiff normalPatch = getFineDiff(originalDiff);
-                        saveDiff(normalPatch, normalPatchFile);
-                        Logger.info("Saved fine diff.");
-
-                        // For each target variant,
-                        Logger.info("Starting patch application for source variant " + source.getName());
-                        for (final Variant target : sample.variants()) {
-                            if (target == source) {
-                                continue;
-                            }
-                            runID++;
-                            Logger.info(source.getName() + " --patch--> " + target.getName());
-                            final Path pathToTarget = variantsDirV0.path().resolve(target.getName());
-                            final Path pathToExpectedResult = variantsDirV1.path().resolve(target.getName());
-                            final FineDiff evolutionDiff = getFineDiff(getOriginalDiff(pathToTarget, pathToExpectedResult));
-                            if (inDebug) {
-                                saveDiff(evolutionDiff, debugDir.resolve("evolutionDiff.txt"));
-                            }
-
-                            /* Application of patches without knowledge about features */
-                            Logger.info("Applying patch without knowledge about features...");
-                            // Apply the fine diff to the target variant
-                            final Set<String> skippedNormal = applyPatch(normalPatchFile, pathToTarget, rejectsNormalFile);
-                            // Evaluate the patch result
-                            final FineDiff actualVsExpectedNormal = getActualVsExpected(pathToExpectedResult);
-                            final OriginalDiff rejectsNormal = readRejects(rejectsNormalFile);
-
-                            /* Application of patches with knowledge about PC of edit only */
-                            Logger.info("Applying patch with knowledge about edits' PCs...");
-                            // Create target variant specific patch that respects PCs
-                            final FineDiff filteredPatch = getFilteredDiff(originalDiff, groundTruthV0.get(source).variant(), groundTruthV1.get(source).variant(), target, variantsDirV0.path(), variantsDirV1.path());
-                            final boolean emptyPatch = filteredPatch.content().isEmpty();
-                            saveDiff(filteredPatch, filteredPatchFile);
-                            // Apply the patch
-                            final Set<String> skippedFiltered = applyPatch(filteredPatchFile, pathToTarget, rejectsFilteredFile, emptyPatch);
-                            // Evaluate the result
-                            final FineDiff actualVsExpectedFiltered = getActualVsExpected(pathToExpectedResult);
-                            final OriginalDiff rejectsFiltered = readRejects(rejectsFilteredFile);
-
-                            /* Result Evaluation */
-                            final PatchOutcome patchOutcome = ResultAnalysis.processOutcome(
-                                    datasetName,
-                                    runID,
-                                    source.getName(),
-                                    target.getName(),
-                                    parentCommit, childCommit,
-                                    normalPatch, filteredPatch,
-                                    actualVsExpectedNormal, actualVsExpectedFiltered,
-                                    rejectsNormal, rejectsFiltered,
-                                    evolutionDiff,
-                                    skippedNormal,
-                                    skippedFiltered);
-
-                            try {
-                                patchOutcome.writeAsJSON(resultFile, true);
-                            } catch (final IOException e) {
-                                Logger.error("Was not able to write filtered patch result file for run " + runID, e);
-                            }
-
-                            Logger.info("Finished patching for source " + source.getName() + " and target " + target.getName());
+                    Variant source = sample.variants().get(0);
+                    if (source == null) {
+                        continue;
+                    }
+                    Logger.info("Starting diff application for source variant " + source.getName());
+                    if (Files.exists(normalPatchFile)) {
+                        Logger.info("Cleaning old patch file " + normalPatchFile);
+                        shell.execute(new RmCommand(normalPatchFile));
+                    }
+                    // Apply diff to both versions of source variant
+                    Logger.info("Diffing source...");
+                    final OriginalDiff originalDiff = getOriginalDiff(variantsDirV0.path().resolve(source.getName()), variantsDirV1.path().resolve(source.getName()));
+                    if (originalDiff.isEmpty()) {
+                        // There was no change to this variant, so we can skip it as source
+                        Logger.info("Skipping " + source.getName() + " as diff source. Diff is empty.");
+                        continue;
+                    } else if (inDebug) {
+                        try {
+                            Files.write(debugDir.resolve("diff.txt"), originalDiff.toLines());
+                        } catch (final IOException e) {
+                            Logger.error("Was not able to save diff", e);
                         }
                     }
+                    Logger.info("Converting diff...");
+                    // Convert the original diff into a fine diff
+                    final FineDiff normalPatch = getFineDiff(originalDiff);
+                    saveDiff(normalPatch, normalPatchFile);
+                    Logger.info("Saved fine diff.");
+
+                    // For each target variant,
+                    Logger.info("Starting patch application for source variant " + source.getName());
+                    for (final Variant target : sample.variants()) {
+                        if (target == source) {
+                            continue;
+                        }
+                        runID++;
+                        Logger.info(source.getName() + " --patch--> " + target.getName());
+                        final Path pathToTarget = variantsDirV0.path().resolve(target.getName());
+                        final Path pathToExpectedResult = variantsDirV1.path().resolve(target.getName());
+                        final FineDiff evolutionDiff = getFineDiff(getOriginalDiff(pathToTarget, pathToExpectedResult));
+                        if (inDebug) {
+                            saveDiff(evolutionDiff, debugDir.resolve("evolutionDiff.txt"));
+                        }
+
+                        /* Application of patches without knowledge about features */
+                        Logger.info("Applying patch without knowledge about features...");
+                        // Apply the fine diff to the target variant
+                        final Set<String> skippedNormal = applyPatch(normalPatchFile, pathToTarget, rejectsNormalFile);
+                        // Evaluate the patch result
+                        final FineDiff actualVsExpectedNormal = getActualVsExpected(pathToExpectedResult);
+                        final OriginalDiff rejectsNormal = readRejects(rejectsNormalFile);
+
+                        /* Application of patches with knowledge about PC of edit only */
+                        Logger.info("Applying patch with knowledge about edits' PCs...");
+                        // Create target variant specific patch that respects PCs
+                        final FineDiff filteredPatch = getFilteredDiff(originalDiff, groundTruthV0.get(source).variant(), groundTruthV1.get(source).variant(), target, variantsDirV0.path(), variantsDirV1.path());
+                        final boolean emptyPatch = filteredPatch.content().isEmpty();
+                        saveDiff(filteredPatch, filteredPatchFile);
+                        // Apply the patch
+                        final Set<String> skippedFiltered = applyPatch(filteredPatchFile, pathToTarget, rejectsFilteredFile, emptyPatch);
+                        // Evaluate the result
+                        final FineDiff actualVsExpectedFiltered = getActualVsExpected(pathToExpectedResult);
+                        final OriginalDiff rejectsFiltered = readRejects(rejectsFilteredFile);
+
+                        /* Result Evaluation */
+                        final PatchOutcome patchOutcome = ResultAnalysis.processOutcome(
+                                datasetName,
+                                runID,
+                                source.getName(),
+                                target.getName(),
+                                parentCommit, childCommit,
+                                normalPatch, filteredPatch,
+                                actualVsExpectedNormal, actualVsExpectedFiltered,
+                                rejectsNormal, rejectsFiltered,
+                                evolutionDiff,
+                                skippedNormal,
+                                skippedFiltered);
+
+                        try {
+                            patchOutcome.writeAsJSON(resultFile, true);
+                        } catch (final IOException e) {
+                            Logger.error("Was not able to write filtered patch result file for run " + runID, e);
+                        }
+
+                        Logger.info("Finished patching for source " + source.getName() + " and target " + target.getName());
+                    }
                 }
+
                 pairCount++;
                 Logger.info(String.format("Finished commit pair %d of %d.%n", pairCount, historySize));
 
@@ -615,7 +617,7 @@ public class SynchronizationStudy {
                 throw new RuntimeException(e);
             }
             Path file = this.debugDir.resolve("latestDiff.txt");
-            try(PrintWriter writer = new PrintWriter(file.toFile())) {
+            try (PrintWriter writer = new PrintWriter(file.toFile())) {
                 for (String line : output) {
                     writer.write(line);
                     writer.write("\n");
