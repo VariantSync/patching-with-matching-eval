@@ -26,7 +26,6 @@ public class StudyRunner {
         // Initialize the VEVOS Simulation library
         Initialize();
         final StudyConfiguration config = new StudyConfiguration(new File(args[0]));
-        org.variantsync.vevos.simulation.util.Logger.setLogLevel(config.EXPERIMENT_LOGGER_LEVEL());
 
         Logger.info("Starting experiment initialization.");
 

@@ -3,6 +3,7 @@ package org.variantsync.evaluation;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
+import org.variantsync.diffdetective.util.Assert;
 import org.variantsync.evaluation.baseline.diff.components.FineDiff;
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
@@ -125,9 +126,9 @@ public class ResultAnalysis {
         final long filteredWrongLocation = filteredTN + filteredFN - (/*filtered lines*/ lineNormal - lineFiltered) - lineFilteredFailed;
 
         // Some sanity checks
-        assert normalTP + normalFP + normalFN + normalTN == filteredTP + filteredFP + filteredTN + filteredFN;
-        assert normalTN + normalFN - normalWrongLocation <= lineNormalFailed;
-        assert filteredTP + filteredFP + filteredFN + filteredTN == lineFiltered + (lineNormal - lineFiltered);
+        Assert.assertTrue(normalTP + normalFP + normalFN + normalTN == filteredTP + filteredFP + filteredTN + filteredFN);
+        Assert.assertTrue(normalTN + normalFN - normalWrongLocation <= lineNormalFailed);
+        Assert.assertTrue(filteredTP + filteredFP + filteredFN + filteredTN == lineFiltered + (lineNormal - lineFiltered));
 
         return new PatchOutcome(dataset,
                 runID,
@@ -159,6 +160,7 @@ public class ResultAnalysis {
 
     // Calculate true positives, false positives, true negatives, and false negatives
     private static ConditionTable calculateConditionTable(FineDiff evaluatedPatch, FineDiff unfilteredPatch, FineDiff resultDiff, FineDiff evolutionDiff) {
+        Logger.info("Calculating result table with TP, FP, TN, and FN.");
         List<Change> changesInPatch = FineDiff.determineChangedLines(evaluatedPatch);
         List<Change> changesToClassify = FineDiff.determineChangedLines(unfilteredPatch);
         List<Change> changesInResult = FineDiff.determineChangedLines(resultDiff);
@@ -198,9 +200,9 @@ public class ResultAnalysis {
         List<Change> actualDifferences = new ArrayList<>(changesInResult);
         unpatchableChanges.forEach(actualDifferences::remove);
 
-        assert changesToClassify.size() >= changesInPatch.size();
-        assert changesInEvolution.size() - changesToClassify.size() <= unpatchableChanges.size();
-        assert changesInEvolution.size() - unpatchableChanges.size() <= changesToClassify.size();
+        Assert.assertTrue(changesToClassify.size() >= changesInPatch.size());
+        Assert.assertTrue(changesInEvolution.size() - changesToClassify.size() <= unpatchableChanges.size());
+        Assert.assertTrue(changesInEvolution.size() - unpatchableChanges.size() <= changesToClassify.size());
 
         // We first want to account for the remaining differences between the actual and the expected result. They are either
         // false positives, i.e. changes in the patch that were applied but should not have been, or the mirror change
@@ -254,7 +256,7 @@ public class ResultAnalysis {
         long fp = fpChanges.size();
         long tn = tnChanges.size();
         long fn = fnChanges.size();
-        assert tp + fp + tn + fn == FineDiff.determineChangedLines(unfilteredPatch).size();
+        Assert.assertTrue(tp + fp + tn + fn == FineDiff.determineChangedLines(unfilteredPatch).size());
         return new ConditionTable(tpChanges, fpChanges, tnChanges, fnChanges);
     }
 

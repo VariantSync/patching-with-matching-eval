@@ -1,10 +1,9 @@
+import org.tinylog.Logger;
 import org.variantsync.evaluation.baseline.shell.*;
 import org.variantsync.evaluation.error.ShellException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.variantsync.functjonal.Result;
-import org.variantsync.vevos.simulation.util.LogLevel;
-import org.variantsync.vevos.simulation.util.Logger;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,11 +16,6 @@ import java.util.stream.Collectors;
 
 public class ShellExecutorTest {
     static Consumer<String> errorReader = Logger::error;
-
-    static {
-        Logger.initConsoleLogger();
-        Logger.setLogLevel(LogLevel.DEBUG);
-    }
 
     @Test
     public void echo() {
