@@ -8,7 +8,8 @@ import org.variantsync.evaluation.baseline.diff.components.OriginalDiff;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
 import org.variantsync.evaluation.baseline.diff.lines.Change;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
-import org.variantsync.vevos.simulation.util.Logger;
+import org.tinylog.Logger;
+
 import org.variantsync.vevos.simulation.variability.SPLCommit;
 
 import java.io.BufferedReader;

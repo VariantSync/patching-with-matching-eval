@@ -5,7 +5,7 @@ import org.variantsync.evaluation.baseline.diff.components.FileDiff;
 import org.variantsync.evaluation.error.Panic;
 import org.variantsync.functjonal.Result;
 import org.variantsync.vevos.simulation.feature.Variant;
-import org.variantsync.vevos.simulation.util.Logger;
+import org.tinylog.Logger;
 import org.variantsync.vevos.simulation.util.io.CaseSensitivePath;
 import org.variantsync.vevos.simulation.variability.pc.Artefact;
 

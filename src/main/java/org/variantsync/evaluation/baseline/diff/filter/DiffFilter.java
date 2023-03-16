@@ -5,7 +5,8 @@ import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
 import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
-import org.variantsync.vevos.simulation.util.Logger;
+import org.tinylog.Logger;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class DiffFilter {
 
         // The list in which we will collect the
         final List<FileDiff> filteredFileDiffs = new ArrayList<>();
-        Logger.info("Filtering %d file diffs".formatted(originalDiff.fileDiffs().size()));
+        Logger.debug("Filtering %d file diffs".formatted(originalDiff.fileDiffs().size()));
 
         // Go over all FileDiff in diff
         for (final FileDiff fileDiff : originalDiff.fileDiffs()) {

@@ -3,7 +3,7 @@ package org.variantsync.evaluation;
 import org.eclipse.jgit.api.Git;
 import org.variantsync.diffdetective.datasets.DatasetDescription;
 import org.variantsync.diffdetective.load.GitLoader;
-import org.variantsync.vevos.simulation.util.Logger;
+import org.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,19 +25,18 @@ public class StudyRunner {
         }
         // Initialize the VEVOS Simulation library
         Initialize();
-
         final StudyConfiguration config = new StudyConfiguration(new File(args[0]));
+        org.variantsync.vevos.simulation.util.Logger.setLogLevel(config.EXPERIMENT_LOGGER_LEVEL());
 
-        Logger.status("Starting experiment initialization.");
-        Logger.setLogLevel(config.EXPERIMENT_LOGGER_LEVEL());
+        Logger.info("Starting experiment initialization.");
 
         final Path mainDir = Path.of(config.EXPERIMENT_DIR_MAIN());
-        var resultsDir = Path.of(config.EXPERIMENT_DIR_RESULTS());
-        var inDebug = config.EXPERIMENT_DEBUG();
-        var groundTruthPath = Path.of(config.EXPERIMENT_DIR_GROUND_TRUTH());
-        var numRepetitions = config.EXPERIMENT_REPEATS();
-        var numVariants = config.EXPERIMENT_VARIANT_COUNT();
-        var startID = config.EXPERIMENT_START_ID();
+        Path resultsDir = Path.of(config.EXPERIMENT_DIR_RESULTS());
+        boolean inDebug = config.EXPERIMENT_DEBUG();
+        Path groundTruthPath = Path.of(config.EXPERIMENT_DIR_GROUND_TRUTH());
+        int numRepetitions = config.EXPERIMENT_REPEATS();
+        int numVariants = config.EXPERIMENT_VARIANT_COUNT();
+        int startID = config.EXPERIMENT_START_ID();
 
         List<DatasetDescription> datasets;
         try {
@@ -51,20 +50,20 @@ public class StudyRunner {
         for (DatasetDescription dataset : datasets) {
             var datasetSize = Integer.parseInt(dataset.commits().replaceAll(",", ""));
             if (datasetSize > datasetMaxSize) {
-                Logger.status("Skipping %s with %s commits because it exceeds the maximum number of commits (%d) set in the configuration.".formatted(dataset.name(), dataset.commits(), datasetMaxSize));
+                Logger.info("Skipping %s with %s commits because it exceeds the maximum number of commits (%d) set in the configuration.".formatted(dataset.name(), dataset.commits(), datasetMaxSize));
                 continue;
             }
             var repoDir = mainDir.resolve(dataset.name());
             var repoGroundTruth = groundTruthPath.resolve(dataset.name());
 
             if (!Files.exists(repoGroundTruth)) {
-                Logger.warning("Found no ground truth for %s. Skipping the study for %s".formatted(dataset.name(), dataset.name()));
+                Logger.info("Found no ground truth for %s. Skipping the study for %s".formatted(dataset.name(), dataset.name()));
                 continue;
             }
 
             // Clone the repository if required
             try (Git ignored = GitLoader.fromRemote(repoDir, URI.create(dataset.repoURL()))) {
-                Logger.status("Cloned %s into %s".formatted(dataset.name(), repoDir));
+                Logger.info("Cloned %s into %s".formatted(dataset.name(), repoDir));
             }
 
             final SynchronizationStudy synchronizationStudy = new SynchronizationStudy(dataset.name(), mainDir, resultsDir,

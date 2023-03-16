@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 openjdk:17-alpine
+FROM --platform=linux/amd64 openjdk:19-alpine
 
 # Prepare the environment
 RUN apk add maven
@@ -10,10 +10,10 @@ COPY local-maven-repo local-maven-repo
 COPY pom.xml .
 RUN mvn package || exit
 
-FROM --platform=linux/amd64 alpine:3.16.2
+FROM --platform=linux/amd64 openjdk:19-alpine
 
 RUN apk update
-RUN apk add --no-cache --upgrade openjdk17 bash diffutils patch git python3 py3-matplotlib unzip
+RUN apk add --no-cache --upgrade bash diffutils patch git python3 py3-matplotlib unzip
 # Create a user
 RUN adduser --disabled-password  --home /home/user --gecos '' user
 WORKDIR /home/user
@@ -28,7 +28,7 @@ COPY --from=0 /home/user/target ./target
 
 # Extract BusyBox
 WORKDIR /home/user/simulation-files
-RUN unzip -oq busybox.zip
+RUN unzip -oq ground-truth.zip
 
 WORKDIR /home/user
 

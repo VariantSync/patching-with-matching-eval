@@ -5,7 +5,8 @@ import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
 import org.variantsync.evaluation.baseline.diff.lines.MetaLine;
 import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
-import org.variantsync.vevos.simulation.util.Logger;
+import org.tinylog.Logger;
+
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

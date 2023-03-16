@@ -3,7 +3,8 @@ package org.variantsync.evaluation.baseline.shell;
 import org.variantsync.functjonal.Result;
 import org.variantsync.evaluation.error.SetupError;
 import org.variantsync.evaluation.error.ShellException;
-import org.variantsync.vevos.simulation.util.Logger;
+import org.tinylog.Logger;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
