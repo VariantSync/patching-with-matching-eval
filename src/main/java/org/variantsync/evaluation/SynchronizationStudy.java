@@ -116,7 +116,7 @@ public class SynchronizationStudy {
         this.resultsDir = resultsDir;
         this.debugDir = resultsDir.resolve("DEBUG");
         this.inDebug = inDebug;
-        this.resultFile = resultsDir.resolve("%s.txt".formatted(datasetName));
+        this.resultFile = resultsDir.resolve("%s.results".formatted(datasetName));
         this.repositoryPath = repositoryPath;
         this.groundTruthPath = groundTruthPath;
         this.splCopyA = this.workDir.resolve("SPL-A");
