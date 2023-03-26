@@ -17,6 +17,7 @@ import org.variantsync.vevos.simulation.variability.SPLCommit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Performs the result analysis presented in our paper.
@@ -279,7 +281,7 @@ public class ResultAnalysis {
     }
 
     /**
-     * Run the result analysis on the collected results (i.e., results.txt). This method is called by the Docker container
+     * Run the result analysis on the collected results. This method is called by the Docker container
      * after the study has been run.
      *
      * @param args CL arguments
@@ -291,8 +293,24 @@ public class ResultAnalysis {
         }
         final StudyConfiguration config = new StudyConfiguration(new File(args[0]));
         final Path resultsDir = Path.of(config.EXPERIMENT_DIR_RESULTS());
-        final Path resultFile = resultsDir.toAbsolutePath().resolve("results.txt");
-        final Path resultSummaryFile = resultsDir.toAbsolutePath().resolve("results-summary.txt");
+        try(Stream<Path> files = Files.list(resultsDir)) {
+            files.filter(f -> {
+                String fileName = f.getFileName().toString();
+                return fileName.endsWith(".results");
+            }).forEach(f -> {
+                try {
+                    analyze(f);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
+        }
+
+    }
+
+    private static void analyze(Path resultFile) throws IOException {
+        String fileName = resultFile.getFileName().getName(0).toString();
+        final Path resultSummaryFile = resultFile.getParent().resolve("%s.summary".formatted(fileName));
 
         StringBuilder sb = new StringBuilder();
         final AccumulatedOutcome allOutcomes = loadResultObjects(resultFile);
