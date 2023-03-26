@@ -454,7 +454,7 @@ public class SynchronizationStudy {
         final GroundTruth gtV1 = childCommit
                 .presenceConditions()
                 .run()
-                .orElseThrow()
+                .orElseThrow(() -> new RuntimeException("%s ; %s ; %s".formatted(variant, splCopyB, childCommit) ))
                 .generateVariant(
                         variant,
                         new CaseSensitivePath(splCopyB),
