@@ -8,9 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.variantsync.evaluation.baseline.diff.filter.DiffFilter;
 import org.variantsync.evaluation.baseline.shell.*;
 import org.variantsync.functjonal.Result;
-import org.variantsync.functjonal.list.NonEmptyList;
 import org.variantsync.evaluation.baseline.diff.DiffParser;
-import org.variantsync.evaluation.baseline.diff.components.FileDiff;
 import org.variantsync.evaluation.baseline.diff.components.FineDiff;
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff;
 import org.variantsync.evaluation.baseline.diff.filter.CachedPCBasedFilter;
@@ -25,17 +23,12 @@ import org.variantsync.vevos.simulation.io.Resources;
 import org.variantsync.vevos.simulation.io.data.VariabilityDatasetLoader;
 import org.variantsync.vevos.simulation.repository.SPLRepository;
 import org.tinylog.Logger;
-import org.variantsync.vevos.simulation.util.fide.FeatureModelUtils;
 import org.variantsync.vevos.simulation.util.io.CaseSensitivePath;
 import org.variantsync.vevos.simulation.variability.SPLCommit;
 import org.variantsync.vevos.simulation.variability.VariabilityDataset;
-import org.variantsync.vevos.simulation.variability.VariabilityHistory;
 import org.variantsync.vevos.simulation.variability.pc.Artefact;
-import org.variantsync.vevos.simulation.variability.pc.SourceCodeFile;
 import org.variantsync.vevos.simulation.variability.pc.groundtruth.GroundTruth;
-import org.variantsync.vevos.simulation.variability.pc.options.ArtefactFilter;
 import org.variantsync.vevos.simulation.variability.pc.options.VariantGenerationOptions;
-import org.variantsync.vevos.simulation.variability.sequenceextraction.Domino;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -93,15 +86,13 @@ public class SynchronizationStudy {
     // Path to the ground truth dataset
     protected final Path groundTruthPath;
     // Evolution history of the subject
-    protected final VariabilityHistory history;
+    protected final List<SPLCommit> history;
     // The variant sampler
     private final Sampler sampler;
     // The feature model for which variants are sampled
     private IFeatureModel currentModel;
-    // The considered parent commit
-    private SPLCommit commitV0Current;
-    // The considered child commit
-    private SPLCommit commitV1Current;
+    // The considered commit
+    private SPLCommit currentCommit;
 
     /**
      * Initialize the study from the given configuration
@@ -170,191 +161,180 @@ public class SynchronizationStudy {
         // For each pair
         Logger.info("Starting diffing and patching...");
         long runID = 0;
-        int pairCount = 0;
-        final long historySize =
-                        history.commitSequences().stream().mapToLong(Collection::size).sum();
-        Logger.info("There are " + historySize + " commit pairs to work on.");
-        for (final NonEmptyList<SPLCommit> relatedCommits : history.commitSequences()) {
+        int commitCount = 0;
+        final long historySize = history.size();
+        Logger.info("There are " + historySize + " commits to work on.");
+        for (final SPLCommit currentCommit : history) {
             // Increase one extra time for the first parent in the sequence
-            pairCount++;
-            SPLCommit parentCommit;
-            SPLCommit childCommit = relatedCommits.get(0);
-            for (int childID = 1; childID < relatedCommits.size(); childID++) {
-                // Skip pairs until the start ID has been reached.
-                if (pairCount < startID) {
-                    Logger.info("Skipped pair " + pairCount);
-                    pairCount++;
+            commitCount++;
+            // Skip pairs until the start ID has been reached.
+            if (commitCount < startID) {
+                Logger.info("Skipped commit " + commitCount);
+                continue;
+            }
+            // We can only process the commit if it has at least one parent
+            if (currentCommit.parents().isEmpty()) {
+                continue;
+            }
+            SPLCommit parentCommit = currentCommit.parents().get()[0];
+
+            splRepoPreparation(parentRepo, childRepo, parentCommit, currentCommit);
+
+            // While more random configurations to consider
+            for (int i = 0; i < numRepetitions; i++) {
+                Logger.info("Starting repetition " + (i + 1) + " of " + numRepetitions + " with "
+                                + numVariants + " variants.");
+                if (inDebug && Files.exists(debugDir)) {
+                    shell.execute(new RmCommand(debugDir).recursive());
+                }
+                if (inDebug && debugDir.toFile().mkdirs()) {
+                    Logger.debug("Created Debug directory.");
+                }
+
+                // Sample set of random variants
+                Logger.info("Sampling next set of variants...");
+                final Sample sample = sample(currentCommit);
+                Logger.info("Done. Sampled " + sample.variants().size() + " variants.");
+
+                if (Files.exists(variantsDirV0.path())) {
+                    Logger.info("Cleaning variants dir V0.");
+                    shell.execute(new RmCommand(variantsDirV0.path()).recursive());
+                }
+                if (Files.exists(variantsDirV1.path())) {
+                    Logger.info("Cleaning variants dir V1.");
+                    shell.execute(new RmCommand(variantsDirV1.path()).recursive());
+                }
+
+                // Write information about the commits
+                if (inDebug) {
+                    try {
+                        final var v0PCs = currentCommit.presenceConditionsBefore().run();
+                        if (v0PCs.isPresent()) {
+                            Resources.Instance().write(Artefact.class, v0PCs.get(),
+                                            debugDir.resolve("V0.spl.csv"));
+                        }
+
+                        final var v1PCs = currentCommit.presenceConditionsAfter().run();
+                        if (v1PCs.isPresent()) {
+                            Resources.Instance().write(Artefact.class, v1PCs.get(),
+                                            debugDir.resolve("V1.spl.csv"));
+                        }
+                    } catch (final Resources.ResourceIOException e) {
+                        panic("Was not able to write PCs", e);
+                    }
+                }
+
+                // Generate the randomly selected variants at both versions
+                final Map<Variant, GroundTruth> groundTruthV0 = new HashMap<>();
+                final Map<Variant, GroundTruth> groundTruthV1 = new HashMap<>();
+                Logger.info("Generating variants...");
+                for (final Variant variant : sample.variants()) {
+                    generateVariant(currentCommit, groundTruthV0, groundTruthV1, variant);
+                }
+                Logger.info("Done.");
+
+                // Select each variant once as source
+                Variant source = sample.variants().get(0);
+                if (source == null) {
                     continue;
                 }
-                // The old child becomes the next parent
-                parentCommit = childCommit;
-                // The next descendant is selected as new child
-                childCommit = relatedCommits.get(childID);
-
-                final SimpleFileFilter fileFilter = splRepoPreparation(parentRepo, childRepo,
-                                parentCommit, childCommit);
-
-                // While more random configurations to consider
-                for (int i = 0; i < numRepetitions; i++) {
-                    Logger.info("Starting repetition " + (i + 1) + " of " + numRepetitions
-                                    + " with " + numVariants + " variants.");
-                    if (inDebug && Files.exists(debugDir)) {
-                        shell.execute(new RmCommand(debugDir).recursive());
-                    }
-                    if (inDebug && debugDir.toFile().mkdirs()) {
-                        Logger.debug("Created Debug directory.");
-                    }
-
-                    // Sample set of random variants
-                    Logger.info("Sampling next set of variants...");
-                    final Sample sample = sample(parentCommit, childCommit);
-                    Logger.info("Done. Sampled " + sample.variants().size() + " variants.");
-
-                    if (Files.exists(variantsDirV0.path())) {
-                        Logger.info("Cleaning variants dir V0.");
-                        shell.execute(new RmCommand(variantsDirV0.path()).recursive());
-                    }
-                    if (Files.exists(variantsDirV1.path())) {
-                        Logger.info("Cleaning variants dir V1.");
-                        shell.execute(new RmCommand(variantsDirV1.path()).recursive());
-                    }
-
-                    // Write information about the commits
-                    if (inDebug) {
-                        try {
-                            final var v0PCs = parentCommit.presenceConditions().run();
-                            if (v0PCs.isPresent()) {
-                                Resources.Instance().write(Artefact.class, v0PCs.get(),
-                                                debugDir.resolve("V0.spl.csv"));
-                            }
-
-                            final var v1PCs = childCommit.presenceConditions().run();
-                            if (v1PCs.isPresent()) {
-                                Resources.Instance().write(Artefact.class, v1PCs.get(),
-                                                debugDir.resolve("V1.spl.csv"));
-                            }
-                        } catch (final Resources.ResourceIOException e) {
-                            panic("Was not able to write PCs", e);
-                        }
-                    }
-
-                    // Generate the randomly selected variants at both versions
-                    final Map<Variant, GroundTruth> groundTruthV0 = new HashMap<>();
-                    final Map<Variant, GroundTruth> groundTruthV1 = new HashMap<>();
-                    Logger.info("Generating variants...");
-                    for (final Variant variant : sample.variants()) {
-                        generateVariant(parentCommit, childCommit, groundTruthV0, groundTruthV1,
-                                        variant, fileFilter);
-                    }
-                    Logger.info("Done.");
-
-                    // Select each variant once as source
-                    Variant source = sample.variants().get(0);
-                    if (source == null) {
-                        continue;
-                    }
-                    Logger.info("Starting diff application for source variant " + source.getName());
-                    if (Files.exists(normalPatchFile)) {
-                        Logger.info("Cleaning old patch file " + normalPatchFile);
-                        shell.execute(new RmCommand(normalPatchFile));
-                    }
-                    // Apply diff to both versions of source variant
-                    Logger.info("Diffing source...");
-                    final OriginalDiff originalDiff =
-                                    getOriginalDiff(variantsDirV0.path().resolve(source.getName()),
-                                                    variantsDirV1.path().resolve(source.getName()));
-                    if (originalDiff.isEmpty()) {
-                        // There was no change to this variant, so we can skip it as source
-                        Logger.info("Skipping " + source.getName()
-                                        + " as diff source. Diff is empty.");
-                        continue;
-                    } else if (inDebug) {
-                        try {
-                            Files.write(debugDir.resolve("diff.txt"), originalDiff.toLines());
-                        } catch (final IOException e) {
-                            Logger.error("Was not able to save diff", e);
-                        }
-                    }
-                    Logger.info("Converting diff...");
-                    // Convert the original diff into a fine diff
-                    final FineDiff normalPatch = getFineDiff(originalDiff);
-                    saveDiff(normalPatch, normalPatchFile);
-                    Logger.info("Saved fine diff.");
-
-                    // For each target variant,
-                    Logger.info("Starting patch application for source variant "
-                                    + source.getName());
-                    for (final Variant target : sample.variants()) {
-                        if (target == source) {
-                            continue;
-                        }
-                        runID++;
-                        Logger.info(source.getName() + " --patch--> " + target.getName());
-                        final Path pathToTarget = variantsDirV0.path().resolve(target.getName());
-                        final Path pathToExpectedResult =
-                                        variantsDirV1.path().resolve(target.getName());
-                        final FineDiff evolutionDiff = getFineDiff(
-                                        getOriginalDiff(pathToTarget, pathToExpectedResult));
-                        if (inDebug) {
-                            saveDiff(evolutionDiff, debugDir.resolve("evolutionDiff.txt"));
-                        }
-
-                        /* Application of patches without knowledge about features */
-                        Logger.info("Applying patch without knowledge about features...");
-                        // Apply the fine diff to the target variant
-                        final Set<String> skippedNormal = applyPatch(normalPatchFile, pathToTarget,
-                                        rejectsNormalFile);
-                        // Evaluate the patch result
-                        final FineDiff actualVsExpectedNormal =
-                                        getActualVsExpected(pathToExpectedResult);
-                        final OriginalDiff rejectsNormal = readRejects(rejectsNormalFile);
-
-                        /* Application of patches with knowledge about PC of edit only */
-                        Logger.info("Applying patch with knowledge about edits' PCs...");
-                        // Create target variant specific patch that respects PCs
-                        final FineDiff filteredPatch = getFilteredDiff(originalDiff,
-                                        groundTruthV0.get(source).variant(),
-                                        groundTruthV1.get(source).variant(), target,
-                                        variantsDirV0.path(), variantsDirV1.path());
-                        final boolean emptyPatch = filteredPatch.content().isEmpty();
-                        saveDiff(filteredPatch, filteredPatchFile);
-                        // Apply the patch
-                        final Set<String> skippedFiltered = applyPatch(filteredPatchFile,
-                                        pathToTarget, rejectsFilteredFile, emptyPatch);
-                        // Evaluate the result
-                        final FineDiff actualVsExpectedFiltered =
-                                        getActualVsExpected(pathToExpectedResult);
-                        final OriginalDiff rejectsFiltered = readRejects(rejectsFilteredFile);
-
-                        /* Result Evaluation */
-                        final PatchOutcome patchOutcome = ResultAnalysis.processOutcome(datasetName,
-                                        runID, source.getName(), target.getName(), parentCommit,
-                                        childCommit, normalPatch, filteredPatch,
-                                        actualVsExpectedNormal, actualVsExpectedFiltered,
-                                        rejectsNormal, rejectsFiltered, evolutionDiff,
-                                        skippedNormal, skippedFiltered);
-
-                        try {
-                            patchOutcome.writeAsJSON(resultFile, true);
-                        } catch (final IOException e) {
-                            Logger.error("Was not able to write filtered patch result file for run "
-                                            + runID, e);
-                        }
-
-                        Logger.info("Finished patching for source " + source.getName()
-                                        + " and target " + target.getName());
+                Logger.info("Starting diff application for source variant " + source.getName());
+                if (Files.exists(normalPatchFile)) {
+                    Logger.info("Cleaning old patch file " + normalPatchFile);
+                    shell.execute(new RmCommand(normalPatchFile));
+                }
+                // Apply diff to both versions of source variant
+                Logger.info("Diffing source...");
+                final OriginalDiff originalDiff =
+                                getOriginalDiff(variantsDirV0.path().resolve(source.getName()),
+                                                variantsDirV1.path().resolve(source.getName()));
+                if (originalDiff.isEmpty()) {
+                    // There was no change to this variant, so we can skip it as source
+                    Logger.info("Skipping " + source.getName()
+                                    + " because there are no changes to code. Diff of code files is empty.");
+                    continue;
+                } else if (inDebug) {
+                    try {
+                        Files.write(debugDir.resolve("diff.txt"), originalDiff.toLines());
+                    } catch (final IOException e) {
+                        Logger.error("Was not able to save diff", e);
                     }
                 }
+                Logger.info("Converting diff...");
+                // Convert the original diff into a fine diff
+                final FineDiff normalPatch = getFineDiff(originalDiff);
+                saveDiff(normalPatch, normalPatchFile);
+                Logger.info("Saved fine diff.");
 
-                pairCount++;
-                Logger.info(String.format("Finished commit pair %d of %d.%n", pairCount,
-                                historySize));
+                // For each target variant,
+                Logger.info("Starting patch application for source variant " + source.getName());
+                for (final Variant target : sample.variants()) {
+                    if (target == source) {
+                        continue;
+                    }
+                    runID++;
+                    Logger.info(source.getName() + " --patch--> " + target.getName());
+                    final Path pathToTarget = variantsDirV0.path().resolve(target.getName());
+                    final Path pathToExpectedResult =
+                                    variantsDirV1.path().resolve(target.getName());
+                    final FineDiff evolutionDiff = getFineDiff(
+                                    getOriginalDiff(pathToTarget, pathToExpectedResult));
+                    if (inDebug) {
+                        saveDiff(evolutionDiff, debugDir.resolve("evolutionDiff.txt"));
+                    }
 
-                // Free memory of parentCommit
-                parentCommit.forget();
+                    /* Application of patches without knowledge about features */
+                    Logger.info("Applying patch without knowledge about features...");
+                    // Apply the fine diff to the target variant
+                    final Set<String> skippedNormal =
+                                    applyPatch(normalPatchFile, pathToTarget, rejectsNormalFile);
+                    // Evaluate the patch result
+                    final FineDiff actualVsExpectedNormal =
+                                    getActualVsExpected(pathToExpectedResult);
+                    final OriginalDiff rejectsNormal = readRejects(rejectsNormalFile);
+
+                    /* Application of patches with knowledge about PC of edit only */
+                    Logger.info("Applying patch with knowledge about edits' PCs...");
+                    // Create target variant specific patch that respects PCs
+                    final FineDiff filteredPatch = getFilteredDiff(originalDiff,
+                                    groundTruthV0.get(source).variant(),
+                                    groundTruthV1.get(source).variant(), target,
+                                    variantsDirV0.path(), variantsDirV1.path());
+                    final boolean emptyPatch = filteredPatch.content().isEmpty();
+                    saveDiff(filteredPatch, filteredPatchFile);
+                    // Apply the patch
+                    final Set<String> skippedFiltered = applyPatch(filteredPatchFile, pathToTarget,
+                                    rejectsFilteredFile, emptyPatch);
+                    // Evaluate the result
+                    final FineDiff actualVsExpectedFiltered =
+                                    getActualVsExpected(pathToExpectedResult);
+                    final OriginalDiff rejectsFiltered = readRejects(rejectsFilteredFile);
+
+                    /* Result Evaluation */
+                    final PatchOutcome patchOutcome = ResultAnalysis.processOutcome(datasetName,
+                                    runID, source.getName(), target.getName(), parentCommit,
+                                    currentCommit, normalPatch, filteredPatch,
+                                    actualVsExpectedNormal, actualVsExpectedFiltered, rejectsNormal,
+                                    rejectsFiltered, evolutionDiff, skippedNormal, skippedFiltered);
+
+                    try {
+                        patchOutcome.writeAsJSON(resultFile, true);
+                    } catch (final IOException e) {
+                        Logger.error("Was not able to write filtered patch result file for run "
+                                        + runID, e);
+                    }
+
+                    Logger.info("Finished patching for source " + source.getName() + " and target "
+                                    + target.getName());
+                }
             }
+
+            Logger.info(String.format("Finished commit %d of %d.%n", commitCount, historySize));
+
+            // Free memory of parentCommit
+            parentCommit.forget();
             // Free memory of commit V1
-            childCommit.forget();
+            currentCommit.forget();
         }
         Logger.info("All done.");
     }
@@ -388,45 +368,26 @@ public class SynchronizationStudy {
     /**
      * Randomly sample a set of variants valid in both commits.
      *
-     * @param commitV0 The id of the parent commit
+     * @param commit The id of the parent commit
      * @param commitV1 The id of the child commit
      * @return The sampled variants
      */
-    protected Sample sample(final SPLCommit commitV0, final SPLCommit commitV1) {
-        if (currentModel == null || commitV0Current != commitV0 || commitV1Current != commitV1) {
+    protected Sample sample(final SPLCommit commit) {
+        if (currentModel == null || currentCommit != commit) {
             Logger.info("Loading feature models.");
-            commitV0Current = commitV0;
-            commitV1Current = commitV1;
-            final IFeatureModel modelV0 = commitV0.featureModel().run().orElseThrow();
-            final IFeatureModel modelV1 = commitV1.featureModel().run().orElseThrow();
-
-            // We need the set of all features to create the union
-            HashSet<String> features = new HashSet<>(modelV0.getFeatureTable().keySet());
-            features.addAll(modelV1.getFeatureTable().keySet());
-            // Remove the default Root feature, which will be added again during creation
-            features.remove("Root");
-
-            // We use the union of both models to sample configurations, so that all features are
-            // included
-            Logger.info("Creating model union.");
-            currentModel = FeatureModelUtils.FromOptionalFeatures(features);
-
-            featureModelDebug(modelV0, modelV1);
+            currentCommit = commit;
+            currentModel = commit.featureModel().run().orElseThrow();
+            featureModelDebug(currentModel);
         }
         return sampler.sample(currentModel);
     }
 
     // Save the features in the feature models
-    private void featureModelDebug(final IFeatureModel modelV0, final IFeatureModel modelV1) {
+    private void featureModelDebug(final IFeatureModel model) {
         if (inDebug) {
-            final Collection<String> featuresInDifference =
-                            FeatureModelUtils.getSymmetricFeatureDifference(modelV0, modelV1);
             try {
-                Files.write(debugDir.resolve("features-V0.txt"), modelV0.getFeatures().stream()
+                Files.write(debugDir.resolve("features.txt"), model.getFeatures().stream()
                                 .map(IFeatureModelElement::getName).collect(Collectors.toSet()));
-                Files.write(debugDir.resolve("features-V1.txt"), modelV1.getFeatures().stream()
-                                .map(IFeatureModelElement::getName).collect(Collectors.toSet()));
-                Files.write(debugDir.resolve("variables-in-difference.txt"), featuresInDifference);
             } catch (final IOException e) {
                 Logger.error("Was not able to write commit data.", e);
             }
@@ -434,10 +395,9 @@ public class SynchronizationStudy {
     }
 
     // Generate the two versions of a variant
-    private void generateVariant(final SPLCommit parentCommit, final SPLCommit childCommit,
+    private void generateVariant(final SPLCommit currentCommit,
                     final Map<Variant, GroundTruth> groundTruthV0,
-                    final Map<Variant, GroundTruth> groundTruthV1, final Variant variant,
-                    final SimpleFileFilter filter) {
+                    final Map<Variant, GroundTruth> groundTruthV1, final Variant variant) {
         Logger.info("Generating variant " + variant.getName());
         if (inDebug && variant.getConfiguration() instanceof FeatureIDEConfiguration config) {
             try {
@@ -458,12 +418,12 @@ public class SynchronizationStudy {
             panic("Was not able to create directory for variant: " + variant.getName());
         }
 
-        final GroundTruth gtV0 = parentCommit.presenceConditions().run().orElseThrow()
+        final GroundTruth gtV0 = currentCommit.presenceConditionsBefore().run().orElseThrow()
                         .generateVariant(variant, new CaseSensitivePath(splCopyA),
                                         variantsDirV0.resolve(variant.getName()),
                                         VariantGenerationOptions
                                                         .ExitOnErrorButAllowNonExistentFiles(false,
-                                                                        filter))
+                                                                        f -> true))
                         .expect("Was not able to generate V0 of " + variant);
         if (inDebug) {
             try {
@@ -475,14 +435,14 @@ public class SynchronizationStudy {
         }
         groundTruthV0.put(variant, gtV0);
 
-        final GroundTruth gtV1 = childCommit.presenceConditions().run()
+        final GroundTruth gtV1 = currentCommit.presenceConditionsAfter().run()
                         .orElseThrow(() -> new RuntimeException(
-                                        "%s ; %s ; %s".formatted(variant, splCopyB, childCommit)))
+                                        "%s ; %s ; %s".formatted(variant, splCopyB, currentCommit)))
                         .generateVariant(variant, new CaseSensitivePath(splCopyB),
                                         variantsDirV1.resolve(variant.getName()),
                                         VariantGenerationOptions
                                                         .ExitOnErrorButAllowNonExistentFiles(false,
-                                                                        filter))
+                                                                        f -> true))
                         .expect("Was not able to generate V1 of " + variant);
         if (inDebug) {
             try {
@@ -499,9 +459,8 @@ public class SynchronizationStudy {
      * Prepare the two copies of the SPL repository by cleaning them and checking out the next
      * commit pair
      */
-    protected SimpleFileFilter splRepoPreparation(final SPLRepository parentRepo,
-                    final SPLRepository childRepo, final SPLCommit parentCommit,
-                    final SPLCommit childCommit) {
+    protected void splRepoPreparation(final SPLRepository parentRepo, final SPLRepository childRepo,
+                    final SPLCommit parentCommit, final SPLCommit childCommit) {
         Logger.info("Next V0 commit: " + parentCommit);
         Logger.info("Next V1 commit: " + childCommit);
         // Checkout the commits in the SPL repository
@@ -514,22 +473,11 @@ public class SynchronizationStudy {
             panic("Was not able to checkout commit for SPL repository.", e);
         }
         Logger.info("Done.");
-
-        Logger.info("Diffing SPL commits to find changed files.");
-        final OriginalDiff diff = getOriginalDiff(splCopyA, splCopyB);
-        final Set<Path> filesToKeep = new HashSet<>();
-        for (final FileDiff fileDiff : diff.fileDiffs()) {
-            if (!fileDiff.oldFile().getName(1).startsWith(".git")) {
-                filesToKeep.add(fileDiff.oldFile().subpath(1, fileDiff.oldFile().getNameCount()));
-            }
-        }
-
-        return new SimpleFileFilter(filesToKeep);
     }
 
 
     // Initialize the study by loading the required data
-    private VariabilityHistory init() {
+    private List<SPLCommit> init() {
         // Clean old SPL repo files
         Logger.info("Cleaning old repo files.");
         if (Files.exists(splCopyA)) {
@@ -563,7 +511,7 @@ public class SynchronizationStudy {
 
         // Retrieve pairs/sequences of usable commits
         Logger.info("Retrieving commit pairs");
-        return Objects.requireNonNull(dataset).getVariabilityHistory(new Domino());
+        return Objects.requireNonNull(dataset).getSuccessCommits();
     }
 
     // Save the difference as a patch file
@@ -682,16 +630,5 @@ public class SynchronizationStudy {
         e.printStackTrace();
         throw new Panic(message);
     }
-
-    // Simple filter used during the generation of variants. Only changed files are generated.
-    private record SimpleFileFilter(Set<Path> filesToKeep)
-                    implements ArtefactFilter<SourceCodeFile> {
-
-        @Override
-        public boolean shouldKeep(final SourceCodeFile sourceCodeFile) {
-            return filesToKeep.contains(sourceCodeFile.getFile().path());
-        }
-    }
-
 
 }
