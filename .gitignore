@@ -12,3 +12,6 @@ simulation-files/busybox/
 /simulation-files/ground-truth/
 /log.txt
 /warn.txt
+.classpath
+.project
+.settings
