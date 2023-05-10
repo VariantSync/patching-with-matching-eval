@@ -69,9 +69,10 @@ public class Main {
                 Logger.info("Cloned %s into %s".formatted(dataset.name(), repoDir));
             }
 
+            final int numThreads = 5;
             final SynchronizationStudy synchronizationStudy = new SynchronizationStudy(
                             dataset.name(), mainDir, resultsDir, repoDir, repoGroundTruth,
-                            numRepetitions, numVariants, startID, inDebug);
+                            numRepetitions, numVariants, startID, inDebug, numThreads);
 
             try {
                 synchronizationStudy.run();
