@@ -12,6 +12,8 @@ public class WorkPaths {
 
     // Working directory
     public final Path workDir;
+    // Debug directory
+    public final Path debugDir;
     // Path to the first copy of the SPL. We require copy to consider different versions
     public final Path splCopyA;
     // Path to the second copy of the SPL
@@ -45,6 +47,7 @@ public class WorkPaths {
             Logger.error("Was not able to initialize this.workDir", e);
             throw new UncheckedIOException(e);
         }
+        this.debugDir = this.workDir.resolve("DEBUG");
         this.splCopyA = this.workDir.resolve("SPL-A");
         this.splCopyB = this.workDir.resolve("SPL-B");
         this.variantsDirV0 = new CaseSensitivePath(this.workDir.resolve("V0Variants"));
