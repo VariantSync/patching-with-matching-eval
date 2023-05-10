@@ -18,10 +18,11 @@ import static org.variantsync.vevos.simulation.VEVOS.Initialize;
 /**
  * Entry point for running our study. Loads the configuration and starts the study.
  */
-public class StudyRunner {
+public class Main {
     public static void main(final String... args) {
         if (args.length < 1) {
-            System.err.println("The first argument should provide the path to the configuration file that is to be used");
+            System.err.println(
+                            "The first argument should provide the path to the configuration file that is to be used");
         }
         // Initialize the VEVOS Simulation library
         Initialize();
@@ -41,7 +42,8 @@ public class StudyRunner {
         try {
             datasets = DatasetDescription.fromMarkdown(Path.of(config.EXPERIMENT_DATASETS()));
         } catch (IOException e) {
-            Logger.error("Was not able to load markdown file with the datasets from '" + config.EXPERIMENT_DATASETS() + "'");
+            Logger.error("Was not able to load markdown file with the datasets from '"
+                            + config.EXPERIMENT_DATASETS() + "'");
             throw new UncheckedIOException(e);
         }
 
@@ -49,14 +51,16 @@ public class StudyRunner {
         for (DatasetDescription dataset : datasets) {
             var datasetSize = Integer.parseInt(dataset.commits().replaceAll(",", ""));
             if (datasetSize > datasetMaxSize) {
-                Logger.info("Skipping %s with %s commits because it exceeds the maximum number of commits (%d) set in the configuration.".formatted(dataset.name(), dataset.commits(), datasetMaxSize));
+                Logger.info("Skipping %s with %s commits because it exceeds the maximum number of commits (%d) set in the configuration."
+                                .formatted(dataset.name(), dataset.commits(), datasetMaxSize));
                 continue;
             }
             var repoDir = mainDir.resolve(dataset.name());
             var repoGroundTruth = groundTruthPath.resolve(dataset.name());
 
             if (!Files.exists(repoGroundTruth)) {
-                Logger.info("Found no ground truth for %s. Skipping the study for %s".formatted(dataset.name(), dataset.name()));
+                Logger.info("Found no ground truth for %s. Skipping the study for %s"
+                                .formatted(dataset.name(), dataset.name()));
                 continue;
             }
 
@@ -65,8 +69,9 @@ public class StudyRunner {
                 Logger.info("Cloned %s into %s".formatted(dataset.name(), repoDir));
             }
 
-            final SynchronizationStudy synchronizationStudy = new SynchronizationStudy(dataset.name(), mainDir, resultsDir,
-                    repoDir, repoGroundTruth, numRepetitions, numVariants, startID, inDebug);
+            final SynchronizationStudy synchronizationStudy = new SynchronizationStudy(
+                            dataset.name(), mainDir, resultsDir, repoDir, repoGroundTruth,
+                            numRepetitions, numVariants, startID, inDebug);
 
             try {
                 synchronizationStudy.run();
@@ -79,3 +84,4 @@ public class StudyRunner {
         System.exit(0);
     }
 }
+
