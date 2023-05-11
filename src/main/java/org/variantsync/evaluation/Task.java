@@ -235,6 +235,7 @@ public class Task implements Runnable {
 
                     /* Result Evaluation */
                     final PatchOutcome patchOutcome = ResultAnalysis.processOutcome(
+                                    workdir,
                                     this.datasetName, runID, source.getName(), target.getName(),
                                     parentCommit, currentCommit, normalPatch, filteredPatch,
                                     actualVsExpectedNormal, actualVsExpectedFiltered, rejectsNormal,

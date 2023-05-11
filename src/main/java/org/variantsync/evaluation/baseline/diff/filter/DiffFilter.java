@@ -70,7 +70,7 @@ public class DiffFilter {
                         atLeastOneChange = true;
                     }
                     newIndex++;
-                } else if (line instanceof ContextLine) {
+                } else {
                     // Increase the index
                     oldIndex++;
                     newIndex++;

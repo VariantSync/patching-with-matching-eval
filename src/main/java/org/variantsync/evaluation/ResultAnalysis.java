@@ -58,13 +58,14 @@ public class ResultAnalysis {
      *        patched
      * @return The patch outcome
      */
-    public static PatchOutcome processOutcome(final String dataset, final long runID,
+    public static PatchOutcome processOutcome(final WorkPaths workdir, final String dataset, final long runID,
                     final String sourceVariant, final String targetVariant,
                     final SPLCommit commitV0, final SPLCommit commitV1, final FineDiff normalPatch,
                     final FineDiff filteredPatch, final FineDiff resultDiffNormal,
                     final FineDiff resultDiffFiltered, OriginalDiff rejectsNormal,
                     OriginalDiff rejectsFiltered, final FineDiff sourceChanges,
                     final Set<String> skippedFilesNormal, final Set<String> skippedFilesFiltered) {
+        Logger.debug("Processing outcome for patch process in " + workdir.workDir);
         // evaluate patch rejects
         // number of tried file-level patches
         final int fileNormal = new HashSet<>(normalPatch.content().stream()
@@ -150,6 +151,9 @@ public class ResultAnalysis {
                         - (/* filtered lines */ lineNormal - lineFiltered) - lineFilteredFailed;
 
         // Some sanity checks
+        if (filteredFN > normalFN) {
+            Logger.debug("There are more false negatives after filtering! " + filteredFN + " vs. " + normalFN);
+        }
         Assert.assertTrue(normalTP + normalFP + normalFN + normalTN == filteredTP + filteredFP
                         + filteredTN + filteredFN);
         Assert.assertTrue(normalTN + normalFN - normalWrongLocation <= lineNormalFailed);
