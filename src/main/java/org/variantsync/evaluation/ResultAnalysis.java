@@ -37,39 +37,41 @@ public class ResultAnalysis {
     /**
      * Analyze the outcome of applying patches to a target variant
      *
-     * @param dataset              The considered SPL
-     * @param runID                The id of the analyzed run
-     * @param sourceVariant        The source variant's name
-     * @param targetVariant        The target variant's name
-     * @param commitV0             The id of the parent commit
-     * @param commitV1             The id of the child commit
-     * @param normalPatch          The FineDiff with all prepared changes
-     * @param filteredPatch        The FineDiff with all prepared changes after filtering
-     * @param resultDiffNormal     The difference between the patched target variant and the expected result
-     * @param resultDiffFiltered   The difference between the patched target variant and the expected result (with filtering)
-     * @param rejectsNormal        The rejected patches (aka. failed patches) without filtering
-     * @param rejectsFiltered      The rejected patches (aka. failed patches) with filtering
-     * @param sourceChanges        The difference between the two versions of the source variant
-     * @param skippedFilesNormal   List of files that were not found by patch and therefore not patched
-     * @param skippedFilesFiltered List of files that were not found by patch and therefore not patched
+     * @param dataset The considered SPL
+     * @param runID The id of the analyzed run
+     * @param sourceVariant The source variant's name
+     * @param targetVariant The target variant's name
+     * @param commitV0 The id of the parent commit
+     * @param commitV1 The id of the child commit
+     * @param normalPatch The FineDiff with all prepared changes
+     * @param filteredPatch The FineDiff with all prepared changes after filtering
+     * @param resultDiffNormal The difference between the patched target variant and the expected
+     *        result
+     * @param resultDiffFiltered The difference between the patched target variant and the expected
+     *        result (with filtering)
+     * @param rejectsNormal The rejected patches (aka. failed patches) without filtering
+     * @param rejectsFiltered The rejected patches (aka. failed patches) with filtering
+     * @param sourceChanges The difference between the two versions of the source variant
+     * @param skippedFilesNormal List of files that were not found by patch and therefore not
+     *        patched
+     * @param skippedFilesFiltered List of files that were not found by patch and therefore not
+     *        patched
      * @return The patch outcome
      */
-    public static PatchOutcome processOutcome(final String dataset,
-                                              final long runID,
-                                              final String sourceVariant,
-                                              final String targetVariant,
-                                              final SPLCommit commitV0, final SPLCommit commitV1,
-                                              final FineDiff normalPatch, final FineDiff filteredPatch,
-                                              final FineDiff resultDiffNormal, final FineDiff resultDiffFiltered,
-                                              OriginalDiff rejectsNormal, OriginalDiff rejectsFiltered,
-                                              final FineDiff sourceChanges,
-                                              final Set<String> skippedFilesNormal,
-                                              final Set<String> skippedFilesFiltered) {
+    public static PatchOutcome processOutcome(final String dataset, final long runID,
+                    final String sourceVariant, final String targetVariant,
+                    final SPLCommit commitV0, final SPLCommit commitV1, final FineDiff normalPatch,
+                    final FineDiff filteredPatch, final FineDiff resultDiffNormal,
+                    final FineDiff resultDiffFiltered, OriginalDiff rejectsNormal,
+                    OriginalDiff rejectsFiltered, final FineDiff sourceChanges,
+                    final Set<String> skippedFilesNormal, final Set<String> skippedFilesFiltered) {
         // evaluate patch rejects
         // number of tried file-level patches
-        final int fileNormal = new HashSet<>(normalPatch.content().stream().map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
+        final int fileNormal = new HashSet<>(normalPatch.content().stream()
+                        .map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
         // number of tried line-level patches
-        final int lineNormal = normalPatch.content().stream().mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
+        final int lineNormal = normalPatch.content().stream()
+                        .mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
         // number of failed patches
         int fileNormalFailed;
         int lineNormalFailed;
@@ -79,19 +81,27 @@ public class ResultAnalysis {
         }
 
         // Determine the number of failed file-level patches (without filtering)
-        fileNormalFailed = new HashSet<>(rejectsNormal.fileDiffs().stream().map(fd -> fd.oldFile().toString()).collect(Collectors.toSet())).size();
+        fileNormalFailed = new HashSet<>(rejectsNormal.fileDiffs().stream()
+                        .map(fd -> fd.oldFile().toString()).collect(Collectors.toSet())).size();
         fileNormalFailed += skippedFilesNormal.size();
-        Logger.info("" + fileNormalFailed + " of " + fileNormal + " normal file-sized patches failed.");
+        Logger.debug("" + fileNormalFailed + " of " + fileNormal
+                        + " normal file-sized patches failed.");
 
         // Determine the number of failed line-level patches (without filtering)
-        lineNormalFailed = rejectsNormal.fileDiffs().stream().mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
-        lineNormalFailed += normalPatch.content().stream().filter(fd -> skippedFilesNormal.contains(fd.oldFile().toString())).mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
-        Logger.info("" + lineNormalFailed + " of " + lineNormal + " normal line-sized patches failed");
+        lineNormalFailed = rejectsNormal.fileDiffs().stream()
+                        .mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
+        lineNormalFailed += normalPatch.content().stream()
+                        .filter(fd -> skippedFilesNormal.contains(fd.oldFile().toString()))
+                        .mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
+        Logger.debug("" + lineNormalFailed + " of " + lineNormal
+                        + " normal line-sized patches failed");
 
         // Number of tried file-level patches (with filtering)
-        final int fileFiltered = new HashSet<>(filteredPatch.content().stream().map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
+        final int fileFiltered = new HashSet<>(filteredPatch.content().stream()
+                        .map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
         // Number of tried line-level patches (with filtering)
-        final int lineFiltered = filteredPatch.content().stream().mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
+        final int lineFiltered = filteredPatch.content().stream()
+                        .mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
         // Number of failed patches
         int fileFilteredFailed;
         int lineFilteredFailed;
@@ -101,17 +111,25 @@ public class ResultAnalysis {
         }
 
         // Determine the number of failed file-level patches (with filtering)
-        fileFilteredFailed = new HashSet<>(rejectsFiltered.fileDiffs().stream().map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
+        fileFilteredFailed = new HashSet<>(rejectsFiltered.fileDiffs().stream()
+                        .map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
         fileFilteredFailed += skippedFilesFiltered.size();
-        Logger.info("" + fileFilteredFailed + " of " + fileFiltered + " filtered file-sized patches failed.");
+        Logger.debug("" + fileFilteredFailed + " of " + fileFiltered
+                        + " filtered file-sized patches failed.");
 
         // Determine the number of failed line-level patches (with filtering)
-        lineFilteredFailed = rejectsFiltered.fileDiffs().stream().mapToInt(fd -> fd.hunks().size()).sum();
-        lineFilteredFailed += filteredPatch.content().stream().filter(fd -> skippedFilesFiltered.contains(fd.oldFile().toString())).mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
-        Logger.info("" + lineFilteredFailed + " of " + lineFiltered + " filtered line-sized patches failed");
+        lineFilteredFailed = rejectsFiltered.fileDiffs().stream().mapToInt(fd -> fd.hunks().size())
+                        .sum();
+        lineFilteredFailed += filteredPatch.content().stream()
+                        .filter(fd -> skippedFilesFiltered.contains(fd.oldFile().toString()))
+                        .mapToInt(ResultAnalysis::numEditsInFileDiff).sum();
+        Logger.debug("" + lineFilteredFailed + " of " + lineFiltered
+                        + " filtered line-sized patches failed");
 
-        // Calculate the condition table (without filtering): true positives, false positive, true negatives, and false negatives
-        final ConditionTable normalConditionTable = calculateConditionTable(normalPatch, normalPatch, resultDiffNormal, sourceChanges);
+        // Calculate the condition table (without filtering): true positives, false positive, true
+        // negatives, and false negatives
+        final ConditionTable normalConditionTable = calculateConditionTable(normalPatch,
+                        normalPatch, resultDiffNormal, sourceChanges);
         final long normalTP = normalConditionTable.tpCount();
         final long normalFP = normalConditionTable.fpCount();
         final long normalTN = normalConditionTable.tnCount();
@@ -119,46 +137,33 @@ public class ResultAnalysis {
         // Number of line-level patches applied to the wrong location
         final long normalWrongLocation = normalTN + normalFN - lineNormalFailed;
 
-        // Calculate the condition table (with filtering): true positives, false positive, true negatives, and false negatives
-        final ConditionTable filteredConditionTable = calculateConditionTable(filteredPatch, normalPatch, resultDiffFiltered, sourceChanges);
+        // Calculate the condition table (with filtering): true positives, false positive, true
+        // negatives, and false negatives
+        final ConditionTable filteredConditionTable = calculateConditionTable(filteredPatch,
+                        normalPatch, resultDiffFiltered, sourceChanges);
         final long filteredTP = filteredConditionTable.tpCount();
         final long filteredFP = filteredConditionTable.fpCount();
         final long filteredTN = filteredConditionTable.tnCount();
         final long filteredFN = filteredConditionTable.fnCount();
         // Number of line-level patches applied to the wrong location
-        final long filteredWrongLocation = filteredTN + filteredFN - (/*filtered lines*/ lineNormal - lineFiltered) - lineFilteredFailed;
+        final long filteredWrongLocation = filteredTN + filteredFN
+                        - (/* filtered lines */ lineNormal - lineFiltered) - lineFilteredFailed;
 
         // Some sanity checks
-        Assert.assertTrue(normalTP + normalFP + normalFN + normalTN == filteredTP + filteredFP + filteredTN + filteredFN);
+        Assert.assertTrue(normalTP + normalFP + normalFN + normalTN == filteredTP + filteredFP
+                        + filteredTN + filteredFN);
         Assert.assertTrue(normalTN + normalFN - normalWrongLocation <= lineNormalFailed);
-        Assert.assertTrue(filteredTP + filteredFP + filteredFN + filteredTN == lineFiltered + (lineNormal - lineFiltered));
+        Assert.assertTrue(filteredTP + filteredFP + filteredFN + filteredTN == lineFiltered
+                        + (lineNormal - lineFiltered));
 
-        return new PatchOutcome(dataset,
-                runID,
-                commitV0.id(),
-                commitV1.id(),
-                sourceVariant,
-                targetVariant,
-                resultDiffNormal.content().size(),
-                resultDiffFiltered.content().size(),
-                fileNormal,
-                lineNormal,
-                fileNormal - fileNormalFailed,
-                lineNormal - lineNormalFailed,
-                fileFiltered,
-                lineFiltered,
-                fileFiltered - fileFilteredFailed,
-                lineFiltered - lineFilteredFailed,
-                normalTP,
-                normalFP,
-                normalTN,
-                normalFN,
-                normalWrongLocation,
-                filteredTP,
-                filteredFP,
-                filteredTN,
-                filteredFN,
-                filteredWrongLocation);
+        return new PatchOutcome(dataset, runID, commitV0.id(), commitV1.id(), sourceVariant,
+                        targetVariant, resultDiffNormal.content().size(),
+                        resultDiffFiltered.content().size(), fileNormal, lineNormal,
+                        fileNormal - fileNormalFailed, lineNormal - lineNormalFailed, fileFiltered,
+                        lineFiltered, fileFiltered - fileFilteredFailed,
+                        lineFiltered - lineFilteredFailed, normalTP, normalFP, normalTN, normalFN,
+                        normalWrongLocation, filteredTP, filteredFP, filteredTN, filteredFN,
+                        filteredWrongLocation);
     }
 
     private static int numEditsInFileDiff(FileDiff fileDiff) {
@@ -166,16 +171,20 @@ public class ResultAnalysis {
     }
 
     // Calculate true positives, false positives, true negatives, and false negatives
-    private static ConditionTable calculateConditionTable(FineDiff evaluatedPatch, FineDiff unfilteredPatch, FineDiff resultDiff, FineDiff evolutionDiff) {
-        Logger.info("Calculating result table with TP, FP, TN, and FN.");
+    private static ConditionTable calculateConditionTable(FineDiff evaluatedPatch,
+                    FineDiff unfilteredPatch, FineDiff resultDiff, FineDiff evolutionDiff) {
+        Logger.debug("Calculating result table with TP, FP, TN, and FN.");
         List<Change> changesInPatch = FineDiff.determineChangedLines(evaluatedPatch);
         List<Change> changesToClassify = FineDiff.determineChangedLines(unfilteredPatch);
         List<Change> changesInResult = FineDiff.determineChangedLines(resultDiff);
         List<Change> changesInEvolution = FineDiff.determineChangedLines(evolutionDiff);
 
-        // Determine changes in the target variant's de.variantsync.studies.evolution that cannot be synchronized, because they are not part of the source variant and therefore not of the patch
+        // Determine changes in the target variant's de.variantsync.studies.evolution that cannot be
+        // synchronized, because they are not part of the source variant and therefore not of the
+        // patch
         final List<Change> unpatchableChanges = new ArrayList<>();
-        // Determine expected changes, i.e., changes in the target variant's de.variantsync.studies.evolution that can be synchronized
+        // Determine expected changes, i.e., changes in the target variant's
+        // de.variantsync.studies.evolution that can be synchronized
         final List<Change> requiredChanges = new ArrayList<>();
         {
             final List<Change> tempChanges = new ArrayList<>(changesToClassify);
@@ -189,7 +198,8 @@ public class ResultAnalysis {
             }
         }
 
-        // Determine undesired changes, i.e., changes in the patch but not de.variantsync.studies.evolution
+        // Determine undesired changes, i.e., changes in the patch but not
+        // de.variantsync.studies.evolution
         final List<Change> undesiredChanges = new ArrayList<>();
         {
             final List<Change> tempChanges = new ArrayList<>(requiredChanges);
@@ -203,16 +213,21 @@ public class ResultAnalysis {
         }
 
         // Determine actual differences between result and expected result,
-        // i.e., changes that should have been synchronized but were not, or changes that should not have been synchronized
+        // i.e., changes that should have been synchronized but were not, or changes that should not
+        // have been synchronized
         List<Change> actualDifferences = new ArrayList<>(changesInResult);
         unpatchableChanges.forEach(actualDifferences::remove);
 
         Assert.assertTrue(changesToClassify.size() >= changesInPatch.size());
-        Assert.assertTrue(changesInEvolution.size() - changesToClassify.size() <= unpatchableChanges.size());
-        Assert.assertTrue(changesInEvolution.size() - unpatchableChanges.size() <= changesToClassify.size());
+        Assert.assertTrue(changesInEvolution.size() - changesToClassify.size() <= unpatchableChanges
+                        .size());
+        Assert.assertTrue(changesInEvolution.size() - unpatchableChanges.size() <= changesToClassify
+                        .size());
 
-        // We first want to account for the remaining differences between the actual and the expected result. They are either
-        // false positives, i.e. changes in the patch that were applied but should not have been, or the mirror change
+        // We first want to account for the remaining differences between the actual and the
+        // expected result. They are either
+        // false positives, i.e. changes in the patch that were applied but should not have been, or
+        // the mirror change
         // of a false negative that was applied to the wrong location.
         List<Change> remainingDifferences = new ArrayList<>();
         List<Change> fpChanges = new ArrayList<>();
@@ -236,7 +251,8 @@ public class ResultAnalysis {
         for (Change actualDifference : actualDifferences) {
             // Is it a false negative?
             if (requiredChanges.contains(actualDifference)) {
-                // Each line in the patch must only be considered once, all additional difference are false positives
+                // Each line in the patch must only be considered once, all additional difference
+                // are false positives
                 changesToClassify.remove(actualDifference);
                 requiredChanges.remove(actualDifference);
                 fnChanges.add(actualDifference);
@@ -245,7 +261,8 @@ public class ResultAnalysis {
             }
         }
 
-        // Now account for the remaining lines in the patch file and determine whether they are true positive or true negative
+        // Now account for the remaining lines in the patch file and determine whether they are true
+        // positive or true negative
         List<Change> tpChanges = new ArrayList<>();
         List<Change> tnChanges = new ArrayList<>();
         for (var patchLine : changesToClassify) {
@@ -263,17 +280,20 @@ public class ResultAnalysis {
         long fp = fpChanges.size();
         long tn = tnChanges.size();
         long fn = fnChanges.size();
-        Assert.assertTrue(tp + fp + tn + fn == FineDiff.determineChangedLines(unfilteredPatch).size());
+        Assert.assertTrue(tp + fp + tn + fn == FineDiff.determineChangedLines(unfilteredPatch)
+                        .size());
         return new ConditionTable(tpChanges, fpChanges, tnChanges, fnChanges);
     }
 
-    // Determine the inverse change (i.e., removed line for an added line, and added line for a removed line
+    // Determine the inverse change (i.e., removed line for an added line, and added line for a
+    // removed line
     @NotNull
     private static Change getOppositeChange(Change actualDifference) {
         String changedText = actualDifference.line().line().substring(1);
         Change oppositeChange;
         if (actualDifference.line() instanceof AddedLine) {
-            oppositeChange = new Change(actualDifference.file(), new RemovedLine("-" + changedText));
+            oppositeChange = new Change(actualDifference.file(),
+                            new RemovedLine("-" + changedText));
         } else {
             oppositeChange = new Change(actualDifference.file(), new AddedLine("+" + changedText));
         }
@@ -281,19 +301,20 @@ public class ResultAnalysis {
     }
 
     /**
-     * Run the result analysis on the collected results. This method is called by the Docker container
-     * after the study has been run.
+     * Run the result analysis on the collected results. This method is called by the Docker
+     * container after the study has been run.
      *
      * @param args CL arguments
      * @throws IOException If the results cannot be loaded
      */
     public static void main(final String... args) throws IOException {
         if (args.length < 1) {
-            System.err.println("The first argument should provide the path to the configuration file that is to be used");
+            System.err.println(
+                            "The first argument should provide the path to the configuration file that is to be used");
         }
         final StudyConfiguration config = new StudyConfiguration(new File(args[0]));
         final Path resultsDir = Path.of(config.EXPERIMENT_DIR_RESULTS());
-        try(Stream<Path> files = Files.list(resultsDir)) {
+        try (Stream<Path> files = Files.list(resultsDir)) {
             files.filter(f -> {
                 String fileName = f.getFileName().toString();
                 return fileName.endsWith(".results");
@@ -310,7 +331,8 @@ public class ResultAnalysis {
 
     private static void analyze(Path resultFile) throws IOException {
         String fileName = resultFile.getFileName().getName(0).toString();
-        final Path resultSummaryFile = resultFile.getParent().resolve("%s.summary".formatted(fileName));
+        final Path resultSummaryFile =
+                        resultFile.getParent().resolve("%s.summary".formatted(fileName));
 
         StringBuilder sb = new StringBuilder();
         final AccumulatedOutcome allOutcomes = loadResultObjects(resultFile);
@@ -331,11 +353,7 @@ public class ResultAnalysis {
         long normalFN = allOutcomes.normalFN;
 
         sb.append("Without Domain Knowledge").append(LINE_SEP);
-        printPrecisionRecall(sb,
-                normalTP,
-                normalFP,
-                normalTN,
-                normalFN);
+        printPrecisionRecall(sb, normalTP, normalFP, normalTN, normalFN);
 
 
         sb.append(LINE_SEP);
@@ -348,11 +366,7 @@ public class ResultAnalysis {
         long filteredTN = allOutcomes.filteredTN;
         long filteredFN = allOutcomes.filteredFN;
 
-        printPrecisionRecall(sb,
-                filteredTP,
-                filteredFP,
-                filteredTN,
-                filteredFN);
+        printPrecisionRecall(sb, filteredTP, filteredFP, filteredTN, filteredFN);
 
         sb.append(DIV).append(LINE_SEP);
         sb.append("Accuracy").append(LINE_SEP);
@@ -366,7 +380,8 @@ public class ResultAnalysis {
         Files.writeString(resultSummaryFile, sb);
     }
 
-    private static void printAccuracy(StringBuilder sb, long tp, long fp, long tn, long fn, String name) {
+    private static void printAccuracy(StringBuilder sb, long tp, long fp, long tn, long fn,
+                    String name) {
         long expectedCount = tp + tn;
         long allPositives = tp + fn;
         long allNegative = fp + tn;
@@ -374,33 +389,47 @@ public class ResultAnalysis {
         double trueNegativeRate = (double) tn / (double) allNegative;
         long all = tp + fp + tn + fn;
 
-        sb.append(String.format("%s patching achieved the expected result %d out of %d times", name, expectedCount, all)).append(LINE_SEP);
+        sb.append(String.format("%s patching achieved the expected result %d out of %d times", name,
+                        expectedCount, all)).append(LINE_SEP);
         sb.append(String.format("Accuracy: %s", percentage(expectedCount, all))).append(LINE_SEP);
-        sb.append(String.format("Balanced Accuracy: %1.2f", ((truePositiveRate + trueNegativeRate) / 2.0))).append(LINE_SEP).append(LINE_SEP);
+        sb.append(String.format("Balanced Accuracy: %1.2f",
+                        ((truePositiveRate + trueNegativeRate) / 2.0))).append(LINE_SEP)
+                        .append(LINE_SEP);
     }
 
-    private static void printTechnicalSuccess(final StringBuilder sb, final AccumulatedOutcome allOutcomes) {
+    private static void printTechnicalSuccess(final StringBuilder sb,
+                    final AccumulatedOutcome allOutcomes) {
         final long commitPatches = allOutcomes.commitPatches();
         final long commitSuccessNormal = allOutcomes.commitSuccessNormal();
-        sb.append(String.format("%d of %d commit-sized patch applications succeeded (%s)", commitSuccessNormal, commitPatches, percentage(commitSuccessNormal, commitPatches))).append(LINE_SEP);
+        sb.append(String.format("%d of %d commit-sized patch applications succeeded (%s)",
+                        commitSuccessNormal, commitPatches,
+                        percentage(commitSuccessNormal, commitPatches))).append(LINE_SEP);
 
         final long fileNormal = allOutcomes.fileNormal;
         final long fileSuccessNormal = allOutcomes.fileSuccessNormal;
 
-        sb.append(String.format("%d of %d file-sized patch applications succeeded (%s)", fileSuccessNormal, fileNormal, percentage(fileSuccessNormal, fileNormal))).append(LINE_SEP);
+        sb.append(String.format("%d of %d file-sized patch applications succeeded (%s)",
+                        fileSuccessNormal, fileNormal, percentage(fileSuccessNormal, fileNormal)))
+                        .append(LINE_SEP);
 
         final long lineNormal = allOutcomes.lineNormal;
         final long lineSuccessNormal = allOutcomes.lineSuccessNormal;
-        sb.append(String.format("%d of %d line-sized patch applications succeeded (%s)", lineSuccessNormal, lineNormal, percentage(lineSuccessNormal, lineNormal))).append(LINE_SEP);
+        sb.append(String.format("%d of %d line-sized patch applications succeeded (%s)",
+                        lineSuccessNormal, lineNormal, percentage(lineSuccessNormal, lineNormal)))
+                        .append(LINE_SEP);
 
         // -------------------
         final long lineFiltered = allOutcomes.lineFiltered;
         final long lineSuccessFiltered = allOutcomes.lineSuccessFiltered;
-        sb.append(String.format("%d of %d line-sized patch applications succeeded after filtering (%s)%n", lineSuccessFiltered, lineFiltered, percentage(lineSuccessFiltered, lineFiltered))).append(LINE_SEP);
+        sb.append(String.format(
+                        "%d of %d line-sized patch applications succeeded after filtering (%s)%n",
+                        lineSuccessFiltered, lineFiltered,
+                        percentage(lineSuccessFiltered, lineFiltered))).append(LINE_SEP);
 
     }
 
-    private static void printPrecisionRecall(StringBuilder sb, final long tp, final long fp, final long tn, final long fn) {
+    private static void printPrecisionRecall(StringBuilder sb, final long tp, final long fp,
+                    final long tn, final long fn) {
         final double precision = (double) tp / ((double) tp + fp);
         final double recall = (double) tp / ((double) tp + fn);
         final double f_measure = (2 * precision * recall) / (precision + recall);
@@ -487,14 +516,12 @@ public class ResultAnalysis {
 
         System.out.printf("Read a total of %d results.", commitPatches);
 
-        return new AccumulatedOutcome(
-                normalTP, normalFP, normalTN, normalFN,
-                filteredTP, filteredFP, filteredTN, filteredFN,
-                normalWrongLocation, filteredWrongLocation,
-                commitPatches, commitSuccessNormal, commitSuccessFiltered,
-                fileNormal, fileFiltered, fileSuccessNormal, fileSuccessFiltered,
-                lineNormal, lineFiltered, lineSuccessNormal, lineSuccessFiltered
-        );
+        return new AccumulatedOutcome(normalTP, normalFP, normalTN, normalFN, filteredTP,
+                        filteredFP, filteredTN, filteredFN, normalWrongLocation,
+                        filteredWrongLocation, commitPatches, commitSuccessNormal,
+                        commitSuccessFiltered, fileNormal, fileFiltered, fileSuccessNormal,
+                        fileSuccessFiltered, lineNormal, lineFiltered, lineSuccessNormal,
+                        lineSuccessFiltered);
     }
 
     public static PatchOutcome parseResult(final List<String> lines) {
@@ -515,7 +542,8 @@ public class ResultAnalysis {
         return String.format("%3.1f%s", percentage, "%");
     }
 
-    private record ConditionTable(List<Change> tp, List<Change> fp, List<Change> tn, List<Change> fn) {
+    private record ConditionTable(List<Change> tp, List<Change> fp, List<Change> tn,
+                    List<Change> fn) {
         public long tpCount() {
             return tp.size();
         }
@@ -533,28 +561,12 @@ public class ResultAnalysis {
         }
     }
 
-    private record AccumulatedOutcome(
-            long normalTP,
-            long normalFP,
-            long normalTN,
-            long normalFN,
-            long filteredTP,
-            long filteredFP,
-            long filteredTN,
-            long filteredFN,
-            long normalWrongLocation,
-            long filteredWrongLocation,
-            long commitPatches,
-            long commitSuccessNormal,
-            long commitSuccessFiltered,
-            long fileNormal,
-            long fileFiltered,
-            long fileSuccessNormal,
-            long fileSuccessFiltered,
-            long lineNormal,
-            long lineFiltered,
-            long lineSuccessNormal,
-            long lineSuccessFiltered
-    ) {
+    private record AccumulatedOutcome(long normalTP, long normalFP, long normalTN, long normalFN,
+                    long filteredTP, long filteredFP, long filteredTN, long filteredFN,
+                    long normalWrongLocation, long filteredWrongLocation, long commitPatches,
+                    long commitSuccessNormal, long commitSuccessFiltered, long fileNormal,
+                    long fileFiltered, long fileSuccessNormal, long fileSuccessFiltered,
+                    long lineNormal, long lineFiltered, long lineSuccessNormal,
+                    long lineSuccessFiltered) {
     }
 }
