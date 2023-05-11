@@ -252,7 +252,7 @@ public class Task implements Runnable {
                 }
             }
 
-            if (commitCount % 1000 == 0) {
+            if (commitCount % 100 == 0) {
                 Logger.info(String.format("Finished commit %d of %d.%n", commitCount, historySize));
             }
 
