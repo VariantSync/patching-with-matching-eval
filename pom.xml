@@ -41,7 +41,7 @@
                             <finalName>StudyRunner</finalName>
                             <archive>
                                 <manifest>
-                                    <mainClass>org.variantsync.evaluation.StudyRunner</mainClass>
+                                    <mainClass>org.variantsync.evaluation.Main</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
