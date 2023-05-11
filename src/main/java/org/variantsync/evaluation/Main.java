@@ -69,7 +69,7 @@ public class Main {
                 Logger.info("Cloned %s into %s".formatted(dataset.name(), repoDir));
             }
 
-            final int numThreads = 5;
+            final int numThreads = config.EXPERIMENT_THREAD_COUNT();
             final SynchronizationStudy synchronizationStudy = new SynchronizationStudy(
                             dataset.name(), mainDir, resultsDir, repoDir, repoGroundTruth,
                             numRepetitions, numVariants, startID, inDebug, numThreads);

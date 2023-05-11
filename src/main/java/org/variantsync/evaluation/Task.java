@@ -104,7 +104,7 @@ public class Task implements Runnable {
 
             // While more random configurations to consider
             for (int i = 0; i < numRepetitions; i++) {
-                Logger.info("Starting repetition " + (i + 1) + " of " + numRepetitions + " with "
+                Logger.debug("Starting repetition " + (i + 1) + " of " + numRepetitions + " with "
                                 + numVariants + " variants.");
                 if (inDebug && Files.exists(workdir.debugDir)) {
                     workdir.shell.execute(new RmCommand(workdir.debugDir).recursive());
@@ -114,16 +114,16 @@ public class Task implements Runnable {
                 }
 
                 // Sample set of random variants
-                Logger.info("Sampling next set of variants...");
+                Logger.debug("Sampling next set of variants...");
                 final Sample sample = sample(currentCommit);
-                Logger.info("Done. Sampled " + sample.variants().size() + " variants.");
+                Logger.debug("Done. Sampled " + sample.variants().size() + " variants.");
 
                 if (Files.exists(workdir.variantsDirV0.path())) {
-                    Logger.info("Cleaning variants dir V0.");
+                    Logger.debug("Cleaning variants dir V0.");
                     workdir.shell.execute(new RmCommand(workdir.variantsDirV0.path()).recursive());
                 }
                 if (Files.exists(workdir.variantsDirV1.path())) {
-                    Logger.info("Cleaning variants dir V1.");
+                    Logger.debug("Cleaning variants dir V1.");
                     workdir.shell.execute(new RmCommand(workdir.variantsDirV1.path()).recursive());
                 }
 
@@ -149,30 +149,30 @@ public class Task implements Runnable {
                 // Generate the randomly selected variants at both versions
                 final Map<Variant, GroundTruth> groundTruthV0 = new HashMap<>();
                 final Map<Variant, GroundTruth> groundTruthV1 = new HashMap<>();
-                Logger.info("Generating variants...");
+                Logger.debug("Generating variants...");
                 for (final Variant variant : sample.variants()) {
                     generateVariant(currentCommit, groundTruthV0, groundTruthV1, variant, workdir);
                 }
-                Logger.info("Done.");
+                Logger.debug("Done.");
 
                 // Select each variant once as source
                 Variant source = sample.variants().get(0);
                 if (source == null) {
                     continue;
                 }
-                Logger.info("Starting diff application for source variant " + source.getName());
+                Logger.debug("Starting diff application for source variant " + source.getName());
                 if (Files.exists(workdir.normalPatchFile)) {
-                    Logger.info("Cleaning old patch file " + workdir.normalPatchFile);
+                    Logger.debug("Cleaning old patch file " + workdir.normalPatchFile);
                     workdir.shell.execute(new RmCommand(workdir.normalPatchFile));
                 }
                 // Apply diff to both versions of source variant
-                Logger.info("Diffing source...");
+                Logger.debug("Diffing source...");
                 final OriginalDiff originalDiff = getOriginalDiff(
                                 workdir.variantsDirV0.path().resolve(source.getName()),
                                 workdir.variantsDirV1.path().resolve(source.getName()), workdir);
                 if (originalDiff.isEmpty()) {
                     // There was no change to this variant, so we can skip it as source
-                    Logger.info("Skipping " + source.getName()
+                    Logger.debug("Skipping " + source.getName()
                                     + " because there are no changes to code. Diff of code files is empty.");
                     continue;
                 } else if (inDebug) {
@@ -182,20 +182,20 @@ public class Task implements Runnable {
                         Logger.error("Was not able to save diff", e);
                     }
                 }
-                Logger.info("Converting diff...");
+                Logger.debug("Converting diff...");
                 // Convert the original diff into a fine diff
                 final FineDiff normalPatch = getFineDiff(originalDiff);
                 saveDiff(normalPatch, workdir.normalPatchFile);
-                Logger.info("Saved fine diff.");
+                Logger.debug("Saved fine diff.");
 
                 // For each target variant,
-                Logger.info("Starting patch application for source variant " + source.getName());
+                Logger.debug("Starting patch application for source variant " + source.getName());
                 for (final Variant target : sample.variants()) {
                     if (target == source) {
                         continue;
                     }
                     runID++;
-                    Logger.info(source.getName() + " --patch--> " + target.getName());
+                    Logger.debug(source.getName() + " --patch--> " + target.getName());
                     final Path pathToTarget =
                                     workdir.variantsDirV0.path().resolve(target.getName());
                     final Path pathToExpectedResult =
@@ -207,7 +207,7 @@ public class Task implements Runnable {
                     }
 
                     /* Application of patches without knowledge about features */
-                    Logger.info("Applying patch without knowledge about features...");
+                    Logger.debug("Applying patch without knowledge about features...");
                     // Apply the fine diff to the target variant
                     final Set<String> skippedNormal = applyPatch(workdir.normalPatchFile,
                                     pathToTarget, workdir.rejectsNormalFile, workdir);
@@ -217,7 +217,7 @@ public class Task implements Runnable {
                     final OriginalDiff rejectsNormal = readRejects(workdir.rejectsNormalFile);
 
                     /* Application of patches with knowledge about PC of edit only */
-                    Logger.info("Applying patch with knowledge about edits' PCs...");
+                    Logger.debug("Applying patch with knowledge about edits' PCs...");
                     // Create target variant specific patch that respects PCs
                     final FineDiff filteredPatch = getFilteredDiff(originalDiff,
                                     groundTruthV0.get(source).variant(),
@@ -247,12 +247,14 @@ public class Task implements Runnable {
                                         + runID, e);
                     }
 
-                    Logger.info("Finished patching for source " + source.getName() + " and target "
+                    Logger.debug("Finished patching for source " + source.getName() + " and target "
                                     + target.getName());
                 }
             }
 
-            Logger.info(String.format("Finished commit %d of %d.%n", commitCount, historySize));
+            if (commitCount % 1000 == 0) {
+                Logger.info(String.format("Finished commit %d of %d.%n", commitCount, historySize));
+            }
 
             // Free memory of parentCommit
             parentCommit.forget();
@@ -263,7 +265,7 @@ public class Task implements Runnable {
 
     private void initializeSPLCopies(final WorkPaths workdir) {
         // Clean old SPL repo files
-        Logger.info("Cleaning old repo files.");
+        Logger.debug("Cleaning old repo files.");
         if (Files.exists(workdir.splCopyA)) {
             workdir.shell.execute(new RmCommand(workdir.splCopyA).recursive())
                             .expect("Was not able to remove SPL-V0.");

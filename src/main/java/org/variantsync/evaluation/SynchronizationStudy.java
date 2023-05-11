@@ -49,7 +49,6 @@ public class SynchronizationStudy {
     public void run() {
         try (final ExecutorService threadPool = Executors.newFixedThreadPool(this.numThreads)) {
             this.tasks.forEach(threadPool::submit);
-            threadPool.wait();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

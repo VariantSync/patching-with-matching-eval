@@ -23,15 +23,19 @@ public class StudyConfiguration {
     private static final String EXPERIMENT_DIR_GROUND_TRUTH = "experiment.dir.ground-truths";
     // The file containing the list of datasets
     private static final String EXPERIMENT_DATASETS = "experiment.datasets";
-    // Enable saving of certain files (e.g., feature list, presence conditions, configurations) for additional debugging
+    // Enable saving of certain files (e.g., feature list, presence conditions, configurations) for
+    // additional debugging
     private static final String EXPERIMENT_DEBUG = "experiment.debug";
-    // Each commit pair that is considered has its own id. All ids < startid are skipped when running the study. This
+    // Each commit pair that is considered has its own id. All ids < startid are skipped when
+    // running the study. This
     // property is required for the short installation validation.
     private static final String EXPERIMENT_STARTID = "experiment.startid";
     // The directory for saving the results
     private static final String EXPERIMENT_DIR_RESULTS = "experiment.dir.results";
     // The maximum number of commits in a dataset for it to be considered
     private static final String EXPERIMENT_DATASET_MAX_SIZE = "experiment.dataset.max-size";
+    // The number of threads for parallel execution
+    private static final String EXPERIMENT_THREAD_COUNT = "experiment.thread-count";
     // Configuration object holding key-value properties.
     private final Configuration config;
 
@@ -43,11 +47,10 @@ public class StudyConfiguration {
     public StudyConfiguration(final File propertiesFile) {
         final Parameters params = new Parameters();
         try {
-            final var builder =
-                    new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
-                            .configure(params.properties()
-                                    .setFile(propertiesFile)
-                                    .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
+            final var builder = new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
+                            .configure(params.properties().setFile(propertiesFile)
+                                            .setListDelimiterHandler(
+                                                            new DefaultListDelimiterHandler(',')));
             this.config = builder.getConfiguration();
         } catch (ConfigurationException e) {
             System.err.println("Was not able to load properties file " + propertiesFile);
@@ -98,8 +101,9 @@ public class StudyConfiguration {
     }
 
     /**
-     * @return Each commit pair that is considered has its own id. All ids smaller than startid are skipped when running the study.
-     * This property is required for the short installation validation.
+     * @return Each commit pair that is considered has its own id. All ids smaller than startid are
+     *         skipped when running the study. This property is required for the short installation
+     *         validation.
      */
     public int EXPERIMENT_START_ID() {
         return config.getInt(EXPERIMENT_STARTID, 0);
@@ -109,19 +113,33 @@ public class StudyConfiguration {
      * @return The path to the results directory
      */
     public String EXPERIMENT_DIR_RESULTS() {
-       return config.getString(EXPERIMENT_DIR_RESULTS);
+        return config.getString(EXPERIMENT_DIR_RESULTS);
     }
 
     /**
      *
-     * @return Maximum number of commits in a repository for a dataset to be considered for the study. If a repository has
-     * more commits, it is simply ignored. Values of 0 or less are automatically converted to Integer.MAX_VALUE.
+     * @return Maximum number of commits in a repository for a dataset to be considered for the
+     *         study. If a repository has more commits, it is simply ignored. Values of 0 or less
+     *         are automatically converted to Integer.MAX_VALUE.
      */
     public int EXPERIMENT_DATASET_MAX_SIZE() {
         var value = config.getInt(EXPERIMENT_DATASET_MAX_SIZE);
-        if (value <=0) {
+        if (value <= 0) {
             value = Integer.MAX_VALUE;
         }
         return value;
+    }
+
+
+    /**
+     * @return Number of threads to use for the parallel execution of the study. If the number is
+     *         unset or negative, the number of available processors is taken.
+     */
+    public int EXPERIMENT_THREAD_COUNT() {
+        int count = config.getInt(EXPERIMENT_THREAD_COUNT, 0);
+        if (count < 1) {
+            count = Runtime.getRuntime().availableProcessors();
+        }
+        return count;
     }
 }
