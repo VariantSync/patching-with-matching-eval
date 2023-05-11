@@ -275,7 +275,7 @@ public class Task implements Runnable {
                             .expect("Was not able to remove SPL-V1.");
         }
         // Copy the SPL repo
-        Logger.info("Creating new SPL repo copies.");
+        Logger.debug("Creating new SPL repo copies.");
         workdir.shell.execute(new CpCommand(repositoryPath, workdir.splCopyA).recursive())
                         .expect("Was not able to copy SPL-V0.");
         workdir.shell.execute(new CpCommand(repositoryPath, workdir.splCopyB).recursive())
@@ -318,7 +318,7 @@ public class Task implements Runnable {
      */
     protected Sample sample(final SPLCommit commit) {
         if (currentModel == null || currentCommit != commit) {
-            Logger.info("Loading feature models.");
+            Logger.debug("Loading feature models.");
             currentCommit = commit;
             currentModel = commit.featureModel().run().orElseThrow();
             featureModelDebug(currentModel);
@@ -343,7 +343,7 @@ public class Task implements Runnable {
                     final Map<Variant, GroundTruth> groundTruthV0,
                     final Map<Variant, GroundTruth> groundTruthV1, final Variant variant,
                     final WorkPaths workdir) {
-        Logger.info("Generating variant " + variant.getName());
+        Logger.debug("Generating variant " + variant.getName());
         if (inDebug && variant.getConfiguration() instanceof FeatureIDEConfiguration config) {
             try {
                 Files.write(workdir.debugDir.resolve(variant.getName() + ".config"),
@@ -406,18 +406,18 @@ public class Task implements Runnable {
      */
     protected void splRepoPreparation(final SPLRepository parentRepo, final SPLRepository childRepo,
                     final SPLCommit parentCommit, final SPLCommit childCommit) {
-        Logger.info("Next V0 commit: " + parentCommit);
-        Logger.info("Next V1 commit: " + childCommit);
+        Logger.debug("Next V0 commit: " + parentCommit);
+        Logger.debug("Next V1 commit: " + childCommit);
         // Checkout the commits in the SPL repository
         try {
-            Logger.info("Checkout of commits in SPL repo.");
+            Logger.debug("Checkout of commits in SPL repo.");
             parentRepo.checkoutCommit(parentCommit, true);
             childRepo.checkoutCommit(childCommit, true);
 
         } catch (final GitAPIException | IOException e) {
             panic("Was not able to checkout commit for SPL repository.", e);
         }
-        Logger.info("Done.");
+        Logger.debug("Done.");
     }
 
     // Save the difference as a patch file
@@ -452,7 +452,7 @@ public class Task implements Runnable {
         }
 
         if (Files.exists(rejectFile)) {
-            Logger.info("Cleaning old rejects file " + rejectFile);
+            Logger.debug("Cleaning old rejects file " + rejectFile);
             workdir.shell.execute(new RmCommand(rejectFile));
         }
 
@@ -472,7 +472,7 @@ public class Task implements Runnable {
                 result.getSuccess().forEach(Logger::debug);
             } else {
                 final List<String> lines = result.getFailure().getOutput();
-                Logger.info("Failed to apply part of patch. See debug log and rejects file for more information");
+                Logger.debug("Failed to apply part of patch. See debug log and rejects file for more information");
                 String oldFile;
                 for (final String nextLine : lines) {
                     Logger.debug(nextLine);
