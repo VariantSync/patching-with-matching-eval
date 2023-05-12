@@ -54,7 +54,7 @@ if [ "$1" == 'replication' ] || [ "$1" == 'validation' ]; then
 		if [ $? -eq 1 ]; then
 			mkdir /home/user/simulation-files/results/ERROR
 			cp -r /home/user/simulation-files /home/user/simulation-files/ERROR/
-			cp -r /home/user/TARGET /home/user/results/ERROR/
+			cp -r /home/user/TARGET /home/user/simulation-files/results/ERROR/
 		fi
 		evaluation config-replication.properties
 	elif [ "$1" == 'validation' ]; then
