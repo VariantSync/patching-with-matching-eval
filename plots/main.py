@@ -1,4 +1,5 @@
-﻿import sys
+﻿import glob
+import sys
 import os
 
 import parse
@@ -7,33 +8,43 @@ import serialization
 import colours
 
 if __name__ == "__main__":
-    if len(sys.argv) < 1:
-        path = "testdata.txt"
+    if len(sys.argv) < 2:
+        result_dir = "testdata"
     else:
-        path = sys.argv[1]
-    cachedFile = path + ".cache"
-    outputDirectory = "../results/plots"
+        result_dir = sys.argv[1]
 
-    colourscheme = colours.CSCHEME1
+    # Get all .results files in the result directory
+    results_files = glob.glob(result_dir + '/*.results')
 
-    if os.path.exists(cachedFile):
-        print("Loading chache", cachedFile)
-        experiment = serialization.deserialize(cachedFile)
-    else:
-        print("No chache found at", cachedFile)
-        print("Opening", path)
-        experiment = parse.parseFileAt(path)
-        serialization.serialize(experiment, cachedFile)
+    # Print each file name without the .results extension
+    for result_file in results_files:
+        base_name = os.path.basename(result_file)  # Get the final component of the path
+        file_name = os.path.splitext(base_name)[0]  # Split the base name into name and extension
+        outputDirectory = "../results/plots/" + file_name
+        os.makedirs(outputDirectory, exist_ok=True)
 
-    print()
-    print("Parsed Values:")
-    print("commitPatches =", experiment.normal.commitPatches)
-    print("normal =", vars(experiment.normal))
-    print("filtered =", vars(experiment.filtered))
-    print()
+        cachedFile = result_dir + "/" + file_name + ".cache"
 
-    plot.rq1(experiment.normal, outputDirectory)
-    plot.rq2(experiment.normal, colourscheme, outputDirectory)
-    plot.rq3(experiment, colourscheme, outputDirectory)
+        colourscheme = colours.CSCHEME1
+
+        if os.path.exists(cachedFile):
+            print("Loading chache", cachedFile)
+            experiment = serialization.deserialize(cachedFile)
+        else:
+            print("No chache found at", cachedFile)
+            print("Opening", result_file)
+            experiment = parse.parseFileAt(result_file)
+            serialization.serialize(experiment, cachedFile)
+
+        print()
+        print("Parsed Values:")
+        print("commitPatches =", experiment.normal.commitPatches)
+        print("normal =", vars(experiment.normal))
+        print("filtered =", vars(experiment.filtered))
+        print()
+
+        plot.rq1(experiment.normal, outputDirectory)
+        plot.rq2(experiment.normal, colourscheme, outputDirectory)
+        plot.rq3(experiment, colourscheme, outputDirectory)
 
     print("Done")
