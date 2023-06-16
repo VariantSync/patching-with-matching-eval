@@ -21,7 +21,7 @@ evaluation() {
 	fi
 
 	cd plots || exit
-	python3 main.py /home/user/simulation-files/results/results.txt
+	python3 main.py /home/user/simulation-files/results
 	cd ..
 
 	echo "Cleaning temporary directories"
