@@ -52,7 +52,7 @@ public class SynchronizationStudy {
             final ExecutorService threadPool = Executors.newFixedThreadPool(this.numThreads);
             this.tasks.forEach(threadPool::submit);
             threadPool.shutdown();
-            if (!threadPool.awaitTermination(0, TimeUnit.SECONDS)) {
+            if (!threadPool.awaitTermination(7, TimeUnit.DAYS)) {
                 Logger.error("Thread pool timeout.");
             }
         } catch (Exception e) {
