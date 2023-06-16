@@ -10,8 +10,10 @@ import colours
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         result_dir = "testdata"
+        output_base = "testdata/plots"
     else:
         result_dir = sys.argv[1]
+        output_base = sys.argv[2]
 
     # Get all .results files in the result directory
     results_files = glob.glob(result_dir + '/*.results')
@@ -20,7 +22,7 @@ if __name__ == "__main__":
     for result_file in results_files:
         base_name = os.path.basename(result_file)  # Get the final component of the path
         file_name = os.path.splitext(base_name)[0]  # Split the base name into name and extension
-        outputDirectory = "../results/plots/" + file_name
+        outputDirectory = output_base + "/" + file_name
         os.makedirs(outputDirectory, exist_ok=True)
 
         cachedFile = result_dir + "/" + file_name + ".cache"
