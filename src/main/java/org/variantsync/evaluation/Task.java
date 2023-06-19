@@ -222,7 +222,7 @@ public class Task implements Runnable {
                                     pathToTarget, workdir.rejectsNormalFile, workdir);
                     // Evaluate the patch result
                     final FineDiff actualVsExpectedNormal =
-                                    getActualVsExpected(workdir, pathToExpectedResult);
+                                    getActualVsExpected(workdir, pathToExpectedResult, "normal");
                     final OriginalDiff rejectsNormal = readRejects(workdir.rejectsNormalFile);
 
                     /* Application of patches with knowledge about PC of edit only */
@@ -239,12 +239,13 @@ public class Task implements Runnable {
                                     pathToTarget, workdir.rejectsFilteredFile, emptyPatch, workdir);
                     // Evaluate the result
                     final FineDiff actualVsExpectedFiltered =
-                                    getActualVsExpected(workdir, pathToExpectedResult);
+                                    getActualVsExpected(workdir, pathToExpectedResult, "filtered");
                     final OriginalDiff rejectsFiltered = readRejects(workdir.rejectsFilteredFile);
 
                     /* Result Evaluation */
                     final PatchOutcome patchOutcome = ResultAnalysis.processOutcome(
                                     workdir,
+                                    inDebug,
                                     this.datasetName, runID, source.getName(), target.getName(),
                                     parentCommit, currentCommit, normalPatch, filteredPatch,
                                     actualVsExpectedNormal, actualVsExpectedFiltered, rejectsNormal,
@@ -297,12 +298,12 @@ public class Task implements Runnable {
      * next de.variantsync.studies.evolution step. Then, filter all differences that do not belong
      * to the source variant and could have therefore not been synchronized in any case.
      */
-    private FineDiff getActualVsExpected(final WorkPaths workdir, final Path pathToExpectedResult) {
+    private FineDiff getActualVsExpected(final WorkPaths workdir, final Path pathToExpectedResult, final String filePostfix) {
         final OriginalDiff resultDiff =
                         getOriginalDiff(workdir.patchDir, pathToExpectedResult, workdir);
         if (inDebug) {
             try {
-                Files.write(workdir.debugDir.resolve("resultDiffOriginal.txt"),
+                Files.write(workdir.debugDir.resolve("resultDiffOriginal-" + filePostfix + ".txt"),
                                 resultDiff.toLines());
             } catch (final IOException e) {
                 Logger.error("Was not able to save resultDiffOriginal", e);
@@ -311,7 +312,7 @@ public class Task implements Runnable {
         FineDiff fineResult = getFineDiff(resultDiff);
         if (inDebug) {
             try {
-                Files.write(workdir.debugDir.resolve("resultDiffFine.txt"), fineResult.toLines());
+                Files.write(workdir.debugDir.resolve("resultDiffFine-" + filePostfix + ".txt"), fineResult.toLines());
             } catch (final IOException e) {
                 Logger.error("Was not able to save resultDiffFiltered", e);
             }

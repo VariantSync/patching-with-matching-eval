@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,7 +59,8 @@ public class ResultAnalysis {
      *        patched
      * @return The patch outcome
      */
-    public static PatchOutcome processOutcome(final WorkPaths workdir, final String dataset, final long runID,
+    public static PatchOutcome processOutcome(final WorkPaths workdir, final boolean inDebug,
+                                              final String dataset, final long runID,
                     final String sourceVariant, final String targetVariant,
                     final SPLCommit commitV0, final SPLCommit commitV1, final FineDiff normalPatch,
                     final FineDiff filteredPatch, final FineDiff resultDiffNormal,
@@ -153,6 +155,9 @@ public class ResultAnalysis {
         // Some sanity checks
         if (filteredFN > normalFN) {
             Logger.warn("There are more false negatives after filtering! " + filteredFN + " vs. " + normalFN);
+            if (inDebug) {
+                writeFnDebug(workdir, normalConditionTable, filteredConditionTable);
+            }
         }
         Assert.assertTrue(normalTP + normalFP + normalFN + normalTN == filteredTP + filteredFP
                         + filteredTN + filteredFN);
@@ -168,6 +173,35 @@ public class ResultAnalysis {
                         lineFiltered - lineFilteredFailed, normalTP, normalFP, normalTN, normalFN,
                         normalWrongLocation, filteredTP, filteredFP, filteredTN, filteredFN,
                         filteredWrongLocation);
+    }
+
+    private static void writeFnDebug(WorkPaths workdir, ConditionTable normalConditionTable, ConditionTable filteredConditionTable) {
+        Function<List<Change>, String> changesToLines = (List<Change> changes) -> {
+            StringBuilder sb = new StringBuilder();
+            for (Change change : changes) {
+                sb.append("++++++++++++++++++++++++++++++++++");
+                sb.append(System.lineSeparator());
+                sb.append("File: ");
+                sb.append(change.file());
+                sb.append(System.lineSeparator());
+                sb.append(change.line());
+                sb.append(System.lineSeparator());
+                sb.append("++++++++++++++++++++++++++++++++++");
+                sb.append(System.lineSeparator());
+            }
+            return sb.toString();
+        };
+        try {
+            Files.writeString(workdir.debugDir.resolve("falseNegatives-normal.txt"),
+                    changesToLines.apply(normalConditionTable.fn()));
+        } catch (final IOException e) {
+            Logger.error("Was not able to save resultDiffOriginal", e);
+        }
+        try {
+            Files.writeString(workdir.debugDir.resolve("falseNegatives-filtered.txt"), changesToLines.apply(filteredConditionTable.fn()));
+        } catch (final IOException e) {
+            Logger.error("Was not able to save resultDiffFiltered", e);
+        }
     }
 
     private static int numEditsInFileDiff(FileDiff fileDiff) {
