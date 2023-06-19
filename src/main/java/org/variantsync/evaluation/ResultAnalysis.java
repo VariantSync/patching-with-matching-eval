@@ -152,7 +152,7 @@ public class ResultAnalysis {
 
         // Some sanity checks
         if (filteredFN > normalFN) {
-            Logger.debug("There are more false negatives after filtering! " + filteredFN + " vs. " + normalFN);
+            Logger.warn("There are more false negatives after filtering! " + filteredFN + " vs. " + normalFN);
         }
         Assert.assertTrue(normalTP + normalFP + normalFN + normalTN == filteredTP + filteredFP
                         + filteredTN + filteredFN);
