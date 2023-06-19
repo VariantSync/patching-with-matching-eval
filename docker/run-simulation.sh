@@ -13,13 +13,6 @@ evaluation() {
 		mkdir $PD
 	fi
 
-	PD=/home/user/results/plots
-	if test -d "$PD"; then
-		echo ""
-	else
-		mkdir $PD
-	fi
-
 	cd plots || exit
 	python3 main.py /home/user/simulation-files/results
 	cd ..
