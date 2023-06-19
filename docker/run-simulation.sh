@@ -12,7 +12,7 @@ evaluation() {
 	else
 		mkdir $PD
 	fi
-
+  cd plots || exit
 	python3 main.py /home/user/simulation-files/results /home/user/simulation-files/plots
 	cd ..
 
