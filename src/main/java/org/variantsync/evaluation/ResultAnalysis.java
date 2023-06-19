@@ -154,7 +154,10 @@ public class ResultAnalysis {
 
         // Some sanity checks
         if (filteredFN > normalFN) {
-            Logger.warn("There are more false negatives after filtering! " + filteredFN + " vs. " + normalFN);
+            // This is an expected case. If there is duplicate code alternatives of a variation point, the filter
+            // might remove changes if they come from an undesired alternative, even though these changes might be to
+            // the duplicate code and should therefore be applied.
+            Logger.debug("There are more false negatives after filtering! " + filteredFN + " vs. " + normalFN);
             if (inDebug) {
                 writeFnDebug(workdir, normalConditionTable, filteredConditionTable);
             }
