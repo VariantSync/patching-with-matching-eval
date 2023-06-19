@@ -13,8 +13,7 @@ evaluation() {
 		mkdir $PD
 	fi
 
-	cd plots || exit
-	python3 main.py /home/user/simulation-files/results
+	python3 main.py /home/user/simulation-files/results /home/user/simulation-files/plots
 	cd ..
 
 	echo "Cleaning temporary directories"
