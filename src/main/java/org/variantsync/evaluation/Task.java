@@ -79,6 +79,11 @@ public class Task implements Runnable {
         this.initializeSPLCopies(workdir);
         SPLRepository parentRepo = new SPLRepository(workdir.splCopyA);
         SPLRepository childRepo = new SPLRepository(workdir.splCopyB);
+        try {
+            Files.createDirectories(resultsFile.getParent());
+        } catch (IOException e) {
+            panic("Was not able to create results directory for " + resultsFile);
+        }
 
         // For each pair
         Logger.info("Starting diffing and patching...");
