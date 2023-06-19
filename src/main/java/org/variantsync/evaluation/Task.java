@@ -425,7 +425,7 @@ public class Task implements Runnable {
             childRepo.checkoutCommit(childCommit, true);
 
         } catch (final GitAPIException | IOException e) {
-            panic("Was not able to checkout commit for SPL repository.", e);
+            panic("Was not able to checkout commits (" + parentCommit + " -> " + childCommit + ") for SPL repository.", e);
         }
         Logger.debug("Done.");
     }
