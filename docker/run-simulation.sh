@@ -13,8 +13,7 @@ evaluation() {
 		mkdir $PD
 	fi
   cd plots || exit
-  MPLCONFIGDIR=/home/user/.config/matplotlib
-	python3 main.py /home/user/simulation-files/results /home/user/simulation-files/plots
+	MPLCONFIGDIR=/home/user/.config/matplotlib python3 main.py /home/user/simulation-files/results /home/user/simulation-files/plots
 	cd ..
 
 	echo "Cleaning temporary directories"
