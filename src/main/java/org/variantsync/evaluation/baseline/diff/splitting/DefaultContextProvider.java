@@ -96,7 +96,12 @@ public class DefaultContextProvider implements IContextProvider {
 
             // Consider the lines coming after the considered change, until the end of the file has been reached, or
             // until all required context lines have been determined
-            for (int i = index - 1; i < lines.size(); i++) {
+            for (int i = index - 1; i <= lines.size(); i++) {
+                if (i == lines.size()) {
+                    // Add a meta-line stating EOF and break the loop
+                    context.addLast(new MetaLine());
+                    break;
+                }
                 final String currentLine = " " + lines.get(i);
                 // Apply the line filter to ignore certain lines
                 if (lineFilter.keepContextLine(fileDiff.oldFile(), i + 1)) {
@@ -104,10 +109,6 @@ public class DefaultContextProvider implements IContextProvider {
                         break;
                     }
                     context.addLast(new ContextLine(currentLine));
-                }
-                if (i == lines.size() - 1) {
-                    // Add a meta-line stating EOF 
-                    context.addLast(new MetaLine());
                 }
             }
             return context;

@@ -57,6 +57,6 @@ public class WorkPaths {
         this.filteredPatchFile = this.workDir.resolve("filtered-patch.txt");
         this.rejectsNormalFile = this.workDir.resolve("rejects-normal.txt");
         this.rejectsFilteredFile = this.workDir.resolve("rejects-filtered.txt");
-        this.shell = new ShellExecutor(Logger::debug, Logger::debug, this.workDir);
+        this.shell = new ShellExecutor(Logger::debug, Logger::warn, this.workDir);
     }
 }
