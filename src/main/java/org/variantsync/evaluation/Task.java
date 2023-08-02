@@ -223,7 +223,7 @@ public class Task implements Runnable {
                     // Evaluate the patch result
                     final FineDiff actualVsExpectedNormal =
                                     getActualVsExpected(workdir, pathToExpectedResult, "normal");
-                    final OriginalDiff rejectsNormal = readRejects(workdir.rejectsNormalFile);
+                    final FineDiff rejectsNormal = readRejects(workdir.rejectsNormalFile);
 
                     /* Application of patches with knowledge about PC of edit only */
                     Logger.debug("Applying patch with knowledge about edits' PCs...");
@@ -240,7 +240,7 @@ public class Task implements Runnable {
                     // Evaluate the result
                     final FineDiff actualVsExpectedFiltered =
                                     getActualVsExpected(workdir, pathToExpectedResult, "filtered");
-                    final OriginalDiff rejectsFiltered = readRejects(workdir.rejectsFilteredFile);
+                    final FineDiff rejectsFiltered = readRejects(workdir.rejectsFilteredFile);
 
                     /* Result Evaluation */
                     final PatchOutcome patchOutcome = ResultAnalysis.processOutcome(
@@ -558,7 +558,7 @@ public class Task implements Runnable {
 
     // Read a rejects file
     @Nullable
-    private static OriginalDiff readRejects(final Path rejectFile) {
+    private FineDiff readRejects(final Path rejectFile) {
         OriginalDiff rejectsDiff = null;
         if (Files.exists(rejectFile)) {
             try {
@@ -568,6 +568,6 @@ public class Task implements Runnable {
                 Logger.error("Was not able to read rejects file.", e);
             }
         }
-        return rejectsDiff;
+        return rejectsDiff == null ? null : getFineDiff(rejectsDiff);
     }
 }

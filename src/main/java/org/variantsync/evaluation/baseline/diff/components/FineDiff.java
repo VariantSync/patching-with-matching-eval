@@ -4,6 +4,7 @@ import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
 import org.variantsync.evaluation.baseline.diff.lines.Change;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +28,16 @@ public record FineDiff(List<FileDiff> content) implements IDiffComponent {
         for (FileDiff fd : diff.content()) {
             // Filter the hunks of each patch to extract changed lines
             fd.hunks().stream().flatMap(hunk -> hunk.content().stream()).forEach(line -> {
-                        if (line instanceof AddedLine addedLine) {
-                            changedLines.add(new Change(fd.oldFile().subpath(2, fd.oldFile().getNameCount()), addedLine));
-                        } else if (line instanceof RemovedLine removedLine) {
-                            changedLines.add(new Change(fd.oldFile().subpath(2, fd.oldFile().getNameCount()), removedLine));
-                        }
+
+                    Path filePath = (fd.oldFile().startsWith("V0Variants") || fd.oldFile().startsWith("V1Variants") || fd.oldFile().startsWith("TARGET"))
+                            ? fd.oldFile().subpath(2, fd.oldFile().getNameCount())
+                            : fd.oldFile();
+                    if (line instanceof AddedLine addedLine) {
+                        changedLines.add(new Change(filePath, addedLine));
+                    } else if (line instanceof RemovedLine removedLine) {
+                        changedLines.add(new Change(filePath, removedLine));
+                    }
+
                     }
             );
         }
