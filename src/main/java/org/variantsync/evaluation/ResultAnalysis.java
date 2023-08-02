@@ -133,7 +133,6 @@ public class ResultAnalysis {
         final long normalFP = normalConditionTable.fpCount();
         final long normalTN = normalConditionTable.tnCount();
         final long normalFN = normalConditionTable.fnCount();
-        final long normalFailedSuccessfully = normalConditionTable.failedCorrectlyCount();
         // Number of line-level patches applied to the wrong location
         final long normalWrongLocation = normalConditionTable.wrongLocationCount();
         final long normalFilteredIncorrectly = normalConditionTable.filteredIncorrectlyCount();
@@ -147,7 +146,6 @@ public class ResultAnalysis {
         final long filteredFP = filteredConditionTable.fpCount();
         final long filteredTN = filteredConditionTable.tnCount();
         final long filteredFN = filteredConditionTable.fnCount();
-        final long filteredFailedSuccessfully = normalConditionTable.failedCorrectlyCount();
         // Number of line-level patches applied to the wrong location
         final long filteredWrongLocation = filteredConditionTable.wrongLocationCount();
         final long filteredFilteredIncorrectly = filteredConditionTable.filteredIncorrectlyCount();
@@ -176,8 +174,8 @@ public class ResultAnalysis {
                 resultDiffFiltered.content().size(), fileNormal, lineNormal.size(),
                 fileNormal - fileNormalFailed, lineNormal.size() - lineNormalFailed.size(), fileFiltered,
                 lineFiltered.size(), fileFiltered - fileFilteredFailed, lineFiltered.size() - lineFilteredFailed.size(),
-                normalTP, normalFP, normalTN, normalFN, normalWrongLocation, normalFailedSuccessfully, normalFilteredIncorrectly, filteredTP, filteredFP,
-                filteredTN, filteredFN, filteredWrongLocation, filteredFailedSuccessfully, filteredFilteredIncorrectly);
+                normalTP, normalFP, normalTN, normalFN, normalWrongLocation, normalFilteredIncorrectly, filteredTP, filteredFP,
+                filteredTN, filteredFN, filteredWrongLocation, filteredFilteredIncorrectly);
     }
 
     private static void writeFnDebug(WorkPaths workdir, ConditionTable normalConditionTable,
@@ -229,7 +227,6 @@ public class ResultAnalysis {
         List<Change> fpChanges = new ArrayList<>();
         List<Change> tnChanges = new ArrayList<>();
         List<Change> fnChanges = new ArrayList<>();
-        List<Change> failedCorrectlyChanges = new ArrayList<>();
         List<Change> wrongLocationChanges = new ArrayList<>();
         List<Change> filteredIncorrectlyChanges = new ArrayList<>();
 
@@ -240,7 +237,7 @@ public class ResultAnalysis {
         final List<Change> unpatchableChanges = new ArrayList<>();
         // Expected changes, i.e., changes in the target variant's
         // evolution that can be synchronized
-        final List<Change> requiredChanges = new ArrayList<>();
+        List<Change> requiredChanges = new ArrayList<>();
         {
             final List<Change> tempChanges = new ArrayList<>(changesToClassify);
             for (Change evolutionChange : changesInEvolution) {
@@ -253,42 +250,11 @@ public class ResultAnalysis {
             }
         }
 
-        // Determine undesired changes, i.e., changes in the patch but not evolution
-        final List<Change> undesiredChanges = new ArrayList<>();
-        {
-            final List<Change> tempChanges = new ArrayList<>(requiredChanges);
-            for (Change patchChange : changesToClassify) {
-                if (!tempChanges.contains(patchChange)) {
-                    undesiredChanges.add(patchChange);
-                } else {
-                    tempChanges.remove(patchChange);
-                }
-            }
-        }
+        // Determine undesired changes, i.e., changes in the evolution of the source but not the target
+        List<Change> undesiredChangesTotal = determineUndesired(changesToClassify, requiredChanges);
 
-        // Correctness of source and target intersection
-        int sourceIntersection = changesToClassify.size() - undesiredChanges.size();
-        int targetIntersection = changesInEvolution.size() - unpatchableChanges.size();
-        Assert.assertEquals(sourceIntersection, targetIntersection);
-
-        // Correctness of source and target union
-        int union = unpatchableChanges.size() + undesiredChanges.size() + requiredChanges.size();
-        int unionAlt = changesInEvolution.size() + changesToClassify.size() - requiredChanges.size();
-        Assert.assertEquals(union, unionAlt);
-
-        // Correctness of unpatchable changes
-        int evoRemain = changesInEvolution.size() - changesToClassify.size() + undesiredChanges.size();
-        Assert.assertEquals(evoRemain, unpatchableChanges.size());
-
-        // Correctness of undesired changes
-        int classifiedRemain = changesToClassify.size() - changesInEvolution.size() + unpatchableChanges.size();
-        Assert.assertEquals(classifiedRemain, undesiredChanges.size());
-
-        // Correctness of required changes
-        int reqRemain = changesToClassify.size() - undesiredChanges.size();
-        Assert.assertEquals(reqRemain, requiredChanges.size());
-        reqRemain = changesInEvolution.size() - unpatchableChanges.size();
-        Assert.assertEquals(reqRemain, requiredChanges.size());
+        // Determine undesired changes in the patch
+        List<Change> undesiredChangesInPatch = determineUndesired(changesInPatch, requiredChanges);
 
         // Determine actual differences between result and expected result,
         // i.e., changes that should have been synchronized but were not, or changes that should not
@@ -305,85 +271,98 @@ public class ResultAnalysis {
         // We first want to account for changes that could not be applied
         for (Change failedChange : failedChanges) {
             if (requiredChanges.contains(failedChange) && actualDifferences.contains(failedChange)) {
-                Assert.assertTrue(changesToClassify.remove(failedChange));
-                Assert.assertTrue(changesInPatch.remove(failedChange));
+                // required but failed -> FN
+                // we always handle failed changes that lead to a difference in the result first!
+                Assert.assertTrue(requiredChanges.remove(failedChange));
+                Assert.assertTrue(actualDifferences.remove(failedChange));
+                fnChanges.add(failedChange);
+            } else if (undesiredChangesTotal.contains(failedChange)) {
+                // undesired but failed -> TN
+                Assert.assertTrue(undesiredChangesTotal.remove(failedChange));
+                Assert.assertTrue(undesiredChangesInPatch.remove(failedChange));
+                tnChanges.add(failedChange);
+            } else if (requiredChanges.contains(failedChange)) {
+                // Changes that were required and failed but did not result in an unexpected difference in the result
+                // This might happen because of other changes being applied and the diff operator applying
+                // internal heuristics
                 // required but failed -> FN
                 Assert.assertTrue(requiredChanges.remove(failedChange));
-                // remove the change from the difference
-                Assert.assertTrue(actualDifferences.remove(failedChange));
-                // Add it to the false negatives
                 fnChanges.add(failedChange);
-            } else if (undesiredChanges.contains(failedChange)) {
-                Assert.assertTrue(changesToClassify.remove(failedChange));
-                Assert.assertTrue(changesInPatch.remove(failedChange));
-                // undesired but failed -> TN
-                Assert.assertTrue(undesiredChanges.remove(failedChange));
-                // add it to the true negatives
-                tnChanges.add(failedChange);
             } else {
-                // Changes that were required and failed but did not result in an unexpected difference in the result
-                failedCorrectlyChanges.add(failedChange);
+                // A change must be either required or undesired
+                throw new IllegalStateException("Unclassified change!");
             }
+
+            Assert.assertTrue(changesToClassify.remove(failedChange));
+            Assert.assertTrue(changesInPatch.remove(failedChange));
         }
 
-        // We next want to account for the remaining differences between the actual and the
-        // expected result. They are either false positives, i.e. changes in the patch that
-        // were applied but should not have been, or the mirror change of a false negative
-        // that was applied to the wrong location.
-        List<Change> remainingDifferences = new ArrayList<>();
-        for (Change actualDifference : actualDifferences) {
-            Change oppositeChange = getOppositeChange(actualDifference);
-            if (actualDifferences.contains(oppositeChange) && requiredChanges.contains(oppositeChange)) {
-                // Each line in the patch must only be considered once, all additional difference
-                // are false positives
-                Assert.assertTrue(changesToClassify.remove(oppositeChange));
-                Assert.assertTrue(requiredChanges.remove(oppositeChange));
-                fnChanges.add(oppositeChange);
-                wrongLocationChanges.add(oppositeChange);
-            } else if (undesiredChanges.contains(oppositeChange) && changesInPatch.contains(oppositeChange)) {
-                // The patch contained a false positive, as the difference was not expected.
-                Assert.assertTrue(changesInPatch.remove(oppositeChange));
-                Assert.assertTrue(changesToClassify.remove(oppositeChange));
-                Assert.assertTrue(undesiredChanges.remove(oppositeChange));
-                fpChanges.add(oppositeChange);
-            } else {
-                remainingDifferences.add(actualDifference);
-            }
+
+        // All remaining undesired changes in the patch have been applied and are false positives
+        for (Change undesired : undesiredChangesInPatch) {
+            // Clean the undesired change from all collections where it is tracked
+            Assert.assertTrue(changesToClassify.remove(undesired));
+            Assert.assertTrue(changesInPatch.remove(undesired));
+            Assert.assertTrue(undesiredChangesTotal.remove(undesired));
+            // An applied undesired change should leave an opposite change in the difference
+            Change oppositeChange = getOppositeChange(undesired);
+            Assert.assertTrue(actualDifferences.remove(oppositeChange));
+            fpChanges.add(undesired);
         }
+        undesiredChangesInPatch.clear();
+
+        // All remaining undesired changes were not part of the patch and are true negative (filtered correctly)
+        for (Change undesired : undesiredChangesTotal) {
+            // Clean the undesired change from all collections where it is tracked
+            Assert.assertTrue(changesToClassify.remove(undesired));
+            tnChanges.add(undesired);
+        }
+        undesiredChangesTotal.clear();
+
+        // We next want to account for the remaining differences between the actual and the
+        // expected result. Because we handled all undesired changes, they must be false negatives due to
+        // a change having been applied to the wrong location
+        List<Change> remainingChanges = new ArrayList<>();
+        for (Change requiredChange : requiredChanges) {
+            Change oppositeChange = getOppositeChange(requiredChange);
+            if (!(actualDifferences.contains(requiredChange) && actualDifferences.contains(oppositeChange))) {
+                remainingChanges.add(requiredChange);
+                continue;
+            }
+            Assert.assertTrue(changesToClassify.remove(requiredChange));
+            Assert.assertTrue(changesInPatch.remove(requiredChange));
+            Assert.assertTrue(actualDifferences.remove(requiredChange));
+            Assert.assertTrue(actualDifferences.remove(oppositeChange));
+            fnChanges.add(requiredChange);
+            wrongLocationChanges.add(requiredChange);
+        }
+        requiredChanges = remainingChanges;
 
         // Now account for the remaining false negatives
         // These are required changes that were filtered incorrectly
-        actualDifferences = remainingDifferences;
-        remainingDifferences = new ArrayList<>();
-        for (Change actualDifference : actualDifferences) {
-            // Is it a false negative?
-            if (requiredChanges.contains(actualDifference)) {
-                // Each line in the patch must only be considered once, all additional difference
-                // are false positives
-                Assert.assertTrue(changesToClassify.remove(actualDifference));
-                Assert.assertTrue(requiredChanges.remove(actualDifference));
-                fnChanges.add(actualDifference);
-                filteredIncorrectlyChanges.add(actualDifference);
-            } else {
-                remainingDifferences.add(actualDifference);
+        remainingChanges = new ArrayList<>();
+        for (Change requiredChange : requiredChanges) {
+            if (!actualDifferences.contains(requiredChange)) {
+                remainingChanges.add(requiredChange);
+                continue;
             }
+            Assert.assertTrue(!changesInPatch.contains(requiredChange));
+            Assert.assertTrue(changesToClassify.remove(requiredChange));
+            Assert.assertTrue(actualDifferences.remove(requiredChange));
+            fnChanges.add(requiredChange);
+            filteredIncorrectlyChanges.add(requiredChange);
+        }
+        requiredChanges = remainingChanges;
+
+        // All differences should be accounted for
+        Assert.assertTrue(actualDifferences.isEmpty());
+
+        // Now account for the remaining lines in the patch file. These must be true positives
+        for (Change requiredChange : requiredChanges) {
+            Assert.assertTrue(changesToClassify.remove(requiredChange));
+            tpChanges.add(requiredChange);
         }
 
-        Assert.assertTrue(remainingDifferences.isEmpty());
-
-        // Now account for the remaining lines in the patch file and determine whether they are true
-        // positive or true negative
-        for (var patchLine : changesToClassify) {
-            if (requiredChanges.contains(patchLine)) {
-                // In Patch & Expected: It is a true positive
-                tpChanges.add(patchLine);
-                // Remove the line from the expected changes to account for similar changes
-                Assert.assertTrue(requiredChanges.remove(patchLine));
-            } else if (undesiredChanges.contains(patchLine)) {
-                // In Patch & Unexpected: It is a true negative
-                tnChanges.add(patchLine);
-            }
-        }
         long tp = tpChanges.size();
         long fp = fpChanges.size();
         long tn = tnChanges.size();
@@ -391,7 +370,22 @@ public class ResultAnalysis {
 
         Assert.assertTrue(
                 tp + fp + tn + fn == FineDiff.determineChangedLines(unfilteredPatch).size());
-        return new ConditionTable(tpChanges, fpChanges, tnChanges, fnChanges, wrongLocationChanges, failedCorrectlyChanges, filteredIncorrectlyChanges);
+        return new ConditionTable(tpChanges, fpChanges, tnChanges, fnChanges, wrongLocationChanges, filteredIncorrectlyChanges);
+    }
+
+    private static List<Change> determineUndesired(List<Change> changesToClassify, List<Change> requiredChanges) {
+        final List<Change> undesiredChanges = new ArrayList<>();
+        {
+            final List<Change> tempChanges = new ArrayList<>(requiredChanges);
+            for (Change patchChange : changesToClassify) {
+                if (!tempChanges.contains(patchChange)) {
+                    undesiredChanges.add(patchChange);
+                } else {
+                    tempChanges.remove(patchChange);
+                }
+            }
+        }
+        return undesiredChanges;
     }
 
     // Determine the inverse change (i.e., removed line for an added line, and added line for a
@@ -698,7 +692,7 @@ public class ResultAnalysis {
     }
 
     private record ConditionTable(List<Change> tp, List<Change> fp, List<Change> tn,
-            List<Change> fn, List<Change> wrongLocation, List<Change> failedCorrectly, List<Change> filteredIncorrectly) {
+            List<Change> fn, List<Change> wrongLocation, List<Change> filteredIncorrectly) {
         public long tpCount() {
             return tp.size();
         }
@@ -719,7 +713,6 @@ public class ResultAnalysis {
             return wrongLocation.size();
         }
 
-        public long failedCorrectlyCount() {return failedCorrectly.size();}
         public long filteredIncorrectlyCount() {return filteredIncorrectly.size();}
     }
 

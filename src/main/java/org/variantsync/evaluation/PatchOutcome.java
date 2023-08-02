@@ -58,14 +58,12 @@ public record PatchOutcome(String dataset,
                            long normalTN,
                            long normalFN,
                            long normalWrongLocation,
-                           long normalFailedCorrectly,
                            long normalFilteredIncorrectly,
                            long filteredTP,
                            long filteredFP,
                            long filteredTN,
                            long filteredFN,
                            long filteredWrongLocation,
-                           long filteredFailedCorrectly,
                            long filteredFilteredIncorrectly) {
 
     public static String toJSON(final String key, final Object value) {
@@ -99,14 +97,12 @@ public record PatchOutcome(String dataset,
                 object.get("normalTN").getAsLong(),
                 object.get("normalFN").getAsLong(),
                 object.get("normalWrongLocation").getAsLong(),
-                object.get("normalFailedCorrectly").getAsLong(),
                 object.get("normalFilteredIncorrectly").getAsLong(),
                 object.get("filteredTP").getAsLong(),
                 object.get("filteredFP").getAsLong(),
                 object.get("filteredTN").getAsLong(),
                 object.get("filteredFN").getAsLong(),
                 object.get("filteredWrongLocation").getAsLong(),
-                object.get("filteredFailedCorrectly").getAsLong(),
                 object.get("filteredFilteredIncorrectly").getAsLong()
         );
     }
@@ -135,15 +131,13 @@ public record PatchOutcome(String dataset,
         jsonBuilder.append(toJSON("normalTN", normalTN)).append(",\n");
         jsonBuilder.append(toJSON("normalFN", normalFN)).append(",\n");
         jsonBuilder.append(toJSON("normalWrongLocation", normalWrongLocation)).append(",\n");
-        jsonBuilder.append(toJSON("normalFailedCorrectly", normalFailedCorrectly)).append(",\n");
-        jsonBuilder.append(toJSON("normalFilteredIncorrectly", normalFailedCorrectly)).append(",\n");
+        jsonBuilder.append(toJSON("normalFilteredIncorrectly", normalFilteredIncorrectly)).append(",\n");
         jsonBuilder.append(toJSON("filteredTP", filteredTP)).append(",\n");
         jsonBuilder.append(toJSON("filteredFP", filteredFP)).append(",\n");
         jsonBuilder.append(toJSON("filteredTN", filteredTN)).append(",\n");
         jsonBuilder.append(toJSON("filteredFN", filteredFN)).append(",\n");
         jsonBuilder.append(toJSON("filteredWrongLocation", filteredWrongLocation)).append("\n");
-        jsonBuilder.append(toJSON("filteredFailedCorrectly", filteredFailedCorrectly)).append(",\n");
-        jsonBuilder.append(toJSON("filteredFilteredIncorrectly", normalFailedCorrectly)).append(",\n");
+        jsonBuilder.append(toJSON("filteredFilteredIncorrectly", filteredFilteredIncorrectly)).append(",\n");
         jsonBuilder.append("}").append("\n\n");
         if (!Files.exists(pathToFile)) {
             Files.createFile(pathToFile);
