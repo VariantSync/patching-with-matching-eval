@@ -10,7 +10,9 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * This class contains the core workflow of our study as described in our paper.
@@ -50,8 +52,13 @@ public class SynchronizationStudy {
     public void run() {
         try {
             final ExecutorService threadPool = Executors.newFixedThreadPool(this.numThreads);
-            this.tasks.forEach(threadPool::submit);
+            List<Future<?>> futures = this.tasks.stream()
+                    .map(threadPool::submit)
+                    .collect(Collectors.toList());
             threadPool.shutdown();
+            for (Future<?> future : futures) {
+                future.get();
+            }
             if (!threadPool.awaitTermination(7, TimeUnit.DAYS)) {
                 Logger.error("Thread pool timeout.");
             }
