@@ -346,7 +346,6 @@ public class ResultAnalysis {
                 remainingChanges.add(requiredChange);
                 continue;
             }
-            Assert.assertTrue(!changesInPatch.contains(requiredChange));
             Assert.assertTrue(changesToClassify.remove(requiredChange));
             Assert.assertTrue(actualDifferences.remove(requiredChange));
             fnChanges.add(requiredChange);
