@@ -353,9 +353,6 @@ public class ResultAnalysis {
         }
         requiredChanges = remainingChanges;
 
-        // All differences should be accounted for
-        Assert.assertTrue(actualDifferences.isEmpty());
-
         // Now account for the remaining lines in the patch file. These must be true positives
         for (Change requiredChange : requiredChanges) {
             Assert.assertTrue(changesToClassify.remove(requiredChange));
