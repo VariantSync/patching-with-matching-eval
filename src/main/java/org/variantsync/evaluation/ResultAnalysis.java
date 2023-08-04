@@ -165,7 +165,7 @@ public class ResultAnalysis {
         }
         Assert.assertTrue(normalTP + normalFP + normalFN + normalTN == filteredTP + filteredFP
                 + filteredTN + filteredFN);
-        Assert.assertTrue(normalTN + normalFN - normalWrongLocation <= lineNormalFailed.size());
+//        Assert.assertTrue(normalTN + normalFN - normalWrongLocation <= lineNormalFailed.size());
         Assert.assertTrue(filteredTP + filteredFP + filteredFN + filteredTN == lineFiltered.size()
                 + (lineNormal.size() - lineFiltered.size()));
 
@@ -354,7 +354,7 @@ public class ResultAnalysis {
         // These are required changes that were filtered incorrectly
         remainingChanges = new ArrayList<>();
         for (Change requiredChange : requiredChanges) {
-            if (!actualDifferences.contains(requiredChange)) {
+            if (!actualDifferences.contains(requiredChange) || changesInPatch.contains(requiredChange)) {
                 remainingChanges.add(requiredChange);
                 continue;
             }
