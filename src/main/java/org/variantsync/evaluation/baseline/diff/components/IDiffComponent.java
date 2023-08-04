@@ -14,4 +14,6 @@ public interface IDiffComponent {
      * @return the lines of the part of the diff that this component represents
      */
     List<String> toLines();
+
+    int changeCount();
 }

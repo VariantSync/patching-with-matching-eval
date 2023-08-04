@@ -12,24 +12,39 @@ import java.util.stream.Collectors;
 
 /**
  * A Hunk represents a changed text block in the difference between two versions of a file.
- *
- * @param location The location of the hunk in the file
- * @param content  The content of the hunk (i.e., context and changed lines)
  */
-public record Hunk(HunkLocation location, List<Line> content) implements IDiffComponent {
+public final class Hunk implements IDiffComponent {
+    private final HunkLocation location;
+    private final List<Line> allLines;
+    private final List<Line> changedLines;
 
-    public List<Line> editedLines() {
-        return content.stream().filter(l -> (l instanceof AddedLine || l instanceof RemovedLine)).collect(Collectors.toList());
+    /**
+     * @param location The location of the hunk in the file
+     * @param allLines  The content of the hunk (i.e., context and changed lines)
+     */
+    public Hunk(HunkLocation location, List<Line> allLines) {
+        this.location = location;
+        this.allLines = allLines;
+        this.changedLines = allLines.stream().filter(l -> (l instanceof AddedLine || l instanceof RemovedLine)).collect(Collectors.toList());
+    }
+
+    public List<Line> changedLines() {
+        return this.changedLines;
     }
 
     @Override
     public List<String> toLines() {
         final List<String> lines = new ArrayList<>();
-        final int sourceSize = (int) content.stream().filter(l -> !(l instanceof AddedLine || l instanceof MetaLine)).count();
-        final int targetSize = (int) content.stream().filter(l -> !(l instanceof RemovedLine || l instanceof MetaLine)).count();
+        final int sourceSize = (int) allLines.stream().filter(l -> !(l instanceof AddedLine || l instanceof MetaLine)).count();
+        final int targetSize = (int) allLines.stream().filter(l -> !(l instanceof RemovedLine || l instanceof MetaLine)).count();
         lines.add(String.format("@@ -%d,%d +%d,%d @@", location.startLineSource(), sourceSize, location.startLineTarget(), targetSize));
-        content.stream().map(Line::line).forEach(lines::add);
+        allLines.stream().map(Line::line).forEach(lines::add);
         return lines;
+    }
+
+    @Override
+    public int changeCount() {
+        return this.changedLines.size();
     }
 
     @Override
@@ -55,4 +70,13 @@ public record Hunk(HunkLocation location, List<Line> content) implements IDiffCo
         }
         return sb.toString();
     }
+
+    public HunkLocation location() {
+        return location;
+    }
+
+    public List<Line> content() {
+        return allLines;
+    }
+
 }

@@ -19,4 +19,9 @@ public record FileDiff(List<String> header, List<Hunk> hunks, Path oldFile, Path
         hunks.stream().map(IDiffComponent::toLines).forEach(lines::addAll);
         return lines;
     }
+
+    @Override
+    public int changeCount() {
+        return this.hunks.stream().mapToInt(Hunk::changeCount).sum();
+    }
 }

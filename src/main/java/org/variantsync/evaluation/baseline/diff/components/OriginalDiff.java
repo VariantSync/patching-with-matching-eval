@@ -18,6 +18,11 @@ public record OriginalDiff(List<FileDiff> fileDiffs) implements IDiffComponent {
         return lines;
     }
 
+    @Override
+    public int changeCount() {
+        return this.fileDiffs.stream().mapToInt(FileDiff::changeCount).sum();
+    }
+
     public boolean isEmpty() {
         return this.fileDiffs.isEmpty();
     }
