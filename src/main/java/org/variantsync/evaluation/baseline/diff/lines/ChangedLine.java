@@ -8,5 +8,5 @@ import java.nio.file.Path;
  * @param file the changed file
  * @param line the changed line in the file
  */
-public record ChangeLine(Path file, Line line) {
+public record ChangedLine(Path file, Line line) {
 }

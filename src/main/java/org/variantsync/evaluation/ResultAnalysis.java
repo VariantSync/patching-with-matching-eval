@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.variantsync.diffdetective.util.Assert;
 import org.variantsync.evaluation.baseline.diff.components.FineDiff;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
-import org.variantsync.evaluation.baseline.diff.lines.ChangeLine;
+import org.variantsync.evaluation.baseline.diff.lines.ChangedLine;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
 import org.tinylog.Logger;
 
@@ -70,10 +70,10 @@ public class ResultAnalysis {
         final int fileNormal = new HashSet<>(normalPatch.content().stream()
                 .map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
         // number of tried line-level patches
-        final List<ChangeLine> lineNormal = FineDiff.determineChangedLines(normalPatch);
+        final List<ChangedLine> lineNormal = FineDiff.determineChangedLines(normalPatch);
         // number of failed patches
         int fileNormalFailed;
-        List<ChangeLine> lineNormalFailed;
+        List<ChangedLine> lineNormalFailed;
         if (rejectsNormal == null) {
             // If there is no rejects file, because all patches were applied successfully
             rejectsNormal = new FineDiff(new ArrayList<>());
@@ -98,10 +98,10 @@ public class ResultAnalysis {
         final int fileFiltered = new HashSet<>(filteredPatch.content().stream()
                 .map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
         // Number of tried line-level patches (with filtering)
-        final List<ChangeLine> lineFiltered = FineDiff.determineChangedLines(filteredPatch);
+        final List<ChangedLine> lineFiltered = FineDiff.determineChangedLines(filteredPatch);
         // Number of failed patches
         int fileFilteredFailed;
-        List<ChangeLine> lineFilteredFailed;
+        List<ChangedLine> lineFilteredFailed;
         if (rejectsFiltered == null) {
             // If there is no rejects file, because all patches were applied successfully
             rejectsFiltered = new FineDiff(new ArrayList<>());
@@ -178,9 +178,9 @@ public class ResultAnalysis {
 
     private static void writeFnDebug(WorkPaths workdir, ConditionTable normalConditionTable,
             ConditionTable filteredConditionTable) {
-        Function<List<ChangeLine>, String> changesToLines = (List<ChangeLine> changes) -> {
+        Function<List<ChangedLine>, String> changesToLines = (List<ChangedLine> changes) -> {
             StringBuilder sb = new StringBuilder();
-            for (ChangeLine change : changes) {
+            for (ChangedLine change : changes) {
                 sb.append("++++++++++++++++++++++++++++++++++");
                 sb.append(System.lineSeparator());
                 sb.append("File: ");
@@ -210,33 +210,33 @@ public class ResultAnalysis {
     // Calculate true positives, false positives, true negatives, and false negatives
     private static ConditionTable calculateConditionTable(FineDiff evaluatedPatch,
             FineDiff unfilteredPatch, FineDiff resultDiff, FineDiff evolutionDiff,
-            List<ChangeLine> failedChanges) {
+            List<ChangedLine> failedChanges) {
         Logger.debug("Calculating result table with TP, FP, TN, and FN.");
-        List<ChangeLine> changesInPatch = FineDiff.determineChangedLines(evaluatedPatch);
-        List<ChangeLine> changesToClassify = FineDiff.determineChangedLines(unfilteredPatch);
-        List<ChangeLine> changesInResult = FineDiff.determineChangedLines(resultDiff);
-        List<ChangeLine> changesInEvolution = FineDiff.determineChangedLines(evolutionDiff);
+        List<ChangedLine> changesInPatch = FineDiff.determineChangedLines(evaluatedPatch);
+        List<ChangedLine> changesToClassify = FineDiff.determineChangedLines(unfilteredPatch);
+        List<ChangedLine> changesInResult = FineDiff.determineChangedLines(resultDiff);
+        List<ChangedLine> changesInEvolution = FineDiff.determineChangedLines(evolutionDiff);
         // Create a shallow copy to not mutate the given list
         failedChanges = new ArrayList<>(failedChanges);
 
-        List<ChangeLine> tpChanges = new ArrayList<>();
-        List<ChangeLine> fpChanges = new ArrayList<>();
-        List<ChangeLine> tnChanges = new ArrayList<>();
-        List<ChangeLine> fnChanges = new ArrayList<>();
-        List<ChangeLine> wrongLocationChanges = new ArrayList<>();
-        List<ChangeLine> filteredIncorrectlyChanges = new ArrayList<>();
+        List<ChangedLine> tpChanges = new ArrayList<>();
+        List<ChangedLine> fpChanges = new ArrayList<>();
+        List<ChangedLine> tnChanges = new ArrayList<>();
+        List<ChangedLine> fnChanges = new ArrayList<>();
+        List<ChangedLine> wrongLocationChanges = new ArrayList<>();
+        List<ChangedLine> filteredIncorrectlyChanges = new ArrayList<>();
 
 
         // Changes in the target variant's evolution that cannot be
         // synchronized, because they are not part of the source variant and therefore not of the
         // patch
-        final List<ChangeLine> unpatchableChanges = new ArrayList<>();
+        final List<ChangedLine> unpatchableChanges = new ArrayList<>();
         // Expected changes, i.e., changes in the target variant's
         // evolution that can be synchronized
-        List<ChangeLine> requiredChanges = new ArrayList<>();
+        List<ChangedLine> requiredChanges = new ArrayList<>();
         {
-            final List<ChangeLine> tempChanges = new ArrayList<>(changesToClassify);
-            for (ChangeLine evolutionChange : changesInEvolution) {
+            final List<ChangedLine> tempChanges = new ArrayList<>(changesToClassify);
+            for (ChangedLine evolutionChange : changesInEvolution) {
                 if (!tempChanges.contains(evolutionChange)) {
                     unpatchableChanges.add(evolutionChange);
                 } else {
@@ -248,15 +248,15 @@ public class ResultAnalysis {
 
         // Determine undesired changes, i.e., changes in the evolution of the source but not the
         // target
-        List<ChangeLine> undesiredChangesTotal = determineUndesired(changesToClassify, requiredChanges);
+        List<ChangedLine> undesiredChangesTotal = determineUndesired(changesToClassify, requiredChanges);
 
         // Determine undesired changes in the patch
-        List<ChangeLine> undesiredChangesInPatch = determineUndesired(changesInPatch, requiredChanges);
+        List<ChangedLine> undesiredChangesInPatch = determineUndesired(changesInPatch, requiredChanges);
 
         // Determine actual differences between result and expected result,
         // i.e., changes that should have been synchronized but were not, or changes that should not
         // have been synchronized
-        List<ChangeLine> actualDifferences = new ArrayList<>(changesInResult);
+        List<ChangedLine> actualDifferences = new ArrayList<>(changesInResult);
         unpatchableChanges.forEach(actualDifferences::remove);
 
         Assert.assertTrue(changesToClassify.size() >= changesInPatch.size());
@@ -266,7 +266,7 @@ public class ResultAnalysis {
                 changesInEvolution.size() - unpatchableChanges.size() <= changesToClassify.size());
 
         // We first want to account for changes that could not be applied
-        for (ChangeLine failedChange : failedChanges) {
+        for (ChangedLine failedChange : failedChanges) {
             if (requiredChanges.contains(failedChange)
                     && actualDifferences.contains(failedChange)) {
                 // required but failed -> FN
@@ -300,13 +300,13 @@ public class ResultAnalysis {
 
         // All remaining undesired changes in the patch have been applied and are likely false
         // positives
-        for (ChangeLine undesired : undesiredChangesInPatch) {
+        for (ChangedLine undesired : undesiredChangesInPatch) {
             // Clean the undesired change from all collections where it is tracked
             Assert.assertTrue(changesToClassify.remove(undesired));
             Assert.assertTrue(changesInPatch.remove(undesired));
             Assert.assertTrue(undesiredChangesTotal.remove(undesired));
             // An applied undesired change should leave an opposite change in the difference
-            ChangeLine oppositeChange = getOppositeChange(undesired);
+            ChangedLine oppositeChange = getOppositeChange(undesired);
             if (actualDifferences.contains(oppositeChange)) {
                 Assert.assertTrue(actualDifferences.remove(oppositeChange));
                 fpChanges.add(undesired);
@@ -320,7 +320,7 @@ public class ResultAnalysis {
 
         // All remaining undesired changes were not part of the patch and are true negative
         // (filtered correctly)
-        for (ChangeLine undesired : undesiredChangesTotal) {
+        for (ChangedLine undesired : undesiredChangesTotal) {
             // Clean the undesired change from all collections where it is tracked
             Assert.assertTrue(changesToClassify.remove(undesired));
             tnChanges.add(undesired);
@@ -330,9 +330,9 @@ public class ResultAnalysis {
         // We next want to account for the remaining differences between the actual and the
         // expected result. Because we handled all undesired changes, they must be false negatives
         // due to a change having been applied to the wrong location
-        List<ChangeLine> remainingChanges = new ArrayList<>();
-        for (ChangeLine requiredChange : requiredChanges) {
-            ChangeLine oppositeChange = getOppositeChange(requiredChange);
+        List<ChangedLine> remainingChanges = new ArrayList<>();
+        for (ChangedLine requiredChange : requiredChanges) {
+            ChangedLine oppositeChange = getOppositeChange(requiredChange);
             if (!(actualDifferences.contains(requiredChange)
                     && actualDifferences.contains(oppositeChange))) {
                 remainingChanges.add(requiredChange);
@@ -350,7 +350,7 @@ public class ResultAnalysis {
         // Now account for the remaining false negatives
         // These are required changes that were filtered incorrectly
         remainingChanges = new ArrayList<>();
-        for (ChangeLine requiredChange : requiredChanges) {
+        for (ChangedLine requiredChange : requiredChanges) {
             if (!actualDifferences.contains(requiredChange) || changesInPatch.contains(requiredChange)) {
                 remainingChanges.add(requiredChange);
                 continue;
@@ -363,7 +363,7 @@ public class ResultAnalysis {
         requiredChanges = remainingChanges;
 
         // Now account for the remaining lines in the patch file. These must be true positives
-        for (ChangeLine requiredChange : requiredChanges) {
+        for (ChangedLine requiredChange : requiredChanges) {
             Assert.assertTrue(changesToClassify.remove(requiredChange));
             tpChanges.add(requiredChange);
         }
@@ -381,12 +381,12 @@ public class ResultAnalysis {
                 filteredIncorrectlyChanges);
     }
 
-    private static List<ChangeLine> determineUndesired(List<ChangeLine> changesToClassify,
-                                                       List<ChangeLine> requiredChanges) {
-        final List<ChangeLine> undesiredChanges = new ArrayList<>();
+    private static List<ChangedLine> determineUndesired(List<ChangedLine> changesToClassify,
+                                                        List<ChangedLine> requiredChanges) {
+        final List<ChangedLine> undesiredChanges = new ArrayList<>();
         {
-            final List<ChangeLine> tempChanges = new ArrayList<>(requiredChanges);
-            for (ChangeLine patchChange : changesToClassify) {
+            final List<ChangedLine> tempChanges = new ArrayList<>(requiredChanges);
+            for (ChangedLine patchChange : changesToClassify) {
                 if (!tempChanges.contains(patchChange)) {
                     undesiredChanges.add(patchChange);
                 } else {
@@ -400,14 +400,14 @@ public class ResultAnalysis {
     // Determine the inverse change (i.e., removed line for an added line, and added line for a
     // removed line
     @NotNull
-    private static ChangeLine getOppositeChange(ChangeLine actualDifference) {
+    private static ChangedLine getOppositeChange(ChangedLine actualDifference) {
         String changedText = actualDifference.line().line().substring(1);
-        ChangeLine oppositeChange;
+        ChangedLine oppositeChange;
         if (actualDifference.line() instanceof AddedLine) {
             oppositeChange =
-                    new ChangeLine(actualDifference.file(), new RemovedLine("-" + changedText));
+                    new ChangedLine(actualDifference.file(), new RemovedLine("-" + changedText));
         } else {
-            oppositeChange = new ChangeLine(actualDifference.file(), new AddedLine("+" + changedText));
+            oppositeChange = new ChangedLine(actualDifference.file(), new AddedLine("+" + changedText));
         }
         return oppositeChange;
     }
@@ -700,8 +700,8 @@ public class ResultAnalysis {
         return String.format("%3.1f%s", percentage, "%");
     }
 
-    private record ConditionTable(List<ChangeLine> tp, List<ChangeLine> fp, List<ChangeLine> tn,
-                                  List<ChangeLine> fn, List<ChangeLine> wrongLocation, List<ChangeLine> filteredIncorrectly) {
+    private record ConditionTable(List<ChangedLine> tp, List<ChangedLine> fp, List<ChangedLine> tn,
+                                  List<ChangedLine> fn, List<ChangedLine> wrongLocation, List<ChangedLine> filteredIncorrectly) {
         public long tpCount() {
             return tp.size();
         }

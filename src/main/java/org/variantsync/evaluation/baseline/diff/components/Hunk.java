@@ -1,9 +1,6 @@
 package org.variantsync.evaluation.baseline.diff.components;
 
-import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
-import org.variantsync.evaluation.baseline.diff.lines.Line;
-import org.variantsync.evaluation.baseline.diff.lines.MetaLine;
-import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
+import org.variantsync.evaluation.baseline.diff.lines.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +74,26 @@ public final class Hunk implements IDiffComponent {
 
     public List<Line> content() {
         return allLines;
+    }
+
+    public Hunk inverse() {
+        List<Line> lines = new ArrayList<>(this.allLines.size());
+
+        for (Line l : this.allLines) {
+            String changedText = l.line().substring(1);
+            Line inverse;
+            if (l instanceof AddedLine) {
+                inverse =
+                        new RemovedLine("-" + changedText);
+            } else if (l instanceof RemovedLine) {
+                inverse = new AddedLine("+" + changedText);
+            } else {
+                inverse = l;
+            }
+            lines.add(inverse);
+        }
+
+        return new Hunk(this.location, lines);
     }
 
 }

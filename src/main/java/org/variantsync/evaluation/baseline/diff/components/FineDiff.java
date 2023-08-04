@@ -2,7 +2,7 @@ package org.variantsync.evaluation.baseline.diff.components;
 
 import org.variantsync.diffdetective.util.Assert;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
-import org.variantsync.evaluation.baseline.diff.lines.ChangeLine;
+import org.variantsync.evaluation.baseline.diff.lines.ChangedLine;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
 import org.variantsync.evaluation.common.Change;
 
@@ -25,8 +25,8 @@ public record FineDiff(List<FileDiff> content) implements IDiffComponent {
      * @param diff The difference from which changed lines are to be extracted
      * @return A list of all changed lines (i.e., added and removed source code)
      */
-    public static List<ChangeLine> determineChangedLines(FineDiff diff) {
-        final List<ChangeLine> changedLines = new ArrayList<>();
+    public static List<ChangedLine> determineChangedLines(FineDiff diff) {
+        final List<ChangedLine> changedLines = new ArrayList<>();
         for (FileDiff fd : diff.content()) {
             // Filter the hunks of each patch to extract changed lines
             fd.hunks().stream().flatMap(hunk -> hunk.content().stream()).forEach(line -> {
@@ -35,9 +35,9 @@ public record FineDiff(List<FileDiff> content) implements IDiffComponent {
                             ? fd.oldFile().subpath(2, fd.oldFile().getNameCount())
                             : fd.oldFile();
                     if (line instanceof AddedLine addedLine) {
-                        changedLines.add(new ChangeLine(filePath, addedLine));
+                        changedLines.add(new ChangedLine(filePath, addedLine));
                     } else if (line instanceof RemovedLine removedLine) {
-                        changedLines.add(new ChangeLine(filePath, removedLine));
+                        changedLines.add(new ChangedLine(filePath, removedLine));
                     }
 
                     }
