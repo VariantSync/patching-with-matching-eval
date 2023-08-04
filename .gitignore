@@ -17,3 +17,4 @@ simulation-files/busybox/
 .project
 .settings
 simulation-files/ground-truth.zip
+/debug.txt
