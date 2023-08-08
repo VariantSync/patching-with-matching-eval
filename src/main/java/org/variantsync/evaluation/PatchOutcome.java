@@ -9,62 +9,82 @@ import java.nio.file.StandardOpenOption;
 
 /**
  * Represents the outcome of a single experimental run in the study.
- *
- * @param dataset                  The considered subject
- * @param runID                    The id of this run
- * @param commitV0                 The id of the parent commit
- * @param commitV1                 The id of the child commit
- * @param sourceVariant            The name of the source variant
- * @param targetVariant            The name of the target variant
- * @param normalActualVsExpected   Number of differences between the patched target variant and the expected result (without filtering)
- * @param filteredActualVsExpected Number of differences between the patched target variant and the expected result (with filtering)
- * @param fileNormal               Number of unfiltered file-level patches
- * @param lineNormal               Number of unfiltered line-level patches
- * @param fileSuccessNormal        Number of successful file-level patches
- * @param lineSuccessNormal        Number of successful line-level patches
- * @param fileFiltered             Number of filtered file-level patches
- * @param lineFiltered             Number of filtered line-level patches
- * @param fileSuccessFiltered      Number of successful file-level patches
- * @param lineSuccessFiltered      Number of successful line-level patches
- * @param normalTP                 Number of true positives without filtering
- * @param normalFP                 Number of false positives without filtering
- * @param normalTN                 Number of true negatives without filtering
- * @param normalFN                 Number of false negatives without filtering
- * @param normalWrongLocation      Number of patches without filtering applied to the wrong location
- * @param filteredTP               Number of true positives with filtering
- * @param filteredFP               Number of false positives with filtering
- * @param filteredTN               Number of true negatives with filtering
- * @param filteredFN               Number of false negatives with filtering
- * @param filteredWrongLocation    Number of patches with filtering applied to the wrong location
  */
-public record PatchOutcome(String dataset,
-                           long runID,
-                           String commitV0,
-                           String commitV1,
-                           String sourceVariant,
-                           String targetVariant,
-                           long normalActualVsExpected,
-                           long filteredActualVsExpected,
-                           long fileNormal,
-                           long lineNormal,
-                           long fileSuccessNormal,
-                           long lineSuccessNormal,
-                           long fileFiltered,
-                           long lineFiltered,
-                           long fileSuccessFiltered,
-                           long lineSuccessFiltered,
-                           long normalTP,
-                           long normalFP,
-                           long normalTN,
-                           long normalFN,
-                           long normalWrongLocation,
-                           long normalFilteredIncorrectly,
-                           long filteredTP,
-                           long filteredFP,
-                           long filteredTN,
-                           long filteredFN,
-                           long filteredWrongLocation,
-                           long filteredFilteredIncorrectly) {
+public final class PatchOutcome {
+    private final String dataset;
+    private final long runID;
+    private final String commitV0;
+    private final String commitV1;
+    private final String sourceVariant;
+    private final String targetVariant;
+    private final long normalActualVsExpected;
+    private final long filteredActualVsExpected;
+    private final long fileNormal;
+    private final long lineNormal;
+    private final long fileSuccessNormal;
+    private final long lineSuccessNormal;
+    private final long fileFiltered;
+    private final long lineFiltered;
+    private final long fileSuccessFiltered;
+    private final long lineSuccessFiltered;
+    private EvalResult normalResult;
+    private EvalResult filteredResult;
+
+    /**
+     * @param dataset                  The considered subject
+     * @param runID                    The id of this run
+     * @param commitV0                 The id of the parent commit
+     * @param commitV1                 The id of the child commit
+     * @param sourceVariant            The name of the source variant
+     * @param targetVariant            The name of the target variant
+     * @param normalActualVsExpected   Number of differences between the patched target variant and the expected result (without filtering)
+     * @param filteredActualVsExpected Number of differences between the patched target variant and the expected result (with filtering)
+     * @param fileNormal               Number of unfiltered file-level patches
+     * @param lineNormal               Number of unfiltered line-level patches
+     * @param fileSuccessNormal        Number of successful file-level patches
+     * @param lineSuccessNormal        Number of successful line-level patches
+     * @param fileFiltered             Number of filtered file-level patches
+     * @param lineFiltered             Number of filtered line-level patches
+     * @param fileSuccessFiltered      Number of successful file-level patches
+     * @param lineSuccessFiltered      Number of successful line-level patches
+     */
+    public PatchOutcome(String dataset,
+                        long runID,
+                        String commitV0,
+                        String commitV1,
+                        String sourceVariant,
+                        String targetVariant,
+                        long normalActualVsExpected,
+                        long filteredActualVsExpected,
+                        long fileNormal,
+                        long lineNormal,
+                        long fileSuccessNormal,
+                        long lineSuccessNormal,
+                        long fileFiltered,
+                        long lineFiltered,
+                        long fileSuccessFiltered,
+                        long lineSuccessFiltered,
+                        EvalResult normalResult,
+                        EvalResult filteredResult) {
+        this.dataset = dataset;
+        this.runID = runID;
+        this.commitV0 = commitV0;
+        this.commitV1 = commitV1;
+        this.sourceVariant = sourceVariant;
+        this.targetVariant = targetVariant;
+        this.normalActualVsExpected = normalActualVsExpected;
+        this.filteredActualVsExpected = filteredActualVsExpected;
+        this.fileNormal = fileNormal;
+        this.lineNormal = lineNormal;
+        this.fileSuccessNormal = fileSuccessNormal;
+        this.lineSuccessNormal = lineSuccessNormal;
+        this.fileFiltered = fileFiltered;
+        this.lineFiltered = lineFiltered;
+        this.fileSuccessFiltered = fileSuccessFiltered;
+        this.lineSuccessFiltered = lineSuccessFiltered;
+        this.normalResult = normalResult;
+        this.filteredResult = filteredResult;
+    }
 
     public static String toJSON(final String key, final Object value) {
         return "\"" + key + "\": " + value;
@@ -92,18 +112,23 @@ public record PatchOutcome(String dataset,
                 object.get("lineFiltered").getAsLong(),
                 object.get("fileSuccessFiltered").getAsLong(),
                 object.get("lineSuccessFiltered").getAsLong(),
-                object.get("normalTP").getAsLong(),
-                object.get("normalFP").getAsLong(),
-                object.get("normalTN").getAsLong(),
-                object.get("normalFN").getAsLong(),
-                object.get("normalWrongLocation").getAsLong(),
-                object.get("normalFilteredIncorrectly").getAsLong(),
-                object.get("filteredTP").getAsLong(),
-                object.get("filteredFP").getAsLong(),
-                object.get("filteredTN").getAsLong(),
-                object.get("filteredFN").getAsLong(),
-                object.get("filteredWrongLocation").getAsLong(),
-                object.get("filteredFilteredIncorrectly").getAsLong()
+                new EvalResult(
+                        object.get("normalCorrect").getAsInt(),
+                object.get("normalInvalid").getAsInt(),
+                object.get("normalWrongLocation").getAsInt(),
+                object.get("normalMissing").getAsInt(),
+                object.get("normalFilteredCorrectly").getAsInt(),
+                object.get("normalFilteredIncorrectly").getAsInt(),
+                object.get("normalMitigatedInvalid").getAsInt(),
+                object.get("normalMitigatedMissing").getAsInt()),
+                new EvalResult(object.get("filteredCorrect").getAsInt(),
+                object.get("filteredInvalid").getAsInt(),
+                object.get("filteredWrongLocation").getAsInt(),
+                object.get("filteredMissing").getAsInt(),
+                object.get("filteredFilteredCorrectly").getAsInt(),
+                object.get("filteredFilteredIncorrectly").getAsInt(),
+                object.get("filteredMitigatedInvalid").getAsInt(),
+                object.get("filteredMitigatedMissing").getAsInt())
         );
     }
 
@@ -126,18 +151,22 @@ public record PatchOutcome(String dataset,
         jsonBuilder.append(toJSON("lineFiltered", lineFiltered)).append(",\n");
         jsonBuilder.append(toJSON("fileSuccessFiltered", fileSuccessFiltered)).append(",\n");
         jsonBuilder.append(toJSON("lineSuccessFiltered", lineSuccessFiltered)).append(",\n");
-        jsonBuilder.append(toJSON("normalTP", normalTP)).append(",\n");
-        jsonBuilder.append(toJSON("normalFP", normalFP)).append(",\n");
-        jsonBuilder.append(toJSON("normalTN", normalTN)).append(",\n");
-        jsonBuilder.append(toJSON("normalFN", normalFN)).append(",\n");
-        jsonBuilder.append(toJSON("normalWrongLocation", normalWrongLocation)).append(",\n");
-        jsonBuilder.append(toJSON("normalFilteredIncorrectly", normalFilteredIncorrectly)).append(",\n");
-        jsonBuilder.append(toJSON("filteredTP", filteredTP)).append(",\n");
-        jsonBuilder.append(toJSON("filteredFP", filteredFP)).append(",\n");
-        jsonBuilder.append(toJSON("filteredTN", filteredTN)).append(",\n");
-        jsonBuilder.append(toJSON("filteredFN", filteredFN)).append(",\n");
-        jsonBuilder.append(toJSON("filteredWrongLocation", filteredWrongLocation)).append("\n");
-        jsonBuilder.append(toJSON("filteredFilteredIncorrectly", filteredFilteredIncorrectly)).append(",\n");
+        jsonBuilder.append(toJSON("normalApplied", normalResult.getApplied())).append(",\n");
+        jsonBuilder.append(toJSON("normalInvalid", normalResult.getInvalid())).append(",\n");
+        jsonBuilder.append(toJSON("normalWrongLocation", normalResult.getWrongLocation())).append(",\n");
+        jsonBuilder.append(toJSON("normalMissing", normalResult.getMissing())).append(",\n");
+        jsonBuilder.append(toJSON("normalFilteredCorrectly", normalResult.getFilteredCorrectly())).append(",\n");
+        jsonBuilder.append(toJSON("normalFilteredIncorrectly", normalResult.getFilteredIncorrectly())).append(",\n");
+        jsonBuilder.append(toJSON("normalMitigatedInvalid", normalResult.getMitigatedInvalid())).append(",\n");
+        jsonBuilder.append(toJSON("normalMitigatedMissing", normalResult.getMitigatedMissing())).append(",\n");
+        jsonBuilder.append(toJSON("filteredApplied", filteredResult.getApplied())).append(",\n");
+        jsonBuilder.append(toJSON("filteredInvalid", filteredResult.getInvalid())).append(",\n");
+        jsonBuilder.append(toJSON("filteredWrongLocation", filteredResult.getWrongLocation())).append(",\n");
+        jsonBuilder.append(toJSON("filteredMissing", filteredResult.getMissing())).append(",\n");
+        jsonBuilder.append(toJSON("filteredFilteredCorrectly", filteredResult.getFilteredCorrectly())).append(",\n");
+        jsonBuilder.append(toJSON("filteredFilteredIncorrectly", filteredResult.getFilteredIncorrectly())).append(",\n");
+        jsonBuilder.append(toJSON("filteredMitigatedInvalid", filteredResult.getMitigatedInvalid())).append(",\n");
+        jsonBuilder.append(toJSON("filteredMitigatedMissing", filteredResult.getMitigatedMissing())).append(",\n");
         jsonBuilder.append("}").append("\n\n");
         if (!Files.exists(pathToFile)) {
             Files.createFile(pathToFile);
@@ -149,4 +178,99 @@ public record PatchOutcome(String dataset,
         }
     }
 
+    public String getDataset() {
+        return dataset;
+    }
+
+    public long getRunID() {
+        return runID;
+    }
+
+    public String getCommitV0() {
+        return commitV0;
+    }
+
+    public String getCommitV1() {
+        return commitV1;
+    }
+
+    public String getSourceVariant() {
+        return sourceVariant;
+    }
+
+    public String getTargetVariant() {
+        return targetVariant;
+    }
+
+    public long getNormalActualVsExpected() {
+        return normalActualVsExpected;
+    }
+
+    public long getFilteredActualVsExpected() {
+        return filteredActualVsExpected;
+    }
+
+    public long getFileNormal() {
+        return fileNormal;
+    }
+
+    public long getLineNormal() {
+        return lineNormal;
+    }
+
+    public long getFileSuccessNormal() {
+        return fileSuccessNormal;
+    }
+
+    public long getLineSuccessNormal() {
+        return lineSuccessNormal;
+    }
+
+    public long getFileFiltered() {
+        return fileFiltered;
+    }
+
+    public long getLineFiltered() {
+        return lineFiltered;
+    }
+
+    public long getFileSuccessFiltered() {
+        return fileSuccessFiltered;
+    }
+
+    public long getLineSuccessFiltered() {
+        return lineSuccessFiltered;
+    }
+
+    public EvalResult getNormalResult() {
+        return normalResult;
+    }
+
+    public EvalResult getFilteredResult() {
+        return filteredResult;
+    }
+
+    @Override
+    public String toString() {
+        return "PatchOutcome{" +
+                "dataset='" + dataset + '\'' +
+                ", runID=" + runID +
+                ", commitV0='" + commitV0 + '\'' +
+                ", commitV1='" + commitV1 + '\'' +
+                ", sourceVariant='" + sourceVariant + '\'' +
+                ", targetVariant='" + targetVariant + '\'' +
+                ", normalActualVsExpected=" + normalActualVsExpected +
+                ", filteredActualVsExpected=" + filteredActualVsExpected +
+                ", fileNormal=" + fileNormal +
+                ", lineNormal=" + lineNormal +
+                ", fileSuccessNormal=" + fileSuccessNormal +
+                ", lineSuccessNormal=" + lineSuccessNormal +
+                ", fileFiltered=" + fileFiltered +
+                ", lineFiltered=" + lineFiltered +
+                ", fileSuccessFiltered=" + fileSuccessFiltered +
+                ", lineSuccessFiltered=" + lineSuccessFiltered +
+                ", normalResult=" + normalResult +
+                ", filteredResult=" + filteredResult +
+                '}';
+    }
 }
