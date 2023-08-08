@@ -1,9 +1,11 @@
 package org.variantsync.evaluation
 
 import org.variantsync.diffdetective.util.Assert
+import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
+import org.variantsync.evaluation.common.Change
 
-class EvaluationScenario(val required: ChangeMap, val undesired: ChangeMap, val unPatchable: ChangeMap) {
-    fun evaluate(scenario: EvaluationScenario, patch: ChangeMap, rejects: ChangeMap, observedDifference: ChangeMap): EvalResult {
+class EvaluationScenario(val required: CountingMap<Change>, val undesired: CountingMap<Change>, val unPatchable: CountingMap<Change>) {
+    fun evaluate(scenario: EvaluationScenario, patch: CountingMap<Change>, rejects: CountingMap<Change>, observedDifference: CountingMap<ChangedLine>): EvalResult {
         var correct = 0u
         var invalid = 0u
         var wrongLocation = 0u
@@ -15,7 +17,7 @@ class EvaluationScenario(val required: ChangeMap, val undesired: ChangeMap, val 
 
         // Second, clean the observed differences from all un-patchable changes
         for (unpatchable in scenario.unPatchable.keys()) {
-            observedDifference.removeOne(unpatchable)
+            observedDifference.removeOne(unpatchable.asChangedLine())
         }
 
         // Third, classify the undesired changes into invalid, filtered, and mitigated
@@ -37,10 +39,9 @@ class EvaluationScenario(val required: ChangeMap, val undesired: ChangeMap, val 
 
             // The change has been applied and caused an observable undesired effect
             val inverse = undesired.inverse()
-            if (observedDifference.contains(inverse)) {
+            if (observedDifference.contains(inverse.asChangedLine())) {
                 invalid++
-                // TODO: This does not work as expected because a Change in the difference might have a different context
-                Assert.assertTrue(observedDifference.removeOne(inverse))
+                Assert.assertTrue(observedDifference.removeOne(inverse.asChangedLine()))
                 continue
             }
 
@@ -54,13 +55,13 @@ class EvaluationScenario(val required: ChangeMap, val undesired: ChangeMap, val 
             if (!patch.removeOne(required)) {
                 // If not, it has been filtered incorrectly
                 filteredIncorrectly++
-                Assert.assertTrue(observedDifference.removeOne(required))
+                Assert.assertTrue(observedDifference.removeOne(required.asChangedLine()))
                 continue
             }
 
             // Has it failed?
             if (rejects.removeOne(required)) {
-                if (observedDifference.removeOne(required)) {
+                if (observedDifference.removeOne(required.asChangedLine())) {
                     missing++
                 } else {
                     mitigatedMissing++
@@ -69,7 +70,7 @@ class EvaluationScenario(val required: ChangeMap, val undesired: ChangeMap, val 
             }
 
             // Was it applied to the wrong location?
-            if (observedDifference.removeOne(required)) {
+            if (observedDifference.removeOne(required.asChangedLine())) {
                 wrongLocation++
                 continue
             }
