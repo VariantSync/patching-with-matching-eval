@@ -19,3 +19,4 @@ simulation-files/busybox/
 simulation-files/ground-truth.zip
 /debug.txt
 /.gradle/
+/build/
