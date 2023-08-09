@@ -5,15 +5,15 @@ import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
 import org.variantsync.evaluation.common.Change
 
 class EvaluationScenario(private val required: CountingMap<Change>, private val undesired: CountingMap<Change>, private val unPatchable: CountingMap<Change>) {
-    fun evaluate(patch: CountingMap<Change>, rejects: CountingMap<Change>, observedDifference: CountingMap<ChangedLine>): EvalResult {
-        var correct = 0
-        var invalid = 0
-        var wrongLocation = 0
-        var missing = 0
-        var filteredCorrectly = 0
-        var filteredIncorrectly = 0
-        var mitigatedInvalid = 0
-        var mitigatedMissing = 0
+    fun evaluate(patch: CountingMap<Change>, rejects: CountingMap<Change>, observedDifference: CountingMap<ChangedLine>): EvaluationResult {
+        var correct = 0L
+        var invalid = 0L
+        var wrongLocation = 0L
+        var missing = 0L
+        var filteredCorrectly = 0L
+        var filteredIncorrectly = 0L
+        var mitigatedInvalid = 0L
+        var mitigatedMissing = 0L
 
         // Second, clean the observed differences from all un-patchable changes
         for (unpatchable in this.unPatchable.keys()) {
@@ -79,69 +79,6 @@ class EvaluationScenario(private val required: CountingMap<Change>, private val 
             correct++
         }
 
-        return EvalResult(Applied(correct), Invalid(invalid), WrongLocation(wrongLocation), Missing(missing), FilteredCorrectly(filteredCorrectly), FilteredIncorrectly(filteredIncorrectly), MitigatedInvalid(mitigatedInvalid), MitigatedMissing(mitigatedMissing))
+        return EvaluationResult(Applied(correct), Invalid(invalid), WrongLocation(wrongLocation), Missing(missing), FilteredCorrectly(filteredCorrectly), FilteredIncorrectly(filteredIncorrectly), MitigatedInvalid(mitigatedInvalid), MitigatedMissing(mitigatedMissing))
     }
 }
-
-class EvalResult(val applied: Applied, val invalid: Invalid, val wrongLocation: WrongLocation, val missing: Missing,
-                 val filteredCorrectly: FilteredCorrectly, val filteredIncorrectly: FilteredIncorrectly,
-                 val mitigatedInvalid: MitigatedInvalid, val mitigatedMissing: MitigatedMissing)  {
-    fun resultCount(): Int {
-        return applied.v + invalid.v + wrongLocation.v + missing.v + filteredCorrectly.v + filteredIncorrectly.v + mitigatedInvalid.v + mitigatedMissing.v;
-    }
-
-}
-
-class AccumulatedResult(var applied: Applied, var invalid: Invalid,
-                        var wrongLocation: WrongLocation, var missing: Missing,
-                        var filteredCorrectly: FilteredCorrectly, var filteredIncorrectly: FilteredIncorrectly,
-                        var mitigatedInvalid: MitigatedInvalid, var mitigatedMissing: MitigatedMissing)  {
-
-    constructor() : this(Applied(0),Invalid(0),WrongLocation(0),Missing(0),FilteredCorrectly(0),FilteredIncorrectly(0),MitigatedInvalid(0),MitigatedMissing(0))
-    fun resultCount(): Int {
-        return applied.v + invalid.v + wrongLocation.v + missing.v + filteredCorrectly.v + filteredIncorrectly.v + mitigatedInvalid.v + mitigatedMissing.v
-    }
-
-    fun correctCount(): Int {
-        return applied.v + filteredCorrectly.v + mitigatedInvalid.v + mitigatedMissing.v
-    }
-
-    fun incorrectCount(): Int {
-        return invalid.v + wrongLocation.v + missing.v + filteredIncorrectly.v
-    }
-
-    fun add(other: EvalResult) {
-        this.applied = Applied(this.applied.v + other.applied.v)
-        this.invalid = Invalid(this.invalid.v + other.invalid.v)
-        this.wrongLocation = WrongLocation(this.wrongLocation.v + other.wrongLocation.v)
-        this.missing = Missing(this.missing.v + other.missing.v)
-        this.filteredCorrectly = FilteredCorrectly(this.filteredCorrectly.v + other.filteredCorrectly.v)
-        this.filteredIncorrectly = FilteredIncorrectly(this.filteredIncorrectly.v + other.filteredIncorrectly.v)
-        this.mitigatedInvalid = MitigatedInvalid(this.mitigatedInvalid.v + other.mitigatedInvalid.v)
-        this.mitigatedMissing = MitigatedMissing(this.mitigatedMissing.v + other.mitigatedMissing.v)
-    }
-}
-
-@JvmInline
-value class Applied(val v: Int)
-
-@JvmInline
-value class Invalid(val v: Int)
-
-@JvmInline
-value class Missing(val v: Int)
-
-@JvmInline
-value class FilteredCorrectly(val v: Int)
-
-@JvmInline
-value class FilteredIncorrectly(val v: Int)
-
-@JvmInline
-value class WrongLocation(val v: Int)
-
-@JvmInline
-value class MitigatedInvalid(val v: Int)
-
-@JvmInline
-value class MitigatedMissing(val v: Int)

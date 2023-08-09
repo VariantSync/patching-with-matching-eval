@@ -1,10 +1,10 @@
 package org.variantsync.evaluation
 
-class CountingMap<K> {
+class CountingMap<K>(keys: Collection<K>) {
     private val changeMap: HashMap<K, Int>
 
-    constructor(keys: Collection<K>) {
-        changeMap = HashMap.newHashMap(keys.size)
+    init {
+        changeMap = HashMap(keys.size)
         for (k in keys) {
             val currentCount = changeMap.getOrDefault(k, 0)
             changeMap[k] = currentCount + 1

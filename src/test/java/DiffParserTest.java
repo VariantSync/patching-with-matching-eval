@@ -1,4 +1,5 @@
 import org.variantsync.evaluation.baseline.diff.DiffParser;
+import org.variantsync.evaluation.baseline.diff.components.*;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
 import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;

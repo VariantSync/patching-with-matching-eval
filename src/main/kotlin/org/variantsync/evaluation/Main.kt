@@ -1,88 +1,80 @@
-package org.variantsync.evaluation;
+package org.variantsync.evaluation
 
-import org.eclipse.jgit.api.Git;
-import org.variantsync.diffdetective.datasets.DatasetDescription;
-import org.variantsync.diffdetective.load.GitLoader;
-import org.tinylog.Logger;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
-import static org.variantsync.vevos.simulation.VEVOS.Initialize;
+import org.tinylog.kotlin.Logger
+import org.variantsync.diffdetective.datasets.DatasetDescription
+import org.variantsync.diffdetective.load.GitLoader
+import org.variantsync.vevos.simulation.VEVOS
+import java.io.File
+import java.io.IOException
+import java.io.UncheckedIOException
+import java.net.URI
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.system.exitProcess
 
 /**
  * Entry point for running our study. Loads the configuration and starts the study.
  */
-public class Main {
-    public static void main(final String... args) {
-        if (args.length < 1) {
+object Main {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        if (args.isEmpty()) {
             System.err.println(
-                            "The first argument should provide the path to the configuration file that is to be used");
+                "The first argument should provide the path to the configuration file that is to be used"
+            )
         }
         // Initialize the VEVOS Simulation library
-        Initialize();
-        final StudyConfiguration config = new StudyConfiguration(new File(args[0]));
-
-        Logger.info("Starting experiment initialization.");
-
-        final Path mainDir = Path.of(config.EXPERIMENT_DIR_MAIN());
-        Path resultsDir = Path.of(config.EXPERIMENT_DIR_RESULTS());
-        boolean inDebug = config.EXPERIMENT_DEBUG();
-        Path groundTruthPath = Path.of(config.EXPERIMENT_DIR_GROUND_TRUTH());
-        int numRepetitions = config.EXPERIMENT_REPEATS();
-        int numVariants = config.EXPERIMENT_VARIANT_COUNT();
-        int startID = config.EXPERIMENT_START_ID();
-
-        List<DatasetDescription> datasets;
-        try {
-            datasets = DatasetDescription.fromMarkdown(Path.of(config.EXPERIMENT_DATASETS()));
-        } catch (IOException e) {
-            Logger.error("Was not able to load markdown file with the datasets from '"
-                            + config.EXPERIMENT_DATASETS() + "'");
-            throw new UncheckedIOException(e);
+        VEVOS.Initialize()
+        val config = StudyConfiguration(File(args[0]))
+        Logger.info("Starting experiment initialization.")
+        val mainDir = Path.of(config.EXPERIMENT_DIR_MAIN())
+        val resultsDir = Path.of(config.EXPERIMENT_DIR_RESULTS())
+        val inDebug = config.EXPERIMENT_DEBUG()
+        val groundTruthPath = Path.of(config.EXPERIMENT_DIR_GROUND_TRUTH())
+        val numRepetitions = config.EXPERIMENT_REPEATS()
+        val numVariants = config.EXPERIMENT_VARIANT_COUNT()
+        val startID = config.EXPERIMENT_START_ID()
+        val datasets: List<DatasetDescription> = try {
+            DatasetDescription.fromMarkdown(Path.of(config.EXPERIMENT_DATASETS()))
+        } catch (e: IOException) {
+            Logger.error(
+                "Was not able to load markdown file with the datasets from '"
+                        + config.EXPERIMENT_DATASETS() + "'"
+            )
+            throw UncheckedIOException(e)
         }
-
-        var datasetMaxSize = config.EXPERIMENT_DATASET_MAX_SIZE();
-        for (DatasetDescription dataset : datasets) {
-            var datasetSize = Integer.parseInt(dataset.commits().replaceAll(",", ""));
+        val datasetMaxSize = config.EXPERIMENT_DATASET_MAX_SIZE()
+        for (dataset in datasets) {
+            val datasetSize = dataset.commits().replace(",".toRegex(), "").toInt()
             if (datasetSize > datasetMaxSize) {
-                Logger.info("Skipping %s with %s commits because it exceeds the maximum number of commits (%d) set in the configuration."
-                                .formatted(dataset.name(), dataset.commits(), datasetMaxSize));
-                continue;
+                Logger.info(
+                    "Skipping %s with %s commits because it exceeds the maximum number of commits (%d) set in the configuration.".format(dataset.name(), dataset.commits(), datasetMaxSize)
+                )
+                continue
             }
-            var repoDir = mainDir.resolve(dataset.name());
-            var repoGroundTruth = groundTruthPath.resolve(dataset.name());
-
+            val repoDir = mainDir.resolve(dataset.name())
+            val repoGroundTruth = groundTruthPath.resolve(dataset.name())
             if (!Files.exists(repoGroundTruth)) {
-                Logger.info("Found no ground truth for %s. Skipping the study for %s"
-                                .formatted(dataset.name(), dataset.name()));
-                continue;
+                Logger.info(
+                    "Found no ground truth for %s. Skipping the study for %s"
+                        .format(dataset.name(), dataset.name())
+                )
+                continue
             }
-
-            // Clone the repository if required
-            try (Git ignored = GitLoader.fromRemote(repoDir, URI.create(dataset.repoURL()))) {
-                Logger.info("Cloned %s into %s".formatted(dataset.name(), repoDir));
-            }
-
-            final int numThreads = config.EXPERIMENT_THREAD_COUNT();
-            final SynchronizationStudy synchronizationStudy = new SynchronizationStudy(
-                            dataset.name(), mainDir, resultsDir, repoDir, repoGroundTruth,
-                            numRepetitions, numVariants, startID, inDebug, numThreads);
-
+            GitLoader.fromRemote(repoDir, URI.create(dataset.repoURL()))
+                .use { Logger.info("Cloned %s into %s".format(dataset.name(), repoDir)) }
+            val numThreads = config.EXPERIMENT_THREAD_COUNT()
+            val synchronizationStudy = SynchronizationStudy(
+                dataset.name(), mainDir, resultsDir, repoDir, repoGroundTruth,
+                numRepetitions, numVariants, startID, inDebug, numThreads
+            )
             try {
-                synchronizationStudy.run();
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.exit(1);
+                synchronizationStudy.run()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                exitProcess(1)
             }
         }
-
-        System.exit(0);
+        exitProcess(0)
     }
 }
-

@@ -1,4 +1,5 @@
 import org.tinylog.Logger;
+import org.variantsync.evaluation.baseline.shell.*;
 import org.variantsync.evaluation.error.ShellException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class ShellExecutorTest {
     static Consumer<String> errorReader = Logger::error;
@@ -144,8 +144,8 @@ public class ShellExecutorTest {
                 PatchCommand.Recommended(resourcesDir.resolve("diff-A-B.txt").toAbsolutePath()));
         assert result.isSuccess();
         List<Path> versionBPaths =
-                Files.list(Paths.get(resourcesDir.toString(), "version-B")).collect(Collectors.toList());
-        List<Path> versionCPaths = Files.list(outputDir).collect(Collectors.toList());
+                Files.list(Paths.get(resourcesDir.toString(), "version-B")).toList();
+        List<Path> versionCPaths = Files.list(outputDir).toList();
         assert versionBPaths.size() == versionCPaths.size();
 
         for (Path pathB : versionBPaths) {
@@ -177,8 +177,8 @@ public class ShellExecutorTest {
                 PatchCommand.Recommended(resourcesDir.resolve("fine-diff-A-B.txt").toAbsolutePath()));
         assert result.isSuccess();
         List<Path> versionBPaths =
-                Files.list(Paths.get(resourcesDir.toString(), "version-B")).collect(Collectors.toList());
-        List<Path> versionCPaths = Files.list(outputDir).collect(Collectors.toList());
+                Files.list(Paths.get(resourcesDir.toString(), "version-B")).toList();
+        List<Path> versionCPaths = Files.list(outputDir).toList();
         assert versionBPaths.size() <= versionCPaths.size();
 
         for (Path pathB : versionBPaths) {

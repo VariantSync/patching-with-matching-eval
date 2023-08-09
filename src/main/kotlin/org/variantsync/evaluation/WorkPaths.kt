@@ -1,62 +1,75 @@
-package org.variantsync.evaluation;
+package org.variantsync.evaluation
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import org.tinylog.Logger;
-import org.variantsync.evaluation.baseline.shell.ShellExecutor;
-import org.variantsync.vevos.simulation.util.io.CaseSensitivePath;
+import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.baseline.shell.ShellExecutor
+import org.variantsync.vevos.simulation.util.io.CaseSensitivePath
+import java.io.IOException
+import java.io.UncheckedIOException
+import java.nio.file.Files
+import java.nio.file.Path
 
-public class WorkPaths {
-
+class WorkPaths(mainDir: Path) {
     // Working directory
-    public final Path workDir;
+    @JvmField
+    var workDir: Path
+
     // Debug directory
-    public final Path debugDir;
+    val debugDir: Path
+
     // Path to the first copy of the SPL. We require copy to consider different versions
-    public final Path splCopyA;
+    val splCopyA: Path
+
     // Path to the second copy of the SPL
-    public final Path splCopyB;
+    val splCopyB: Path
+
     // Path to the directory containing the variants generated for the parent commit
-    public final CaseSensitivePath variantsDirV0;
+    val variantsDirV0: CaseSensitivePath
+
     // Path to the directory containing the variants generated for the child commit
-    public final CaseSensitivePath variantsDirV1;
+    val variantsDirV1: CaseSensitivePath
+
     // The directory to which patches are applied. A copy of the target variant is created in this
     // directory.
-    public final Path patchDir;
+    val patchDir: Path
+
     // Path to the patch file containing the patches without filtering
-    public final Path normalPatchFile;
+    val normalPatchFile: Path
+
     // Path to the patch file containing the patches with filtering
-    public final Path filteredPatchFile;
+    val filteredPatchFile: Path
+
     // Path to the rejects file created by patching without filtering
-    public final Path rejectsNormalFile;
+    val rejectsNormalFile: Path
+
     // Path to the rejects file created by patching with filtering
-    public final Path rejectsFilteredFile;
+    val rejectsFilteredFile: Path
+
     // ShellExecutor for executing shell commands
-    protected final ShellExecutor shell;
+    val shell: ShellExecutor
 
-    public WorkPaths(Path mainDir, Path resultsDir) {
-
+    init {
         try {
             if (mainDir.toFile().mkdirs()) {
-                Logger.info("Created main directory " + mainDir);
+                Logger.info("Created main directory $mainDir")
             }
-            this.workDir = Files.createTempDirectory(mainDir, "workdir");
-        } catch (final IOException e) {
-            Logger.error("Was not able to initialize this.workDir", e);
-            throw new UncheckedIOException(e);
+            workDir = Files.createTempDirectory(mainDir, "workdir")
+        } catch (e: IOException) {
+            Logger.error("Was not able to initialize this.workDir", e)
+            throw UncheckedIOException(e)
         }
-        this.debugDir = this.workDir.resolve("DEBUG");
-        this.splCopyA = this.workDir.resolve("SPL-A");
-        this.splCopyB = this.workDir.resolve("SPL-B");
-        this.variantsDirV0 = new CaseSensitivePath(this.workDir.resolve("V0Variants"));
-        this.variantsDirV1 = new CaseSensitivePath(this.workDir.resolve("V1Variants"));
-        this.patchDir = this.workDir.resolve("TARGET/V0");
-        this.normalPatchFile = this.workDir.resolve("patch.txt");
-        this.filteredPatchFile = this.workDir.resolve("filtered-patch.txt");
-        this.rejectsNormalFile = this.workDir.resolve("rejects-normal.txt");
-        this.rejectsFilteredFile = this.workDir.resolve("rejects-filtered.txt");
-        this.shell = new ShellExecutor(Logger::debug, Logger::warn, this.workDir);
+        debugDir = workDir.resolve("DEBUG")
+        splCopyA = workDir.resolve("SPL-A")
+        splCopyB = workDir.resolve("SPL-B")
+        variantsDirV0 = CaseSensitivePath(workDir.resolve("V0Variants"))
+        variantsDirV1 = CaseSensitivePath(workDir.resolve("V1Variants"))
+        patchDir = workDir.resolve("TARGET/V0")
+        normalPatchFile = workDir.resolve("patch.txt")
+        filteredPatchFile = workDir.resolve("filtered-patch.txt")
+        rejectsNormalFile = workDir.resolve("rejects-normal.txt")
+        rejectsFilteredFile = workDir.resolve("rejects-filtered.txt")
+        shell = ShellExecutor({ message: String? -> Logger.debug(message) },
+            { message: String? -> Logger.warn(message) },
+            workDir
+        )
     }
 }

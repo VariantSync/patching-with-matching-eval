@@ -1,32 +1,27 @@
-package org.variantsync.evaluation.error;
+package org.variantsync.evaluation.error
 
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Consumer
 
 /**
  * Custom Exception for representing errors caused by shell commands being executed.
  */
-public class ShellException extends Exception {
-    private final List<String> output;
+class ShellException : Exception {
+    @JvmField
+    val output: List<String>
 
-    public ShellException(final Exception e) {
-        super(e);
-        this.output = new ArrayList<>();
+    constructor(e: Exception) : super(e) {
+        output = ArrayList()
     }
 
-    public ShellException(final List<String> output) {
-        super(convert(output));
-        this.output = output;
+    constructor(output: List<String>) : super(convert(output)) {
+        this.output = output
     }
 
-    private static String convert(final Collection<String> output) {
-        final StringBuilder sb = new StringBuilder();
-        output.forEach(l -> sb.append(l).append(System.lineSeparator()));
-        return sb.toString();
-    }
-
-    public List<String> getOutput() {
-        return output;
+    companion object {
+        private fun convert(output: Collection<String>): String {
+            val sb = StringBuilder()
+            output.forEach(Consumer { l: String -> sb.append(l).append(System.lineSeparator()) })
+            return sb.toString()
+        }
     }
 }

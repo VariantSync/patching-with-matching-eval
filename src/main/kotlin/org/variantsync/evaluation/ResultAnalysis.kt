@@ -1,31 +1,29 @@
-package org.variantsync.evaluation;
+package org.variantsync.evaluation
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import org.variantsync.diffdetective.util.Assert;
-import org.variantsync.evaluation.baseline.diff.components.FineDiff;
-import org.variantsync.evaluation.baseline.diff.lines.ChangedLine;
-import org.tinylog.Logger;
-
-import org.variantsync.evaluation.common.Change;
-import org.variantsync.vevos.simulation.variability.SPLCommit;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import org.tinylog.kotlin.Logger.debug
+import org.variantsync.diffdetective.util.Assert
+import org.variantsync.evaluation.PatchOutcome.Companion.fromJSON
+import org.variantsync.evaluation.baseline.diff.components.FileDiff
+import org.variantsync.evaluation.baseline.diff.components.FineDiff
+import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
+import org.variantsync.evaluation.common.Change
+import org.variantsync.vevos.simulation.variability.SPLCommit
+import java.io.File
+import java.io.IOException
+import java.io.UncheckedIOException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.util.function.Consumer
+import java.util.stream.Collectors
 
 /**
  * Performs the result analysis presented in our paper.
  */
-public class ResultAnalysis {
-    private static final String DIV = "++++++++++++++++++++++++++++++++++++++";
-    private static final String LINE_SEP = System.lineSeparator();
+object ResultAnalysis {
+    private const val DIV = "++++++++++++++++++++++++++++++++++++++"
+    private val LINE_SEP = System.lineSeparator()
 
     /**
      * Analyze the outcome of applying patches to a target variant
@@ -39,152 +37,158 @@ public class ResultAnalysis {
      * @param normalPatch The FineDiff with all prepared changes
      * @param filteredPatch The FineDiff with all prepared changes after filtering
      * @param resultDiffNormal The difference between the patched target variant and the expected
-     *        result
+     * result
      * @param resultDiffFiltered The difference between the patched target variant and the expected
-     *        result (with filtering)
+     * result (with filtering)
      * @param rejectsNormal The rejected patches (aka. failed patches) without filtering
      * @param rejectsFiltered The rejected patches (aka. failed patches) with filtering
      * @param targetChanges The difference between the two versions of the target variant
      * @param skippedFilesNormal List of files that were not found by patch and therefore not
-     *        patched
+     * patched
      * @param skippedFilesFiltered List of files that were not found by patch and therefore not
-     *        patched
+     * patched
      * @return The patch outcome
      */
-    public static PatchOutcome processOutcome(final WorkPaths workdir, final boolean inDebug,
-            final String dataset, final long runID, final String sourceVariant,
-            final String targetVariant, final SPLCommit commitV0, final SPLCommit commitV1,
-            final FineDiff normalPatch, final FineDiff filteredPatch,
-            final FineDiff resultDiffNormal, final FineDiff resultDiffFiltered,
-            FineDiff rejectsNormal, FineDiff rejectsFiltered, final FineDiff targetChanges,
-            final Set<String> skippedFilesNormal, final Set<String> skippedFilesFiltered) {
-        Logger.debug("Processing outcome for patch process in " + workdir.workDir);
+    fun processOutcome(
+        workdir: WorkPaths, 
+        dataset: String, runID: Long, sourceVariant: String,
+        targetVariant: String, commitV0: SPLCommit, commitV1: SPLCommit,
+        normalPatch: FineDiff, filteredPatch: FineDiff,
+        resultDiffNormal: FineDiff, resultDiffFiltered: FineDiff,
+        rejectsNormal: FineDiff, rejectsFiltered: FineDiff, targetChanges: FineDiff,
+        skippedFilesNormal: Set<String>, skippedFilesFiltered: Set<String>
+    ): PatchOutcome {
+        debug("Processing outcome for patch process in " + workdir.workDir)
         // evaluate patch rejects
         // number of tried file-level patches
-        final int fileNormal = new HashSet<>(normalPatch.content().stream()
-                .map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
+        val fileNormal = HashSet(normalPatch.content.stream()
+            .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
+        ).size
         // number of tried line-level patches
-        final List<ChangedLine> lineNormal = FineDiff.determineChangedLines(normalPatch);
+        val lineNormal = FineDiff.determineChangedLines(normalPatch)
         // number of failed patches
-        int fileNormalFailed;
-        List<ChangedLine> lineNormalFailed;
-        if (rejectsNormal == null) {
-            // If there is no rejects file, because all patches were applied successfully
-            rejectsNormal = new FineDiff(new ArrayList<>());
-        }
 
         // Determine the number of failed file-level patches (without filtering)
-        fileNormalFailed = new HashSet<>(rejectsNormal.content().stream()
-                .map(fd -> fd.oldFile().toString()).collect(Collectors.toSet())).size();
-        fileNormalFailed += skippedFilesNormal.size();
-        Logger.debug(
-                "" + fileNormalFailed + " of " + fileNormal + " normal file-sized patches failed.");
+        var fileNormalFailed: Long = HashSet(rejectsNormal.content.stream()
+            .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toSet())
+        ).size.toLong()
+        fileNormalFailed += skippedFilesNormal.size
+        debug(
+            "$fileNormalFailed of $fileNormal normal file-sized patches failed."
+        )
 
         // Determine the number of failed line-level patches (without filtering)
-        lineNormalFailed = FineDiff.determineChangedLines(rejectsNormal);
+        val lineNormalFailed: MutableList<ChangedLine> = FineDiff.determineChangedLines(rejectsNormal)
         FineDiff.determineChangedLines(normalPatch).stream()
-                .filter(change -> skippedFilesNormal.contains(change.file().toString()))
-                .forEach(lineNormalFailed::add);
-        Logger.debug(
-                "" + lineNormalFailed + " of " + lineNormal + " normal line-sized patches failed");
+            .filter { change: ChangedLine -> skippedFilesNormal.contains(change.file.toString()) }
+            .forEach { e: ChangedLine -> lineNormalFailed.add(e) }
+        debug(
+            "$lineNormalFailed of $lineNormal normal line-sized patches failed"
+        )
 
         // Number of tried file-level patches (with filtering)
-        final int fileFiltered = new HashSet<>(filteredPatch.content().stream()
-                .map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
+        val fileFiltered = HashSet(filteredPatch.content.stream()
+            .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
+        ).size
         // Number of tried line-level patches (with filtering)
-        final List<ChangedLine> lineFiltered = FineDiff.determineChangedLines(filteredPatch);
+        val lineFiltered = FineDiff.determineChangedLines(filteredPatch)
         // Number of failed patches
-        int fileFilteredFailed;
-        List<ChangedLine> lineFilteredFailed;
-        if (rejectsFiltered == null) {
-            // If there is no rejects file, because all patches were applied successfully
-            rejectsFiltered = new FineDiff(new ArrayList<>());
-        }
 
         // Determine the number of failed file-level patches (with filtering)
-        fileFilteredFailed = new HashSet<>(rejectsFiltered.content().stream()
-                .map(fd -> fd.oldFile().toString()).collect(Collectors.toList())).size();
-        fileFilteredFailed += skippedFilesFiltered.size();
-        Logger.debug("" + fileFilteredFailed + " of " + fileFiltered
-                + " filtered file-sized patches failed.");
+        var fileFilteredFailed: Long = HashSet(rejectsFiltered.content.stream()
+            .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
+        ).size.toLong()
+        fileFilteredFailed += skippedFilesFiltered.size
+        debug(
+            "" + fileFilteredFailed + " of " + fileFiltered
+                    + " filtered file-sized patches failed."
+        )
 
         // Determine the number of failed line-level patches (with filtering)
-        lineFilteredFailed = FineDiff.determineChangedLines(rejectsFiltered);
+        val lineFilteredFailed: MutableList<ChangedLine> = FineDiff.determineChangedLines(rejectsFiltered)
         FineDiff.determineChangedLines(filteredPatch).stream()
-                .filter(change -> skippedFilesFiltered.contains(change.file().toString()))
-                .forEach(lineFilteredFailed::add);
-        Logger.debug("" + lineFilteredFailed + " of " + lineFiltered
-                + " filtered line-sized patches failed");
-
-
-        final EvaluationScenario scenario = initScenario(normalPatch, targetChanges);
-        final EvalResult normalResult = scenario.evaluate(
-                new CountingMap<>(normalPatch.intoChanges()),
-                new CountingMap<>(rejectsNormal.intoChanges()),
-                new CountingMap<>(FineDiff.determineChangedLines(resultDiffNormal)));
-
-        final EvalResult filteredResult = scenario.evaluate(
-                new CountingMap<>(filteredPatch.intoChanges()),
-                new CountingMap<>(rejectsFiltered.intoChanges()),
-                new CountingMap<>(FineDiff.determineChangedLines(resultDiffFiltered)));
-
-        Assert.assertEquals(normalResult.resultCount(), filteredResult.resultCount());
-        Assert.assertEquals(normalResult.resultCount(), lineNormal.size());
-        Assert.assertEquals(filteredResult.resultCount(), lineNormal.size());
-
-        return new PatchOutcome(dataset, runID, commitV0.id(), commitV1.id(), sourceVariant,
-                targetVariant, resultDiffNormal.content().size(),
-                resultDiffFiltered.content().size(), fileNormal, lineNormal.size(),
-                fileNormal - fileNormalFailed, lineNormal.size() - lineNormalFailed.size(),
-                fileFiltered, lineFiltered.size(), fileFiltered - fileFilteredFailed,
-                lineFiltered.size() - lineFilteredFailed.size(), normalResult, filteredResult);
+            .filter { change: ChangedLine -> skippedFilesFiltered.contains(change.file.toString()) }
+            .forEach { e: ChangedLine -> lineFilteredFailed.add(e) }
+        debug(
+            "" + lineFilteredFailed + " of " + lineFiltered
+                    + " filtered line-sized patches failed"
+        )
+        val scenario = initScenario(normalPatch, targetChanges)
+        val normalResult: EvaluationResult = scenario.evaluate(
+            CountingMap(normalPatch.intoChanges()),
+            CountingMap(rejectsNormal.intoChanges()),
+            CountingMap(FineDiff.determineChangedLines(resultDiffNormal))
+        )
+        val filteredResult: EvaluationResult = scenario.evaluate(
+            CountingMap(filteredPatch.intoChanges()),
+            CountingMap(rejectsFiltered.intoChanges()),
+            CountingMap(FineDiff.determineChangedLines(resultDiffFiltered))
+        )
+        Assert.assertEquals(normalResult.resultCount(), filteredResult.resultCount())
+        Assert.assertEquals(normalResult.resultCount(), lineNormal.size)
+        Assert.assertEquals(filteredResult.resultCount(), lineNormal.size)
+        return PatchOutcome(
+            dataset, runID, commitV0.id(), commitV1.id(), sourceVariant,
+            targetVariant, resultDiffNormal.content.size.toLong(),
+            resultDiffFiltered.content.size.toLong(), fileNormal.toLong(), lineNormal.size.toLong(),
+            (
+                    fileNormal - fileNormalFailed), (lineNormal.size - lineNormalFailed.size).toLong(),
+            fileFiltered.toLong(), lineFiltered.size.toLong(), (fileFiltered - fileFilteredFailed),
+            (
+                    lineFiltered.size - lineFilteredFailed.size).toLong(), normalResult, filteredResult
+        )
     }
 
-    private static EvaluationScenario initScenario(FineDiff unfilteredPatch, FineDiff targetEvolutionDiff) {
-        Logger.debug("Calculating result table with TP, FP, TN, and FN.");
-        List<Change> changesToClassify = unfilteredPatch.intoChanges();
-        List<Change> changesInEvolution = targetEvolutionDiff.intoChanges();
+    private fun initScenario(unfilteredPatch: FineDiff, targetEvolutionDiff: FineDiff): EvaluationScenario {
+        debug("Calculating result table with TP, FP, TN, and FN.")
+        val changesToClassify = unfilteredPatch.intoChanges()
+        val changesInEvolution = targetEvolutionDiff.intoChanges()
 
         // Changes in the target variant's evolution that cannot be
         // synchronized, because they are not part of the source variant and therefore not of the
         // patch
-        final List<Change> unpatchableChanges = new ArrayList<>();
+        val unpatchableChanges: MutableList<Change> = ArrayList()
         // Expected changes, i.e., changes in the target variant's
         // evolution that can be synchronized
-        List<Change> requiredChanges = new ArrayList<>();
-        {
-            final List<Change> tempChanges = new ArrayList<>(changesToClassify);
-            for (Change evolutionChange : changesInEvolution) {
+        val requiredChanges: MutableList<Change> = ArrayList()
+        run {
+            val tempChanges: MutableList<Change> = ArrayList(changesToClassify)
+            for (evolutionChange in changesInEvolution) {
                 if (!tempChanges.contains(evolutionChange)) {
-                    unpatchableChanges.add(evolutionChange);
+                    unpatchableChanges.add(evolutionChange)
                 } else {
-                    requiredChanges.add(evolutionChange);
-                    tempChanges.remove(evolutionChange);
+                    requiredChanges.add(evolutionChange)
+                    tempChanges.remove(evolutionChange)
                 }
             }
         }
 
         // Determine undesired changes, i.e., changes in the evolution of the source but not the
         // target
-        List<Change> undesiredChangesTotal = determineUndesired(changesToClassify, requiredChanges);
-
-        return new EvaluationScenario(new CountingMap<>(requiredChanges), new CountingMap<>(undesiredChangesTotal), new CountingMap<>(unpatchableChanges));
+        val undesiredChangesTotal = determineUndesired(changesToClassify, requiredChanges)
+        return EvaluationScenario(
+            CountingMap(requiredChanges),
+            CountingMap(undesiredChangesTotal),
+            CountingMap(unpatchableChanges)
+        )
     }
 
-    private static List<Change> determineUndesired(List<Change> changesToClassify,
-                                                        List<Change> requiredChanges) {
-        final List<Change> undesiredChanges = new ArrayList<>();
-        {
-            final List<Change> tempChanges = new ArrayList<>(requiredChanges);
-            for (Change patchChange : changesToClassify) {
+    private fun determineUndesired(
+        changesToClassify: List<Change>,
+        requiredChanges: List<Change>
+    ): List<Change> {
+        val undesiredChanges: MutableList<Change> = ArrayList()
+        run {
+            val tempChanges: MutableList<Change> = ArrayList(requiredChanges)
+            for (patchChange in changesToClassify) {
                 if (!tempChanges.contains(patchChange)) {
-                    undesiredChanges.add(patchChange);
+                    undesiredChanges.add(patchChange)
                 } else {
-                    tempChanges.remove(patchChange);
+                    tempChanges.remove(patchChange)
                 }
             }
         }
-        return undesiredChanges;
+        return undesiredChanges
     }
 
     /**
@@ -194,277 +198,301 @@ public class ResultAnalysis {
      * @param args CL arguments
      * @throws IOException If the results cannot be loaded
      */
-    public static void main(final String... args) throws IOException {
-        if (args.length < 1) {
+    @Throws(IOException::class)
+    @JvmStatic
+    fun main(args: Array<String>) {
+        if (args.isEmpty()) {
             System.err.println(
-                    "The first argument should provide the path to the configuration file that is to be used");
+                "The first argument should provide the path to the configuration file that is to be used"
+            )
         }
-        final StudyConfiguration config = new StudyConfiguration(new File(args[0]));
-        final Path resultsDir = Path.of(config.EXPERIMENT_DIR_RESULTS());
-        try (Stream<Path> files = Files.list(resultsDir)) {
-            files.filter(f -> {
-                String fileName = f.getFileName().toString();
-                return fileName.endsWith(".results");
-            }).forEach(f -> {
+        val config = StudyConfiguration(File(args[0]))
+        val resultsDir = Path.of(config.EXPERIMENT_DIR_RESULTS())
+        Files.list(resultsDir).use { files ->
+            files.filter { f: Path ->
+                val fileName = f.fileName.toString()
+                fileName.endsWith(".results")
+            }.forEach { f: Path ->
                 try {
-                    analyze(f);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            });
-        }
-
-    }
-
-    private static void analyze(Path resultFile) throws IOException {
-        String fileName = resultFile.getFileName().getName(0).toString();
-        final Path resultSummaryFile =
-                resultFile.getParent().resolve("%s.summary".formatted(fileName));
-
-        StringBuilder sb = new StringBuilder();
-        final AccumulatedOutcome accumulatedOutcome = loadResultObjects(resultFile);
-        sb.append(LINE_SEP);
-        sb.append(DIV).append(LINE_SEP);
-        sb.append("Patch Success").append(LINE_SEP);
-        sb.append(DIV).append(LINE_SEP);
-        printTechnicalSuccess(sb, accumulatedOutcome);
-
-        long normalTP = accumulatedOutcome.normalResult().getApplied();
-        normalTP += accumulatedOutcome.normalResult().getMitigatedMissing();
-        long normalFP = accumulatedOutcome.normalResult().getInvalid();
-        long normalTN = accumulatedOutcome.normalResult().getFilteredCorrectly();
-        normalTN += accumulatedOutcome.normalResult().getMitigatedInvalid();
-        long normalFN = accumulatedOutcome.normalResult().getWrongLocation();
-        normalFN += accumulatedOutcome.normalResult().getMissing();
-
-        long filteredTP = accumulatedOutcome.filteredResult().getApplied();
-        filteredTP += accumulatedOutcome.filteredResult().getMitigatedMissing();
-        long filteredFP = accumulatedOutcome.filteredResult().getInvalid();
-        long filteredTN = accumulatedOutcome.filteredResult().getFilteredCorrectly();
-        filteredTN += accumulatedOutcome.filteredResult().getMitigatedInvalid();
-        long filteredFN = accumulatedOutcome.filteredResult().getWrongLocation();
-        filteredFN += accumulatedOutcome.filteredResult().getMissing();
-
-
-        sb.append(LINE_SEP);
-        sb.append(DIV).append(LINE_SEP);
-        sb.append("Correctness").append(LINE_SEP);
-        sb.append(DIV).append(LINE_SEP);
-
-        sb.append("Without Domain Knowledge").append(LINE_SEP);
-        printCorrectness(sb, accumulatedOutcome.normalResult());
-
-        sb.append(LINE_SEP);
-        sb.append(DIV).append(LINE_SEP);
-        sb.append("With Domain Knowledge").append(LINE_SEP);
-        sb.append(LINE_SEP);
-
-        printCorrectness(sb, accumulatedOutcome.filteredResult());
-
-        sb.append(LINE_SEP);
-        sb.append(DIV).append(LINE_SEP);
-        sb.append("Precision / Recall").append(LINE_SEP);
-        sb.append(DIV).append(LINE_SEP);
-
-
-        sb.append("Without Domain Knowledge").append(LINE_SEP);
-        printPrecisionRecall(sb, normalTP, normalFP, normalTN, normalFN);
-
-        sb.append(LINE_SEP);
-        sb.append(DIV).append(LINE_SEP);
-        sb.append("With Domain Knowledge").append(LINE_SEP);
-        sb.append(LINE_SEP);
-
-        printPrecisionRecall(sb, filteredTP, filteredFP, filteredTN, filteredFN);
-
-        sb.append(DIV).append(LINE_SEP);
-        sb.append("Accuracy").append(LINE_SEP);
-        sb.append(DIV).append(LINE_SEP);
-
-        printAccuracy(sb, normalTP, normalFP, normalTN, normalFN, "Normal");
-        printAccuracy(sb, filteredTP, filteredFP, filteredTN, filteredFN, "Filtered");
-
-        sb.append(DIV).append(LINE_SEP);
-        System.out.print(sb);
-        Files.writeString(resultSummaryFile, sb);
-    }
-
-    private static void printAccuracy(StringBuilder sb, long tp, long fp, long tn, long fn,
-            String name) {
-        long expectedCount = tp + tn;
-        long allPositives = tp + fn;
-        long allNegative = fp + tn;
-        double truePositiveRate = (double) tp / (double) allPositives;
-        double trueNegativeRate = (double) tn / (double) allNegative;
-        long all = tp + fp + tn + fn;
-
-        sb.append(String.format("%s patching achieved the expected result %d out of %d times", name,
-                expectedCount, all)).append(LINE_SEP);
-        sb.append(String.format("Accuracy: %s", percentage(expectedCount, all))).append(LINE_SEP);
-        sb.append(String.format("Balanced Accuracy: %1.2f",
-                ((truePositiveRate + trueNegativeRate) / 2.0))).append(LINE_SEP).append(LINE_SEP);
-    }
-
-    private static void printTechnicalSuccess(final StringBuilder sb,
-            final AccumulatedOutcome allOutcomes) {
-        final long commitPatches = allOutcomes.commitPatches();
-        final long commitSuccessNormal = allOutcomes.commitSuccessNormal();
-        sb.append(String.format("%d of %d commit-sized patch applications succeeded (%s)",
-                commitSuccessNormal, commitPatches, percentage(commitSuccessNormal, commitPatches)))
-                .append(LINE_SEP);
-
-        final long fileNormal = allOutcomes.fileNormal;
-        final long fileSuccessNormal = allOutcomes.fileSuccessNormal;
-
-        sb.append(String.format("%d of %d file-sized patch applications succeeded (%s)",
-                fileSuccessNormal, fileNormal, percentage(fileSuccessNormal, fileNormal)))
-                .append(LINE_SEP);
-
-        final long lineNormal = allOutcomes.lineNormal;
-        final long lineSuccessNormal = allOutcomes.lineSuccessNormal;
-        sb.append(String.format("%d of %d line-sized patch applications succeeded (%s)",
-                lineSuccessNormal, lineNormal, percentage(lineSuccessNormal, lineNormal)))
-                .append(LINE_SEP);
-
-        // -------------------
-        final long lineFiltered = allOutcomes.lineFiltered;
-        final long lineSuccessFiltered = allOutcomes.lineSuccessFiltered;
-        sb.append(String.format(
-                "%d of %d line-sized patch applications succeeded after filtering (%s)%n",
-                lineSuccessFiltered, lineFiltered, percentage(lineSuccessFiltered, lineFiltered)))
-                .append(LINE_SEP);
-
-    }
-
-    private static void printPrecisionRecall(StringBuilder sb, final long tp, final long fp,
-            final long tn, final long fn) {
-        final double precision = (double) tp / ((double) tp + fp);
-        final double recall = (double) tp / ((double) tp + fn);
-        final double f_measure = (2 * precision * recall) / (precision + recall);
-
-        sb.append("TP: ").append(tp).append(LINE_SEP);
-        sb.append("FP: ").append(fp).append(LINE_SEP);
-        sb.append("TN: ").append(tn).append(LINE_SEP);
-        sb.append("FN: ").append(fn).append(LINE_SEP);
-        sb.append(String.format("Precision: %1.2f", precision)).append(LINE_SEP);
-        sb.append(String.format("Recall: %1.2f", recall)).append(LINE_SEP);
-        sb.append(String.format("F-Measure: %1.2f", f_measure)).append(LINE_SEP);
-    }
-
-    private static void printCorrectness(StringBuilder sb, AccumulatedResult result) {
-        final double correct = result.correctCount();
-        final double incorrect = result.incorrectCount();
-        final double total = result.resultCount();
-
-        final double correctPerc = 100d * correct / total;
-        final double incorrectPerc = 100d * incorrect / total;
-
-        final double appliedP = 100d * (double) result.getApplied() / total;
-        final double invalidP = 100d * (double) result.getInvalid() / total;
-        final double wrongLocationP = 100d * (double) result.getWrongLocation() / total;
-        final double missingP = 100d * (double) result.getMissing() / total;
-        final double filteredCorrectlyP = 100d * (double) result.getFilteredCorrectly() / total;
-        final double filteredIncorrectlyP = 100d * (double) result.getFilteredIncorrectly() / total;
-        final double mitigatedInvalidP = 100d * (double) result.getMitigatedInvalid() / total;
-        final double mitigatedMissingP = 100d * (double) result.getMitigatedMissing() / total;
-
-
-        sb.append(String.format("Correct: %1.2f%%  (%d of %d)", correctPerc, (long) correct, (long) total))
-                .append(LINE_SEP);
-        sb.append(String.format("Incorrect: %1.2f%% (%d of %d)", incorrectPerc, (long) incorrect, (long) total))
-                .append(LINE_SEP);
-        sb.append("++ Distribution ++").append(LINE_SEP);
-        sb.append(String.format("%1.2f%% applied, %1.2f%% invalid", appliedP, invalidP))
-                .append(LINE_SEP);
-        sb.append(String.format("%1.2f%% invalid, %1.2f%% wrong location",
-                missingP, wrongLocationP)).append(LINE_SEP);
-        sb.append(String.format("%1.2f%% filtered correctly, %1.2f%% filtered incorrectly", filteredCorrectlyP, filteredIncorrectlyP))
-                .append(LINE_SEP);
-        sb.append(String.format("%1.2f%% mitigated invalid, %1.2f%% mitigated missing", mitigatedInvalidP, mitigatedMissingP))
-                .append(LINE_SEP);
-    }
-
-
-    public static AccumulatedOutcome loadResultObjects(final Path path) throws IOException {
-        long commitPatches = 0;
-        long commitSuccessNormal = 0;
-        long commitSuccessFiltered = 0;
-
-        long fileNormal = 0;
-        long fileFiltered = 0;
-        long fileSuccessNormal = 0;
-        long fileSuccessFiltered = 0;
-
-        long lineNormal = 0;
-        long lineFiltered = 0;
-        long lineSuccessNormal = 0;
-        long lineSuccessFiltered = 0;
-
-        AccumulatedResult accumulatedNormal = new AccumulatedResult();
-        AccumulatedResult accumulatedFiltered = new AccumulatedResult();
-
-        try (BufferedReader reader = Files.newBufferedReader(path)) {
-            List<String> outcomeLines = new ArrayList<>();
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                if (line.isEmpty()) {
-                    PatchOutcome outcome = parseResult(outcomeLines);
-                    accumulatedNormal.add(outcome.getNormalResult());
-                    accumulatedFiltered.add(outcome.getFilteredResult());
-
-                    commitPatches++;
-                    if (outcome.getLineSuccessNormal() == outcome.getLineNormal()) {
-                        commitSuccessNormal++;
-                    }
-                    if (outcome.getLineSuccessFiltered() == outcome.getLineFiltered()) {
-                        commitSuccessFiltered++;
-                    }
-
-                    fileNormal += outcome.getFileNormal();
-                    fileSuccessNormal += outcome.getFileSuccessNormal();
-                    fileFiltered += outcome.getFileFiltered();
-                    fileSuccessFiltered += outcome.getFileSuccessFiltered();
-
-                    lineNormal += outcome.getLineNormal();
-                    lineSuccessNormal += outcome.getLineSuccessNormal();
-                    lineFiltered += outcome.getLineFiltered();
-                    lineSuccessFiltered += outcome.getLineSuccessFiltered();
-
-                    outcomeLines.clear();
-                } else {
-                    outcomeLines.add(line);
+                    analyze(f)
+                } catch (e: IOException) {
+                    throw UncheckedIOException(e)
                 }
             }
         }
-
-        System.out.printf("Read a total of %d results.", commitPatches);
-
-        return new AccumulatedOutcome(accumulatedNormal, accumulatedFiltered,
-                commitPatches, commitSuccessNormal, commitSuccessFiltered, fileNormal, fileFiltered,
-                fileSuccessNormal, fileSuccessFiltered, lineNormal, lineFiltered, lineSuccessNormal,
-                lineSuccessFiltered);
     }
 
-    public static PatchOutcome parseResult(final List<String> lines) {
-        final Gson gson = new Gson();
-        final StringBuilder sb = new StringBuilder();
-        lines.forEach(l -> sb.append(l).append("\n"));
-        final JsonObject object = gson.fromJson(sb.toString(), JsonObject.class);
-        return PatchOutcome.FromJSON(object);
+    @Throws(IOException::class)
+    private fun analyze(resultFile: Path) {
+        val fileName = resultFile.fileName.getName(0).toString()
+        val resultSummaryFile = resultFile.parent.resolve("%s.summary".format(fileName))
+        val sb = StringBuilder()
+        val accumulatedOutcome = loadResultObjects(resultFile)
+        sb.append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
+        sb.append("Patch Success").append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
+        printTechnicalSuccess(sb, accumulatedOutcome)
+        var normalTP: Long = accumulatedOutcome.normalResult.applied.v
+        normalTP += accumulatedOutcome.normalResult.mitigatedMissing.v
+        val normalFP: Long = accumulatedOutcome.normalResult.invalid.v
+        var normalTN: Long = accumulatedOutcome.normalResult.filteredCorrectly.v
+        normalTN += accumulatedOutcome.normalResult.mitigatedInvalid.v
+        var normalFN: Long = accumulatedOutcome.normalResult.wrongLocation.v
+        normalFN += accumulatedOutcome.normalResult.missing.v
+        var filteredTP: Long = accumulatedOutcome.filteredResult.applied.v
+        filteredTP += accumulatedOutcome.filteredResult.mitigatedMissing.v
+        val filteredFP: Long = accumulatedOutcome.filteredResult.invalid.v
+        var filteredTN: Long = accumulatedOutcome.filteredResult.filteredCorrectly.v
+        filteredTN += accumulatedOutcome.filteredResult.mitigatedInvalid.v
+        var filteredFN: Long = accumulatedOutcome.filteredResult.wrongLocation.v
+        filteredFN += accumulatedOutcome.filteredResult.missing.v
+        sb.append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
+        sb.append("Correctness").append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
+        sb.append("Without Domain Knowledge").append(LINE_SEP)
+        printCorrectness(sb, accumulatedOutcome.normalResult)
+        sb.append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
+        sb.append("With Domain Knowledge").append(LINE_SEP)
+        sb.append(LINE_SEP)
+        printCorrectness(sb, accumulatedOutcome.filteredResult)
+        sb.append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
+        sb.append("Precision / Recall").append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
+        sb.append("Without Domain Knowledge").append(LINE_SEP)
+        printPrecisionRecall(sb, normalTP, normalFP, normalTN, normalFN)
+        sb.append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
+        sb.append("With Domain Knowledge").append(LINE_SEP)
+        sb.append(LINE_SEP)
+        printPrecisionRecall(sb, filteredTP, filteredFP, filteredTN, filteredFN)
+        sb.append(DIV).append(LINE_SEP)
+        sb.append("Accuracy").append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
+        printAccuracy(sb, normalTP, normalFP, normalTN, normalFN, "Normal")
+        printAccuracy(sb, filteredTP, filteredFP, filteredTN, filteredFN, "Filtered")
+        sb.append(DIV).append(LINE_SEP)
+        print(sb)
+        Files.writeString(resultSummaryFile, sb)
     }
 
-    public static String percentage(final long x, final long y) {
-        final double percentage;
-        if (y == 0) {
-            percentage = 0;
-        } else {
-            percentage = 100 * ((double) x / (double) y);
+    private fun printAccuracy(
+        sb: StringBuilder, tp: Long, fp: Long, tn: Long, fn: Long,
+        name: String
+    ) {
+        val expectedCount = tp + tn
+        val allPositives = tp + fn
+        val allNegative = fp + tn
+        val truePositiveRate = tp.toDouble() / allPositives.toDouble()
+        val trueNegativeRate = tn.toDouble() / allNegative.toDouble()
+        val all = tp + fp + tn + fn
+        sb.append(
+            String.format(
+                "%s patching achieved the expected result %d out of %d times", name,
+                expectedCount, all
+            )
+        ).append(LINE_SEP)
+        sb.append(String.format("Accuracy: %s", percentage(expectedCount, all))).append(LINE_SEP)
+        sb.append(
+            String.format(
+                "Balanced Accuracy: %1.2f",
+                (truePositiveRate + trueNegativeRate) / 2.0
+            )
+        ).append(LINE_SEP).append(LINE_SEP)
+    }
+
+    private fun printTechnicalSuccess(
+        sb: StringBuilder,
+        allOutcomes: AccumulatedOutcome
+    ) {
+        val commitPatches = allOutcomes.commitPatches
+        val commitSuccessNormal = allOutcomes.commitSuccessNormal
+        sb.append(
+            String.format(
+                "%d of %d commit-sized patch applications succeeded (%s)",
+                commitSuccessNormal, commitPatches, percentage(commitSuccessNormal, commitPatches)
+            )
+        )
+            .append(LINE_SEP)
+        val fileNormal = allOutcomes.fileNormal
+        val fileSuccessNormal = allOutcomes.fileSuccessNormal
+        sb.append(
+            String.format(
+                "%d of %d file-sized patch applications succeeded (%s)",
+                fileSuccessNormal, fileNormal, percentage(fileSuccessNormal, fileNormal)
+            )
+        )
+            .append(LINE_SEP)
+        val lineNormal = allOutcomes.lineNormal
+        val lineSuccessNormal = allOutcomes.lineSuccessNormal
+        sb.append(
+            String.format(
+                "%d of %d line-sized patch applications succeeded (%s)",
+                lineSuccessNormal, lineNormal, percentage(lineSuccessNormal, lineNormal)
+            )
+        )
+            .append(LINE_SEP)
+
+        // -------------------
+        val lineFiltered = allOutcomes.lineFiltered
+        val lineSuccessFiltered = allOutcomes.lineSuccessFiltered
+        sb.append(
+            String.format(
+                "%d of %d line-sized patch applications succeeded after filtering (%s)%n",
+                lineSuccessFiltered, lineFiltered, percentage(lineSuccessFiltered, lineFiltered)
+            )
+        )
+            .append(LINE_SEP)
+    }
+
+    private fun printPrecisionRecall(
+        sb: StringBuilder, tp: Long, fp: Long,
+        tn: Long, fn: Long
+    ) {
+        val precision = tp.toDouble() / (tp.toDouble() + fp)
+        val recall = tp.toDouble() / (tp.toDouble() + fn)
+        val fMeasure = 2 * precision * recall / (precision + recall)
+        sb.append("TP: ").append(tp).append(LINE_SEP)
+        sb.append("FP: ").append(fp).append(LINE_SEP)
+        sb.append("TN: ").append(tn).append(LINE_SEP)
+        sb.append("FN: ").append(fn).append(LINE_SEP)
+        sb.append(String.format("Precision: %1.2f", precision)).append(LINE_SEP)
+        sb.append(String.format("Recall: %1.2f", recall)).append(LINE_SEP)
+        sb.append(String.format("F-Measure: %1.2f", fMeasure)).append(LINE_SEP)
+    }
+
+    private fun printCorrectness(sb: StringBuilder, result: AccumulatedResult) {
+        val correct = result.correctCount().toDouble()
+        val incorrect = result.incorrectCount().toDouble()
+        val total = result.resultCount().toDouble()
+        val correctPerc = 100.0 * correct / total
+        val incorrectPerc = 100.0 * incorrect / total
+        val appliedP: Double = 100.0 * result.applied.v.toDouble() / total
+        val invalidP: Double = 100.0 * result.invalid.v.toDouble() / total
+        val wrongLocationP: Double = 100.0 * result.wrongLocation.v.toDouble() / total
+        val missingP: Double = 100.0 * result.missing.v.toDouble() / total
+        val filteredCorrectlyP: Double = 100.0 * result.filteredCorrectly.v.toDouble() / total
+        val filteredIncorrectlyP: Double = 100.0 * result.filteredIncorrectly.v.toDouble() / total
+        val mitigatedInvalidP: Double = 100.0 * result.mitigatedInvalid.v.toDouble() / total
+        val mitigatedMissingP: Double = 100.0 * result.mitigatedMissing.v.toDouble() / total
+        sb.append(String.format("Correct: %1.2f%%  (%d of %d)", correctPerc, correct.toLong(), total.toLong()))
+            .append(LINE_SEP)
+        sb.append(String.format("Incorrect: %1.2f%% (%d of %d)", incorrectPerc, incorrect.toLong(), total.toLong()))
+            .append(LINE_SEP)
+        sb.append("++ Distribution ++").append(LINE_SEP)
+        sb.append(String.format("%1.2f%% applied, %1.2f%% invalid", appliedP, invalidP))
+            .append(LINE_SEP)
+        sb.append(
+            String.format(
+                "%1.2f%% invalid, %1.2f%% wrong location",
+                missingP, wrongLocationP
+            )
+        ).append(LINE_SEP)
+        sb.append(
+            String.format(
+                "%1.2f%% filtered correctly, %1.2f%% filtered incorrectly",
+                filteredCorrectlyP,
+                filteredIncorrectlyP
+            )
+        )
+            .append(LINE_SEP)
+        sb.append(
+            String.format(
+                "%1.2f%% mitigated invalid, %1.2f%% mitigated missing",
+                mitigatedInvalidP,
+                mitigatedMissingP
+            )
+        )
+            .append(LINE_SEP)
+    }
+
+    @Throws(IOException::class)
+    fun loadResultObjects(path: Path?): AccumulatedOutcome {
+        var commitPatches: Long = 0
+        var commitSuccessNormal: Long = 0
+        var commitSuccessFiltered: Long = 0
+        var fileNormal: Long = 0
+        var fileFiltered: Long = 0
+        var fileSuccessNormal: Long = 0
+        var fileSuccessFiltered: Long = 0
+        var lineNormal: Long = 0
+        var lineFiltered: Long = 0
+        var lineSuccessNormal: Long = 0
+        var lineSuccessFiltered: Long = 0
+        val accumulatedNormal = AccumulatedResult()
+        val accumulatedFiltered = AccumulatedResult()
+        Files.newBufferedReader(path).use { reader ->
+            val outcomeLines: MutableList<String> = ArrayList()
+            var line = reader.readLine()
+            while (line != null) {
+                if (line.isEmpty()) {
+                    val outcome = parseResult(outcomeLines)
+                    accumulatedNormal.add(outcome.normalResult)
+                    accumulatedFiltered.add(outcome.filteredResult)
+                    commitPatches++
+                    if (outcome.lineSuccessNormal == outcome.lineNormal) {
+                        commitSuccessNormal++
+                    }
+                    if (outcome.lineSuccessFiltered == outcome.lineFiltered) {
+                        commitSuccessFiltered++
+                    }
+                    fileNormal += outcome.fileNormal
+                    fileSuccessNormal += outcome.fileSuccessNormal
+                    fileFiltered += outcome.fileFiltered
+                    fileSuccessFiltered += outcome.fileSuccessFiltered
+                    lineNormal += outcome.lineNormal
+                    lineSuccessNormal += outcome.lineSuccessNormal
+                    lineFiltered += outcome.lineFiltered
+                    lineSuccessFiltered += outcome.lineSuccessFiltered
+                    outcomeLines.clear()
+                } else {
+                    outcomeLines.add(line)
+                }
+                line = reader.readLine()
+            }
         }
-        return String.format("%3.1f%s", percentage, "%");
+        System.out.printf("Read a total of %d results.", commitPatches)
+        return AccumulatedOutcome(
+            accumulatedNormal, accumulatedFiltered,
+            commitPatches, commitSuccessNormal, commitSuccessFiltered, fileNormal, fileFiltered,
+            fileSuccessNormal, fileSuccessFiltered, lineNormal, lineFiltered, lineSuccessNormal,
+            lineSuccessFiltered
+        )
     }
 
-    private record AccumulatedOutcome(AccumulatedResult normalResult, AccumulatedResult filteredResult, long commitPatches,
-            long commitSuccessNormal, long commitSuccessFiltered, long fileNormal,
-            long fileFiltered, long fileSuccessNormal, long fileSuccessFiltered, long lineNormal,
-            long lineFiltered, long lineSuccessNormal, long lineSuccessFiltered) {
+    private fun parseResult(lines: List<String>): PatchOutcome {
+        val gson = Gson()
+        val sb = StringBuilder()
+        lines.forEach(Consumer { l: String? -> sb.append(l).append("\n") })
+        val `object` = gson.fromJson(sb.toString(), JsonObject::class.java)
+        return fromJSON(`object`)
     }
+
+    fun percentage(x: Long, y: Long): String {
+        val percentage: Double = if (y == 0L) {
+            0.0
+        } else {
+            100 * (x.toDouble() / y.toDouble())
+        }
+        return String.format("%3.1f%s", percentage, "%")
+    }
+
+    data class AccumulatedOutcome(
+        val normalResult: AccumulatedResult,
+        val filteredResult: AccumulatedResult,
+        val commitPatches: Long,
+        val commitSuccessNormal: Long,
+        val commitSuccessFiltered: Long,
+        val fileNormal: Long,
+        val fileFiltered: Long,
+        val fileSuccessNormal: Long,
+        val fileSuccessFiltered: Long,
+        val lineNormal: Long,
+        val lineFiltered: Long,
+        val lineSuccessNormal: Long,
+        val lineSuccessFiltered: Long
+    )
 }
