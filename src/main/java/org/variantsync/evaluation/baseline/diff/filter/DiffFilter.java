@@ -2,7 +2,6 @@ package org.variantsync.evaluation.baseline.diff.filter;
 
 import org.variantsync.evaluation.baseline.diff.components.*;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
-import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
 import org.tinylog.Logger;

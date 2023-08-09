@@ -23,7 +23,6 @@ import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
 import org.variantsync.evaluation.baseline.diff.splitting.DefaultContextProvider;
 import org.variantsync.evaluation.baseline.diff.splitting.DiffSplitter;
 import org.variantsync.evaluation.baseline.diff.splitting.IContextProvider;
-import org.variantsync.evaluation.baseline.shell.*;
 import org.variantsync.evaluation.error.Panic;
 import org.variantsync.evaluation.error.ShellException;
 import org.variantsync.functjonal.Result;
