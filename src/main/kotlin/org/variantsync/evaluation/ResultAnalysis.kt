@@ -54,6 +54,7 @@ object ResultAnalysis {
         dataset: String, runID: Long, sourceVariant: String,
         targetVariant: String, commitV0: SPLCommit, commitV1: SPLCommit,
         normalPatch: FineDiff, filteredPatch: FineDiff,
+        requiredChanges: CountingMap<Change>,
         resultDiffNormal: FineDiff, resultDiffFiltered: FineDiff,
         rejectsNormal: FineDiff, rejectsFiltered: FineDiff, targetChanges: FineDiff,
         skippedFilesNormal: Set<String>, skippedFilesFiltered: Set<String>
@@ -113,7 +114,7 @@ object ResultAnalysis {
             "" + lineFilteredFailed + " of " + lineFiltered
                     + " filtered line-sized patches failed"
         )
-        val scenario = initScenario(normalPatch, targetChanges)
+        val scenario = initScenario(normalPatch, requiredChanges, targetChanges)
         val normalResult: EvaluationResult = scenario.evaluate(
             CountingMap(normalPatch.intoChanges()),
             CountingMap(rejectsNormal.intoChanges()),
@@ -125,8 +126,8 @@ object ResultAnalysis {
             CountingMap(FineDiff.determineChangedLines(resultDiffFiltered))
         )
         Assert.assertEquals(normalResult.resultCount(), filteredResult.resultCount())
-        Assert.assertEquals(normalResult.resultCount(), lineNormal.size)
-        Assert.assertEquals(filteredResult.resultCount(), lineNormal.size)
+        Assert.assertEquals(normalResult.resultCount(), lineNormal.size.toLong())
+        Assert.assertEquals(filteredResult.resultCount(), lineNormal.size.toLong())
         return PatchOutcome(
             dataset, runID, commitV0.id(), commitV1.id(), sourceVariant,
             targetVariant, resultDiffNormal.content.size.toLong(),
@@ -139,55 +140,54 @@ object ResultAnalysis {
         )
     }
 
-    private fun initScenario(unfilteredPatch: FineDiff, targetEvolutionDiff: FineDiff): EvaluationScenario {
+    private fun initScenario(unfilteredPatch: FineDiff, requiredChanges: CountingMap<Change>, targetEvolutionDiff: FineDiff): EvaluationScenario {
         debug("Calculating result table with TP, FP, TN, and FN.")
-        val changesToClassify = unfilteredPatch.intoChanges()
-        val changesInEvolution = targetEvolutionDiff.intoChanges()
+        val changesToClassify = CountingMap<Change>(unfilteredPatch.intoChanges())
+        val changesInEvolution = CountingMap<ChangedLine>(FineDiff.determineChangedLines(targetEvolutionDiff))
 
         // Changes in the target variant's evolution that cannot be
         // synchronized, because they are not part of the source variant and therefore not of the
         // patch
-        val unpatchableChanges: MutableList<Change> = ArrayList()
+        val unpatchableChanges: CountingMap<ChangedLine> = CountingMap()
         // Expected changes, i.e., changes in the target variant's
         // evolution that can be synchronized
-        val requiredChanges: MutableList<Change> = ArrayList()
         run {
-            val tempChanges: MutableList<Change> = ArrayList(changesToClassify)
+            val tempChanges: CountingMap<ChangedLine> = CountingMap(FineDiff.determineChangedLines(unfilteredPatch))
             for (evolutionChange in changesInEvolution) {
                 if (!tempChanges.contains(evolutionChange)) {
-                    unpatchableChanges.add(evolutionChange)
+                    unpatchableChanges.addOne(evolutionChange)
                 } else {
-                    requiredChanges.add(evolutionChange)
-                    tempChanges.remove(evolutionChange)
+                    tempChanges.removeOne(evolutionChange)
                 }
             }
         }
 
         // Determine undesired changes, i.e., changes in the evolution of the source but not the
         // target
-        val undesiredChangesTotal = determineUndesired(changesToClassify, requiredChanges)
+        val undesiredChanges = determineUndesired(changesToClassify, requiredChanges)
         return EvaluationScenario(
-            CountingMap(requiredChanges),
-            CountingMap(undesiredChangesTotal),
-            CountingMap(unpatchableChanges)
+            requiredChanges,
+            undesiredChanges,
+            unpatchableChanges
         )
     }
 
     private fun determineUndesired(
-        changesToClassify: List<Change>,
-        requiredChanges: List<Change>
-    ): List<Change> {
-        val undesiredChanges: MutableList<Change> = ArrayList()
+        changesToClassify: CountingMap<Change>,
+        requiredChanges: CountingMap<Change>
+    ): CountingMap<Change> {
+        val undesiredChanges: CountingMap<Change> = CountingMap()
         run {
-            val tempChanges: MutableList<Change> = ArrayList(requiredChanges)
+            val tempChanges: CountingMap<Change> = CountingMap(requiredChanges)
             for (patchChange in changesToClassify) {
                 if (!tempChanges.contains(patchChange)) {
-                    undesiredChanges.add(patchChange)
+                    undesiredChanges.addOne(patchChange)
                 } else {
-                    tempChanges.remove(patchChange)
+                    tempChanges.removeOne(patchChange)
                 }
             }
         }
+        Assert.assertEquals(requiredChanges.elementCount() + undesiredChanges.elementCount(), changesToClassify.elementCount())
         return undesiredChanges
     }
 

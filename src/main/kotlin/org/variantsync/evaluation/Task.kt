@@ -17,6 +17,7 @@ import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.DiffCommand
 import org.variantsync.evaluation.baseline.shell.PatchCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
+import org.variantsync.evaluation.common.Change
 import org.variantsync.evaluation.error.Panic
 import org.variantsync.vevos.simulation.feature.Variant
 import org.variantsync.vevos.simulation.feature.config.FeatureIDEConfiguration
@@ -243,12 +244,18 @@ class Task(
                     // Evaluate the result
                     val actualVsExpectedFiltered = getActualVsExpected(workdir, pathToExpectedResult, "filtered")
                     val rejectsFiltered = readRejects(workdir.rejectsFilteredFile)
+                    val requiredChanges = getRequiredChanges(originalDiff,
+                        groundTruthV0[source]!!.variant(),
+                        groundTruthV1[source]!!.variant(), target,
+                        workdir.variantsDirV0.path(), workdir.variantsDirV1.path()
+                    )
 
                     /* Result Evaluation */
                     val patchOutcome = ResultAnalysis.processOutcome(
                         workdir,
                         datasetName, runID, source.name, target.name,
                         parentCommit, currentCommit, normalPatch, filteredPatch,
+                        requiredChanges,
                         actualVsExpectedNormal, actualVsExpectedFiltered, rejectsNormal,
                         rejectsFiltered, evolutionDiff, skippedNormal, skippedFiltered
                     )
@@ -534,16 +541,31 @@ class Task(
         newVersionRoot: Path
     ): FineDiff {
         val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, 2)
-        return getFilteredDiff(originalDiff, cachedPCBasedFilter)
+        return getFilteredDiff(originalDiff, cachedPCBasedFilter, false)
+    }
+
+    // Get the filtered line-level patches for a given difference
+    private fun getRequiredChanges(
+        originalDiff: OriginalDiff,
+        tracesV0: Artefact,
+        tracesV1: Artefact,
+        target: Variant,
+        oldVersionRoot: Path,
+        newVersionRoot: Path
+    ): CountingMap<Change> {
+        val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, 2)
+        val fineDiff = getFilteredDiff(originalDiff, cachedPCBasedFilter, true)
+        return CountingMap(fineDiff.intoChanges())
     }
 
     // Get the filtered line-level patches for a given difference
     private fun <T> getFilteredDiff(
         originalDiff: OriginalDiff,
-        filter: T
+        filter: T,
+        filterDisabled: Boolean,
     ): FineDiff where T : IFileDiffFilter?, T : ILineFilter? {
         // Create target variant specific patch that respects PCs
-        val contextProvider: IContextProvider = DefaultContextProvider(workdir.workDir)
+        val contextProvider: IContextProvider = DefaultContextProvider(workdir.workDir, filterDisabled)
         return DiffSplitter.split(originalDiff, filter, filter, contextProvider)
     }
 

@@ -4,7 +4,7 @@ import org.variantsync.diffdetective.util.Assert
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
 import org.variantsync.evaluation.common.Change
 
-class EvaluationScenario(private val required: CountingMap<Change>, private val undesired: CountingMap<Change>, private val unPatchable: CountingMap<Change>) {
+class EvaluationScenario(private val required: CountingMap<Change>, private val undesired: CountingMap<Change>, private val unPatchable: CountingMap<ChangedLine>) {
     fun evaluate(patch: CountingMap<Change>, rejects: CountingMap<Change>, observedDifference: CountingMap<ChangedLine>): EvaluationResult {
         var correct = 0L
         var invalid = 0L
@@ -17,7 +17,7 @@ class EvaluationScenario(private val required: CountingMap<Change>, private val 
 
         // Second, clean the observed differences from all un-patchable changes
         for (unpatchable in this.unPatchable.keys()) {
-            observedDifference.removeOne(unpatchable.asChangedLine())
+            observedDifference.removeOne(unpatchable)
         }
 
         // Third, classify the undesired changes into invalid, filtered, and mitigated
@@ -52,6 +52,8 @@ class EvaluationScenario(private val required: CountingMap<Change>, private val 
         // Lastly, classify the required changes into valid, missing, and wrongLocation
         for (required in this.required.keys()) {
             // Is the change part of the applied patch?
+            // TODO: Bug! The context of the required change does not necessarily fit the context of the change in the patch
+            // TODO: We have to track ids or something
             if (!patch.removeOne(required)) {
                 // If not, it has been filtered incorrectly
                 filteredIncorrectly++

@@ -27,22 +27,29 @@ public class DefaultContextProvider implements IContextProvider {
     private final int contextSize;
     // The working directory in which the files for which the context is to be determined can be found
     private final Path rootDir;
+    private final boolean filterDisabled;
 
     /**
      * @param rootDir The working directory containing the files for which a context is to be determined
      */
     public DefaultContextProvider(final Path rootDir) {
         // Three is the default size set in unix diff
-        this(rootDir, 3);
+        this(rootDir, 3, true);
+    }
+
+    public DefaultContextProvider(final Path rootDir, final boolean filterDisabled) {
+        // Three is the default size set in unix diff
+        this(rootDir, 3, filterDisabled);
     }
 
     /**
      * @param rootDir     The working directory containing the files for which a context is to be determined
      * @param contextSize The size of the provided context (i.e., number of leading/trailing lines)
      */
-    public DefaultContextProvider(final Path rootDir, final int contextSize) {
+    public DefaultContextProvider(final Path rootDir, final int contextSize, final boolean filterDisabled) {
         this.rootDir = rootDir;
         this.contextSize = contextSize;
+        this.filterDisabled = filterDisabled;
     }
 
     @Override
@@ -65,7 +72,7 @@ public class DefaultContextProvider implements IContextProvider {
             for (int i = index - 1; i >= 0; i--) {
                 final String currentLine = " " + lines.get(i);
                 // Apply the line filter to ignore certain lines
-                if (lineFilter.keepContextLine(fileDiff.newFile(), i + 1)) {
+                if (filterDisabled || lineFilter.keepContextLine(fileDiff.newFile(), i + 1)) {
                     if (context.size() >= contextSize) {
                         break;
                     }
@@ -104,7 +111,7 @@ public class DefaultContextProvider implements IContextProvider {
                 }
                 final String currentLine = " " + lines.get(i);
                 // Apply the line filter to ignore certain lines
-                if (lineFilter.keepContextLine(fileDiff.oldFile(), i + 1)) {
+                if (filterDisabled || lineFilter.keepContextLine(fileDiff.oldFile(), i + 1)) {
                     if (context.size() >= contextSize) {
                         break;
                     }
