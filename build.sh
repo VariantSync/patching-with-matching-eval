@@ -1,2 +1,2 @@
 #! /bin/bash
-docker build -t sync-study .
+docker build --network=host -t sync-study .

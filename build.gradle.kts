@@ -1,8 +1,9 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.gradle.jvm.tasks.Jar
 
 plugins {
     kotlin("jvm") version "1.9.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     application
 }
 
@@ -34,15 +35,49 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
 
+tasks.create<ShadowJar>("Experiment") {
+    archiveBaseName.set("experiment-execution")
+    archiveVersion.set("")
+
+    // Exclude signature files
+    exclude("META-INF/*.SF")
+    exclude("META-INF/*.DSA")
+    exclude("META-INF/*.RSA")
+
+    // Include the main source sets (classes and resources)
+    from(sourceSets.main.get().output)
+
+    configurations = listOf(project.configurations.runtimeClasspath.get())
+
+    manifest {
+        attributes["Main-Class"] = "org.variantsync.evaluation.Main"
+    }
+}
+
+// Second JAR task
+tasks.create<ShadowJar>("Evaluation") {
+    archiveBaseName.set("result-eval")
+    archiveVersion.set("")
+
+    // Exclude signature files
+    exclude("META-INF/*.SF")
+    exclude("META-INF/*.DSA")
+    exclude("META-INF/*.RSA")
+
+    // Include the main source sets (classes and resources)
+    from(sourceSets.main.get().output)
+
+    configurations = listOf(project.configurations.runtimeClasspath.get())
+
+    manifest {
+        attributes["Main-Class"] = "org.variantsync.evaluation.ResultAnalysis"
+    }
+}
 
 tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
 application {
-    mainClass.set("MainKt")
+    mainClass.set("Main")
 }

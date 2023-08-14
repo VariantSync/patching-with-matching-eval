@@ -3,7 +3,7 @@
 # Function for evaluating results and plotting figures
 evaluation() {
 	echo "Running result evaluation"
-	java -jar ResultEval-jar-with-dependencies.jar "$1"
+	java -jar result-eval.jar "$1"
 
 	echo "Plotting figures"
 	PD=/home/user/simulation-files/plots
@@ -31,9 +31,6 @@ if [ "$1" == '' ]; then
 	exit
 fi
 
-cp target/*Runner*-jar-with* .
-cp target/ResultEval-jar-with-dependencies* .
-
 if [ "$1" == 'replication' ] || [ "$1" == 'validation' ]; then
 	if [ "$1" == 'replication' ]; then
 		echo "Running full study replication. This will take several weeks depending on your system. You can stop the execution
@@ -42,7 +39,7 @@ if [ "$1" == 'replication' ] || [ "$1" == 'validation' ]; then
 		echo ""
 		echo ""
 		echo ""
-		java -jar -Dtinylog.configuration=/home/user/tinylog.properties StudyRunner-jar-with-dependencies.jar config-replication.properties
+		java -jar -Dtinylog.configuration=/home/user/tinylog.properties experiment-execution.jar config-replication.properties
 		if [ $? -eq 1 ]; then
 			mkdir /home/user/simulation-files/results/ERROR
 			cp -r /home/user/simulation-files /home/user/simulation-files/ERROR/
@@ -54,7 +51,7 @@ if [ "$1" == 'replication' ] || [ "$1" == 'validation' ]; then
 		echo ""
 		echo ""
 		echo ""
-		java -jar -Dtinylog.configuration=/home/user/tinylog.properties StudyRunner-jar-with-dependencies.jar config-validation.properties
+		java -jar -Dtinylog.configuration=/home/user/tinylog.properties experiment-execution.jar config-validation.properties
 		if [ $? -eq 1 ]; then
 			mkdir /home/user/simulation-files/results/ERROR
 			cp -r /home/user/simulation-files/main/workdir* /home/user/simulation-files/results/ERROR/
