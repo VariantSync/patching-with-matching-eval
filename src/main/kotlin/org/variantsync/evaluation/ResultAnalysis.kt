@@ -387,7 +387,7 @@ object ResultAnalysis {
             .append(LINE_SEP)
         sb.append(
             String.format(
-                "%1.2f%% invalid, %1.2f%% wrong location",
+                "%1.2f%% missing, %1.2f%% wrong location",
                 missingP, wrongLocationP
             )
         ).append(LINE_SEP)

@@ -23,8 +23,6 @@ class EvaluationScenario(private val required: CountingMap<Change>, private val 
         // Third, classify the required changes into valid, missing, and wrongLocation
         for (required in this.required) {
             // Is the change part of the applied patch?
-            // TODO: Bug! The context of the required change does not necessarily fit the context of the change in the patch
-            // TODO: We have to track ids or something
             if (!patch.removeOne(required)) {
                 if(observedDifference.removeOne(required.asChangedLine())) {
                     // If not, it has been filtered incorrectly
