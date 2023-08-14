@@ -90,6 +90,8 @@ class Task(
 
         // For each pair
         Logger.info("Starting diffing and patching...")
+        // TODO: Fix run id for result saving; unique ids across tasks
+        // TODO: Find issue with patch file not found in Docker
         var runID: Long = 0
         var commitCount = 0
         val historySize = commits.size.toLong()
