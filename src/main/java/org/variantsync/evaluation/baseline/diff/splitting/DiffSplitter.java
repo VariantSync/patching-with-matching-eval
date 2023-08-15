@@ -111,7 +111,7 @@ public class DiffSplitter {
 
         final HunkLocation location = new HunkLocation(hunk.location().startLineSource() + hunkLocationOffset, hunk.location().startLineTarget() + hunkLocationOffset);
 
-        final Hunk miniHunk = new Hunk(location, content);
+        final Hunk miniHunk = new Hunk(location, hunk.rawLocation(), content);
         return new FileDiff(fileDiff.header(), Collections.singletonList(miniHunk), fileDiff.oldFile(), fileDiff.newFile());
 
     }

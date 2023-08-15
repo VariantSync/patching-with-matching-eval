@@ -151,7 +151,7 @@ public class DiffParser {
                 content.add(new ContextLine(line));
             }
         }
-        return new Hunk(location, content);
+        return new Hunk(location, location, content);
     }
 
     // Parse and convert the header of a hunk

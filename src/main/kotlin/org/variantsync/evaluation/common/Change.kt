@@ -16,13 +16,13 @@ class Change(val lineChange: Line, val hunk: Hunk, val path: Path){
         other as Change
 
         if (lineChange != other.lineChange) return false
-        if (hunk.location() != other.hunk.location()) return false
+        if (hunk.rawLocation() != other.hunk.rawLocation()) return false
         return path == other.path
     }
 
     override fun hashCode(): Int {
         var result = lineChange.hashCode()
-        result = 31 * result + hunk.location().hashCode()
+        result = 31 * result + hunk.rawLocation().hashCode()
         result = 31 * result + path.hashCode()
         return result
     }

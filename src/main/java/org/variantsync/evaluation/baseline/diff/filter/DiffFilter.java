@@ -78,7 +78,7 @@ public class DiffFilter {
             }
             if (atLeastOneChange) {
                 HunkLocation location = new HunkLocation(hunk.location().startLineSource(), hunk.location().startLineTarget());
-                filteredHunks.add(new Hunk(location, filteredLines));
+                filteredHunks.add(new Hunk(location, hunk.rawLocation(), filteredLines));
             }
         }
         if (filteredHunks.isEmpty()) {

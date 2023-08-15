@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
  */
 public final class Hunk implements IDiffComponent {
     private final HunkLocation location;
+    private final HunkLocation rawLocation;
     private final List<Line> allLines;
     private final List<Line> changedLines;
 
@@ -19,8 +20,9 @@ public final class Hunk implements IDiffComponent {
      * @param location The location of the hunk in the file
      * @param allLines  The content of the hunk (i.e., context and changed lines)
      */
-    public Hunk(HunkLocation location, List<Line> allLines) {
+    public Hunk(HunkLocation location, HunkLocation rawLocation, List<Line> allLines) {
         this.location = location;
+        this.rawLocation = rawLocation;
         this.allLines = allLines;
         this.changedLines = allLines.stream().filter(l -> (l instanceof AddedLine || l instanceof RemovedLine)).collect(Collectors.toList());
     }
@@ -72,6 +74,10 @@ public final class Hunk implements IDiffComponent {
         return location;
     }
 
+    public HunkLocation rawLocation() {
+        return rawLocation;
+    }
+
     public List<Line> content() {
         return allLines;
     }
@@ -93,7 +99,7 @@ public final class Hunk implements IDiffComponent {
             lines.add(inverse);
         }
 
-        return new Hunk(this.location, lines);
+        return new Hunk(this.location, this.rawLocation, lines);
     }
 
 }
