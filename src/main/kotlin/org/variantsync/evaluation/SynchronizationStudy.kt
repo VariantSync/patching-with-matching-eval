@@ -6,6 +6,7 @@ import org.variantsync.vevos.simulation.io.Resources
 import org.variantsync.vevos.simulation.io.data.VariabilityDatasetLoader
 import org.variantsync.vevos.simulation.variability.SPLCommit
 import org.variantsync.vevos.simulation.variability.VariabilityDataset
+import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.Executors
@@ -33,6 +34,9 @@ class SynchronizationStudy(
      */
     init {
         val resultFile = resultsDir.resolve("$datasetName.results")
+        if (!Files.exists(resultFile)) {
+            Files.createFile(resultFile)
+        }
         this.groundTruthPath = groundTruthPath
         this.numThreads = numThreads
         val history = init()
