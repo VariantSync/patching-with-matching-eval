@@ -68,7 +68,7 @@ class WorkPaths(mainDir: Path) {
         rejectsNormalFile = workDir.resolve("rejects-normal.txt")
         rejectsFilteredFile = workDir.resolve("rejects-filtered.txt")
         shell = ShellExecutor({ message: String? -> Logger.debug(message) },
-            { message: String? -> Logger.warn(message) },
+            { message: String? -> Logger.debug(message) },
             workDir
         )
     }

@@ -19,7 +19,7 @@ import kotlin.math.ceil
 class SynchronizationStudy(
     datasetName: String, mainDir: Path, resultsDir: Path,
     repositoryPath: Path, groundTruthPath: Path, numRepetitions: Int, numVariants: Int,
-    startID: Int, inDebug: Boolean, numThreads: Int
+    idProvider: IDProvider, inDebug: Boolean, numThreads: Int
 ) {
     // Path to the ground truth dataset
     private val groundTruthPath: Path
@@ -44,7 +44,7 @@ class SynchronizationStudy(
             tasks.add(
                 Task(
                     datasetName, mainDir, repositoryPath, resultFile,
-                    commits, numRepetitions, numVariants, inDebug, startID
+                    commits, numRepetitions, numVariants, inDebug, idProvider
                 )
             )
         }

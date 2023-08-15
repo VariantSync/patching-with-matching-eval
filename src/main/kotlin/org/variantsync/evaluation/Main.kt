@@ -64,14 +64,16 @@ object Main {
             GitLoader.fromRemote(repoDir, URI.create(dataset.repoURL()))
                 .use { Logger.info("Cloned %s into %s".format(dataset.name(), repoDir)) }
             val numThreads = config.EXPERIMENT_THREAD_COUNT()
+            val idProvider = IDProvider(startID)
             val synchronizationStudy = SynchronizationStudy(
                 dataset.name(), mainDir, resultsDir, repoDir, repoGroundTruth,
-                numRepetitions, numVariants, startID, inDebug, numThreads
+                numRepetitions, numVariants, idProvider, inDebug, numThreads
             )
             try {
                 synchronizationStudy.run()
             } catch (e: Exception) {
                 e.printStackTrace()
+                Logger.error(e)
                 exitProcess(1)
             }
         }

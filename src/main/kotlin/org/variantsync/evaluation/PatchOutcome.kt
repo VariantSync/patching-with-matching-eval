@@ -29,7 +29,7 @@ class PatchOutcome
  * @param lineSuccessFiltered      Number of successful line-level patches
  */(
     private val dataset: String,
-    private val runID: Long,
+    private val runID: ULong,
     private val commitV0: String,
     private val commitV1: String,
     private val sourceVariant: String,
@@ -132,7 +132,7 @@ class PatchOutcome
         fun fromJSON(`object`: JsonObject): PatchOutcome {
             return PatchOutcome(
                 `object`["dataset"].asString,
-                `object`["runID"].asLong,
+                `object`["runID"].asLong.toULong(),
                 `object`["commitV0"].asString,
                 `object`["commitV1"].asString,
                 `object`["sourceVariant"].asString,

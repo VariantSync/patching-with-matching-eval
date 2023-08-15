@@ -51,7 +51,7 @@ object ResultAnalysis {
      */
     fun processOutcome(
         workdir: WorkPaths, 
-        dataset: String, runID: Long, sourceVariant: String,
+        dataset: String, runID: ULong, sourceVariant: String,
         targetVariant: String, commitV0: SPLCommit, commitV1: SPLCommit,
         normalPatch: FineDiff, filteredPatch: FineDiff,
         requiredChanges: CountingMap<Change>,

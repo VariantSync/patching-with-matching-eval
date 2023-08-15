@@ -85,8 +85,8 @@ class StudyConfiguration(propertiesFile: File) {
      * skipped when running the study. This property is required for the short installation
      * validation.
      */
-    fun EXPERIMENT_START_ID(): Int {
-        return config!!.getInt(EXPERIMENT_STARTID, 0)
+    fun EXPERIMENT_START_ID(): ULong {
+        return config!!.getLong(EXPERIMENT_STARTID, 0).toULong()
     }
 
     /**

@@ -40,15 +40,15 @@ import java.util.function.Consumer
 import java.util.stream.Collectors
 
 class Task(
-    datasetName: String, mainDir: Path,  repositoryPath: Path,
+    datasetName: String, mainDir: Path, repositoryPath: Path,
     resultsFile: Path, commits: List<SPLCommit>, numRepetitions: Int, numVariants: Int,
-    inDebug: Boolean, startID: Int
+    inDebug: Boolean, idProvider: IDProvider
 ) : Runnable {
     private val workdir: WorkPaths
     private val resultsFile: Path
     private val repositoryPath: Path
     private val commits: List<SPLCommit>
-    private val startID: Int
+    private val idProvider: IDProvider
     private val numRepetitions: Int
     private val numVariants: Int
     private val inDebug: Boolean
@@ -72,7 +72,7 @@ class Task(
         this.numRepetitions = numRepetitions
         this.numVariants = numVariants
         this.inDebug = inDebug
-        this.startID = startID
+        this.idProvider = idProvider
         sampler = FeatureIDESampler.CreateRandomSampler(this.numVariants)
     }
 
@@ -90,17 +90,15 @@ class Task(
 
         // For each pair
         Logger.info("Starting diffing and patching...")
-        // TODO: Fix run id for result saving; unique ids across tasks
-        // TODO: Find issue with patch file not found in Docker
-        var runID: Long = 0
-        var commitCount = 0
+        var runID: ULong
+        var commitCount = 0uL
         val historySize = commits.size.toLong()
         Logger.info("There are $historySize commits to work on.")
         for (currentCommit in commits) {
             // Increase one extra time for the first parent in the sequence
             commitCount++
             // Skip pairs until the start ID has been reached.
-            if (commitCount < startID) {
+            if (commitCount < idProvider.start) {
                 Logger.info("Skipped commit $commitCount")
                 continue
             }
@@ -207,7 +205,7 @@ class Task(
                     if (target === source) {
                         continue
                     }
-                    runID++
+                    runID = idProvider.next()
                     Logger.debug(source.name + " --patch--> " + target.name)
                     val pathToTarget = workdir.variantsDirV0.path().resolve(target.name)
                     val pathToExpectedResult = workdir.variantsDirV1.path().resolve(target.name)
@@ -275,7 +273,7 @@ class Task(
                     )
                 }
             }
-            if (commitCount % 100 == 0) {
+            if (commitCount % 100uL == 0uL) {
                 Logger.info(String.format("Finished commit %d of %d.%n", commitCount, historySize))
             }
 
