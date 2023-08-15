@@ -176,14 +176,12 @@ object ResultAnalysis {
         changesToClassify: CountingMap<Change>,
         requiredChanges: CountingMap<Change>
     ): CountingMap<Change> {
-        val undesiredChanges: CountingMap<Change> = CountingMap()
-        run {
-            val tempChanges: CountingMap<Change> = CountingMap(requiredChanges)
-            for (patchChange in changesToClassify) {
-                if (!tempChanges.removeOne(patchChange)) {
-                    undesiredChanges.addOne(patchChange)
-                }
+        val undesiredChanges: CountingMap<Change> = run {
+            val tempChanges: CountingMap<Change> = CountingMap(changesToClassify)
+            for (requiredChange in requiredChanges) {
+                Assert.assertTrue(tempChanges.removeOne(requiredChange))
             }
+            tempChanges
         }
         Assert.assertEquals(requiredChanges.elementCount() + undesiredChanges.elementCount(), changesToClassify.elementCount())
         return undesiredChanges
