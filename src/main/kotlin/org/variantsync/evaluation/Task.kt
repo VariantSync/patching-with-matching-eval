@@ -91,15 +91,16 @@ class Task(
         // For each pair
         Logger.info("Starting diffing and patching...")
         var runID: ULong
-        var commitCount = 0uL
-        val historySize = commits.size.toLong()
-        Logger.info("There are $historySize commits to work on.")
+        var numProcessed = 0uL
+        val numCommits = commits.size.toLong()
+        Logger.info("There are $numCommits commits to work on.")
         for (currentCommit in commits) {
             // Increase one extra time for the first parent in the sequence
-            commitCount++
+            numProcessed++
             // Skip pairs until the start ID has been reached.
-            if (commitCount < idProvider.start) {
-                Logger.info("Skipped commit $commitCount")
+            runID = idProvider.next()
+            if (runID < idProvider.start) {
+                Logger.info("Skipped commit $runID")
                 continue
             }
             // We can only process the commit if it has at least one parent
@@ -205,7 +206,6 @@ class Task(
                     if (target === source) {
                         continue
                     }
-                    runID = idProvider.next()
                     Logger.debug(source.name + " --patch--> " + target.name)
                     val pathToTarget = workdir.variantsDirV0.path().resolve(target.name)
                     val pathToExpectedResult = workdir.variantsDirV1.path().resolve(target.name)
@@ -273,8 +273,8 @@ class Task(
                     )
                 }
             }
-            if (commitCount % 100uL == 0uL) {
-                Logger.info(String.format("Finished commit %d of %d.%n", commitCount, historySize))
+            if (numProcessed % 100uL == 0uL) {
+                Logger.info(String.format("Finished commit %s of %s.%n", numProcessed.toString(), numCommits.toString()))
             }
 
             // Free memory of parentCommit

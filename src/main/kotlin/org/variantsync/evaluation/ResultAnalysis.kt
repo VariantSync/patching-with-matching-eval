@@ -59,7 +59,7 @@ object ResultAnalysis {
         rejectsNormal: FineDiff, rejectsFiltered: FineDiff, targetChanges: FineDiff,
         skippedFilesNormal: Set<String>, skippedFilesFiltered: Set<String>
     ): PatchOutcome {
-        debug("Processing outcome for patch process in " + workdir.workDir)
+        debug("Processing outcome of $runID for patch process in " + workdir.workDir)
         // evaluate patch rejects
         // number of tried file-level patches
         val fileNormal = HashSet(normalPatch.content.stream()
@@ -84,7 +84,7 @@ object ResultAnalysis {
             .filter { change: ChangedLine -> skippedFilesNormal.contains(change.file.toString()) }
             .forEach { e: ChangedLine -> lineNormalFailed.add(e) }
         debug(
-            "$lineNormalFailed of $lineNormal normal line-sized patches failed"
+            "${lineNormalFailed.size} of ${lineNormal.size} normal line-sized patches failed"
         )
 
         // Number of tried file-level patches (with filtering)
@@ -111,7 +111,7 @@ object ResultAnalysis {
             .filter { change: ChangedLine -> skippedFilesFiltered.contains(change.file.toString()) }
             .forEach { e: ChangedLine -> lineFilteredFailed.add(e) }
         debug(
-            "" + lineFilteredFailed + " of " + lineFiltered
+            "" + lineFilteredFailed.size + " of " + lineFiltered.size
                     + " filtered line-sized patches failed"
         )
         val scenario = initScenario(normalPatch, requiredChanges, targetChanges)
@@ -180,10 +180,8 @@ object ResultAnalysis {
         run {
             val tempChanges: CountingMap<Change> = CountingMap(requiredChanges)
             for (patchChange in changesToClassify) {
-                if (!tempChanges.contains(patchChange)) {
+                if (!tempChanges.removeOne(patchChange)) {
                     undesiredChanges.addOne(patchChange)
-                } else {
-                    tempChanges.removeOne(patchChange)
                 }
             }
         }

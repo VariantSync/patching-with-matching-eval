@@ -1,7 +1,7 @@
 package org.variantsync.evaluation
 
-class IDProvider(var id: ULong) {
-    val start: ULong = id
+class IDProvider(val start: ULong) {
+    var id: ULong = 0uL
     fun next() : ULong {
         synchronized(this) {
             return id++
