@@ -54,10 +54,6 @@ class Task(
     private val inDebug: Boolean
     private val datasetName: String
 
-    companion object {
-        private val lock = Any()
-    }
-
     // The variant sampler
     private val sampler: Sampler
 
@@ -263,17 +259,13 @@ class Task(
                         actualVsExpectedNormal, actualVsExpectedFiltered, rejectsNormal,
                         rejectsFiltered, evolutionDiff, skippedNormal, skippedFiltered
                     )
-                    synchronized(lock) {
-                        try
-                        {
-                            patchOutcome.writeAsJSON(resultsFile, true)
-                        } catch (e: IOException)
-                        {
-                            Logger.error(
-                                "Was not able to write filtered patch result file for run "
-                                        + runID, e
-                            )
-                        }
+                    try {
+                        patchOutcome.writeAsJSON(resultsFile, true)
+                    } catch (e: IOException) {
+                        Logger.error(
+                            "Was not able to write filtered patch result file for run "
+                                    + runID, e
+                        )
                     }
                     Logger.debug(
                         "Finished patching for source " + source.name + " and target "
