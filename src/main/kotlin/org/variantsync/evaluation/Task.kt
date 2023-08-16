@@ -397,7 +397,14 @@ class Task(
             e.printStackTrace()
             panic("Was not able to create directory for variant: " + variant.name)
         }
-        val gtV0 = currentCommit.presenceConditionsBefore().run().orElseThrow()
+        val gtV0 = currentCommit.presenceConditionsBefore().run().orElseThrow {
+            NoSuchElementException(
+                "%s ; %s ; %s".format(
+                    variant,
+                    workdir.splCopyB, currentCommit
+                )
+            )
+        }
             .generateVariant(variant, CaseSensitivePath(workdir.splCopyA),
                 workdir.variantsDirV0.resolve(variant.name),
                 VariantGenerationOptions
@@ -418,7 +425,7 @@ class Task(
         groundTruthV0[variant] = gtV0
         val gtV1 = currentCommit.presenceConditionsAfter().run()
             .orElseThrow {
-                RuntimeException(
+                NoSuchElementException(
                     "%s ; %s ; %s".format(
                         variant,
                         workdir.splCopyB, currentCommit
