@@ -108,6 +108,9 @@ class Task(
                 continue
             }
             val parentCommit = currentCommit.parents().get()[0]
+            if (parentCommit.id().trim().isEmpty()) {
+                continue
+            }
             splRepoPreparation(parentRepo, childRepo, parentCommit, currentCommit)
 
             // While more random configurations to consider
