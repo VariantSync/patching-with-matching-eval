@@ -162,8 +162,18 @@ class Task(
                 val groundTruthV0: MutableMap<Variant, GroundTruth> = HashMap()
                 val groundTruthV1: MutableMap<Variant, GroundTruth> = HashMap()
                 Logger.debug("Generating variants...")
+                var skip = false
                 for (variant in sample.variants()) {
-                    generateVariant(currentCommit, groundTruthV0, groundTruthV1, variant, workdir)
+                    try {
+                        generateVariant(currentCommit, groundTruthV0, groundTruthV1, variant, workdir)
+                    } catch (e: NoSuchElementException) {
+                        Logger.debug(e)
+                        Logger.warn("Was not able to generate all variants for commit ${currentCommit.id()}, because there is no ground truth.")
+                        skip = true
+                    }
+                }
+                if (skip) {
+                    continue
                 }
                 Logger.debug("Done.")
 
