@@ -626,7 +626,9 @@ class Task(
 
     // Abort the program
     private fun panic(message: String, e: Exception) {
-        Logger.error(message, e)
+        Logger.error(message)
+        Logger.error(e.message)
+        Logger.error(e)
         e.printStackTrace()
         throw Panic(message)
     }
