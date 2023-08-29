@@ -2,7 +2,6 @@ package org.variantsync.evaluation
 
 import de.ovgu.featureide.fm.core.base.IFeature
 import de.ovgu.featureide.fm.core.base.IFeatureModel
-import org.eclipse.jgit.api.errors.GitAPIException
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
@@ -477,12 +476,32 @@ class Task(
             Logger.debug("Checkout of commits in SPL repo.")
             parentRepo.checkoutCommit(parentCommit, true)
             childRepo.checkoutCommit(childCommit, true)
-        } catch (e: GitAPIException) {
-            panic("Was not able to checkout commits ($parentCommit -> $childCommit) for SPL repository.", e)
-        } catch (e: IOException) {
-            panic("Was not able to checkout commits ($parentCommit -> $childCommit) for SPL repository.", e)
+        } catch (e: Exception) {
+            Logger.error("Was not able to checkout commits ($parentCommit -> $childCommit) for SPL repository.", e)
+            // Try to clean and checkout again
+            cleanRepo(parentRepo)
+            cleanRepo(childRepo)
+            Logger.warn("Retry of commits in SPL repo.")
+            parentRepo.checkoutCommit(parentCommit, true)
+            childRepo.checkoutCommit(childCommit, true)
         }
         Logger.debug("Done.")
+    }
+
+    /**
+     * Clean the repo before the next commit is checked out.
+     */
+    private fun cleanRepo(repo: SPLRepository) {
+        // Stash all changes and drop the stash. This is a workaround as the JGit API does not support restore.
+        Logger.warn("Cleaning state of V0 repo.")
+        try {
+            repo.stashCreate(true)
+            repo.dropStash()
+            Logger.warn("Cleaning state of repo.")
+        } catch (e: Exception) {
+            Logger.error("Was not able to clean SPL repository (${repo.path}).", e)
+            throw e
+        }
     }
 
     // Save the difference as a patch file
