@@ -111,7 +111,14 @@ class Task(
             if (parentCommit.id().trim().isEmpty()) {
                 continue
             }
-            splRepoPreparation(parentRepo, childRepo, parentCommit, currentCommit)
+            try {
+                splRepoPreparation(parentRepo, childRepo, parentCommit, currentCommit)
+            } catch (e: Exception) {
+                Logger.error("Was not able to prepare SPL repositories for commit pair ${parentCommit.id()} -> ${currentCommit.id()}")
+                Logger.error(e)
+                e.printStackTrace()
+                continue
+            }
 
             // While more random configurations to consider
             for (i in 0 until numRepetitions) {
