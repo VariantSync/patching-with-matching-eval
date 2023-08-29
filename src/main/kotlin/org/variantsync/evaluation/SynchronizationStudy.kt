@@ -58,21 +58,26 @@ class SynchronizationStudy(
      * Execute the study.
      */
     fun run() {
-        try {
-            val threadPool = Executors.newFixedThreadPool(numThreads)
-            val futures = tasks.stream()
-                .map { runnable: Task -> threadPool.submit(runnable) }
-                .collect(Collectors.toList())
-            threadPool.shutdown()
-            for (future in futures) {
+
+        val threadPool = Executors.newFixedThreadPool(numThreads)
+        val futures = tasks.stream()
+            .map { runnable: Task -> threadPool.submit(runnable) }
+            .collect(Collectors.toList())
+        threadPool.shutdown()
+        for (future in futures) {
+            try {
                 future.get()
+            } catch (e: Exception) {
+                Logger.error("Failed to finish task!")
+                Logger.error(e)
+                e.printStackTrace()
+                throw RuntimeException(e)
             }
-            if (!threadPool.awaitTermination(7, TimeUnit.DAYS)) {
-                Logger.error("Thread pool timeout.")
-            }
-        } catch (e: Exception) {
-            throw RuntimeException(e)
         }
+        if (!threadPool.awaitTermination(7, TimeUnit.DAYS)) {
+            Logger.error("Thread pool timeout.")
+        }
+
         Logger.info("All done.")
     }
 
