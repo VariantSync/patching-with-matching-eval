@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("org.variantsync.vevos:simulation:1.1.2")
+    implementation("org.variantsync.vevos:simulation:1.2.0")
     implementation("org.apache.commons:commons-configuration2:2.8.0")
     implementation("commons-beanutils:commons-beanutils:1.9.4")
     implementation("org.tinylog:tinylog-api-kotlin:2.6.2")
