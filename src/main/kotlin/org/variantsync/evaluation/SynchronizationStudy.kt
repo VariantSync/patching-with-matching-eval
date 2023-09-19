@@ -71,7 +71,6 @@ class SynchronizationStudy(
                 Logger.error("Failed to finish task!")
                 Logger.error(e)
                 e.printStackTrace()
-                throw RuntimeException(e)
             }
         }
         if (!threadPool.awaitTermination(7, TimeUnit.DAYS)) {
