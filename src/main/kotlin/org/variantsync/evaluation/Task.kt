@@ -18,6 +18,7 @@ import org.variantsync.evaluation.baseline.shell.PatchCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
 import org.variantsync.evaluation.common.Change
 import org.variantsync.evaluation.error.Panic
+import org.variantsync.evaluation.error.VariantGenerationException
 import org.variantsync.vevos.simulation.feature.Variant
 import org.variantsync.vevos.simulation.feature.config.FeatureIDEConfiguration
 import org.variantsync.vevos.simulation.feature.sampling.FeatureIDESampler
@@ -163,7 +164,7 @@ class Task(
                             )
                         }
                     } catch (e: Resources.ResourceIOException) {
-                        panic("Was not able to write PCs", e)
+                        Logger.error("Was not able to write PCs", e)
                     }
                 }
 
@@ -175,9 +176,10 @@ class Task(
                 for (variant in sample.variants()) {
                     try {
                         generateVariant(currentCommit, groundTruthV0, groundTruthV1, variant, workdir)
-                    } catch (e: NoSuchElementException) {
+                    } catch (e: Exception) {
                         Logger.debug(e)
-                        Logger.warn("Was not able to generate all variants for commit ${currentCommit.id()}, because there is no ground truth.")
+                        Logger.warn("Was not able to generate all variants for commit ${currentCommit.id()}")
+                        Logger.warn("Skipping commit.")
                         skip = true
                     }
                 }
@@ -281,7 +283,7 @@ class Task(
                     try {
                         patchOutcome.writeAsJSON(resultsFile, true)
                     } catch (e: IOException) {
-                        Logger.error(
+                        panic(
                             "Was not able to write filtered patch result file for run "
                                     + runID, e
                         )
@@ -420,18 +422,24 @@ class Task(
                     .ExitOnErrorButAllowNonExistentFiles(
                         false
                     ) { _: SourceCodeFile? -> true })
-            .expect("Was not able to generate V0 of $variant")
+
+        if (gtV0.isFailure) {
+            Logger.error("Was not able to generate V0 of $variant")
+            throw VariantGenerationException(gtV0.failure)
+
+        }
+
         if (inDebug) {
             try {
                 Resources.Instance().write(
-                    Artefact::class.java, gtV0.variant(), workdir.debugDir
+                    Artefact::class.java, gtV0.success.variant(), workdir.debugDir
                         .resolve("V0-" + variant.name + ".variant.csv")
                 )
             } catch (e: Resources.ResourceIOException) {
                 Logger.error("Was not able to write ground truth.")
             }
         }
-        groundTruthV0[variant] = gtV0
+        groundTruthV0[variant] = gtV0.success
         val gtV1 = currentCommit.presenceConditionsAfter().run()
             .orElseThrow {
                 NoSuchElementException(
@@ -447,18 +455,21 @@ class Task(
                     .ExitOnErrorButAllowNonExistentFiles(
                         false
                     ) { _: SourceCodeFile? -> true })
-            .expect("Was not able to generate V1 of $variant")
+        if (gtV1.isFailure) {
+            Logger.error("Was not able to generate V1 of $variant")
+            throw VariantGenerationException(gtV1.failure)
+        }
         if (inDebug) {
             try {
                 Resources.Instance().write(
-                    Artefact::class.java, gtV1.variant(), workdir.debugDir
+                    Artefact::class.java, gtV1.success.variant(), workdir.debugDir
                         .resolve("V1-" + variant.name + ".variant.csv")
                 )
             } catch (e: Resources.ResourceIOException) {
                 Logger.error("Was not able to write ground truth.", e)
             }
         }
-        groundTruthV1[variant] = gtV1
+        groundTruthV1[variant] = gtV1.success
     }
 
     /**
@@ -499,8 +510,7 @@ class Task(
             repo.dropStash()
             Logger.warn("Cleaning state of repo.")
         } catch (e: Exception) {
-            Logger.error("Was not able to clean SPL repository (${repo.path}).", e)
-            throw e
+            panic("Was not able to clean SPL repository (${repo.path}).", e)
         }
     }
 
@@ -630,7 +640,7 @@ class Task(
             try {
                 Files.createDirectories(workdir.debugDir)
             } catch (e: IOException) {
-                throw RuntimeException(e)
+                Logger.error(e)
             }
             val file = workdir.debugDir.resolve("latestDiff.txt")
             try {
@@ -641,7 +651,7 @@ class Task(
                     }
                 }
             } catch (e: IOException) {
-                throw RuntimeException(e)
+                Logger.error(e)
             }
         }
         return DiffParser.toOriginalDiff(output)
@@ -670,7 +680,7 @@ class Task(
                 val rejects = Files.readAllLines(rejectFile)
                 rejectsDiff = DiffParser.toOriginalDiff(rejects)
             } catch (e: IOException) {
-                Logger.error("Was not able to read rejects file.", e)
+                panic("Was not able to read rejects file.", e)
             }
         }
         val result: FineDiff =

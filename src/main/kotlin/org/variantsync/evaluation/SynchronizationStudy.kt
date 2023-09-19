@@ -58,7 +58,6 @@ class SynchronizationStudy(
      * Execute the study.
      */
     fun run() {
-
         val threadPool = Executors.newFixedThreadPool(numThreads)
         val futures = tasks.stream()
             .map { runnable: Task -> threadPool.submit(runnable) }
@@ -67,7 +66,7 @@ class SynchronizationStudy(
         for (future in futures) {
             try {
                 future.get()
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 Logger.error("Failed to finish task!")
                 Logger.error(e)
                 e.printStackTrace()
