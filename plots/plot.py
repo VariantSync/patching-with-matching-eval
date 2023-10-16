@@ -94,9 +94,10 @@ def correctness_barchart(experiment, outputPath, colourscheme):
     # colourscheme = 'forestgreen', 'darkorange'
     colors = [colourscheme.tp, colourscheme.fp, colourscheme.fn_wronglocation, colourscheme.tn, colourscheme.fn_missing]
 
-    labels = ['correct\n(TP)', 'invalid\n(FP)', 'wrong location\n(FN)', 'not required\n(TN)', 'missing\n(FN)']
-    success_vals = [experiment.tp, experiment.fp, experiment.wrongLocation]
-    failed_vals = [experiment.tn, experiment.fn - experiment.wrongLocation]
+    labels = ['applied\n(TP)', 'invalid\n(FP)', 'wrong location\n(FN)', 'missing\n(FN)', 'filtered correctly\n(TN)',
+              'filtered incorrectly\n(FN)', 'mitigated invalid', 'mitigated missing']
+    success_vals = [experiment.applied, experiment.invalid, experiment.wrongLocation]
+    failed_vals = [experiment.missing]
 
     _scalefactor = 1
     s = numpy.arange(_scalefactor * len(success_vals), step=_scalefactor)
@@ -233,6 +234,67 @@ def rq3_barchart(experiment, colourscheme, outDir):
     plt.savefig(os.path.join(outDir, "rq3_domain_knowledge" + OUTPUT_FORMAT), dpi=DPI, bbox_inches='tight')
 
 
+def rq4_barchart(experiment, colourscheme, outDir):
+    n = experiment.normal
+    f = experiment.filtered
+
+    labels = ['Applied', 'Invalid', 'WrongLocation', 'Missing', 'Filtered Correctly', 'Filtered Incorrectly', 'Mitigated Invalid', 'Mitigated Missing']
+    nvals = [n.applied, n.invalid, n.wrongLocation, n.missing, n.filteredCorrectly, n.filteredIncorrectly, n.mitigatedInvalid, n.mitigatedMissing]
+    ntotal = numpy.sum(nvals)
+    fvals = [f.applied, f.invalid, f.wrongLocation, f.missing, f.filteredCorrectly, f.filteredIncorrectly,
+             f.mitigatedInvalid, f.mitigatedMissing]
+
+    ftotal = numpy.sum(fvals)
+
+    # print(numpy.sum(fvals))
+
+    # normalize values
+    def normalize(vals, total):
+        return list(map(lambda x: float(x) / float(total), vals))
+
+    nvals = numpy.multiply(normalize(nvals, ntotal), 100)
+    fvals = numpy.multiply(normalize(fvals, ftotal), 100)
+
+    _scalefactor = 3
+    start = 2
+    stop = start + _scalefactor * len(labels)
+    x = numpy.arange(start=start, stop=stop, step=_scalefactor)
+    # print(x)
+    widthOfBars = 0.5
+
+    fig, ax = plt.subplots()
+    nrects = ax.bar(x - 0.05 - widthOfBars / 2, nvals, widthOfBars, label='without domain knowledge')
+    frects = ax.bar(x + 0.05 + widthOfBars / 2, fvals, widthOfBars, label='with domain knowledge')
+
+    # Add some text for labels, title and custom x-axis tick labels, etc.
+    ax.set_ylabel('Percentage of Patches')
+    ax.set_ylim([0, 100])
+    ax.set_xlim([-0.1, stop + 0.75 - _scalefactor / 2])
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.legend()
+
+    def label_values(percentage, offset_x, offset_y):
+        for i, v in enumerate(percentage):
+            label = "{:2.1f}".format(v)
+            label += "%"
+            ax.text(i * _scalefactor + start + offset_x, v + offset_y, label)
+
+    label_values(nvals, -1.9, 1)
+    label_values(fvals, 0.5, 1)
+
+    ax.bar_label(nrects,
+                 labels=map(lambda x: "", nvals),
+                 padding=3)
+    ax.bar_label(frects,
+                 labels=map(lambda x: "", fvals),
+                 padding=3)
+
+    fig.tight_layout()
+
+    plt.savefig(os.path.join(outDir, "rq4_domain_knowledge" + OUTPUT_FORMAT), dpi=DPI, bbox_inches='tight')
+
+
 def sankey(patchstrategy):
     # first row
     numPatches = float(patchstrategy.line)
@@ -329,3 +391,8 @@ def rq2(patchstrategy, colourscheme, outDir):
 def rq3(experiment, colourscheme, outDir):
     print("RQ3")
     rq3_barchart(experiment, colourscheme, outDir)
+
+
+def rq4(experiment, colourscheme, outDir):
+    print("RQ4")
+    rq4_barchart(experiment, colourscheme, outDir)

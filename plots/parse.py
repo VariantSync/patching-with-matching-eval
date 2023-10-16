@@ -10,18 +10,23 @@ REGEX_PATTERN_JSON_FIELD = re.compile(REGEX_JSON_FIELD)
 def parseJsonAndAddToExperiment(json_object, experiment):
     outcome = json.loads(json_object)
 
-    experiment.normal.tp += int(outcome['normalTP'])
-    experiment.normal.fp += int(outcome['normalFP'])
-    experiment.normal.tn += int(outcome['normalTN'])
-    experiment.normal.fn += int(outcome['normalFN'])
-
-    experiment.filtered.tp += int(outcome['filteredTP'])
-    experiment.filtered.fp += int(outcome['filteredFP'])
-    experiment.filtered.tn += int(outcome['filteredTN'])
-    experiment.filtered.fn += int(outcome['filteredFN'])
-
+    experiment.normal.applied += int(outcome['normalApplied'])
+    experiment.normal.invalid += int(outcome['normalInvalid'])
     experiment.normal.wrongLocation += int(outcome['normalWrongLocation'])
+    experiment.normal.missing += int(outcome['normalMissing'])
+    experiment.normal.filteredCorrectly += int(outcome['normalFilteredCorrectly'])
+    experiment.normal.filteredIncorrectly += int(outcome['normalFilteredIncorrectly'])
+    experiment.normal.mitigatedInvalid += int(outcome['normalMitigatedInvalid'])
+    experiment.normal.mitigatedMissing += int(outcome['normalMitigatedMissing'])
+
+    experiment.filtered.applied += int(outcome['filteredApplied'])
+    experiment.filtered.invalid += int(outcome['filteredInvalid'])
     experiment.filtered.wrongLocation += int(outcome['filteredWrongLocation'])
+    experiment.filtered.missing += int(outcome['filteredMissing'])
+    experiment.filtered.filteredCorrectly += int(outcome['filteredFilteredCorrectly'])
+    experiment.filtered.filteredIncorrectly += int(outcome['filteredFilteredIncorrectly'])
+    experiment.filtered.mitigatedInvalid += int(outcome['filteredMitigatedInvalid'])
+    experiment.filtered.mitigatedMissing += int(outcome['filteredMitigatedMissing'])
 
     experiment.normal.commitPatches = experiment.normal.commitPatches + 1
     experiment.filtered.commitPatches = experiment.filtered.commitPatches + 1

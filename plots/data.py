@@ -7,8 +7,6 @@
         self.tn = 0
         self.fn = 0
 
-        self.wrongLocation = 0
-
         self.commitPatches = 0
         self.commitSuccess = 0
 
@@ -17,6 +15,15 @@
 
         self.line = 0
         self.lineSuccess = 0
+        
+        self.applied = 0
+        self.invalid = 0
+        self.wrongLocation = 0
+        self.missing = 0
+        self.filteredCorrectly = 0
+        self.filteredIncorrectly = 0
+        self.mitigatedInvalid = 0
+        self.mitigatedMissing = 0
 
     def getNumCommitFailures(self):
         return self.commitPatches - self.commitSuccess
