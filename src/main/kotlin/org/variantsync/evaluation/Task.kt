@@ -43,7 +43,7 @@ class Task(
     resultsFile: Path, commits: List<SPLCommit>, numRepetitions: Int, numVariants: Int,
     inDebug: Boolean, idProvider: IDProvider
 ) : Runnable {
-    private val workPaths: WorkPaths
+    private val operations: Operations
     private val resultsFile: Path
     private val repositoryPath: Path
     private val commits: List<SPLCommit>
@@ -63,7 +63,7 @@ class Task(
     private var currentCommit: SPLCommit? = null
 
     init {
-        workPaths = WorkPaths(mainDir)
+        operations = Operations(mainDir)
         this.repositoryPath = repositoryPath
         this.datasetName = datasetName
         this.resultsFile = resultsFile
@@ -79,8 +79,8 @@ class Task(
         // Initialize the SPL repositories for different versions
         Logger.info("Initializing SPL repos.")
         initializeSPLCopies()
-        val parentRepo = SPLRepository(workPaths.splCopyA)
-        val childRepo = SPLRepository(workPaths.splCopyB)
+        val parentRepo = SPLRepository(operations.splCopyA)
+        val childRepo = SPLRepository(operations.splCopyB)
         try {
             Files.createDirectories(resultsFile.parent)
         } catch (e: IOException) {
@@ -126,7 +126,7 @@ class Task(
                     "Starting repetition " + (i + 1) + " of " + numRepetitions + " with "
                             + numVariants + " variants."
                 )
-                if (inDebug && workPaths.debugDir(currentCommit).toFile().mkdirs()) {
+                if (inDebug && operations.debugDir(currentCommit).toFile().mkdirs()) {
                     Logger.debug("Created Debug directory.")
                 }
 
@@ -134,13 +134,13 @@ class Task(
                 Logger.debug("Sampling next set of variants...")
                 val sample = sample(currentCommit)
                 Logger.debug("Done. Sampled " + sample.variants().size + " variants.")
-                if (Files.exists(workPaths.variantsDirV0.path())) {
+                if (Files.exists(operations.variantsDirV0.path())) {
                     Logger.debug("Cleaning variants dir V0.")
-                    workPaths.shell.execute(RmCommand(workPaths.variantsDirV0.path()).recursive())
+                    operations.shell.execute(RmCommand(operations.variantsDirV0.path()).recursive())
                 }
-                if (Files.exists(workPaths.variantsDirV1.path())) {
+                if (Files.exists(operations.variantsDirV1.path())) {
                     Logger.debug("Cleaning variants dir V1.")
-                    workPaths.shell.execute(RmCommand(workPaths.variantsDirV1.path()).recursive())
+                    operations.shell.execute(RmCommand(operations.variantsDirV1.path()).recursive())
                 }
 
                 // Write information about the commits
@@ -160,15 +160,15 @@ class Task(
                 // Select the first variant as source
                 val source = sample.variants()[0] ?: continue
                 Logger.debug("Starting diff application for source variant " + source.name)
-                if (Files.exists(workPaths.normalPatchFile)) {
-                    Logger.debug("Cleaning old patch file " + workPaths.normalPatchFile)
-                    workPaths.shell.execute(RmCommand(workPaths.normalPatchFile))
+                if (Files.exists(operations.normalPatchFile)) {
+                    Logger.debug("Cleaning old patch file " + operations.normalPatchFile)
+                    operations.shell.execute(RmCommand(operations.normalPatchFile))
                 }
                 // Apply diff to both versions of source variant
                 Logger.debug("Diffing source...")
                 val originalDiff = getOriginalDiff(
-                    workPaths.variantsDirV0.path().resolve(source.name),
-                    workPaths.variantsDirV1.path().resolve(source.name)
+                    operations.variantsDirV0.path().resolve(source.name),
+                    operations.variantsDirV1.path().resolve(source.name)
                 )
                 if (originalDiff.isEmpty) {
                     // There was no change to this variant, so we can skip it as source
@@ -181,7 +181,7 @@ class Task(
                 if (inDebug) {
                     try {
                         Files.write(
-                            workPaths.debugDir(currentCommit).resolve(source.name + "_unprocessed_source.diff"),
+                            operations.debugDir(currentCommit).resolve(source.name + "_unprocessed_source.diff"),
                             originalDiff.toLines()
                         )
                     } catch (e: IOException) {
@@ -191,11 +191,11 @@ class Task(
                 Logger.debug("Converting diff...")
                 // Convert the original diff into a fine diff
                 val normalPatch = getFineDiff(originalDiff)
-                saveDiff(normalPatch, workPaths.normalPatchFile)
+                saveDiff(normalPatch, operations.normalPatchFile)
                 if (inDebug) {
                     saveDiff(
                         normalPatch,
-                        workPaths.debugDir(currentCommit).resolve(source.name + "_to_any_patch_normal.diff")
+                        operations.debugDir(currentCommit).resolve(source.name + "_to_any_patch_normal.diff")
                     )
                 }
                 Logger.debug("Saved fine diff.")
@@ -207,16 +207,16 @@ class Task(
                         continue
                     }
                     Logger.debug(source.name + " --patch--> " + target.name)
-                    val pathToTarget = workPaths.variantsDirV0.path().resolve(target.name)
-                    val pathToExpectedResult = workPaths.variantsDirV1.path().resolve(target.name)
+                    val pathToTarget = operations.variantsDirV0.path().resolve(target.name)
+                    val pathToExpectedResult = operations.variantsDirV1.path().resolve(target.name)
                     val evolutionDiff = getFineDiff(
                         getOriginalDiff(pathToTarget, pathToExpectedResult)
                     )
                     if (inDebug) {
-                        workPaths.debugDir(currentCommit).resolve(target.name).toFile().mkdirs()
+                        operations.debugDir(currentCommit).resolve(target.name).toFile().mkdirs()
                         saveDiff(
                             evolutionDiff,
-                            workPaths.debugDir(currentCommit).resolve(target.name)
+                            operations.debugDir(currentCommit).resolve(target.name)
                                 .resolve(target.name + "_evolution.diff")
                         )
                     }
@@ -224,19 +224,19 @@ class Task(
                     /* Application of patches without knowledge about features */Logger.debug("Applying patch without knowledge about features...")
                     // Apply the fine diff to the target variant
                     val skippedNormal = applyPatch(
-                        workPaths.normalPatchFile,
-                        pathToTarget, workPaths.rejectsNormalFile
+                        operations.normalPatchFile,
+                        pathToTarget, operations.rejectsNormalFile
                     )
                     if (inDebug) {
                         targetFilesNormalDebug(target, pathToTarget, pathToExpectedResult)
                     }
                     // Gather the patch result
                     val actualVsExpectedNormal = getActualVsExpected(pathToExpectedResult, "normal", target)
-                    val rejectsNormal = readRejects(workPaths.rejectsNormalFile)
+                    val rejectsNormal = readRejects(operations.rejectsNormalFile)
                     if (inDebug) {
                         saveDiff(
                             rejectsNormal,
-                            workPaths.debugDir(currentCommit).resolve(target.name)
+                            operations.debugDir(currentCommit).resolve(target.name)
                                 .resolve(target.name + "_rejects_normal.diff")
                         )
                     }
@@ -247,38 +247,38 @@ class Task(
                         originalDiff,
                         groundTruthV0[source]!!.variant(),
                         groundTruthV1[source]!!.variant(), target,
-                        workPaths.variantsDirV0.path(), workPaths.variantsDirV1.path()
+                        operations.variantsDirV0.path(), operations.variantsDirV1.path()
                     )
                     val emptyPatch = filteredPatch.content.isEmpty()
-                    saveDiff(filteredPatch, workPaths.filteredPatchFile)
+                    saveDiff(filteredPatch, operations.filteredPatchFile)
                     if (inDebug) {
                         saveDiff(
                             filteredPatch,
-                            workPaths.debugDir(currentCommit).resolve(target.name)
+                            operations.debugDir(currentCommit).resolve(target.name)
                                 .resolve(source.name + "_to_" + target.name + "_patch_filtered.diff")
                         )
                     }
                     // Apply the patch
                     val skippedFiltered = applyPatch(
-                        workPaths.filteredPatchFile,
-                        pathToTarget, workPaths.rejectsFilteredFile, emptyPatch
+                        operations.filteredPatchFile,
+                        pathToTarget, operations.rejectsFilteredFile, emptyPatch
                     )
                     if (inDebug) {
-                        workPaths.shell.execute(
+                        operations.shell.execute(
                             CpCommand(
-                                workPaths.patchDir,
-                                workPaths.debugDir(currentCommit).resolve(target.name).resolve("patched_filtered")
+                                operations.patchDir,
+                                operations.debugDir(currentCommit).resolve(target.name).resolve("patched_filtered")
                             ).recursive()
                         )
                             .expect("Was not able to copy variant $target.name")
                     }
                     // Gather the result
                     val actualVsExpectedFiltered = getActualVsExpected(pathToExpectedResult, "filtered", target)
-                    val rejectsFiltered = readRejects(workPaths.rejectsFilteredFile)
+                    val rejectsFiltered = readRejects(operations.rejectsFilteredFile)
                     if (inDebug) {
                         saveDiff(
                             rejectsFiltered,
-                            workPaths.debugDir(currentCommit).resolve(target.name)
+                            operations.debugDir(currentCommit).resolve(target.name)
                                 .resolve(target.name + "_rejects_filtered.diff")
                         )
                     }
@@ -287,12 +287,12 @@ class Task(
                         originalDiff,
                         groundTruthV0[source]!!.variant(),
                         groundTruthV1[source]!!.variant(), target,
-                        workPaths.variantsDirV0.path(), workPaths.variantsDirV1.path()
+                        operations.variantsDirV0.path(), operations.variantsDirV1.path()
                     )
 
                     /* Result Evaluation */
                     val patchOutcome = ResultAnalysis.processOutcome(
-                        workPaths,
+                        operations,
                         datasetName, runID, source.name, target.name,
                         parentCommit, currentCommit, normalPatch, filteredPatch,
                         requiredChanges,
@@ -354,19 +354,19 @@ class Task(
     private fun initializeSPLCopies() {
         // Clean old SPL repo files
         Logger.debug("Cleaning old repo files.")
-        if (Files.exists(workPaths.splCopyA)) {
-            workPaths.shell.execute(RmCommand(workPaths.splCopyA).recursive())
+        if (Files.exists(operations.splCopyA)) {
+            operations.shell.execute(RmCommand(operations.splCopyA).recursive())
                 .expect("Was not able to remove SPL-V0.")
         }
-        if (Files.exists(workPaths.splCopyB)) {
-            workPaths.shell.execute(RmCommand(workPaths.splCopyB).recursive())
+        if (Files.exists(operations.splCopyB)) {
+            operations.shell.execute(RmCommand(operations.splCopyB).recursive())
                 .expect("Was not able to remove SPL-V1.")
         }
         // Copy the SPL repo
         Logger.debug("Creating new SPL repo copies.")
-        workPaths.shell.execute(CpCommand(repositoryPath, workPaths.splCopyA).recursive())
+        operations.shell.execute(CpCommand(repositoryPath, operations.splCopyA).recursive())
             .expect("Was not able to copy SPL-V0.")
-        workPaths.shell.execute(CpCommand(repositoryPath, workPaths.splCopyB).recursive())
+        operations.shell.execute(CpCommand(repositoryPath, operations.splCopyB).recursive())
             .expect("Was not able to copy SPL-V1.")
     }
 
@@ -376,11 +376,11 @@ class Task(
      * to the source variant and could have therefore not been synchronized in any case.
      */
     private fun getActualVsExpected(pathToExpectedResult: Path, filePostfix: String, target: Variant): FineDiff {
-        val resultDiff = getOriginalDiff(workPaths.patchDir, pathToExpectedResult)
+        val resultDiff = getOriginalDiff(operations.patchDir, pathToExpectedResult)
         if (inDebug) {
             try {
                 Files.write(
-                    workPaths.debugDir(currentCommit!!).resolve(target.name)
+                    operations.debugDir(currentCommit!!).resolve(target.name)
                         .resolve(target.name + "_actual_expected-$filePostfix.diff"),
                     resultDiff.toLines()
                 )
@@ -412,7 +412,7 @@ class Task(
         if (inDebug) {
             try {
                 Files.write(
-                    workPaths.debugDir(currentCommit!!).resolve("features.txt"), model!!.features.stream()
+                    operations.debugDir(currentCommit!!).resolve("features.txt"), model!!.features.stream()
                         .map { obj: IFeature -> obj.name }.collect(Collectors.toSet())
                 )
             } catch (e: IOException) {
@@ -430,7 +430,7 @@ class Task(
         Logger.debug("Generating variant " + variant.name)
         if (inDebug && variant.configuration is FeatureIDEConfiguration) {
             val config = variant.configuration as FeatureIDEConfiguration
-            val p = workPaths.debugDir(currentCommit).resolve("configs")
+            val p = operations.debugDir(currentCommit).resolve("configs")
             p.toFile().mkdirs()
             try {
                 Files.write(
@@ -447,8 +447,8 @@ class Task(
             }
         }
         try {
-            Files.createDirectories(workPaths.variantsDirV0.path().resolve(variant.name))
-            Files.createDirectories(workPaths.variantsDirV1.path().resolve(variant.name))
+            Files.createDirectories(operations.variantsDirV0.path().resolve(variant.name))
+            Files.createDirectories(operations.variantsDirV1.path().resolve(variant.name))
         } catch (e: IOException) {
             e.printStackTrace()
             panic("Was not able to create directory for variant: " + variant.name)
@@ -457,12 +457,12 @@ class Task(
             NoSuchElementException(
                 "%s ; %s ; %s".format(
                     variant,
-                    workPaths.splCopyB, currentCommit
+                    operations.splCopyB, currentCommit
                 )
             )
         }
-            .generateVariant(variant, CaseSensitivePath(workPaths.splCopyA),
-                workPaths.variantsDirV0.resolve(variant.name),
+            .generateVariant(variant, CaseSensitivePath(operations.splCopyA),
+                operations.variantsDirV0.resolve(variant.name),
                 VariantGenerationOptions
                     .ExitOnErrorButAllowNonExistentFiles(
                         false
@@ -476,7 +476,7 @@ class Task(
 
         if (inDebug) {
             try {
-                val p = workPaths.debugDir(currentCommit)
+                val p = operations.debugDir(currentCommit)
                     .resolve("PCs")
                     .resolve("parentCommit-" + variant.name + ".variant.csv")
                 p.parent.toFile().mkdirs()
@@ -496,12 +496,12 @@ class Task(
                 NoSuchElementException(
                     "%s ; %s ; %s".format(
                         variant,
-                        workPaths.splCopyB, currentCommit
+                        operations.splCopyB, currentCommit
                     )
                 )
             }
-            .generateVariant(variant, CaseSensitivePath(workPaths.splCopyB),
-                workPaths.variantsDirV1.resolve(variant.name),
+            .generateVariant(variant, CaseSensitivePath(operations.splCopyB),
+                operations.variantsDirV1.resolve(variant.name),
                 VariantGenerationOptions
                     .ExitOnErrorButAllowNonExistentFiles(
                         false
@@ -515,7 +515,7 @@ class Task(
         }
         if (inDebug) {
             try {
-                val p = workPaths.debugDir(currentCommit)
+                val p = operations.debugDir(currentCommit)
                     .resolve("PCs")
                     .resolve("childCommit-" + variant.name + ".variant.csv")
                 p.parent.toFile().mkdirs()
@@ -600,31 +600,31 @@ class Task(
         rejectFile: Path, emptyPatch: Boolean
     ): Set<String> {
         // Clean patch directory
-        if (Files.exists(workPaths.patchDir.toAbsolutePath())) {
-            workPaths.shell.execute(RmCommand(workPaths.patchDir.toAbsolutePath()).recursive())
+        if (Files.exists(operations.patchDir.toAbsolutePath())) {
+            operations.shell.execute(RmCommand(operations.patchDir.toAbsolutePath()).recursive())
         }
         try {
-            Files.createDirectories(workPaths.patchDir.parent)
+            Files.createDirectories(operations.patchDir.parent)
         } catch (e: IOException) {
             e.printStackTrace()
             panic("Was not able to create patch directories: ", e)
         }
         if (Files.exists(rejectFile)) {
             Logger.debug("Cleaning old rejects file $rejectFile")
-            workPaths.shell.execute(RmCommand(rejectFile))
+            operations.shell.execute(RmCommand(rejectFile))
         }
 
         // copy target variant
-        workPaths.shell.execute(CpCommand(targetVariant, workPaths.patchDir).recursive())
+        operations.shell.execute(CpCommand(targetVariant, operations.patchDir).recursive())
             .expect("Was not able to copy variant $targetVariant")
 
         // apply patch to copied target variant
         val skipped: MutableSet<String> = HashSet()
         if (!emptyPatch) {
-            val result = workPaths.shell.execute(
+            val result = operations.shell.execute(
                 PatchCommand.Recommended(patchFile).strip(2)
                     .rejectFile(rejectFile).force(),
-                workPaths.patchDir
+                operations.patchDir
             )
             if (result.isSuccess) {
                 result.success.forEach(Consumer { message: String? -> Logger.debug(message) })
@@ -645,7 +645,7 @@ class Task(
     }
 
     private fun getFineDiff(originalDiff: OriginalDiff): FineDiff {
-        val contextProvider = DefaultContextProvider(workPaths.workDir)
+        val contextProvider = DefaultContextProvider(operations.workDir)
         return DiffSplitter.split(originalDiff, contextProvider)
     }
 
@@ -683,7 +683,7 @@ class Task(
         filterDisabled: Boolean,
     ): FineDiff where T : IFileDiffFilter?, T : ILineFilter? {
         // Create target variant specific patch that respects PCs
-        val contextProvider: IContextProvider = DefaultContextProvider(workPaths.workDir, filterDisabled)
+        val contextProvider: IContextProvider = DefaultContextProvider(operations.workDir, filterDisabled)
         return DiffSplitter.split(originalDiff, filter, filter, contextProvider)
     }
 
@@ -692,10 +692,10 @@ class Task(
         v0Path: Path, v1Path: Path
     ): OriginalDiff {
         val diffCommand: DiffCommand = DiffCommand.Recommended(
-            workPaths.workDir.relativize(v0Path),
-            workPaths.workDir.relativize(v1Path)
+            operations.workDir.relativize(v0Path),
+            operations.workDir.relativize(v1Path)
         )
-        val output = workPaths.shell.execute(diffCommand, workPaths.workDir)
+        val output = operations.shell.execute(diffCommand, operations.workDir)
             .expect("Was not able to diff variants.")
         return DiffParser.toOriginalDiff(output)
     }
@@ -738,7 +738,7 @@ class Task(
     private fun splPCDebug() {
         try {
             val v0PCs = currentCommit!!.presenceConditionsBefore().run()
-            val p = workPaths.debugDir(currentCommit!!).resolve("PCs")
+            val p = operations.debugDir(currentCommit!!).resolve("PCs")
             p.toFile().mkdirs()
             if (v0PCs.isPresent) {
                 Resources.Instance().write(
@@ -759,24 +759,24 @@ class Task(
     }
 
     private fun targetFilesNormalDebug(target: Variant, pathToTarget: Path, pathToExpectedResult: Path) {
-        workPaths.shell.execute(
+        operations.shell.execute(
             CpCommand(
                 pathToTarget,
-                workPaths.debugDir(currentCommit!!).resolve(target.name).resolve("original")
+                operations.debugDir(currentCommit!!).resolve(target.name).resolve("original")
             ).recursive()
         )
             .expect("Was not able to copy variant $target.name")
-        workPaths.shell.execute(
+        operations.shell.execute(
             CpCommand(
-                workPaths.patchDir,
-                workPaths.debugDir(currentCommit!!).resolve(target.name).resolve("patched_normal")
+                operations.patchDir,
+                operations.debugDir(currentCommit!!).resolve(target.name).resolve("patched_normal")
             ).recursive()
         )
             .expect("Was not able to copy variant $target.name")
-        workPaths.shell.execute(
+        operations.shell.execute(
             CpCommand(
                 pathToExpectedResult,
-                workPaths.debugDir(currentCommit!!).resolve(target.name).resolve("expected")
+                operations.debugDir(currentCommit!!).resolve(target.name).resolve("expected")
             ).recursive()
         )
             .expect("Was not able to copy variant $target.name")

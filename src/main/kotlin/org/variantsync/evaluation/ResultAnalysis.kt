@@ -50,7 +50,7 @@ object ResultAnalysis {
      * @return The patch outcome
      */
     fun processOutcome(
-        workdir: WorkPaths,
+        workdir: Operations,
         dataset: String, runID: ULong, sourceVariant: String,
         targetVariant: String, commitV0: SPLCommit, commitV1: SPLCommit,
         normalPatch: FineDiff, filteredPatch: FineDiff,

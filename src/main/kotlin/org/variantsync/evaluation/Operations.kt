@@ -9,13 +9,13 @@ import java.io.UncheckedIOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class WorkPaths(mainDir: Path) {
+class Operations(mainDir: Path) {
     // Working directory
     @JvmField
     var workDir: Path
 
     // Debug directory
-    val debugBaseDir: Path
+    private val debugBaseDir: Path
 
     // Path to the first copy of the SPL. We require copy to consider different versions
     val splCopyA: Path
