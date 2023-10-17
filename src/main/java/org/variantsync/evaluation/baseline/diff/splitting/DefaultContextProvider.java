@@ -87,7 +87,7 @@ public class DefaultContextProvider implements IContextProvider {
     }
 
     @Override
-    public List<Line> trailingContext(final ILineFilter lineFilter, final FileDiff fileDiff, final int index) {
+    public List<Line> trailingContext(final ILineFilter lineFilter, final FileDiff fileDiff, final int index, boolean requiresMetaLine) {
         final LinkedList<Line> context = new LinkedList<>();
         final List<String> lines;
         try {
@@ -105,8 +105,10 @@ public class DefaultContextProvider implements IContextProvider {
             // until all required context lines have been determined
             for (int i = index - 1; i <= lines.size(); i++) {
                 if (i == lines.size()) {
-                    // Add a meta-line stating EOF and break the loop
-                    context.addLast(new MetaLine());
+                    if (requiresMetaLine) {
+                        // Add a meta-line stating EOF
+                        context.addLast(new MetaLine());
+                    }
                     break;
                 }
                 final String currentLine = " " + lines.get(i);
