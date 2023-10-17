@@ -1,2 +1,6 @@
-warn.txt
-log.txt
+*
+!.gitignore
+!main
+!plots
+!results
+!esecfse22-replication.md
