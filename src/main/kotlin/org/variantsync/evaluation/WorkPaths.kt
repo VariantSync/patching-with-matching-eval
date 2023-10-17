@@ -3,6 +3,7 @@ package org.variantsync.evaluation
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
 import org.variantsync.vevos.simulation.util.io.CaseSensitivePath
+import org.variantsync.vevos.simulation.variability.SPLCommit
 import java.io.IOException
 import java.io.UncheckedIOException
 import java.nio.file.Files
@@ -71,5 +72,13 @@ class WorkPaths(mainDir: Path) {
             { },
             workDir
         )
+    }
+
+    fun debugDir(directory: String): Path {
+        return debugBaseDir.resolve(directory)
+    }
+
+    fun debugDir(commit: SPLCommit): Path {
+        return debugDir(commit.id())
     }
 }

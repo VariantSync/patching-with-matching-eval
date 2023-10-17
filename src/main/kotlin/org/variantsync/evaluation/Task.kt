@@ -126,10 +126,7 @@ class Task(
                     "Starting repetition " + (i + 1) + " of " + numRepetitions + " with "
                             + numVariants + " variants."
                 )
-                if (inDebug && Files.exists(workPaths.debugBaseDir)) {
-                    workPaths.shell.execute(RmCommand(workPaths.debugBaseDir).recursive())
-                }
-                if (inDebug && workPaths.debugBaseDir.toFile().mkdirs()) {
+                if (inDebug && workPaths.debugDir(currentCommit).toFile().mkdirs()) {
                     Logger.debug("Created Debug directory.")
                 }
 
@@ -150,17 +147,19 @@ class Task(
                 if (inDebug) {
                     try {
                         val v0PCs = currentCommit.presenceConditionsBefore().run()
+                        val p = workPaths.debugDir(currentCommit).resolve("PCs")
+                        p.toFile().mkdirs()
                         if (v0PCs.isPresent) {
                             Resources.Instance().write(
                                 Artefact::class.java, v0PCs.get(),
-                                workPaths.debugBaseDir.resolve("V0.spl.csv")
+                                p.resolve("pcs-parent.spl.csv")
                             )
                         }
                         val v1PCs = currentCommit.presenceConditionsAfter().run()
                         if (v1PCs.isPresent) {
                             Resources.Instance().write(
                                 Artefact::class.java, v1PCs.get(),
-                                workPaths.debugBaseDir.resolve("V1.spl.csv")
+                                p.resolve("pcs-child.spl.csv")
                             )
                         }
                     } catch (e: Resources.ResourceIOException) {
@@ -177,8 +176,8 @@ class Task(
                     try {
                         generateVariant(currentCommit, groundTruthV0, groundTruthV1, variant)
                     } catch (e: Exception) {
-                        Logger.debug(e)
-                        Logger.warn("Was not able to generate all variants for commit ${currentCommit.id()}")
+                        Logger.warn("Was not able to generate all variants for commit ${currentCommit.id()}:\n" +
+                                "{}", e)
                         Logger.warn("Skipping commit.")
                         skip = true
                     }
@@ -210,15 +209,18 @@ class Task(
                     continue
                 } else if (inDebug) {
                     try {
-                        Files.write(workPaths.debugBaseDir.resolve("diff.txt"), originalDiff.toLines())
+                        Files.write(workPaths.debugDir(currentCommit).resolve(source.name + "_unprocessed_source.diff"), originalDiff.toLines())
                     } catch (e: IOException) {
-                        Logger.error("Was not able to save diff", e)
+                        Logger.error("Was not able to save diff: {}", e)
                     }
                 }
                 Logger.debug("Converting diff...")
                 // Convert the original diff into a fine diff
                 val normalPatch = getFineDiff(originalDiff)
                 saveDiff(normalPatch, workPaths.normalPatchFile)
+                if (inDebug) {
+                    saveDiff(normalPatch, workPaths.debugDir(currentCommit).resolve(source.name + "_to_any_patch_normal.diff"))
+                }
                 Logger.debug("Saved fine diff.")
 
                 // For each target variant,
@@ -234,7 +236,8 @@ class Task(
                         getOriginalDiff(pathToTarget, pathToExpectedResult)
                     )
                     if (inDebug) {
-                        saveDiff(evolutionDiff, workPaths.debugBaseDir.resolve("evolutionDiff.txt"))
+                        workPaths.debugDir(currentCommit).resolve(target.name).toFile().mkdirs()
+                        saveDiff(evolutionDiff, workPaths.debugDir(currentCommit).resolve(target.name).resolve(target.name + "_evolution.diff"))
                     }
 
                     /* Application of patches without knowledge about features */Logger.debug("Applying patch without knowledge about features...")
@@ -243,9 +246,20 @@ class Task(
                         workPaths.normalPatchFile,
                         pathToTarget, workPaths.rejectsNormalFile
                     )
+                    if (inDebug) {
+                        workPaths.shell.execute(CpCommand(pathToTarget, workPaths.debugDir(currentCommit).resolve(target.name).resolve("original")).recursive())
+                            .expect("Was not able to copy variant $target.name")
+                        workPaths.shell.execute(CpCommand(workPaths.patchDir, workPaths.debugDir(currentCommit).resolve(target.name).resolve("patched_normal")).recursive())
+                            .expect("Was not able to copy variant $target.name")
+                        workPaths.shell.execute(CpCommand(pathToExpectedResult, workPaths.debugDir(currentCommit).resolve(target.name).resolve("expected")).recursive())
+                            .expect("Was not able to copy variant $target.name")
+                    }
                     // Evaluate the patch result
-                    val actualVsExpectedNormal = getActualVsExpected(pathToExpectedResult, "normal")
+                    val actualVsExpectedNormal = getActualVsExpected(pathToExpectedResult, "normal", target)
                     val rejectsNormal = readRejects(workPaths.rejectsNormalFile)
+                    if (inDebug) {
+                        saveDiff(rejectsNormal, workPaths.debugDir(currentCommit).resolve(target.name).resolve(target.name + "_rejects_normal.diff"))
+                    }
 
                     /* Application of patches with knowledge about PC of edit only */Logger.debug("Applying patch with knowledge about edits' PCs...")
                     // Create target variant specific patch that respects PCs
@@ -257,14 +271,25 @@ class Task(
                     )
                     val emptyPatch = filteredPatch.content.isEmpty()
                     saveDiff(filteredPatch, workPaths.filteredPatchFile)
+                    if (inDebug) {
+                        saveDiff(filteredPatch, workPaths.debugDir(currentCommit).resolve(target.name).resolve(source.name + "_to_" + target.name + "_patch_filtered.diff"))
+                    }
                     // Apply the patch
                     val skippedFiltered = applyPatch(
                         workPaths.filteredPatchFile,
                         pathToTarget, workPaths.rejectsFilteredFile, emptyPatch
                     )
+                    if (inDebug) {
+                        workPaths.shell.execute(CpCommand(workPaths.patchDir, workPaths.debugDir(currentCommit).resolve(target.name).resolve("patched_filtered")).recursive())
+                            .expect("Was not able to copy variant $target.name")
+                    }
                     // Evaluate the result
-                    val actualVsExpectedFiltered = getActualVsExpected(pathToExpectedResult, "filtered")
+                    val actualVsExpectedFiltered = getActualVsExpected(pathToExpectedResult, "filtered", target)
                     val rejectsFiltered = readRejects(workPaths.rejectsFilteredFile)
+                    if (inDebug) {
+                        saveDiff(rejectsFiltered, workPaths.debugDir(currentCommit).resolve(target.name).resolve(target.name + "_rejects_filtered.diff"))
+                    }
+
                     val requiredChanges = getRequiredChanges(originalDiff,
                         groundTruthV0[source]!!.variant(),
                         groundTruthV1[source]!!.variant(), target,
@@ -329,27 +354,19 @@ class Task(
      * next de.variantsync.studies.evolution step. Then, filter all differences that do not belong
      * to the source variant and could have therefore not been synchronized in any case.
      */
-    private fun getActualVsExpected(pathToExpectedResult: Path, filePostfix: String): FineDiff {
+    private fun getActualVsExpected(pathToExpectedResult: Path, filePostfix: String, target: Variant): FineDiff {
         val resultDiff = getOriginalDiff(workPaths.patchDir, pathToExpectedResult)
         if (inDebug) {
             try {
                 Files.write(
-                    workPaths.debugBaseDir.resolve("resultDiffOriginal-$filePostfix.txt"),
+                    workPaths.debugDir(currentCommit!!).resolve(target.name).resolve(target.name + "_actual_expected-$filePostfix.diff"),
                     resultDiff.toLines()
                 )
             } catch (e: IOException) {
-                Logger.error("Was not able to save resultDiffOriginal", e)
+                Logger.error("Was not able to save resultDiffOriginal:\n{}", e)
             }
         }
-        val fineResult = getFineDiff(resultDiff)
-        if (inDebug) {
-            try {
-                Files.write(workPaths.debugBaseDir.resolve("resultDiffFine-$filePostfix.txt"), fineResult.toLines())
-            } catch (e: IOException) {
-                Logger.error("Was not able to save resultDiffFiltered", e)
-            }
-        }
-        return fineResult
+        return getFineDiff(resultDiff)
     }
 
     /**
@@ -372,11 +389,11 @@ class Task(
     private fun featureModelDebug(model: IFeatureModel?) {
         if (inDebug) {
             try {
-                Files.write(workPaths.debugBaseDir.resolve("features.txt"), model!!.features.stream()
+                Files.write(workPaths.debugDir(currentCommit!!).resolve("features.txt"), model!!.features.stream()
                     .map { obj: IFeature -> obj.name }.collect(Collectors.toSet())
                 )
             } catch (e: IOException) {
-                Logger.error("Was not able to write commit data.", e)
+                Logger.error("Was not able to write commit data:\n{}", e)
             }
         }
     }
@@ -390,14 +407,17 @@ class Task(
         Logger.debug("Generating variant " + variant.name)
         if (inDebug && variant.configuration is FeatureIDEConfiguration) {
             val config = variant.configuration as FeatureIDEConfiguration
+            val p = workPaths.debugDir(currentCommit).resolve("configs")
+            p.toFile().mkdirs()
             try {
                 Files.write(
-                    workPaths.debugBaseDir.resolve(variant.name + ".config"),
+                    p.resolve(variant.name + ".config"),
                     config.toAssignment().entries.stream().map { (key, value): Map.Entry<Any, Boolean> -> "$key : $value" }
                         .collect(Collectors.toList())
                 )
             } catch (e: IOException) {
-                Logger.error("Was not able to write configuration of " + variant.name, e)
+                Logger.error("Was not able to write configuration of " + variant.name + ":\n" +
+                        "{}", e)
             }
         }
         try {
@@ -423,19 +443,22 @@ class Task(
                     ) { _: SourceCodeFile? -> true })
 
         if (gtV0.isFailure) {
-            Logger.error("Was not able to generate V0 of $variant")
+            Logger.error("Was not able to generate V0 of $variant:\n{}")
             throw VariantGenerationException(gtV0.failure)
 
         }
 
         if (inDebug) {
             try {
+                val p = workPaths.debugDir(currentCommit)
+                    .resolve("PCs")
+                    .resolve("parentCommit-" + variant.name + ".variant.csv")
+                p.parent.toFile().mkdirs()
                 Resources.Instance().write(
-                    Artefact::class.java, gtV0.success.variant(), workPaths.debugBaseDir
-                        .resolve("V0-" + variant.name + ".variant.csv")
-                )
+                    Artefact::class.java, gtV0.success.variant(), p)
             } catch (e: Resources.ResourceIOException) {
-                Logger.error("Was not able to write ground truth.")
+                Logger.error("Was not able to write ground truth:\n" +
+                        "{}", e)
             }
         }
         groundTruthV0[variant] = gtV0.success
@@ -455,17 +478,22 @@ class Task(
                         false
                     ) { _: SourceCodeFile? -> true })
         if (gtV1.isFailure) {
-            Logger.error("Was not able to generate V1 of $variant")
+            Logger.error("Was not able to generate V1 of $variant:\n" +
+                    "{}", gtV1.failure)
             throw VariantGenerationException(gtV1.failure)
         }
         if (inDebug) {
             try {
+                val p = workPaths.debugDir(currentCommit)
+                    .resolve("PCs")
+                    .resolve("childCommit-" + variant.name + ".variant.csv")
+                p.parent.toFile().mkdirs()
                 Resources.Instance().write(
-                    Artefact::class.java, gtV1.success.variant(), workPaths.debugBaseDir
-                        .resolve("V1-" + variant.name + ".variant.csv")
+                    Artefact::class.java, gtV1.success.variant(), p
                 )
             } catch (e: Resources.ResourceIOException) {
-                Logger.error("Was not able to write ground truth.", e)
+                Logger.error("Was not able to write ground truth:\n" +
+                        "{}", e)
             }
         }
         groundTruthV1[variant] = gtV1.success
@@ -487,7 +515,8 @@ class Task(
             parentRepo.checkoutCommit(parentCommit, true)
             childRepo.checkoutCommit(childCommit, true)
         } catch (e: Exception) {
-            Logger.error("Was not able to checkout commits ($parentCommit -> $childCommit) for SPL repository.", e)
+            Logger.error("Was not able to checkout commits ($parentCommit -> $childCommit) for SPL repository:\n" +
+                    "{}", e)
             // Try to clean and checkout again
             cleanRepo(parentRepo)
             cleanRepo(childRepo)
@@ -633,24 +662,6 @@ class Task(
         )
         val output = workPaths.shell.execute(diffCommand, workPaths.workDir)
             .expect("Was not able to diff variants.")
-        if (inDebug) {
-            try {
-                Files.createDirectories(workPaths.debugBaseDir)
-            } catch (e: IOException) {
-                Logger.error(e)
-            }
-            val file = workPaths.debugBaseDir.resolve("latestDiff.txt")
-            try {
-                PrintWriter(file.toFile()).use { writer ->
-                    for (line in output) {
-                        writer.write(line)
-                        writer.write("\n")
-                    }
-                }
-            } catch (e: IOException) {
-                Logger.error(e)
-            }
-        }
         return DiffParser.toOriginalDiff(output)
     }
 
