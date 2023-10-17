@@ -18,7 +18,7 @@ public class CachedPCBasedFilterTest {
 
     private void runComparison(Path pathToExpectedResult, ILineFilter lineFilter) throws IOException {
         List<String> diffLines = Files.readAllLines(resourceDir.resolve("diff-A-B.txt"));
-        IContextProvider contextProvider = new DefaultContextProvider(resourceDir);
+        IContextProvider contextProvider = new DefaultContextProvider(resourceDir, false);
         FineDiff fineDiff;
         if (lineFilter == null) {
             fineDiff = DiffSplitter.split(DiffParser.toOriginalDiff(diffLines), contextProvider);
@@ -31,6 +31,7 @@ public class CachedPCBasedFilterTest {
         for (int i = 0; i < expectedLines.size(); i++) {
             String expectedLine = expectedLines.get(i);
             String actualLine = actualLines.get(i);
+            System.out.println("Comparing line " + (i+1));
             Assertions.assertEquals(expectedLine, actualLine);
         }
     }

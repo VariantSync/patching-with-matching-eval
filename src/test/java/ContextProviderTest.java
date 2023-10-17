@@ -18,7 +18,7 @@ public class ContextProviderTest {
 
     private void runComparison(Path pathToExpectedResult, ILineFilter lineFilter) throws IOException {
         List<String> diffLines = Files.readAllLines(resourceDir.getParent().resolve("diff-A-B.txt"));
-        IContextProvider contextProvider = new DefaultContextProvider(resourceDir.getParent());
+        IContextProvider contextProvider = new DefaultContextProvider(resourceDir.getParent(), false);
         FineDiff fineDiff = DiffSplitter.split(DiffParser.toOriginalDiff(diffLines), null, lineFilter, contextProvider);
 
         List<String> expectedLines = Files.readAllLines(pathToExpectedResult);

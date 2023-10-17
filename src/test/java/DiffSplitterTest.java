@@ -19,7 +19,7 @@ public class DiffSplitterTest {
 
     private void runComparison(Path pathToExpectedResult, IFileDiffFilter fileDiffFilter, ILineFilter lineFilter) throws IOException {
         List<String> diffLines = Files.readAllLines(resourceDir.getParent().resolve("diff-A-B.txt"));
-        IContextProvider contextProvider = new DefaultContextProvider(resourceDir.getParent());
+        IContextProvider contextProvider = new DefaultContextProvider(resourceDir.getParent(), false);
         FineDiff fineDiff;
         if (fileDiffFilter == null && lineFilter == null) {
             fineDiff = DiffSplitter.split(DiffParser.toOriginalDiff(diffLines), contextProvider);

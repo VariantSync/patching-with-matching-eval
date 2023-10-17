@@ -37,7 +37,7 @@ public class PCBasedFilterTest {
 
     private void runComparison(Path pathToExpectedResult, IFileDiffFilter fileFilter, ILineFilter lineFilter) throws IOException {
         List<String> diffLines = Files.readAllLines(resourceDir.resolve("diff-A-B.txt"));
-        IContextProvider contextProvider = new DefaultContextProvider(resourceDir);
+        IContextProvider contextProvider = new DefaultContextProvider(resourceDir, false);
         FineDiff fineDiff = DiffSplitter.split(DiffParser.toOriginalDiff(diffLines), fileFilter, lineFilter, contextProvider);
 
         List<String> expectedLines = Files.readAllLines(pathToExpectedResult);
