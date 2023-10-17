@@ -31,7 +31,6 @@ public class CachedPCBasedFilterTest {
         for (int i = 0; i < expectedLines.size(); i++) {
             String expectedLine = expectedLines.get(i);
             String actualLine = actualLines.get(i);
-            System.out.println("Comparing line " + (i+1));
             Assertions.assertEquals(expectedLine, actualLine);
         }
     }
