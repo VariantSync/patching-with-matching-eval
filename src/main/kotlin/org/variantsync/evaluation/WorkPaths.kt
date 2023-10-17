@@ -68,7 +68,8 @@ class WorkPaths(mainDir: Path) {
         filteredPatchFile = workDir.resolve("filtered-patch.txt")
         rejectsNormalFile = workDir.resolve("rejects-normal.txt")
         rejectsFilteredFile = workDir.resolve("rejects-filtered.txt")
-        shell = ShellExecutor({ },
+        shell = ShellExecutor(
+            { },
             { },
             workDir
         )

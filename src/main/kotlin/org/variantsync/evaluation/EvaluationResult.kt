@@ -1,20 +1,34 @@
 package org.variantsync.evaluation
 
-class EvaluationResult(val applied: Applied, val invalid: Invalid, val wrongLocation: WrongLocation, val missing: Missing,
-                 val filteredCorrectly: FilteredCorrectly, val filteredIncorrectly: FilteredIncorrectly,
-                 val mitigatedInvalid: MitigatedInvalid, val mitigatedMissing: MitigatedMissing)  {
+class EvaluationResult(
+    val applied: Applied, val invalid: Invalid, val wrongLocation: WrongLocation, val missing: Missing,
+    val filteredCorrectly: FilteredCorrectly, val filteredIncorrectly: FilteredIncorrectly,
+    val mitigatedInvalid: MitigatedInvalid, val mitigatedMissing: MitigatedMissing
+) {
     fun resultCount(): Long {
         return applied.v + invalid.v + wrongLocation.v + missing.v + filteredCorrectly.v + filteredIncorrectly.v + mitigatedInvalid.v + mitigatedMissing.v
     }
 
 }
 
-class AccumulatedResult(var applied: Applied, var invalid: Invalid,
-                        var wrongLocation: WrongLocation, var missing: Missing,
-                        var filteredCorrectly: FilteredCorrectly, var filteredIncorrectly: FilteredIncorrectly,
-                        var mitigatedInvalid: MitigatedInvalid, var mitigatedMissing: MitigatedMissing)  {
+class AccumulatedResult(
+    var applied: Applied, var invalid: Invalid,
+    var wrongLocation: WrongLocation, var missing: Missing,
+    var filteredCorrectly: FilteredCorrectly, var filteredIncorrectly: FilteredIncorrectly,
+    var mitigatedInvalid: MitigatedInvalid, var mitigatedMissing: MitigatedMissing
+) {
 
-    constructor() : this(Applied(0),Invalid(0),WrongLocation(0),Missing(0),FilteredCorrectly(0),FilteredIncorrectly(0),MitigatedInvalid(0),MitigatedMissing(0))
+    constructor() : this(
+        Applied(0),
+        Invalid(0),
+        WrongLocation(0),
+        Missing(0),
+        FilteredCorrectly(0),
+        FilteredIncorrectly(0),
+        MitigatedInvalid(0),
+        MitigatedMissing(0)
+    )
+
     fun resultCount(): Long {
         return applied.v + invalid.v + wrongLocation.v + missing.v + filteredCorrectly.v + filteredIncorrectly.v + mitigatedInvalid.v + mitigatedMissing.v
     }

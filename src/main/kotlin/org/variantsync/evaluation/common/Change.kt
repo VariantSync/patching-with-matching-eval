@@ -8,7 +8,7 @@ import org.variantsync.evaluation.baseline.diff.lines.RemovedLine
 import java.nio.file.Path
 
 
-class Change(val lineChange: Line, val hunk: Hunk, val path: Path){
+class Change(val lineChange: Line, val hunk: Hunk, val path: Path) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

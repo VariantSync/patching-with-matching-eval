@@ -1,11 +1,11 @@
 package org.variantsync.evaluation.baseline.shell;
 
-import org.variantsync.functjonal.Result;
 import org.variantsync.evaluation.error.ShellException;
+import org.variantsync.functjonal.Result;
 
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**

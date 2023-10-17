@@ -31,14 +31,14 @@ public record FineDiff(List<FileDiff> content) implements IDiffComponent {
             // Filter the hunks of each patch to extract changed lines
             fd.hunks().stream().flatMap(hunk -> hunk.content().stream()).forEach(line -> {
 
-                    Path filePath = (fd.oldFile().startsWith("V0Variants") || fd.oldFile().startsWith("V1Variants") || fd.oldFile().startsWith("TARGET"))
-                            ? fd.oldFile().subpath(2, fd.oldFile().getNameCount())
-                            : fd.oldFile();
-                    if (line instanceof AddedLine addedLine) {
-                        changedLines.add(new ChangedLine(filePath, addedLine));
-                    } else if (line instanceof RemovedLine removedLine) {
-                        changedLines.add(new ChangedLine(filePath, removedLine));
-                    }
+                        Path filePath = (fd.oldFile().startsWith("V0Variants") || fd.oldFile().startsWith("V1Variants") || fd.oldFile().startsWith("TARGET"))
+                                ? fd.oldFile().subpath(2, fd.oldFile().getNameCount())
+                                : fd.oldFile();
+                        if (line instanceof AddedLine addedLine) {
+                            changedLines.add(new ChangedLine(filePath, addedLine));
+                        } else if (line instanceof RemovedLine removedLine) {
+                            changedLines.add(new ChangedLine(filePath, removedLine));
+                        }
 
                     }
             );

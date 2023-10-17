@@ -1,8 +1,8 @@
 package org.variantsync.evaluation.baseline.shell;
 
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Represents a shell 'patch' command that can be executed using a ShellExecutor

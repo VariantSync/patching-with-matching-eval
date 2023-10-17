@@ -33,7 +33,6 @@ import org.variantsync.vevos.simulation.variability.pc.SourceCodeFile
 import org.variantsync.vevos.simulation.variability.pc.groundtruth.GroundTruth
 import org.variantsync.vevos.simulation.variability.pc.options.VariantGenerationOptions
 import java.io.IOException
-import java.io.PrintWriter
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
@@ -111,6 +110,7 @@ class Task(
             if (parentCommit.id().trim().isEmpty()) {
                 continue
             }
+
             try {
                 splRepoPreparation(parentRepo, childRepo, parentCommit, currentCommit)
             } catch (e: Exception) {
@@ -145,49 +145,19 @@ class Task(
 
                 // Write information about the commits
                 if (inDebug) {
-                    try {
-                        val v0PCs = currentCommit.presenceConditionsBefore().run()
-                        val p = workPaths.debugDir(currentCommit).resolve("PCs")
-                        p.toFile().mkdirs()
-                        if (v0PCs.isPresent) {
-                            Resources.Instance().write(
-                                Artefact::class.java, v0PCs.get(),
-                                p.resolve("pcs-parent.spl.csv")
-                            )
-                        }
-                        val v1PCs = currentCommit.presenceConditionsAfter().run()
-                        if (v1PCs.isPresent) {
-                            Resources.Instance().write(
-                                Artefact::class.java, v1PCs.get(),
-                                p.resolve("pcs-child.spl.csv")
-                            )
-                        }
-                    } catch (e: Resources.ResourceIOException) {
-                        Logger.error("Was not able to write PCs", e)
-                    }
+                    splPCDebug()
                 }
 
                 // Generate the randomly selected variants at both versions
                 val groundTruthV0: MutableMap<Variant, GroundTruth> = HashMap()
                 val groundTruthV1: MutableMap<Variant, GroundTruth> = HashMap()
                 Logger.debug("Generating variants...")
-                var skip = false
-                for (variant in sample.variants()) {
-                    try {
-                        generateVariant(currentCommit, groundTruthV0, groundTruthV1, variant)
-                    } catch (e: Exception) {
-                        Logger.warn("Was not able to generate all variants for commit ${currentCommit.id()}:\n" +
-                                "{}", e)
-                        Logger.warn("Skipping commit.")
-                        skip = true
-                    }
-                }
-                if (skip) {
+                if (!generateVariants(sample, groundTruthV0, groundTruthV1)) {
                     continue
                 }
                 Logger.debug("Done.")
 
-                // Select each variant once as source
+                // Select the first variant as source
                 val source = sample.variants()[0] ?: continue
                 Logger.debug("Starting diff application for source variant " + source.name)
                 if (Files.exists(workPaths.normalPatchFile)) {
@@ -207,9 +177,13 @@ class Task(
                                 + " because there are no changes to code. Diff of code files is empty."
                     )
                     continue
-                } else if (inDebug) {
+                }
+                if (inDebug) {
                     try {
-                        Files.write(workPaths.debugDir(currentCommit).resolve(source.name + "_unprocessed_source.diff"), originalDiff.toLines())
+                        Files.write(
+                            workPaths.debugDir(currentCommit).resolve(source.name + "_unprocessed_source.diff"),
+                            originalDiff.toLines()
+                        )
                     } catch (e: IOException) {
                         Logger.error("Was not able to save diff: {}", e)
                     }
@@ -219,7 +193,10 @@ class Task(
                 val normalPatch = getFineDiff(originalDiff)
                 saveDiff(normalPatch, workPaths.normalPatchFile)
                 if (inDebug) {
-                    saveDiff(normalPatch, workPaths.debugDir(currentCommit).resolve(source.name + "_to_any_patch_normal.diff"))
+                    saveDiff(
+                        normalPatch,
+                        workPaths.debugDir(currentCommit).resolve(source.name + "_to_any_patch_normal.diff")
+                    )
                 }
                 Logger.debug("Saved fine diff.")
 
@@ -237,7 +214,11 @@ class Task(
                     )
                     if (inDebug) {
                         workPaths.debugDir(currentCommit).resolve(target.name).toFile().mkdirs()
-                        saveDiff(evolutionDiff, workPaths.debugDir(currentCommit).resolve(target.name).resolve(target.name + "_evolution.diff"))
+                        saveDiff(
+                            evolutionDiff,
+                            workPaths.debugDir(currentCommit).resolve(target.name)
+                                .resolve(target.name + "_evolution.diff")
+                        )
                     }
 
                     /* Application of patches without knowledge about features */Logger.debug("Applying patch without knowledge about features...")
@@ -247,18 +228,17 @@ class Task(
                         pathToTarget, workPaths.rejectsNormalFile
                     )
                     if (inDebug) {
-                        workPaths.shell.execute(CpCommand(pathToTarget, workPaths.debugDir(currentCommit).resolve(target.name).resolve("original")).recursive())
-                            .expect("Was not able to copy variant $target.name")
-                        workPaths.shell.execute(CpCommand(workPaths.patchDir, workPaths.debugDir(currentCommit).resolve(target.name).resolve("patched_normal")).recursive())
-                            .expect("Was not able to copy variant $target.name")
-                        workPaths.shell.execute(CpCommand(pathToExpectedResult, workPaths.debugDir(currentCommit).resolve(target.name).resolve("expected")).recursive())
-                            .expect("Was not able to copy variant $target.name")
+                        targetFilesNormalDebug(target, pathToTarget, pathToExpectedResult)
                     }
-                    // Evaluate the patch result
+                    // Gather the patch result
                     val actualVsExpectedNormal = getActualVsExpected(pathToExpectedResult, "normal", target)
                     val rejectsNormal = readRejects(workPaths.rejectsNormalFile)
                     if (inDebug) {
-                        saveDiff(rejectsNormal, workPaths.debugDir(currentCommit).resolve(target.name).resolve(target.name + "_rejects_normal.diff"))
+                        saveDiff(
+                            rejectsNormal,
+                            workPaths.debugDir(currentCommit).resolve(target.name)
+                                .resolve(target.name + "_rejects_normal.diff")
+                        )
                     }
 
                     /* Application of patches with knowledge about PC of edit only */Logger.debug("Applying patch with knowledge about edits' PCs...")
@@ -272,7 +252,11 @@ class Task(
                     val emptyPatch = filteredPatch.content.isEmpty()
                     saveDiff(filteredPatch, workPaths.filteredPatchFile)
                     if (inDebug) {
-                        saveDiff(filteredPatch, workPaths.debugDir(currentCommit).resolve(target.name).resolve(source.name + "_to_" + target.name + "_patch_filtered.diff"))
+                        saveDiff(
+                            filteredPatch,
+                            workPaths.debugDir(currentCommit).resolve(target.name)
+                                .resolve(source.name + "_to_" + target.name + "_patch_filtered.diff")
+                        )
                     }
                     // Apply the patch
                     val skippedFiltered = applyPatch(
@@ -280,17 +264,27 @@ class Task(
                         pathToTarget, workPaths.rejectsFilteredFile, emptyPatch
                     )
                     if (inDebug) {
-                        workPaths.shell.execute(CpCommand(workPaths.patchDir, workPaths.debugDir(currentCommit).resolve(target.name).resolve("patched_filtered")).recursive())
+                        workPaths.shell.execute(
+                            CpCommand(
+                                workPaths.patchDir,
+                                workPaths.debugDir(currentCommit).resolve(target.name).resolve("patched_filtered")
+                            ).recursive()
+                        )
                             .expect("Was not able to copy variant $target.name")
                     }
-                    // Evaluate the result
+                    // Gather the result
                     val actualVsExpectedFiltered = getActualVsExpected(pathToExpectedResult, "filtered", target)
                     val rejectsFiltered = readRejects(workPaths.rejectsFilteredFile)
                     if (inDebug) {
-                        saveDiff(rejectsFiltered, workPaths.debugDir(currentCommit).resolve(target.name).resolve(target.name + "_rejects_filtered.diff"))
+                        saveDiff(
+                            rejectsFiltered,
+                            workPaths.debugDir(currentCommit).resolve(target.name)
+                                .resolve(target.name + "_rejects_filtered.diff")
+                        )
                     }
 
-                    val requiredChanges = getRequiredChanges(originalDiff,
+                    val requiredChanges = getRequiredChanges(
+                        originalDiff,
                         groundTruthV0[source]!!.variant(),
                         groundTruthV1[source]!!.variant(), target,
                         workPaths.variantsDirV0.path(), workPaths.variantsDirV1.path()
@@ -320,7 +314,13 @@ class Task(
                 }
             }
             if (numProcessed % 100uL == 0uL) {
-                Logger.info(String.format("Finished commit %s of %s.%n", numProcessed.toString(), numCommits.toString()))
+                Logger.info(
+                    String.format(
+                        "Finished commit %s of %s.%n",
+                        numProcessed.toString(),
+                        numCommits.toString()
+                    )
+                )
             }
 
             // Free memory of parentCommit
@@ -328,6 +328,27 @@ class Task(
             // Free memory of commit V1
             currentCommit.forget()
         }
+    }
+
+    private fun generateVariants(
+        sample: Sample,
+        groundTruthV0: MutableMap<Variant, GroundTruth>,
+        groundTruthV1: MutableMap<Variant, GroundTruth>,
+    ): Boolean {
+        var success = true
+        for (variant in sample.variants()) {
+            try {
+                generateVariant(currentCommit!!, groundTruthV0, groundTruthV1, variant)
+            } catch (e: Exception) {
+                Logger.warn(
+                    "Was not able to generate all variants for commit ${currentCommit!!.id()}:\n" +
+                            "{}", e
+                )
+                Logger.warn("Skipping commit.")
+                success = false
+            }
+        }
+        return success
     }
 
     private fun initializeSPLCopies() {
@@ -359,7 +380,8 @@ class Task(
         if (inDebug) {
             try {
                 Files.write(
-                    workPaths.debugDir(currentCommit!!).resolve(target.name).resolve(target.name + "_actual_expected-$filePostfix.diff"),
+                    workPaths.debugDir(currentCommit!!).resolve(target.name)
+                        .resolve(target.name + "_actual_expected-$filePostfix.diff"),
                     resultDiff.toLines()
                 )
             } catch (e: IOException) {
@@ -389,8 +411,9 @@ class Task(
     private fun featureModelDebug(model: IFeatureModel?) {
         if (inDebug) {
             try {
-                Files.write(workPaths.debugDir(currentCommit!!).resolve("features.txt"), model!!.features.stream()
-                    .map { obj: IFeature -> obj.name }.collect(Collectors.toSet())
+                Files.write(
+                    workPaths.debugDir(currentCommit!!).resolve("features.txt"), model!!.features.stream()
+                        .map { obj: IFeature -> obj.name }.collect(Collectors.toSet())
                 )
             } catch (e: IOException) {
                 Logger.error("Was not able to write commit data:\n{}", e)
@@ -412,12 +435,15 @@ class Task(
             try {
                 Files.write(
                     p.resolve(variant.name + ".config"),
-                    config.toAssignment().entries.stream().map { (key, value): Map.Entry<Any, Boolean> -> "$key : $value" }
+                    config.toAssignment().entries.stream()
+                        .map { (key, value): Map.Entry<Any, Boolean> -> "$key : $value" }
                         .collect(Collectors.toList())
                 )
             } catch (e: IOException) {
-                Logger.error("Was not able to write configuration of " + variant.name + ":\n" +
-                        "{}", e)
+                Logger.error(
+                    "Was not able to write configuration of " + variant.name + ":\n" +
+                            "{}", e
+                )
             }
         }
         try {
@@ -455,10 +481,13 @@ class Task(
                     .resolve("parentCommit-" + variant.name + ".variant.csv")
                 p.parent.toFile().mkdirs()
                 Resources.Instance().write(
-                    Artefact::class.java, gtV0.success.variant(), p)
+                    Artefact::class.java, gtV0.success.variant(), p
+                )
             } catch (e: Resources.ResourceIOException) {
-                Logger.error("Was not able to write ground truth:\n" +
-                        "{}", e)
+                Logger.error(
+                    "Was not able to write ground truth:\n" +
+                            "{}", e
+                )
             }
         }
         groundTruthV0[variant] = gtV0.success
@@ -478,8 +507,10 @@ class Task(
                         false
                     ) { _: SourceCodeFile? -> true })
         if (gtV1.isFailure) {
-            Logger.error("Was not able to generate V1 of $variant:\n" +
-                    "{}", gtV1.failure)
+            Logger.error(
+                "Was not able to generate V1 of $variant:\n" +
+                        "{}", gtV1.failure
+            )
             throw VariantGenerationException(gtV1.failure)
         }
         if (inDebug) {
@@ -492,8 +523,10 @@ class Task(
                     Artefact::class.java, gtV1.success.variant(), p
                 )
             } catch (e: Resources.ResourceIOException) {
-                Logger.error("Was not able to write ground truth:\n" +
-                        "{}", e)
+                Logger.error(
+                    "Was not able to write ground truth:\n" +
+                            "{}", e
+                )
             }
         }
         groundTruthV1[variant] = gtV1.success
@@ -515,8 +548,10 @@ class Task(
             parentRepo.checkoutCommit(parentCommit, true)
             childRepo.checkoutCommit(childCommit, true)
         } catch (e: Exception) {
-            Logger.error("Was not able to checkout commits ($parentCommit -> $childCommit) for SPL repository:\n" +
-                    "{}", e)
+            Logger.error(
+                "Was not able to checkout commits ($parentCommit -> $childCommit) for SPL repository:\n" +
+                        "{}", e
+            )
             // Try to clean and checkout again
             cleanRepo(parentRepo)
             cleanRepo(childRepo)
@@ -692,11 +727,58 @@ class Task(
             }
         }
         val result: FineDiff =
-        if (rejectsDiff == null) {
-            FineDiff(ArrayList())
-        } else {
-            getFineDiff(rejectsDiff)
-        }
+            if (rejectsDiff == null) {
+                FineDiff(ArrayList())
+            } else {
+                getFineDiff(rejectsDiff)
+            }
         return result
+    }
+
+    private fun splPCDebug() {
+        try {
+            val v0PCs = currentCommit!!.presenceConditionsBefore().run()
+            val p = workPaths.debugDir(currentCommit!!).resolve("PCs")
+            p.toFile().mkdirs()
+            if (v0PCs.isPresent) {
+                Resources.Instance().write(
+                    Artefact::class.java, v0PCs.get(),
+                    p.resolve("pcs-parent.spl.csv")
+                )
+            }
+            val v1PCs = currentCommit!!.presenceConditionsAfter().run()
+            if (v1PCs.isPresent) {
+                Resources.Instance().write(
+                    Artefact::class.java, v1PCs.get(),
+                    p.resolve("pcs-child.spl.csv")
+                )
+            }
+        } catch (e: Resources.ResourceIOException) {
+            Logger.error("Was not able to write PCs", e)
+        }
+    }
+
+    private fun targetFilesNormalDebug(target: Variant, pathToTarget: Path, pathToExpectedResult: Path) {
+        workPaths.shell.execute(
+            CpCommand(
+                pathToTarget,
+                workPaths.debugDir(currentCommit!!).resolve(target.name).resolve("original")
+            ).recursive()
+        )
+            .expect("Was not able to copy variant $target.name")
+        workPaths.shell.execute(
+            CpCommand(
+                workPaths.patchDir,
+                workPaths.debugDir(currentCommit!!).resolve(target.name).resolve("patched_normal")
+            ).recursive()
+        )
+            .expect("Was not able to copy variant $target.name")
+        workPaths.shell.execute(
+            CpCommand(
+                pathToExpectedResult,
+                workPaths.debugDir(currentCommit!!).resolve(target.name).resolve("expected")
+            ).recursive()
+        )
+            .expect("Was not able to copy variant $target.name")
     }
 }

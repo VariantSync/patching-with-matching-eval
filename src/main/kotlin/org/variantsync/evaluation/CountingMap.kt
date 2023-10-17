@@ -4,7 +4,7 @@ class CountingMap<K>() {
     private var map: HashMap<K, Int> = HashMap()
     private var elementCount: UInt = 0u
 
-    constructor(keys: Collection<K>) :this() {
+    constructor(keys: Collection<K>) : this() {
         for (k in keys) {
             val currentCount = map.getOrDefault(k, 0)
             map[k] = currentCount + 1
@@ -36,7 +36,7 @@ class CountingMap<K>() {
         val iterable: ArrayList<K> = ArrayList()
         for (entry in map.entries) {
             var count = entry.value
-            while(count > 0) {
+            while (count > 0) {
                 iterable.add(entry.key)
                 count--
             }

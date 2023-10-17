@@ -1,11 +1,10 @@
 package org.variantsync.evaluation.baseline.diff.filter;
 
+import org.tinylog.Logger;
 import org.variantsync.evaluation.baseline.diff.components.*;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
-import org.tinylog.Logger;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +14,9 @@ public class DiffFilter {
     /**
      * Filter the hunks in the given difference depending on the decision of the provided filters.
      *
-     * @param originalDiff    The difference that is to be filtered
-     * @param fileFilter      A file filter that determines whether the difference of specific files is to be kept
-     * @param lineFilter      A line filter that determines whether changes to certain lines are to be kept
+     * @param originalDiff The difference that is to be filtered
+     * @param fileFilter   A file filter that determines whether the difference of specific files is to be kept
+     * @param lineFilter   A line filter that determines whether changes to certain lines are to be kept
      * @return The filtered diff
      */
     public static FineDiff filter(final OriginalDiff originalDiff, IFileDiffFilter fileFilter, ILineFilter lineFilter) {

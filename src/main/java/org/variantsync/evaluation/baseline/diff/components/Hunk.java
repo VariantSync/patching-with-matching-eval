@@ -1,6 +1,9 @@
 package org.variantsync.evaluation.baseline.diff.components;
 
-import org.variantsync.evaluation.baseline.diff.lines.*;
+import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
+import org.variantsync.evaluation.baseline.diff.lines.Line;
+import org.variantsync.evaluation.baseline.diff.lines.MetaLine;
+import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +22,7 @@ public final class Hunk implements IDiffComponent {
 
     /**
      * @param location The location of the hunk in the file
-     * @param allLines  The content of the hunk (i.e., context and changed lines)
+     * @param allLines The content of the hunk (i.e., context and changed lines)
      */
     public Hunk(HunkLocation location, HunkLocation rawLocation, List<Line> allLines) {
         this.location = location;

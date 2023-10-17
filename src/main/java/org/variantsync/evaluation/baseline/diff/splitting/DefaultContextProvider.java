@@ -1,12 +1,11 @@
 package org.variantsync.evaluation.baseline.diff.splitting;
 
+import org.tinylog.Logger;
 import org.variantsync.evaluation.baseline.diff.components.FileDiff;
+import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
 import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
 import org.variantsync.evaluation.baseline.diff.lines.MetaLine;
-import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
-import org.tinylog.Logger;
-
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

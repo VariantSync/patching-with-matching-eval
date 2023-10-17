@@ -48,7 +48,11 @@ object Main {
             val datasetSize = dataset.commits().replace(",".toRegex(), "").toInt()
             if (datasetSize > datasetMaxSize) {
                 Logger.info(
-                    "Skipping %s with %s commits because it exceeds the maximum number of commits (%d) set in the configuration.".format(dataset.name(), dataset.commits(), datasetMaxSize)
+                    "Skipping %s with %s commits because it exceeds the maximum number of commits (%d) set in the configuration.".format(
+                        dataset.name(),
+                        dataset.commits(),
+                        datasetMaxSize
+                    )
                 )
                 continue
             }

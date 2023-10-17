@@ -50,7 +50,7 @@ object ResultAnalysis {
      * @return The patch outcome
      */
     fun processOutcome(
-        workdir: WorkPaths, 
+        workdir: WorkPaths,
         dataset: String, runID: ULong, sourceVariant: String,
         targetVariant: String, commitV0: SPLCommit, commitV1: SPLCommit,
         normalPatch: FineDiff, filteredPatch: FineDiff,
@@ -62,16 +62,18 @@ object ResultAnalysis {
         debug("Processing outcome of $runID for patch process in " + workdir.workDir)
         // evaluate patch rejects
         // number of tried file-level patches
-        val fileNormal = HashSet(normalPatch.content.stream()
-            .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
+        val fileNormal = HashSet(
+            normalPatch.content.stream()
+                .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
         ).size
         // number of tried line-level patches
         val lineNormal = FineDiff.determineChangedLines(normalPatch)
         // number of failed patches
 
         // Determine the number of failed file-level patches (without filtering)
-        var fileNormalFailed: Long = HashSet(rejectsNormal.content.stream()
-            .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toSet())
+        var fileNormalFailed: Long = HashSet(
+            rejectsNormal.content.stream()
+                .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toSet())
         ).size.toLong()
         fileNormalFailed += skippedFilesNormal.size
         debug(
@@ -88,16 +90,18 @@ object ResultAnalysis {
         )
 
         // Number of tried file-level patches (with filtering)
-        val fileFiltered = HashSet(filteredPatch.content.stream()
-            .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
+        val fileFiltered = HashSet(
+            filteredPatch.content.stream()
+                .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
         ).size
         // Number of tried line-level patches (with filtering)
         val lineFiltered = FineDiff.determineChangedLines(filteredPatch)
         // Number of failed patches
 
         // Determine the number of failed file-level patches (with filtering)
-        var fileFilteredFailed: Long = HashSet(rejectsFiltered.content.stream()
-            .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
+        var fileFilteredFailed: Long = HashSet(
+            rejectsFiltered.content.stream()
+                .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
         ).size.toLong()
         fileFilteredFailed += skippedFilesFiltered.size
         debug(
@@ -140,7 +144,11 @@ object ResultAnalysis {
         )
     }
 
-    private fun initScenario(unfilteredPatch: FineDiff, requiredChanges: CountingMap<Change>, targetEvolutionDiff: FineDiff): EvaluationScenario {
+    private fun initScenario(
+        unfilteredPatch: FineDiff,
+        requiredChanges: CountingMap<Change>,
+        targetEvolutionDiff: FineDiff
+    ): EvaluationScenario {
         debug("Calculating result table with TP, FP, TN, and FN.")
         val changesToClassify = CountingMap<Change>(unfilteredPatch.intoChanges())
         val changesInEvolution = CountingMap<ChangedLine>(FineDiff.determineChangedLines(targetEvolutionDiff))
@@ -183,7 +191,10 @@ object ResultAnalysis {
             }
             tempChanges
         }
-        Assert.assertEquals(requiredChanges.elementCount() + undesiredChanges.elementCount(), changesToClassify.elementCount())
+        Assert.assertEquals(
+            requiredChanges.elementCount() + undesiredChanges.elementCount(),
+            changesToClassify.elementCount()
+        )
         return undesiredChanges
     }
 

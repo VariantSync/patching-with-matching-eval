@@ -1,10 +1,10 @@
 package org.variantsync.evaluation.baseline.diff;
 
-import org.variantsync.evaluation.baseline.diff.lines.*;
 import org.variantsync.evaluation.baseline.diff.components.FileDiff;
 import org.variantsync.evaluation.baseline.diff.components.Hunk;
 import org.variantsync.evaluation.baseline.diff.components.HunkLocation;
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff;
+import org.variantsync.evaluation.baseline.diff.lines.*;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;

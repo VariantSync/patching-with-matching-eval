@@ -1,17 +1,17 @@
 package org.variantsync.evaluation.baseline.diff.splitting;
 
 import org.variantsync.evaluation.baseline.diff.components.*;
+import org.variantsync.evaluation.baseline.diff.filter.DefaultFileDiffFilter;
+import org.variantsync.evaluation.baseline.diff.filter.DefaultLineFilter;
 import org.variantsync.evaluation.baseline.diff.filter.IFileDiffFilter;
+import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
 import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
-import org.variantsync.evaluation.baseline.diff.filter.DefaultFileDiffFilter;
-import org.variantsync.evaluation.baseline.diff.filter.DefaultLineFilter;
-import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
 
-import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
