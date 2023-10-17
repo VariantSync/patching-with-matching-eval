@@ -126,10 +126,10 @@ class Task(
                     "Starting repetition " + (i + 1) + " of " + numRepetitions + " with "
                             + numVariants + " variants."
                 )
-                if (inDebug && Files.exists(workPaths.debugDir)) {
-                    workPaths.shell.execute(RmCommand(workPaths.debugDir).recursive())
+                if (inDebug && Files.exists(workPaths.debugBaseDir)) {
+                    workPaths.shell.execute(RmCommand(workPaths.debugBaseDir).recursive())
                 }
-                if (inDebug && workPaths.debugDir.toFile().mkdirs()) {
+                if (inDebug && workPaths.debugBaseDir.toFile().mkdirs()) {
                     Logger.debug("Created Debug directory.")
                 }
 
@@ -153,14 +153,14 @@ class Task(
                         if (v0PCs.isPresent) {
                             Resources.Instance().write(
                                 Artefact::class.java, v0PCs.get(),
-                                workPaths.debugDir.resolve("V0.spl.csv")
+                                workPaths.debugBaseDir.resolve("V0.spl.csv")
                             )
                         }
                         val v1PCs = currentCommit.presenceConditionsAfter().run()
                         if (v1PCs.isPresent) {
                             Resources.Instance().write(
                                 Artefact::class.java, v1PCs.get(),
-                                workPaths.debugDir.resolve("V1.spl.csv")
+                                workPaths.debugBaseDir.resolve("V1.spl.csv")
                             )
                         }
                     } catch (e: Resources.ResourceIOException) {
@@ -210,7 +210,7 @@ class Task(
                     continue
                 } else if (inDebug) {
                     try {
-                        Files.write(workPaths.debugDir.resolve("diff.txt"), originalDiff.toLines())
+                        Files.write(workPaths.debugBaseDir.resolve("diff.txt"), originalDiff.toLines())
                     } catch (e: IOException) {
                         Logger.error("Was not able to save diff", e)
                     }
@@ -234,7 +234,7 @@ class Task(
                         getOriginalDiff(pathToTarget, pathToExpectedResult)
                     )
                     if (inDebug) {
-                        saveDiff(evolutionDiff, workPaths.debugDir.resolve("evolutionDiff.txt"))
+                        saveDiff(evolutionDiff, workPaths.debugBaseDir.resolve("evolutionDiff.txt"))
                     }
 
                     /* Application of patches without knowledge about features */Logger.debug("Applying patch without knowledge about features...")
@@ -334,7 +334,7 @@ class Task(
         if (inDebug) {
             try {
                 Files.write(
-                    workPaths.debugDir.resolve("resultDiffOriginal-$filePostfix.txt"),
+                    workPaths.debugBaseDir.resolve("resultDiffOriginal-$filePostfix.txt"),
                     resultDiff.toLines()
                 )
             } catch (e: IOException) {
@@ -344,7 +344,7 @@ class Task(
         val fineResult = getFineDiff(resultDiff)
         if (inDebug) {
             try {
-                Files.write(workPaths.debugDir.resolve("resultDiffFine-$filePostfix.txt"), fineResult.toLines())
+                Files.write(workPaths.debugBaseDir.resolve("resultDiffFine-$filePostfix.txt"), fineResult.toLines())
             } catch (e: IOException) {
                 Logger.error("Was not able to save resultDiffFiltered", e)
             }
@@ -372,7 +372,7 @@ class Task(
     private fun featureModelDebug(model: IFeatureModel?) {
         if (inDebug) {
             try {
-                Files.write(workPaths.debugDir.resolve("features.txt"), model!!.features.stream()
+                Files.write(workPaths.debugBaseDir.resolve("features.txt"), model!!.features.stream()
                     .map { obj: IFeature -> obj.name }.collect(Collectors.toSet())
                 )
             } catch (e: IOException) {
@@ -392,7 +392,7 @@ class Task(
             val config = variant.configuration as FeatureIDEConfiguration
             try {
                 Files.write(
-                    workPaths.debugDir.resolve(variant.name + ".config"),
+                    workPaths.debugBaseDir.resolve(variant.name + ".config"),
                     config.toAssignment().entries.stream().map { (key, value): Map.Entry<Any, Boolean> -> "$key : $value" }
                         .collect(Collectors.toList())
                 )
@@ -431,7 +431,7 @@ class Task(
         if (inDebug) {
             try {
                 Resources.Instance().write(
-                    Artefact::class.java, gtV0.success.variant(), workPaths.debugDir
+                    Artefact::class.java, gtV0.success.variant(), workPaths.debugBaseDir
                         .resolve("V0-" + variant.name + ".variant.csv")
                 )
             } catch (e: Resources.ResourceIOException) {
@@ -461,7 +461,7 @@ class Task(
         if (inDebug) {
             try {
                 Resources.Instance().write(
-                    Artefact::class.java, gtV1.success.variant(), workPaths.debugDir
+                    Artefact::class.java, gtV1.success.variant(), workPaths.debugBaseDir
                         .resolve("V1-" + variant.name + ".variant.csv")
                 )
             } catch (e: Resources.ResourceIOException) {
@@ -635,11 +635,11 @@ class Task(
             .expect("Was not able to diff variants.")
         if (inDebug) {
             try {
-                Files.createDirectories(workPaths.debugDir)
+                Files.createDirectories(workPaths.debugBaseDir)
             } catch (e: IOException) {
                 Logger.error(e)
             }
-            val file = workPaths.debugDir.resolve("latestDiff.txt")
+            val file = workPaths.debugBaseDir.resolve("latestDiff.txt")
             try {
                 PrintWriter(file.toFile()).use { writer ->
                     for (line in output) {

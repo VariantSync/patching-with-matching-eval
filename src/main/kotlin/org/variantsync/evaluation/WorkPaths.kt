@@ -14,7 +14,7 @@ class WorkPaths(mainDir: Path) {
     var workDir: Path
 
     // Debug directory
-    val debugDir: Path
+    val debugBaseDir: Path
 
     // Path to the first copy of the SPL. We require copy to consider different versions
     val splCopyA: Path
@@ -57,7 +57,7 @@ class WorkPaths(mainDir: Path) {
             Logger.error("Was not able to initialize this.workDir", e)
             throw UncheckedIOException(e)
         }
-        debugDir = workDir.resolve("DEBUG")
+        debugBaseDir = workDir.resolve("DEBUG")
         splCopyA = workDir.resolve("SPL-A")
         splCopyB = workDir.resolve("SPL-B")
         variantsDirV0 = CaseSensitivePath(workDir.resolve("V0Variants"))
