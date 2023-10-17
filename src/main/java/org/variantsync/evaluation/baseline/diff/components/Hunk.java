@@ -15,6 +15,7 @@ public final class Hunk implements IDiffComponent {
     private final HunkLocation rawLocation;
     private final List<Line> allLines;
     private final List<Line> changedLines;
+    private final boolean hasMetaLine;
 
     /**
      * @param location The location of the hunk in the file
@@ -25,6 +26,7 @@ public final class Hunk implements IDiffComponent {
         this.rawLocation = rawLocation;
         this.allLines = allLines;
         this.changedLines = allLines.stream().filter(l -> (l instanceof AddedLine || l instanceof RemovedLine)).collect(Collectors.toList());
+        this.hasMetaLine = allLines.stream().anyMatch(l -> l instanceof MetaLine);
     }
 
     public List<Line> changedLines() {
@@ -80,6 +82,10 @@ public final class Hunk implements IDiffComponent {
 
     public List<Line> content() {
         return allLines;
+    }
+
+    public boolean hasMetaLine() {
+        return hasMetaLine;
     }
 
     public Hunk inverse() {

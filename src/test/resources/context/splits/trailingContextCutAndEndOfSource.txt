@@ -7,4 +7,3 @@ diff -Naur version-A/DiffParser.txt version-B/DiffParser.txt
  
 +import java.util.ArrayList;
  import java.util.LinkedList;
-\ No newline at end of file

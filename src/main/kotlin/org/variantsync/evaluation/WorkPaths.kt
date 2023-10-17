@@ -3,6 +3,7 @@ package org.variantsync.evaluation
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
 import org.variantsync.vevos.simulation.util.io.CaseSensitivePath
+import org.variantsync.vevos.simulation.variability.SPLCommit
 import java.io.IOException
 import java.io.UncheckedIOException
 import java.nio.file.Files
@@ -14,7 +15,7 @@ class WorkPaths(mainDir: Path) {
     var workDir: Path
 
     // Debug directory
-    val debugDir: Path
+    val debugBaseDir: Path
 
     // Path to the first copy of the SPL. We require copy to consider different versions
     val splCopyA: Path
@@ -57,7 +58,7 @@ class WorkPaths(mainDir: Path) {
             Logger.error("Was not able to initialize this.workDir", e)
             throw UncheckedIOException(e)
         }
-        debugDir = workDir.resolve("DEBUG")
+        debugBaseDir = workDir.resolve("DEBUG")
         splCopyA = workDir.resolve("SPL-A")
         splCopyB = workDir.resolve("SPL-B")
         variantsDirV0 = CaseSensitivePath(workDir.resolve("V0Variants"))
@@ -71,5 +72,13 @@ class WorkPaths(mainDir: Path) {
             { },
             workDir
         )
+    }
+
+    fun debugDir(directory: String): Path {
+        return debugBaseDir.resolve(directory)
+    }
+
+    fun debugDir(commit: SPLCommit): Path {
+        return debugDir(commit.id())
     }
 }

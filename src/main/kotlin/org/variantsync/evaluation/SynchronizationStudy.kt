@@ -35,6 +35,7 @@ class SynchronizationStudy(
     init {
         val resultFile = resultsDir.resolve("$datasetName.results")
         if (!Files.exists(resultFile)) {
+            resultFile.parent.toFile().mkdirs()
             Files.createFile(resultFile)
         }
         this.groundTruthPath = groundTruthPath

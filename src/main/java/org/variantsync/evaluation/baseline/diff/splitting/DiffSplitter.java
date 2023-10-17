@@ -104,7 +104,8 @@ public class DiffSplitter {
                                               final int leadContextStart,
                                               final int hunkLocationOffset) {
         final List<Line> leadingContext = contextProvider.leadingContext(lineFilter, fileDiff, leadContextStart);
-        final List<Line> trailingContext = contextProvider.trailingContext(lineFilter, fileDiff, trailContextStart);
+        boolean requiresMetaLine = fileDiff.hunks().get(0).hasMetaLine();
+        final List<Line> trailingContext = contextProvider.trailingContext(lineFilter, fileDiff, trailContextStart, requiresMetaLine);
         final List<Line> content = new ArrayList<>(leadingContext);
         content.add(line);
         content.addAll(trailingContext);
