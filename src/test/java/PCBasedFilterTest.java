@@ -42,7 +42,11 @@ public class PCBasedFilterTest {
 
         List<String> expectedLines = Files.readAllLines(pathToExpectedResult);
         List<String> actualLines = fineDiff.toLines();
-        Assertions.assertEquals(expectedLines, actualLines);
+        for (int i = 0; i < expectedLines.size(); i++) {
+            String expectedLine = expectedLines.get(i);
+            String actualLine = actualLines.get(i);
+            Assertions.assertEquals(expectedLine, actualLine, "Mismatch in line " + (i+1));
+        }
     }
     
     private PCBasedFilter getPCBasedFilter(Artefact oldTraces, Artefact newTraces, Variant variant, Path oldVersion, Path newVersion) {
