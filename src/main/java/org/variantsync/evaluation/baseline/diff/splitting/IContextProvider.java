@@ -33,5 +33,11 @@ public interface IContextProvider {
      * @param index      The line number of the change for which a context is to be provided
      * @return The trailing context for the change
      */
-    List<Line> trailingContext(ILineFilter lineFilter, FileDiff fileDiff, int index, boolean requiresMetaLine);
+    List<Line> trailingContext(ILineFilter lineFilter, FileDiff fileDiff, int index);
+
+    /**
+     *
+     * @return The size of the leading and trailing context
+     */
+    int contextSize();
 }

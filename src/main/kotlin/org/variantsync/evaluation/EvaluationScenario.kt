@@ -42,7 +42,7 @@ class EvaluationScenario(
             }
 
             // Has it failed?
-            if (rejects.removeOne(required)) {
+            if (rejects.removeOne(required) || rejects.removeOne(required.asRejectedChange())) {
                 if (observedDifference.removeOne(required.asChangedLine())) {
                     missing++
                 } else {

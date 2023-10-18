@@ -5,7 +5,6 @@ import org.variantsync.evaluation.baseline.diff.components.FileDiff;
 import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
 import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
-import org.variantsync.evaluation.baseline.diff.lines.MetaLine;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -86,28 +85,21 @@ public class DefaultContextProvider implements IContextProvider {
     }
 
     @Override
-    public List<Line> trailingContext(final ILineFilter lineFilter, final FileDiff fileDiff, final int index, boolean requiresMetaLine) {
+    public List<Line> trailingContext(final ILineFilter lineFilter, final FileDiff fileDiff, final int index) {
         final LinkedList<Line> context = new LinkedList<>();
         final List<String> lines;
         try {
             // Read the file's content
             if (Files.exists(rootDir.resolve(fileDiff.oldFile()))) {
                 lines = Files.readAllLines(rootDir.resolve(fileDiff.oldFile()));
-                if (lines.isEmpty()) {
-                    return new ArrayList<>();
-                }
             } else {
-                return new ArrayList<>();
+                lines = new ArrayList<>();
             }
 
             // Consider the lines coming after the considered change, until the end of the file has been reached, or
             // until all required context lines have been determined
-            for (int i = index - 1; i <= lines.size(); i++) {
+            for (int i = index - 1; !lines.isEmpty() && i <= lines.size(); i++) {
                 if (i == lines.size()) {
-                    if (requiresMetaLine) {
-                        // Add a meta-line stating EOF
-                        context.addLast(new MetaLine());
-                    }
                     break;
                 }
                 final String currentLine = " " + lines.get(i);
@@ -124,5 +116,10 @@ public class DefaultContextProvider implements IContextProvider {
             Logger.error("Was not able to load file:" + rootDir.resolve(fileDiff.newFile()), e);
             throw new UncheckedIOException(e);
         }
+    }
+
+    @Override
+    public int contextSize() {
+        return contextSize;
     }
 }

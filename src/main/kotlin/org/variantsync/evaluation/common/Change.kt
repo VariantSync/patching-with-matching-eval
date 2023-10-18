@@ -1,6 +1,7 @@
 package org.variantsync.evaluation.common
 
 import org.variantsync.evaluation.baseline.diff.components.Hunk
+import org.variantsync.evaluation.baseline.diff.components.HunkLocation
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
 import org.variantsync.evaluation.baseline.diff.lines.Line
@@ -40,5 +41,11 @@ class Change(val lineChange: Line, val hunk: Hunk, val path: Path) {
             AddedLine("+$changedText")
         }
         return Change(l, hunk, path)
+    }
+
+    fun asRejectedChange(): Change {
+        val location = this.hunk.location()
+        val h = Hunk(location, location, this.hunk.content())
+        return Change(this.lineChange, h, this.path)
     }
 }

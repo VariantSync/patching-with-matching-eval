@@ -1,6 +1,7 @@
 package org.variantsync.evaluation
 
 import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.baseline.shell.AppliedPatchTracker
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
 import org.variantsync.vevos.simulation.util.io.CaseSensitivePath
 import org.variantsync.vevos.simulation.variability.SPLCommit
@@ -48,6 +49,8 @@ class Operations(mainDir: Path) {
     // ShellExecutor for executing shell commands
     val shell: ShellExecutor
 
+    val appliedPatchTracker: AppliedPatchTracker
+
     init {
         try {
             if (mainDir.toFile().mkdirs()) {
@@ -68,10 +71,11 @@ class Operations(mainDir: Path) {
         filteredPatchFile = workDir.resolve("filtered-patch.txt")
         rejectsNormalFile = workDir.resolve("rejects-normal.txt")
         rejectsFilteredFile = workDir.resolve("rejects-filtered.txt")
+        appliedPatchTracker = AppliedPatchTracker()
         shell = ShellExecutor(
-            { },
+            appliedPatchTracker,
             // TODO: Capture "patch: **** write error : Success"
-            { },
+            appliedPatchTracker,
             workDir
         )
     }

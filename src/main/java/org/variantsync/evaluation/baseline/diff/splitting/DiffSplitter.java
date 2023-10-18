@@ -1,14 +1,12 @@
 package org.variantsync.evaluation.baseline.diff.splitting;
 
+import org.tinylog.Logger;
 import org.variantsync.evaluation.baseline.diff.components.*;
 import org.variantsync.evaluation.baseline.diff.filter.DefaultFileDiffFilter;
 import org.variantsync.evaluation.baseline.diff.filter.DefaultLineFilter;
 import org.variantsync.evaluation.baseline.diff.filter.IFileDiffFilter;
 import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
-import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
-import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
-import org.variantsync.evaluation.baseline.diff.lines.Line;
-import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
+import org.variantsync.evaluation.baseline.diff.lines.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,6 +92,13 @@ public class DiffSplitter {
                     newIndex++;
                 }
             }
+            if (hunk.hasMetaLine()) {
+                // Add the meta line to the last patch created from this hunk, if the hunk had one at the end
+                Hunk lastHunk = fileDiffs.get(fileDiffs.size()-1).hunks().get(0);
+                if (!lastHunk.hasMetaLine()) {
+                    lastHunk.content().add(new MetaLine());
+                }
+            }
         }
         return fileDiffs;
     }
@@ -104,10 +109,20 @@ public class DiffSplitter {
                                               final int leadContextStart,
                                               final int hunkLocationOffset) {
         final List<Line> leadingContext = contextProvider.leadingContext(lineFilter, fileDiff, leadContextStart);
-        boolean requiresMetaLine = fileDiff.hunks().get(0).hasMetaLine();
-        final List<Line> trailingContext = contextProvider.trailingContext(lineFilter, fileDiff, trailContextStart, requiresMetaLine);
+        final List<Line> trailingContext = contextProvider.trailingContext(lineFilter, fileDiff, trailContextStart);
+
+        if (hunk.hasMetaLine() && line instanceof RemovedLine && trailingContext.size() < contextProvider.contextSize()) {
+            // Add a meta-line stating EOF for lines being removed
+            trailingContext.add(new MetaLine());
+        }
+
+        // Add the leading context
         final List<Line> content = new ArrayList<>(leadingContext);
+
+        // Add the change
         content.add(line);
+
+        // Add the trailing context
         content.addAll(trailingContext);
 
         final HunkLocation location = new HunkLocation(hunk.location().startLineSource() + hunkLocationOffset, hunk.location().startLineTarget() + hunkLocationOffset);

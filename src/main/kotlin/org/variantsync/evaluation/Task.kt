@@ -232,7 +232,7 @@ class Task(
                     }
                     // Gather the patch result
                     val actualVsExpectedNormal = getActualVsExpected(pathToExpectedResult, "normal", target)
-                    val rejectsNormal = readRejects(operations.rejectsNormalFile)
+                    val rejectsNormal = readRejects(operations.rejectsNormalFile, normalPatch)
                     if (inDebug) {
                         saveDiff(
                             rejectsNormal,
@@ -274,7 +274,7 @@ class Task(
                     }
                     // Gather the result
                     val actualVsExpectedFiltered = getActualVsExpected(pathToExpectedResult, "filtered", target)
-                    val rejectsFiltered = readRejects(operations.rejectsFilteredFile)
+                    val rejectsFiltered = readRejects(operations.rejectsFilteredFile, filteredPatch)
                     if (inDebug) {
                         saveDiff(
                             rejectsFiltered,
@@ -716,7 +716,7 @@ class Task(
     }
 
     // Read a rejects file
-    private fun readRejects(rejectFile: Path): FineDiff {
+    private fun readRejects(rejectFile: Path, patch: FineDiff): FineDiff {
         var rejectsDiff: OriginalDiff? = null
         if (Files.exists(rejectFile)) {
             try {
@@ -732,6 +732,21 @@ class Task(
             } else {
                 getFineDiff(rejectsDiff)
             }
+        if (operations.appliedPatchTracker.hasReceivedError()) {
+            // There was another error due to a bug in patch
+            // We have to read which file caused the error from our tracker, and then add all patches that came afterwards
+            // to the rejects, because patching was aborted
+            val file = operations.appliedPatchTracker.lastPatchTarget()
+            var afterError = false
+            for (fd in patch.content) {
+                if (fd.oldFile.endsWith(file)) {
+                    afterError = true;
+                }
+                if (afterError) {
+                    result.content.add(fd)
+                }
+            }
+        }
         return result
     }
 
