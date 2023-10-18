@@ -13,10 +13,9 @@ public class AppliedPatchTracker implements Consumer<String> {
     @Override
     public void accept(String s) {
         if (s.startsWith("patching file ")) {
-            Logger.warn(s);
             appliedPatches.add(Path.of(s.replace("patching file ", "").trim()));
         } else if (s.startsWith("patch: **** write error :")) {
-            Logger.warn(s);
+            Logger.debug("{} for file {}", s, appliedPatches.get(appliedPatches.size()-1));
             receivedError = true;
         }
     }
