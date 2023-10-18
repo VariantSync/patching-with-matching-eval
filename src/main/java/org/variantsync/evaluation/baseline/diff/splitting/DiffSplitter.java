@@ -111,9 +111,13 @@ public class DiffSplitter {
         final List<Line> leadingContext = contextProvider.leadingContext(lineFilter, fileDiff, leadContextStart);
         final List<Line> trailingContext = contextProvider.trailingContext(lineFilter, fileDiff, trailContextStart);
 
-        if (hunk.hasMetaLine() && line instanceof RemovedLine && trailingContext.size() < contextProvider.contextSize()) {
-            // Add a meta-line stating EOF for lines being removed
-            trailingContext.add(new MetaLine());
+        if (hunk.hasMetaLine()) {
+            boolean eofForRemoved = line instanceof RemovedLine && trailingContext.size() < contextProvider.contextSize();
+            boolean eofForAdded = line instanceof AddedLine && !trailingContext.isEmpty() && trailingContext.size() < contextProvider.contextSize();
+            if (eofForRemoved || eofForAdded) {
+                // Add a meta-line stating EOF for lines being removed
+                trailingContext.add(new MetaLine());
+            }
         }
 
         // Add the leading context
