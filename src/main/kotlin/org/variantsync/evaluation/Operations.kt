@@ -70,6 +70,7 @@ class Operations(mainDir: Path) {
         rejectsFilteredFile = workDir.resolve("rejects-filtered.txt")
         shell = ShellExecutor(
             { },
+            // TODO: Capture "patch: **** write error : Success"
             { },
             workDir
         )
