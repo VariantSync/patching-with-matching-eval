@@ -20,3 +20,4 @@ simulation-files/ground-truth.zip
 /debug.txt
 /.gradle/
 /build/
+/logs/
