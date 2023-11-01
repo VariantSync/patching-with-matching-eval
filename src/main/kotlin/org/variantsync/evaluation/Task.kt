@@ -747,6 +747,7 @@ class Task(
                 }
             }
         }
+        operations.appliedPatchTracker.reset()
         return result
     }
 
