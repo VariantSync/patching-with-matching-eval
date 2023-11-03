@@ -95,7 +95,7 @@ public class DiffSplitter {
             if (hunk.hasMetaLine() && !fileDiffs.isEmpty()) {
                 // Add the meta line to the last patch created from this hunk, if the hunk had one at the end
                 Hunk lastHunk = fileDiffs.get(fileDiffs.size()-1).hunks().get(0);
-                if (!lastHunk.hasMetaLine()) {
+                if (!lastHunk.hasMetaLine() && !lastHunk.endsWithEmptyLine()) {
                     lastHunk.content().add(new MetaLine());
                 }
             }

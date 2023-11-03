@@ -29,7 +29,7 @@ public final class Hunk implements IDiffComponent {
         this.rawLocation = rawLocation;
         this.allLines = allLines;
         this.changedLines = allLines.stream().filter(l -> (l instanceof AddedLine || l instanceof RemovedLine)).collect(Collectors.toList());
-        this.hasMetaLine = allLines.stream().anyMatch(l -> l instanceof MetaLine);
+        this.hasMetaLine = allLines.get(allLines.size()-1) instanceof MetaLine;
     }
 
     public List<Line> changedLines() {
@@ -111,4 +111,11 @@ public final class Hunk implements IDiffComponent {
         return new Hunk(this.location, this.rawLocation, lines);
     }
 
+    public boolean endsWithEmptyLine() {
+        return allLines.get(allLines.size()-1).line().isEmpty();
+    }
+
+    public int size() {
+        return this.allLines.size();
+    }
 }

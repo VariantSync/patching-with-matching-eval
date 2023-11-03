@@ -7,21 +7,21 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class AppliedPatchTracker implements Consumer<String> {
-    private ArrayList<Path> appliedPatches = new ArrayList<>();
+    private Path lastPatchedFile = Path.of("");
     private boolean receivedError = false;
 
     @Override
     public void accept(String s) {
         if (s.startsWith("patching file ")) {
-            appliedPatches.add(Path.of(s.replace("patching file ", "").trim()));
-        } else if (s.startsWith("patch: **** write error :")) {
-            Logger.debug("{} for file {}", s, appliedPatches.get(appliedPatches.size()-1));
+            lastPatchedFile = Path.of(s.replace("patching file ", "").trim());
+        } else if (s.startsWith("patch: **** write error : Success")) {
+            Logger.debug("{} for file {}", s, lastPatchedFile);
             receivedError = true;
         }
     }
 
     public Path lastPatchTarget() {
-        return appliedPatches.get(appliedPatches.size()-1);
+        return lastPatchedFile;
     }
 
     public boolean hasReceivedError() {
@@ -29,7 +29,7 @@ public class AppliedPatchTracker implements Consumer<String> {
     }
 
     public void reset() {
-        this.appliedPatches = new ArrayList<>();
+        this.lastPatchedFile = Path.of("");
         this.receivedError = false;
     }
 }

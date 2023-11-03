@@ -74,7 +74,6 @@ class Operations(mainDir: Path) {
         appliedPatchTracker = AppliedPatchTracker()
         shell = ShellExecutor(
             appliedPatchTracker,
-            // TODO: Capture "patch: **** write error : Success"
             appliedPatchTracker,
             workDir
         )
