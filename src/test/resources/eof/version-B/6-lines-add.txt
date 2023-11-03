@@ -1,0 +1,7 @@
+Line A
+Line B
+Line C
+ADDED
+Line D
+Line E
+Line F

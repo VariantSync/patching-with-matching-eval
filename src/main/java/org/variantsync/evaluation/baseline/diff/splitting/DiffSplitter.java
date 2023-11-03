@@ -112,9 +112,12 @@ public class DiffSplitter {
         final List<Line> trailingContext = contextProvider.trailingContext(lineFilter, fileDiff, trailContextStart);
 
         if (hunk.hasMetaLine()) {
-            boolean eofForRemoved = line instanceof RemovedLine && trailingContext.size() < contextProvider.contextSize();
-            boolean eofForAdded = line instanceof AddedLine && !trailingContext.isEmpty() && trailingContext.size() < contextProvider.contextSize();
-            if (eofForRemoved || eofForAdded) {
+            // A meta line must never follow an empty line
+            boolean contextEndsInEmptyLine = !trailingContext.isEmpty() && trailingContext.get(trailingContext.size()-1).isEmpty();
+            // Additionally, a meta line is only added here if the context is not full yet
+            boolean needsMetaLine = trailingContext.size() < contextProvider.contextSize()
+                    && !contextEndsInEmptyLine;
+            if (needsMetaLine) {
                 // Add a meta-line stating EOF for lines being removed
                 trailingContext.add(new MetaLine());
             }
@@ -129,7 +132,8 @@ public class DiffSplitter {
         // Add the trailing context
         content.addAll(trailingContext);
 
-        final HunkLocation location = new HunkLocation(hunk.location().startLineSource() + hunkLocationOffset, hunk.location().startLineTarget() + hunkLocationOffset);
+        final HunkLocation location = new HunkLocation(hunk.location().startLineSource() + hunkLocationOffset,
+                hunk.location().startLineTarget() + hunkLocationOffset);
 
         final Hunk miniHunk = new Hunk(location, hunk.rawLocation(), content);
         return new FileDiff(fileDiff.header(), Collections.singletonList(miniHunk), fileDiff.oldFile(), fileDiff.newFile());

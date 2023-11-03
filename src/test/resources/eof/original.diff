@@ -1,0 +1,135 @@
+diff -Naur version-A/0-lines-add.txt version-B/0-lines-add.txt
+--- version-A/0-lines-add.txt	2023-11-03 16:26:28.701847364 +0100
++++ version-B/0-lines-add.txt	2023-11-03 16:26:37.168563729 +0100
+@@ -0,0 +1 @@
++ADDED
+\ No newline at end of file
+diff -Naur version-A/0-lines-trail-rem.txt version-B/0-lines-trail-rem.txt
+--- version-A/0-lines-trail-rem.txt	2023-11-03 16:39:35.953263076 +0100
++++ version-B/0-lines-trail-rem.txt	2023-11-03 16:40:12.500153951 +0100
+@@ -1,4 +1,3 @@
+ Line A
+ Line B
+-Line C
+-Line D
+\ No newline at end of file
++Line C
+\ No newline at end of file
+diff -Naur version-A/1-lines-add.txt version-B/1-lines-add.txt
+--- version-A/1-lines-add.txt	2023-11-03 16:16:50.401954796 +0100
++++ version-B/1-lines-add.txt	2023-11-03 16:16:47.168604793 +0100
+@@ -1 +1,2 @@
+-Line A
+\ No newline at end of file
++Line A
++ADDED
+\ No newline at end of file
+diff -Naur version-A/1-lines-trail-rem.txt version-B/1-lines-trail-rem.txt
+--- version-A/1-lines-trail-rem.txt	2023-11-03 16:39:30.449895997 +0100
++++ version-B/1-lines-trail-rem.txt	2023-11-03 16:40:10.566808752 +0100
+@@ -1,5 +1,4 @@
+ Line A
+ Line B
+ Line C
+-Line D
+ Line E
+\ No newline at end of file
+diff -Naur version-A/2-lines-add.txt version-B/2-lines-add.txt
+--- version-A/2-lines-add.txt	2023-11-03 16:12:48.174102442 +0100
++++ version-B/2-lines-add.txt	2023-11-03 16:12:45.080749593 +0100
+@@ -1,2 +1,3 @@
+ Line A
+-Line B
+\ No newline at end of file
++Line B
++ADDED
+\ No newline at end of file
+diff -Naur version-A/2-lines-trail-rem.txt version-B/2-lines-trail-rem.txt
+--- version-A/2-lines-trail-rem.txt	2023-11-03 16:39:23.953189499 +0100
++++ version-B/2-lines-trail-rem.txt	2023-11-03 16:40:02.350091664 +0100
+@@ -1,6 +1,5 @@
+ Line A
+ Line B
+ Line C
+-Line D
+ Line E
+ Line F
+\ No newline at end of file
+diff -Naur version-A/3-lines-add.txt version-B/3-lines-add.txt
+--- version-A/3-lines-add.txt	2023-11-03 16:11:48.753727924 +0100
++++ version-B/3-lines-add.txt	2023-11-03 16:11:54.090428196 +0100
+@@ -1,3 +1,4 @@
+ Line A
+ Line B
+-Line C
+\ No newline at end of file
++Line C
++ADDED
+\ No newline at end of file
+diff -Naur version-A/3-lines-trail-rem.txt version-B/3-lines-trail-rem.txt
+--- version-A/3-lines-trail-rem.txt	2023-11-03 16:28:52.949366609 +0100
++++ version-B/3-lines-trail-rem.txt	2023-11-03 16:28:57.692728171 +0100
+@@ -1,7 +1,6 @@
+ Line A
+ Line B
+ Line C
+-Line D
+ Line E
+ Line F
+ Line G
+\ No newline at end of file
+diff -Naur version-A/4-lines-add.txt version-B/4-lines-add.txt
+--- version-A/4-lines-add.txt	2023-11-03 16:10:22.126516727 +0100
++++ version-B/4-lines-add.txt	2023-11-03 16:10:29.953232515 +0100
+@@ -1,4 +1,5 @@
+ Line A
+ Line B
+ Line C
++ADDED
+ Line D
+\ No newline at end of file
+diff -Naur version-A/4-lines-trail-rem.txt version-B/4-lines-trail-rem.txt
+--- version-A/4-lines-trail-rem.txt	2023-11-03 16:27:11.858767834 +0100
++++ version-B/4-lines-trail-rem.txt	2023-11-03 16:27:19.895481892 +0100
+@@ -1,7 +1,6 @@
+ Line A
+ Line B
+ Line C
+-Line D
+ Line E
+ Line F
+ Line G
+diff -Naur version-A/5-lines-add.txt version-B/5-lines-add.txt
+--- version-A/5-lines-add.txt	2023-11-03 16:08:35.472515806 +0100
++++ version-B/5-lines-add.txt	2023-11-03 16:08:39.635875133 +0100
+@@ -1,5 +1,6 @@
+ Line A
+ Line B
+ Line C
++ADDED
+ Line D
+ Line E
+\ No newline at end of file
+diff -Naur version-A/6-lines-add.txt version-B/6-lines-add.txt
+--- version-A/6-lines-add.txt	2023-11-03 16:07:09.445313389 +0100
++++ version-B/6-lines-add.txt	2023-11-03 16:07:19.588709750 +0100
+@@ -1,6 +1,7 @@
+ Line A
+ Line B
+ Line C
++ADDED
+ Line D
+ Line E
+ Line F
+\ No newline at end of file
+diff -Naur version-A/7-lines-add.txt version-B/7-lines-add.txt
+--- version-A/7-lines-add.txt	2023-11-03 16:05:23.907993506 +0100
++++ version-B/7-lines-add.txt	2023-11-03 16:05:22.941320879 +0100
+@@ -1,6 +1,7 @@
+ Line A
+ Line B
+ Line C
++ADDED
+ Line D
+ Line E
+ Line F
