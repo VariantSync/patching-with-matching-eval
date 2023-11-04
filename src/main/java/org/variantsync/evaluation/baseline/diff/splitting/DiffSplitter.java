@@ -60,7 +60,7 @@ public class DiffSplitter {
     // Split the hunks in the given difference into line-level patches while filtering certain patches depending on the
     // decision of the provided filters.
     private static List<FileDiff> split(final FileDiff fileDiff, final IContextProvider contextProvider, final ILineFilter lineFilter) {
-        final List<FileDiff> fileDiffs = new ArrayList<>();
+        final List<FileDiff> resultDiffs = new ArrayList<>();
 
         int hunkLocationOffset = 0;
         for (final Hunk hunk : fileDiff.hunks()) {
@@ -72,14 +72,14 @@ public class DiffSplitter {
                     if (lineFilter.keepLineChange(fileDiff.oldFile(), hunk.location().startLineSource() + oldIndex)) {
                         final int leadContextStart = hunk.location().startLineTarget() + newIndex - 1;
                         final int trailContextStart = hunk.location().startLineSource() + oldIndex + 1;
-                        fileDiffs.add(calculateMiniDiff(contextProvider, lineFilter, fileDiff, hunk, line, trailContextStart, leadContextStart, hunkLocationOffset));
+                        resultDiffs.add(calculateMiniDiff(contextProvider, lineFilter, fileDiff, hunk, line, trailContextStart, leadContextStart, hunkLocationOffset));
                     }
                     oldIndex++;
                 } else if (line instanceof AddedLine) {
                     if (lineFilter.keepLineChange(fileDiff.newFile(), hunk.location().startLineTarget() + newIndex)) {
                         final int leadContextStart = hunk.location().startLineTarget() + newIndex - 1;
                         final int trailContextStart = hunk.location().startLineSource() + oldIndex;
-                        fileDiffs.add(calculateMiniDiff(contextProvider, lineFilter, fileDiff, hunk, line, trailContextStart, leadContextStart, hunkLocationOffset));
+                        resultDiffs.add(calculateMiniDiff(contextProvider, lineFilter, fileDiff, hunk, line, trailContextStart, leadContextStart, hunkLocationOffset));
                         // Handle creation of new files. An offset of 1 has to be added after the file has been created with the first line
                         if (hunk.location().startLineSource() == 0) {
                             hunkLocationOffset = 1;
@@ -92,15 +92,15 @@ public class DiffSplitter {
                     newIndex++;
                 }
             }
-            if (hunk.hasMetaLine() && !fileDiffs.isEmpty()) {
+            if (hunk.hasMetaLine() && !resultDiffs.isEmpty()) {
                 // Add the meta line to the last patch created from this hunk, if the hunk had one at the end
-                Hunk lastHunk = fileDiffs.get(fileDiffs.size()-1).hunks().get(0);
-                if (!lastHunk.hasMetaLine() && !lastHunk.endsWithEmptyLine()) {
-                    lastHunk.content().add(new MetaLine());
+                Hunk resultHunk = resultDiffs.get(resultDiffs.size()-1).hunks().get(0);
+                if (!resultHunk.hasMetaLine() && !resultHunk.endsWithEmptyLine() && resultHunk.trailingContext().size() < 3) {
+                    resultHunk.content().add(new MetaLine());
                 }
             }
         }
-        return fileDiffs;
+        return resultDiffs;
     }
 
     // Construct the difference for a single line change
@@ -117,7 +117,7 @@ public class DiffSplitter {
             // Additionally, a meta line is only added here if the context is not full yet
             boolean needsMetaLine = trailingContext.size() < contextProvider.contextSize()
                     && !contextEndsInEmptyLine;
-            if (needsMetaLine) {
+            if (needsMetaLine && !line.isEmpty()) {
                 // Add a meta-line stating EOF for lines being removed
                 trailingContext.add(new MetaLine());
             }
@@ -132,6 +132,7 @@ public class DiffSplitter {
         // Add the trailing context
         content.addAll(trailingContext);
 
+        // TODO: Handle '0' start positions
         final HunkLocation location = new HunkLocation(hunk.location().startLineSource() + hunkLocationOffset,
                 hunk.location().startLineTarget() + hunkLocationOffset);
 
