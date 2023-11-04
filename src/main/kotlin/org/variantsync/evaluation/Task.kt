@@ -732,9 +732,13 @@ class Task(
             } else {
                 getFineDiff(rejectsDiff)
             }
-        if (operations.appliedPatchTracker.hasReceivedError()) {
-            // There was another error due to a bug in patch
-            // We have to read which file caused the error from our tracker, and then add all patches that came afterwards
+
+        if (operations.appliedPatchTracker.hasAnyError()) {
+            Logger.error("patch that caused the error: {}", patch.content()[operations.appliedPatchTracker.patchId]);
+        }
+        if (operations.appliedPatchTracker.hasCriticalError()) {
+            // There was a critical error due to a bug in patch
+            // We have to read which file caused the error from our tracker, and then add all patches that came afterward
             // to the rejects, because patching was aborted
             val file = operations.appliedPatchTracker.lastPatchTarget()
             var afterError = false
@@ -746,6 +750,11 @@ class Task(
                     result.content.add(fd)
                 }
             }
+        }
+        if (operations.appliedPatchTracker.hasNormalError()) {
+            // A normal error causes only the problematic patch to fail.
+            // We can add this patch to the rejects.
+            result.content.add(patch.content()[operations.appliedPatchTracker.patchId])
         }
         operations.appliedPatchTracker.reset()
         return result

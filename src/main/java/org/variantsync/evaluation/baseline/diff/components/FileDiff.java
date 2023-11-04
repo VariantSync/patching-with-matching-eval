@@ -24,4 +24,14 @@ public record FileDiff(List<String> header, List<Hunk> hunks, Path oldFile, Path
     public int changeCount() {
         return this.hunks.stream().mapToInt(Hunk::changeCount).sum();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (String line : toLines()) {
+            sb.append(line);
+            sb.append(System.lineSeparator());
+        }
+        return sb.toString();
+    }
 }
