@@ -1,6 +1,6 @@
 package org.variantsync.evaluation.baseline.diff.splitting;
 
-import org.tinylog.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.variantsync.evaluation.baseline.diff.components.*;
 import org.variantsync.evaluation.baseline.diff.filter.DefaultFileDiffFilter;
 import org.variantsync.evaluation.baseline.diff.filter.DefaultLineFilter;
@@ -62,7 +62,6 @@ public class DiffSplitter {
     private static List<FileDiff> split(final FileDiff fileDiff, final IContextProvider contextProvider, final ILineFilter lineFilter) {
         final List<FileDiff> resultDiffs = new ArrayList<>();
 
-        int hunkLocationOffset = 0;
         for (final Hunk hunk : fileDiff.hunks()) {
             // Index that points to the location of the current line in the current hunk
             int oldIndex = 0;
@@ -72,18 +71,16 @@ public class DiffSplitter {
                     if (lineFilter.keepLineChange(fileDiff.oldFile(), hunk.location().startLineSource() + oldIndex)) {
                         final int leadContextStart = hunk.location().startLineTarget() + newIndex - 1;
                         final int trailContextStart = hunk.location().startLineSource() + oldIndex + 1;
-                        resultDiffs.add(calculateMiniDiff(contextProvider, lineFilter, fileDiff, hunk, line, trailContextStart, leadContextStart, hunkLocationOffset));
+                        final HunkLocation location = getRemoveLocation(hunk, oldIndex);
+                        resultDiffs.add(calculateMiniDiff(contextProvider, lineFilter, fileDiff, hunk, line, trailContextStart, leadContextStart, location));
                     }
                     oldIndex++;
                 } else if (line instanceof AddedLine) {
                     if (lineFilter.keepLineChange(fileDiff.newFile(), hunk.location().startLineTarget() + newIndex)) {
                         final int leadContextStart = hunk.location().startLineTarget() + newIndex - 1;
                         final int trailContextStart = hunk.location().startLineSource() + oldIndex;
-                        resultDiffs.add(calculateMiniDiff(contextProvider, lineFilter, fileDiff, hunk, line, trailContextStart, leadContextStart, hunkLocationOffset));
-                        // Handle creation of new files. An offset of 1 has to be added after the file has been created with the first line
-                        if (hunk.location().startLineSource() == 0) {
-                            hunkLocationOffset = 1;
-                        }
+                        final HunkLocation location = getAddLocation(hunk, newIndex);
+                        resultDiffs.add(calculateMiniDiff(contextProvider, lineFilter, fileDiff, hunk, line, trailContextStart, leadContextStart, location));
                     }
                     newIndex++;
                 } else if (line instanceof ContextLine) {
@@ -96,11 +93,41 @@ public class DiffSplitter {
         return resultDiffs;
     }
 
+    @NotNull
+    private static HunkLocation getAddLocation(Hunk hunk, int newIndex) {
+        final int hunkLocationSource;
+        if (hunk.location().startLineSource() == 0 && newIndex == 0) {
+            // If it's the first added line a file being created, the hunk starts at 0
+            hunkLocationSource = 0;
+        } else {
+            // If it's any other added line the hunk starts at least at 1
+            hunkLocationSource = Integer.max(hunk.location().startLineSource(), 1);
+        }
+        final int hunkLocationTarget = Integer.max(hunk.location().startLineTarget(), 1);
+        return new HunkLocation(hunkLocationSource, hunkLocationTarget);
+    }
+
+    @NotNull
+    private static HunkLocation getRemoveLocation(Hunk hunk, int oldIndex) {
+        final int hunkLocationSource = Integer.max(hunk.location().startLineSource(), 1);
+        final int hunkLocationTarget;
+        if (hunk.location().startLineTarget() == 0 && oldIndex == (hunk.size()-(hunk.hasMetaLine() ? 2 : 1))) {
+            // If it's the last removed line a file being removed, the hunk starts at 0
+            // We can determine whether it is the last line by comparing oldIndex and the hunks size minus a offset
+            // that depends on the existence of a meta line
+            hunkLocationTarget = 0;
+        } else {
+            // If it's any other removed line, the hunk starts at least at 1
+            hunkLocationTarget = Integer.max(hunk.location().startLineTarget(), 1);
+        }
+        return new HunkLocation(hunkLocationSource, hunkLocationTarget);
+    }
+
     // Construct the difference for a single line change
     private static FileDiff calculateMiniDiff(final IContextProvider contextProvider, final ILineFilter lineFilter,
                                               final FileDiff fileDiff, final Hunk hunk, final Line line, final int trailContextStart,
                                               final int leadContextStart,
-                                              final int hunkLocationOffset) {
+                                              final HunkLocation hunkLocation) {
         final List<Line> leadingContext = contextProvider.leadingContext(lineFilter, fileDiff, leadContextStart);
         final List<Line> trailingContext = contextProvider.trailingContext(lineFilter, fileDiff, trailContextStart);
 
@@ -119,11 +146,7 @@ public class DiffSplitter {
         // Add the trailing context
         content.addAll(trailingContext);
 
-        // TODO: Handle '0' start positions
-        final HunkLocation location = new HunkLocation(hunk.location().startLineSource() + hunkLocationOffset,
-                hunk.location().startLineTarget() + hunkLocationOffset);
-
-        final Hunk miniHunk = new Hunk(location, hunk.rawLocation(), content);
+        final Hunk miniHunk = new Hunk(hunkLocation, hunk.rawLocation(), content);
         return new FileDiff(fileDiff.header(), Collections.singletonList(miniHunk), fileDiff.oldFile(), fileDiff.newFile());
 
     }
