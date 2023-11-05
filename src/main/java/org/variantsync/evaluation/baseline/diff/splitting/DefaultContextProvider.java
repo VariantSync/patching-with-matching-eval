@@ -5,6 +5,7 @@ import org.variantsync.evaluation.baseline.diff.components.FileDiff;
 import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
 import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
+import org.variantsync.evaluation.baseline.diff.lines.MetaLine;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -85,7 +86,7 @@ public class DefaultContextProvider implements IContextProvider {
     }
 
     @Override
-    public List<Line> trailingContext(final ILineFilter lineFilter, final FileDiff fileDiff, final int index) {
+    public List<Line> trailingContext(final ILineFilter lineFilter, final FileDiff fileDiff, final int index, boolean changeIsEmpty) {
         final LinkedList<Line> context = new LinkedList<>();
         final List<String> lines;
         try {
@@ -98,10 +99,8 @@ public class DefaultContextProvider implements IContextProvider {
 
             // Consider the lines coming after the considered change, until the end of the file has been reached, or
             // until all required context lines have been determined
-            for (int i = index - 1; !lines.isEmpty() && i <= lines.size(); i++) {
-                if (i == lines.size()) {
-                    break;
-                }
+            int i = index - 1;
+            for (; !lines.isEmpty() && i < lines.size(); i++) {
                 final String currentLine = " " + lines.get(i);
                 // Apply the line filter to ignore certain lines
                 if (filterDisabled || lineFilter.keepContextLine(fileDiff.oldFile(), i + 1)) {
@@ -110,6 +109,9 @@ public class DefaultContextProvider implements IContextProvider {
                     }
                     context.addLast(new ContextLine(currentLine));
                 }
+            }
+            if (metaLineAllowed(changeIsEmpty, context) && (context.size() < contextSize || i >= lines.size())) {
+                context.add(new MetaLine());
             }
             return context;
         } catch (final IOException e) {
@@ -121,5 +123,13 @@ public class DefaultContextProvider implements IContextProvider {
     @Override
     public int contextSize() {
         return contextSize;
+    }
+
+    private static boolean metaLineAllowed(boolean changeIsEmpty, List<Line> trailingContext) {
+        // A meta line must never follow an empty context line
+        boolean followsEmptyLine = !trailingContext.isEmpty() && trailingContext.get(trailingContext.size()-1).isEmpty();
+        // A meta line must never follow an empty change if there is no trailing context
+        followsEmptyLine = followsEmptyLine || (trailingContext.isEmpty() && changeIsEmpty);
+        return !followsEmptyLine;
     }
 }

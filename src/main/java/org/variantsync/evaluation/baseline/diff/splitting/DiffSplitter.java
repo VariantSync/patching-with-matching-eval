@@ -129,13 +129,7 @@ public class DiffSplitter {
                                               final int leadContextStart,
                                               final HunkLocation hunkLocation) {
         final List<Line> leadingContext = contextProvider.leadingContext(lineFilter, fileDiff, leadContextStart);
-        final List<Line> trailingContext = contextProvider.trailingContext(lineFilter, fileDiff, trailContextStart);
-
-        // A meta line must never follow an empty line in the trailing context
-        if (needsMetaLine(hunk, line, trailingContext)) {
-            // Add a meta-line stating EOF for lines being removed
-            trailingContext.add(new MetaLine());
-        }
+        final List<Line> trailingContext = contextProvider.trailingContext(lineFilter, fileDiff, trailContextStart, line.isEmpty());
 
         // Add the leading context
         final List<Line> content = new ArrayList<>(leadingContext);
@@ -148,14 +142,7 @@ public class DiffSplitter {
 
         final Hunk miniHunk = new Hunk(hunkLocation, hunk.rawLocation(), content);
         return new FileDiff(fileDiff.header(), Collections.singletonList(miniHunk), fileDiff.oldFile(), fileDiff.newFile());
-
     }
 
-    private static boolean needsMetaLine(Hunk hunk, Line line, List<Line> trailingContext) {
-        boolean followsEmptyLine = !trailingContext.isEmpty() && trailingContext.get(trailingContext.size()-1).isEmpty();
-        // A meta line must never follow an empty line as a change if there is no trailing context
-        followsEmptyLine = followsEmptyLine || (trailingContext.isEmpty() && line.isEmpty());
-        // Additionally, a meta line is only added if the context is not full yet, or if the original hunk had the meta line
-        return !followsEmptyLine && hunk.hasMetaLine();
-    }
+
 }
