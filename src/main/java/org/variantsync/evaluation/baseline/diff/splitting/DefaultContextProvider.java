@@ -122,7 +122,7 @@ public class DefaultContextProvider implements IContextProvider {
             if (
                     metaLineAllowed(change.isEmpty(), context)
                     && fitsInContext
-                    && (change instanceof RemovedLine || (isLastChange && originalHadMetaLine))
+                    && (change instanceof RemovedLine ||  (originalHadMetaLine && (!context.isEmpty() || isLastChange)))
             ) {
                 context.add(new MetaLine());
             }
