@@ -107,6 +107,21 @@ public class PatchCommand extends ShellCommand {
         return this;
     }
 
+    /**
+     * Match patterns loosely, in case tabs or spaces have been munged
+     * in your files. Any sequence of one or more blanks in the patch
+     * file  matches any  sequence in  the  original file, and sequences
+     * of blanks at the ends of lines are ignored. Normal characters
+     * must still match exactly. Each line of the context must still
+     * match a line in the original file.
+     *
+     * @return this command
+     */
+    public PatchCommand ignoreWhitespace() {
+        this.args.add("--ignore-whitespace");
+        return this;
+    }
+
     @Override
     public String[] parts() {
         final String[] parts = new String[args.size() + 1];

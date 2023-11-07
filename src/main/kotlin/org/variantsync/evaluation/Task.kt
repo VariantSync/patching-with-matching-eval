@@ -623,7 +623,7 @@ class Task(
         if (!emptyPatch) {
             val result = operations.shell.execute(
                 PatchCommand.Recommended(patchFile).strip(2)
-                    .rejectFile(rejectFile).force(),
+                    .rejectFile(rejectFile).force().ignoreWhitespace(),
                 operations.patchDir
             )
             if (result.isSuccess) {
