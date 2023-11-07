@@ -133,3 +133,31 @@ diff -Naur version-A/7-lines-add.txt version-B/7-lines-add.txt
  Line D
  Line E
  Line F
+diff -Naur version-A/multi-line-add.txt version-B/multi-line-add.txt
+--- version-A/multi-line-add.txt	2023-11-07 14:52:55.249735979 +0100
++++ version-B/multi-line-add.txt	2023-11-07 14:53:16.179657613 +0100
+@@ -4,4 +4,7 @@
+ Line D
+ Line E
+ Line F
+-Line G
+\ No newline at end of file
++Line G
++Line H
++Line I
++Line J
+\ No newline at end of file
+diff -Naur version-A/multi-line-rem.txt version-B/multi-line-rem.txt
+--- version-A/multi-line-rem.txt	2023-11-07 14:53:16.179657613 +0100
++++ version-B/multi-line-rem.txt	2023-11-07 14:52:55.249735979 +0100
+@@ -4,7 +4,4 @@
+ Line D
+ Line E
+ Line F
+-Line G
+-Line H
+-Line I
+-Line J
+\ No newline at end of file
++Line G
+\ No newline at end of file

@@ -40,7 +40,6 @@ diff -Naur version-A/1-lines-add.txt version-B/1-lines-add.txt
 +++ version-B/1-lines-add.txt	2023-11-03 16:16:47.168604793 +0100
 @@ -1,0 +1,1 @@
 +Line A
-\ No newline at end of file
 diff -Naur version-A/1-lines-add.txt version-B/1-lines-add.txt
 --- version-A/1-lines-add.txt	2023-11-03 16:16:50.401954796 +0100
 +++ version-B/1-lines-add.txt	2023-11-03 16:16:47.168604793 +0100
@@ -71,7 +70,6 @@ diff -Naur version-A/2-lines-add.txt version-B/2-lines-add.txt
 @@ -1,1 +1,2 @@
  Line A
 +Line B
-\ No newline at end of file
 diff -Naur version-A/2-lines-add.txt version-B/2-lines-add.txt
 --- version-A/2-lines-add.txt	2023-11-03 16:12:48.174102442 +0100
 +++ version-B/2-lines-add.txt	2023-11-03 16:12:45.080749593 +0100
@@ -106,7 +104,6 @@ diff -Naur version-A/3-lines-add.txt version-B/3-lines-add.txt
  Line A
  Line B
 +Line C
-\ No newline at end of file
 diff -Naur version-A/3-lines-add.txt version-B/3-lines-add.txt
 --- version-A/3-lines-add.txt	2023-11-03 16:11:48.753727924 +0100
 +++ version-B/3-lines-add.txt	2023-11-03 16:11:54.090428196 +0100
@@ -183,3 +180,96 @@ diff -Naur version-A/7-lines-add.txt version-B/7-lines-add.txt
  Line D
  Line E
  Line F
+diff -Naur version-A/multi-line-add.txt version-B/multi-line-add.txt
+--- version-A/multi-line-add.txt	2023-11-07 14:52:55.249735979 +0100
++++ version-B/multi-line-add.txt	2023-11-07 14:53:16.179657613 +0100
+@@ -4,4 +4,3 @@
+ Line D
+ Line E
+ Line F
+-Line G
+\ No newline at end of file
+diff -Naur version-A/multi-line-add.txt version-B/multi-line-add.txt
+--- version-A/multi-line-add.txt	2023-11-07 14:52:55.249735979 +0100
++++ version-B/multi-line-add.txt	2023-11-07 14:53:16.179657613 +0100
+@@ -4,3 +4,4 @@
+ Line D
+ Line E
+ Line F
++Line G
+diff -Naur version-A/multi-line-add.txt version-B/multi-line-add.txt
+--- version-A/multi-line-add.txt	2023-11-07 14:52:55.249735979 +0100
++++ version-B/multi-line-add.txt	2023-11-07 14:53:16.179657613 +0100
+@@ -4,3 +4,4 @@
+ Line E
+ Line F
+ Line G
++Line H
+diff -Naur version-A/multi-line-add.txt version-B/multi-line-add.txt
+--- version-A/multi-line-add.txt	2023-11-07 14:52:55.249735979 +0100
++++ version-B/multi-line-add.txt	2023-11-07 14:53:16.179657613 +0100
+@@ -4,3 +4,4 @@
+ Line F
+ Line G
+ Line H
++Line I
+diff -Naur version-A/multi-line-add.txt version-B/multi-line-add.txt
+--- version-A/multi-line-add.txt	2023-11-07 14:52:55.249735979 +0100
++++ version-B/multi-line-add.txt	2023-11-07 14:53:16.179657613 +0100
+@@ -4,3 +4,4 @@
+ Line G
+ Line H
+ Line I
++Line J
+\ No newline at end of file
+diff -Naur version-A/multi-line-rem.txt version-B/multi-line-rem.txt
+--- version-A/multi-line-rem.txt	2023-11-07 14:53:16.179657613 +0100
++++ version-B/multi-line-rem.txt	2023-11-07 14:52:55.249735979 +0100
+@@ -4,7 +4,6 @@
+ Line D
+ Line E
+ Line F
+-Line G
+ Line H
+ Line I
+ Line J
+\ No newline at end of file
+diff -Naur version-A/multi-line-rem.txt version-B/multi-line-rem.txt
+--- version-A/multi-line-rem.txt	2023-11-07 14:53:16.179657613 +0100
++++ version-B/multi-line-rem.txt	2023-11-07 14:52:55.249735979 +0100
+@@ -4,6 +4,5 @@
+ Line D
+ Line E
+ Line F
+-Line H
+ Line I
+ Line J
+\ No newline at end of file
+diff -Naur version-A/multi-line-rem.txt version-B/multi-line-rem.txt
+--- version-A/multi-line-rem.txt	2023-11-07 14:53:16.179657613 +0100
++++ version-B/multi-line-rem.txt	2023-11-07 14:52:55.249735979 +0100
+@@ -4,5 +4,4 @@
+ Line D
+ Line E
+ Line F
+-Line I
+ Line J
+\ No newline at end of file
+diff -Naur version-A/multi-line-rem.txt version-B/multi-line-rem.txt
+--- version-A/multi-line-rem.txt	2023-11-07 14:53:16.179657613 +0100
++++ version-B/multi-line-rem.txt	2023-11-07 14:52:55.249735979 +0100
+@@ -4,4 +4,3 @@
+ Line D
+ Line E
+ Line F
+-Line J
+\ No newline at end of file
+diff -Naur version-A/multi-line-rem.txt version-B/multi-line-rem.txt
+--- version-A/multi-line-rem.txt	2023-11-07 14:53:16.179657613 +0100
++++ version-B/multi-line-rem.txt	2023-11-07 14:52:55.249735979 +0100
+@@ -4,3 +4,4 @@
+ Line D
+ Line E
+ Line F
++Line G
+\ No newline at end of file

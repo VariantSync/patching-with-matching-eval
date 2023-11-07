@@ -63,6 +63,8 @@ public class DiffSplitter {
         final List<FileDiff> resultDiffs = new ArrayList<>();
 
         for (final Hunk hunk : fileDiff.hunks()) {
+            int changesTotal = hunk.changeCount();
+            int changeCount = 1;
             // Index that points to the location of the current line in the current hunk
             int oldIndex = 0;
             int newIndex = 0;
@@ -72,17 +74,19 @@ public class DiffSplitter {
                         final int leadContextStart = hunk.location().startLineTarget() + newIndex - 1;
                         final int trailContextStart = hunk.location().startLineSource() + oldIndex + 1;
                         final HunkLocation location = getRemoveLocation(hunk, oldIndex);
-                        resultDiffs.add(calculateMiniDiff(contextProvider, lineFilter, fileDiff, hunk, line, trailContextStart, leadContextStart, location));
+                        resultDiffs.add(calculateMiniDiff(contextProvider, lineFilter, fileDiff, hunk, line, trailContextStart, leadContextStart, location, changeCount == changesTotal));
                     }
                     oldIndex++;
+                    changeCount++;
                 } else if (line instanceof AddedLine) {
                     if (lineFilter.keepLineChange(fileDiff.newFile(), hunk.location().startLineTarget() + newIndex)) {
                         final int leadContextStart = hunk.location().startLineTarget() + newIndex - 1;
                         final int trailContextStart = hunk.location().startLineSource() + oldIndex;
                         final HunkLocation location = getAddLocation(hunk, newIndex);
-                        resultDiffs.add(calculateMiniDiff(contextProvider, lineFilter, fileDiff, hunk, line, trailContextStart, leadContextStart, location));
+                        resultDiffs.add(calculateMiniDiff(contextProvider, lineFilter, fileDiff, hunk, line, trailContextStart, leadContextStart, location, changeCount == changesTotal));
                     }
                     newIndex++;
+                    changeCount++;
                 } else if (line instanceof ContextLine) {
                     // Increase the index
                     oldIndex++;
@@ -127,9 +131,10 @@ public class DiffSplitter {
     private static FileDiff calculateMiniDiff(final IContextProvider contextProvider, final ILineFilter lineFilter,
                                               final FileDiff fileDiff, final Hunk hunk, final Line line, final int trailContextStart,
                                               final int leadContextStart,
-                                              final HunkLocation hunkLocation) {
+                                              final HunkLocation hunkLocation,
+                                              boolean isLastChange) {
         final List<Line> leadingContext = contextProvider.leadingContext(lineFilter, fileDiff, leadContextStart);
-        final List<Line> trailingContext = contextProvider.trailingContext(lineFilter, fileDiff, trailContextStart, line.isEmpty());
+        final List<Line> trailingContext = contextProvider.trailingContext(lineFilter, fileDiff, trailContextStart, line, isLastChange);
 
         // Add the leading context
         final List<Line> content = new ArrayList<>(leadingContext);
