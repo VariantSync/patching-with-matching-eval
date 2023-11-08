@@ -14,8 +14,13 @@ FROM --platform=linux/amd64 openjdk:19-alpine
 
 RUN apk update
 RUN apk add --no-cache --upgrade bash diffutils patch git python3 py3-matplotlib unzip
-# Create a user
-RUN adduser --disabled-password  --home /home/user --gecos '' user
+
+ARG GROUP_ID
+ARG USER_ID
+
+# Create a group and a user
+RUN addgroup -g $GROUP_ID user
+RUN adduser --disabled-password -G user -u $USER_ID --home /home/user --gecos '' user
 WORKDIR /home/user
 
 # Copy the docker resources
