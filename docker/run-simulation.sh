@@ -12,12 +12,8 @@ evaluation() {
 	else
 		mkdir $PD
 	fi
-  cd plots || exit
+	cd plots || exit
 	MPLCONFIGDIR=/home/user/.config/matplotlib python3 main.py /home/user/simulation-files/results /home/user/simulation-files/plots
-	cd ..
-
-	echo "Cleaning temporary directories"
-	rm -rf /home/user/simulation-files/main/workdir*
 }
 
 if [ "$1" == '' ]; then
