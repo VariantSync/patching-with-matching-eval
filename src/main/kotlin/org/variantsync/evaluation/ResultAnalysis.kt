@@ -173,6 +173,8 @@ object ResultAnalysis {
         // Determine undesired changes, i.e., changes in the evolution of the source but not the
         // target
         val undesiredChanges = determineUndesired(changesToClassify, requiredChanges)
+        val derivedElementCount = requiredChanges.elementCount() + undesiredChanges.elementCount()
+        Assert.assertEquals(changesToClassify.elementCount(), derivedElementCount)
         return EvaluationScenario(
             requiredChanges,
             undesiredChanges,

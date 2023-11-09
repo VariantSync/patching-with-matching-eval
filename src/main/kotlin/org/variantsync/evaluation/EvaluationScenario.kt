@@ -71,11 +71,11 @@ class EvaluationScenario(
             }
 
             // Did the undesired change fail to apply?
-            if (rejects.contains(undesired)) {
+            if (rejects.contains(undesired.asRejectedChange())) {
                 // If it did, it has effectively been filtered
                 // TODO: Count under a different name
                 filteredCorrectly++
-                Assert.assertTrue(rejects.removeOne(undesired))
+                Assert.assertTrue(rejects.removeOne(undesired.asRejectedChange()))
                 continue
             }
 
