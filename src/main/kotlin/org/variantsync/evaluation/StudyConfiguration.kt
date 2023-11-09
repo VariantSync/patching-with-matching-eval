@@ -67,6 +67,13 @@ class StudyConfiguration(propertiesFile: File) {
     }
 
     /**
+     * @return The directory to which the repositories specified in the dataset file are cloned to
+     */
+    fun EXPERIMENT_DIR_REPOS(): String {
+        return config!!.getString(EXPERIMENT_DIR_REPOS);
+    }
+
+    /**
      * @return The file with the list of datasets in Markdown format
      */
     fun EXPERIMENT_DATASETS(): String {
@@ -134,6 +141,9 @@ class StudyConfiguration(propertiesFile: File) {
 
         // The directory containing the ground truth
         private const val EXPERIMENT_DIR_GROUND_TRUTH = "experiment.dir.ground-truths"
+
+        // The directory to which the repositories are cloned to
+        private const val EXPERIMENT_DIR_REPOS = "experiment.dir.repos"
 
         // The file containing the list of datasets
         private const val EXPERIMENT_DATASETS = "experiment.datasets"

@@ -29,6 +29,7 @@ object Main {
         Logger.info("Starting experiment initialization.")
         val mainDir = Path.of(config.EXPERIMENT_DIR_MAIN())
         val resultsDir = Path.of(config.EXPERIMENT_DIR_RESULTS())
+        val reposDir = Path.of(config.EXPERIMENT_DIR_REPOS())
         val inDebug = config.EXPERIMENT_DEBUG()
         val groundTruthPath = Path.of(config.EXPERIMENT_DIR_GROUND_TRUTH())
         val numRepetitions = config.EXPERIMENT_REPEATS()
@@ -56,7 +57,7 @@ object Main {
                 )
                 continue
             }
-            val repoDir = mainDir.resolve(dataset.name())
+            val repoDir = reposDir.resolve(dataset.name())
             val repoGroundTruth = groundTruthPath.resolve(dataset.name())
             if (!Files.exists(repoGroundTruth)) {
                 Logger.info(
