@@ -6,6 +6,7 @@ import parse
 import plot
 import serialization
 import colours
+import table
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -19,13 +20,18 @@ if __name__ == "__main__":
     results_files = glob.glob(result_dir + '/*.results')
 
     # Print each file name without the .results extension
+    subjects = []
+    experiments = []
     for result_file in results_files:
-        base_name = os.path.basename(result_file)  # Get the final component of the path
-        file_name = os.path.splitext(base_name)[0]  # Split the base name into name and extension
+        # Get the final component of the path
+        base_name = os.path.basename(result_file)
+        # Split the base name into name and extension
+        file_name = os.path.splitext(base_name)[0]
         outputDirectory = output_base + "/" + file_name
         os.makedirs(outputDirectory, exist_ok=True)
 
         cachedFile = result_dir + "/" + file_name + ".cache"
+        subjects.append(file_name)
 
         colourscheme = colours.CSCHEME1
 
@@ -38,6 +44,8 @@ if __name__ == "__main__":
             experiment = parse.parseFileAt(result_file)
             serialization.serialize(experiment, cachedFile)
 
+        experiments.append(experiment)
+
         print()
         print("Parsed Values:")
         print("commitPatches =", experiment.normal.commitPatches)
@@ -45,9 +53,10 @@ if __name__ == "__main__":
         print("filtered =", vars(experiment.filtered))
         print()
 
-        plot.rq1(experiment.normal, outputDirectory)
-        #plot.rq2(experiment.normal, colourscheme, outputDirectory)
-        #plot.rq3(experiment, colourscheme, outputDirectory)
-        plot.rq4(experiment, colourscheme, outputDirectory)
+        # plot.rq1(experiment.normal, outputDirectory)
+        # plot.rq2(experiment.normal, colourscheme, outputDirectory)
+        # plot.rq3(experiment, colourscheme, outputDirectory)
+        # plot.rq4(experiment, colourscheme, outputDirectory)
+    table.rq1_table(subjects, experiments, None)
 
     print("Done")

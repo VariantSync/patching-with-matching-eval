@@ -19,7 +19,9 @@ def percentageToAmount(percentage, total):
 
 
 def labelPrecentageAndAmount(total):
-    return lambda percentage: str(round(percentage,2)) + "%\n" + toThousandsFormattedString(percentageToAmount(percentage, total)) + " patches"
+    return lambda percentage: str(round(percentage, 2)) + "%\n" + toThousandsFormattedString(percentageToAmount(percentage, total)) + " patches"
+
+
 def labelPrecentage():
     return lambda percentage: '{:.1f}%'.format(percentage)
 
@@ -53,8 +55,10 @@ def rq1_barchart(experiment, outputPath):
     fig, ax = plt.subplots()
     success_percentage = numpy.divide(success_vals, sum_vals)
     failed_percentage = numpy.divide(failed_vals, sum_vals)
-    success_rects = ax.bar(x - 0.05 - widthOfBars / 2, 100*success_percentage, widthOfBars, label='applicable', alpha=1)
-    failed_rects = ax.bar(x + 0.05 + widthOfBars / 2, 100*failed_percentage, widthOfBars, label='failed', alpha=1)
+    success_rects = ax.bar(x - 0.05 - widthOfBars / 2, 100 *
+                           success_percentage, widthOfBars, label='applicable', alpha=1)
+    failed_rects = ax.bar(x + 0.05 + widthOfBars / 2, 100 *
+                          failed_percentage, widthOfBars, label='failed', alpha=1)
 
     def label_values(percentage, absolute, offset):
         for i, v in enumerate(percentage):
@@ -92,11 +96,13 @@ def rq1_barchart(experiment, outputPath):
 
 def correctness_barchart(experiment, outputPath, colourscheme):
     # colourscheme = 'forestgreen', 'darkorange'
-    colors = [colourscheme.tp, colourscheme.fp, colourscheme.fn_wronglocation, colourscheme.tn, colourscheme.fn_missing]
+    colors = [colourscheme.tp, colourscheme.fp,
+              colourscheme.fn_wronglocation, colourscheme.tn, colourscheme.fn_missing]
 
     labels = ['applied\n(TP)', 'invalid\n(FP)', 'wrong location\n(FN)', 'missing\n(FN)', 'filtered correctly\n(TN)',
               'filtered incorrectly\n(FN)', 'mitigated invalid', 'mitigated missing']
-    success_vals = [experiment.applied, experiment.invalid, experiment.wrongLocation]
+    success_vals = [experiment.applied,
+                    experiment.invalid, experiment.wrongLocation]
     failed_vals = [experiment.missing]
 
     _scalefactor = 1
@@ -107,12 +113,15 @@ def correctness_barchart(experiment, outputPath, colourscheme):
     widthOfBars = 0.35
 
     fig, ax = plt.subplots()
-    success_percentage = 100 * numpy.divide(success_vals, numpy.sum(success_vals))
+    success_percentage = 100 * \
+        numpy.divide(success_vals, numpy.sum(success_vals))
     failed_percentage = 100 * numpy.divide(failed_vals, numpy.sum(failed_vals))
-    for i,x in enumerate(s):
-        success_rects = ax.bar(x, success_percentage[i], widthOfBars, color=colors[i], edgecolor='black')
-    for i,x in enumerate(f):
-        failed_rects = ax.bar(x, failed_percentage[i], widthOfBars, color=colors[i+3], edgecolor='black')
+    for i, x in enumerate(s):
+        success_rects = ax.bar(
+            x, success_percentage[i], widthOfBars, color=colors[i], edgecolor='black')
+    for i, x in enumerate(f):
+        failed_rects = ax.bar(
+            x, failed_percentage[i], widthOfBars, color=colors[i+3], edgecolor='black')
     ax.vlines(2.65, ymin=0, ymax=105, color='black')
 
     def label_values(percentage, absolute, offset):
@@ -153,29 +162,37 @@ def correctness_barchart(experiment, outputPath, colourscheme):
     plt.savefig(outputPath, dpi=DPI, bbox_inches='tight')
 
 
-
 def rq2_innerlabelfix1(autotexts):
     autotexts[2]._x = autotexts[2]._x + 0.07
     autotexts[1]._x = autotexts[1]._x + 0.01
     autotexts[2]._y = autotexts[2]._y + 0.2
     # autotexts[1]._y = autotexts[1]._y - 0.08
     autotexts[0].set_color('white')
+
+
 def rq2_innerlabelfix2(autotexts):
     autotexts[1]._x = autotexts[1]._x + 0.05
     autotexts[1]._y = autotexts[1]._y + 0.2
     autotexts[1].set_color('white')
 
+
 def rq3_innerlabelfix1(autotexts):
     autotexts[1]._y = autotexts[1]._y - 0.1
+
+
 def rq3_outerlabelfix1(texts):
     texts[0]._y = texts[0]._y + 0.09
     texts[1]._y = texts[1]._y - 0.09
 
+
 def rq3_granularity_innerlabelfix(autotexts):
     autotexts[0]._y = autotexts[0]._y + 0.05
     autotexts[1]._y = autotexts[1]._y - 0.1
+
+
 def rq3_granularity_outerlabelfix(texts):
     texts[2]._y = texts[2]._y + 0.08
+
 
 def rq3_barchart(experiment, colourscheme, outDir):
     n = experiment.normal
@@ -195,16 +212,18 @@ def rq3_barchart(experiment, colourscheme, outDir):
     fvals = numpy.multiply(normalize(fvals, ftotal), 100)
 
     _scalefactor = 3
-    start=2
-    stop=start+_scalefactor * len(labels)
+    start = 2
+    stop = start+_scalefactor * len(labels)
     x = numpy.arange(start=start, stop=stop, step=_scalefactor)
     # print(x)
     widthOfBars = 0.5
 
     fig, ax = plt.subplots()
-    nrects = ax.bar(x - 0.05 - widthOfBars/2, nvals, widthOfBars, label='without domain knowledge')
-    frects = ax.bar(x + 0.05 + widthOfBars/2, fvals, widthOfBars, label='with domain knowledge')
-    
+    nrects = ax.bar(x - 0.05 - widthOfBars/2, nvals,
+                    widthOfBars, label='without domain knowledge')
+    frects = ax.bar(x + 0.05 + widthOfBars/2, fvals,
+                    widthOfBars, label='with domain knowledge')
+
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_ylabel('Percentage of Patches')
     ax.set_ylim([0, 100])
@@ -223,23 +242,26 @@ def rq3_barchart(experiment, colourscheme, outDir):
     label_values(fvals, 0.5, 1)
 
     ax.bar_label(nrects,
-        labels=map(lambda x: "", nvals),
-        padding=3)
+                 labels=map(lambda x: "", nvals),
+                 padding=3)
     ax.bar_label(frects,
-        labels=map(lambda x: "", fvals),
-        padding=3)
+                 labels=map(lambda x: "", fvals),
+                 padding=3)
 
     fig.tight_layout()
 
-    plt.savefig(os.path.join(outDir, "rq3_domain_knowledge" + OUTPUT_FORMAT), dpi=DPI, bbox_inches='tight')
+    plt.savefig(os.path.join(outDir, "rq3_domain_knowledge" +
+                OUTPUT_FORMAT), dpi=DPI, bbox_inches='tight')
 
 
 def rq4_barchart(experiment, colourscheme, outDir):
     n = experiment.normal
     f = experiment.filtered
 
-    labels = ['Applied', 'Invalid', 'WrongLocation', 'Missing', 'Filtered Correctly', 'Filtered Incorrectly', 'Mitigated Invalid', 'Mitigated Missing']
-    nvals = [n.applied, n.invalid, n.wrongLocation, n.missing, n.filteredCorrectly, n.filteredIncorrectly, n.mitigatedInvalid, n.mitigatedMissing]
+    labels = ['Applied', 'Invalid', 'WrongLocation', 'Missing', 'Filtered Correctly',
+              'Filtered Incorrectly', 'Mitigated Invalid', 'Mitigated Missing']
+    nvals = [n.applied, n.invalid, n.wrongLocation, n.missing, n.filteredCorrectly,
+             n.filteredIncorrectly, n.mitigatedInvalid, n.mitigatedMissing]
     ntotal = numpy.sum(nvals)
     fvals = [f.applied, f.invalid, f.wrongLocation, f.missing, f.filteredCorrectly, f.filteredIncorrectly,
              f.mitigatedInvalid, f.mitigatedMissing]
@@ -263,8 +285,10 @@ def rq4_barchart(experiment, colourscheme, outDir):
     widthOfBars = 0.5
 
     fig, ax = plt.subplots()
-    nrects = ax.bar(x - 0.05 - widthOfBars / 2, nvals, widthOfBars, label='without domain knowledge')
-    frects = ax.bar(x + 0.05 + widthOfBars / 2, fvals, widthOfBars, label='with domain knowledge')
+    nrects = ax.bar(x - 0.05 - widthOfBars / 2, nvals,
+                    widthOfBars, label='without domain knowledge')
+    frects = ax.bar(x + 0.05 + widthOfBars / 2, fvals,
+                    widthOfBars, label='with domain knowledge')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_ylabel('Percentage of Patches')
@@ -292,7 +316,8 @@ def rq4_barchart(experiment, colourscheme, outDir):
 
     fig.tight_layout()
 
-    plt.savefig(os.path.join(outDir, "rq4_domain_knowledge" + OUTPUT_FORMAT), dpi=DPI, bbox_inches='tight')
+    plt.savefig(os.path.join(outDir, "rq4_domain_knowledge" +
+                OUTPUT_FORMAT), dpi=DPI, bbox_inches='tight')
 
 
 def sankey(patchstrategy):
@@ -300,18 +325,19 @@ def sankey(patchstrategy):
     numPatches = float(patchstrategy.line)
 
     # second row
-    numApplicable = float(patchstrategy.lineSuccess) # from numPatches
-    numFailed = float(patchstrategy.getNumLinePatchFailures()) # from numPatches
+    numApplicable = float(patchstrategy.lineSuccess)  # from numPatches
+    numFailed = float(patchstrategy.getNumLinePatchFailures()
+                      )  # from numPatches
     # numApplicable = numApplicable / numPatches
     # numFailed = numFailed / numPatches
     # numPatches = 1.0
 
     # third row
-    numCorrect = patchstrategy.tp # from numApplicable
-    numWrongLocation = patchstrategy.wrongLocation # from numApplicable
-    numInvalid = patchstrategy.fp # from numApplicable
-    numNotRequired = patchstrategy.tn # from numFailed
-    numMissing = patchstrategy.fn - numWrongLocation # from numFailed
+    numCorrect = patchstrategy.tp  # from numApplicable
+    numWrongLocation = patchstrategy.wrongLocation  # from numApplicable
+    numInvalid = patchstrategy.fp  # from numApplicable
+    numNotRequired = patchstrategy.tn  # from numFailed
+    numMissing = patchstrategy.fn - numWrongLocation  # from numFailed
 
     print("numApplicable", numApplicable)
     print("numFailed", numFailed)
@@ -319,19 +345,20 @@ def sankey(patchstrategy):
     print("numCorrect", numCorrect)
     print("numWrongLocation", numWrongLocation)
     print("numInvalid", numInvalid)
-    print("numCorrect + numWrongLocation + numInvalid", numCorrect + numWrongLocation + numInvalid)
+    print("numCorrect + numWrongLocation + numInvalid",
+          numCorrect + numWrongLocation + numInvalid)
     print("numNotRequired", numNotRequired)
     print("numMissing", numMissing)
     print("numNotRequired + numMissing", numNotRequired + numMissing)
     print()
 
     # fourth row
-    tp = patchstrategy.tp # from numCorrect
-    fp = patchstrategy.fp # from numInvalid
-    tn = patchstrategy.tn # from numNotRequired
-    fn = patchstrategy.fn # from numWrongLocation + numMissing
+    tp = patchstrategy.tp  # from numCorrect
+    fp = patchstrategy.fp  # from numInvalid
+    tn = patchstrategy.tn  # from numNotRequired
+    fn = patchstrategy.fn  # from numWrongLocation + numMissing
 
-    ### plotting
+    # plotting
 
     # fig = plt.figure()
     # ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[],
@@ -344,11 +371,11 @@ def sankey(patchstrategy):
         # offset=0.2,
         head_angle=150,
         # format='%.0f',
-        format = '',
-        shoulder = 0
-        )
+        format='',
+        shoulder=0
+    )
 
-    flows1  = [numPatches, -numApplicable, -numFailed]
+    flows1 = [numPatches, -numApplicable, -numFailed]
     labels1 = ['All Patches', 'Applicable', 'Failed']
     print(labels1)
     print(flows1)
@@ -358,18 +385,18 @@ def sankey(patchstrategy):
         orientations=[0, 0, 0],
         # pathlengths=[float(numApplicable) / float(numPatches), float(numApplicable) / float(numFailed)]
         # , patchlabel="Widget\nA"  # Arguments to matplotlib.patches.PathPatch
-        )
+    )
 
-    flows2  = [numApplicable, -numCorrect, -numWrongLocation, numFailed, -numInvalid, -numNotRequired, -numMissing]
-    labels2 = ['', 'Correct', 'Wrong Location', '', 'Invalid', 'Not Required', 'Missing']
+    flows2 = [numApplicable, -numCorrect, -numWrongLocation,
+              numFailed, -numInvalid, -numNotRequired, -numMissing]
+    labels2 = ['', 'Correct', 'Wrong Location',
+               '', 'Invalid', 'Not Required', 'Missing']
     # print(labels2)
     # print(flows2)
     sankey.add(
         flows=flows2,
         labels=labels2,
-        orientations=[0, 0, 0, 0, 0, 0, 0]
-        , prior=0
-        , connect=(1, 0)
+        orientations=[0, 0, 0, 0, 0, 0, 0], prior=0, connect=(1, 0)
     )
 
     diagrams = sankey.finish()
@@ -380,12 +407,14 @@ def sankey(patchstrategy):
 
 def rq1(patchstrategy, outDir):
     print("RQ1")
-    rq1_barchart(patchstrategy, os.path.join(outDir, "rq1_applicability" + OUTPUT_FORMAT))
+    rq1_barchart(patchstrategy, os.path.join(
+        outDir, "rq1_applicability" + OUTPUT_FORMAT))
 
 
 def rq2(patchstrategy, colourscheme, outDir):
     print("RQ2")
-    correctness_barchart(patchstrategy, os.path.join(outDir, "rq2_correctness" + OUTPUT_FORMAT), colourscheme)
+    correctness_barchart(patchstrategy, os.path.join(
+        outDir, "rq2_correctness" + OUTPUT_FORMAT), colourscheme)
 
 
 def rq3(experiment, colourscheme, outDir):
