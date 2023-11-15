@@ -100,10 +100,12 @@ class PatchStrategy:
         return (self.tpr() + self.tnr()) / 2.
 
     def normalize(self, value: int) -> float:
+        if self.total() == 0:
+            return 0.
         return 100. * (float(value) / (float(self.total())))
 
 
 class Experiment:
     def __init__(self):
-        self.normal = PatchStrategy("normal")
-        self.filtered = PatchStrategy("filtered")
+        self.normal = PatchStrategy("blind")
+        self.filtered = PatchStrategy("with DK")

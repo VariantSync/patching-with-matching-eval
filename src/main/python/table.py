@@ -5,7 +5,7 @@ from data import Experiment
 table_header = """
 \\begin{table*}
     \\caption{Sync-Study results for all datasets.}
-    \\small
+    \\footnotesize
     \\begin{tabular}{|l|l||c|c|c|c|c||c|c||c|c|c|}
         \\hline
         \\multirow{2}{*}{Subject} & \\multirow{2}{*}{Approach} & Correct & Invalid & Filtered & Missing & Wrong & Mitigated & Mitigated & \\multirow{2}{*}{Precision} & \\multirow{2}{*}{Recall} & Balanced \\\\
@@ -44,8 +44,8 @@ def generate_row(data: PatchStrategy) -> str:
     percentages = [
         data.normed_applied(),
         data.normed_invalid(),
-        data.normed_missing(),
         data.normed_filtered_correctly(),
+        data.normed_missing(),
         data.normed_wrong_location(),
         data.normed_mitigated_invalid(),
         data.normed_mitigated_missing(),
