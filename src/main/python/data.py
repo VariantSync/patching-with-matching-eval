@@ -1,44 +1,58 @@
 ﻿
 class PatchStrategy:
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
 
-        self.tp = 0
-        self.fp = 0
-        self.tn = 0
-        self.fn = 0
-
-        self.commitPatches = 0
-        self.commitSuccess = 0
+        self.commit_patches = 0
+        self.commit_success = 0
 
         self.file = 0
-        self.fileSuccess = 0
+        self.file_success = 0
 
         self.line = 0
-        self.lineSuccess = 0
+        self.line_success = 0
 
         self.applied = 0
         self.invalid = 0
-        self.wrongLocation = 0
+        self.wrong_location = 0
         self.missing = 0
-        self.filteredCorrectly = 0
-        self.filteredIncorrectly = 0
-        self.mitigatedInvalid = 0
-        self.mitigatedMissing = 0
+        self.filtered_correctly = 0
+        self.filtered_incorrectly = 0
+        self.mitigated_invalid = 0
+        self.mitigated_missing = 0
 
-    def getNumCommitFailures(self):
-        return self.commitPatches - self.commitSuccess
+    def tp(self) -> int:
+        return self.applied
 
-    def getNumFilePatchFailures(self):
-        return self.file - self.fileSuccess
+    def fp(self) -> int:
+        return self.invalid
 
-    def getNumLinePatchFailures(self):
-        return self.line - self.lineSuccess
+    def tn(self) -> int:
+        return self.filtered_correctly
 
-    def total(self):
-        return (self.applied + self.invalid + self.wrongLocation + self.missing
-                + self.filteredCorrectly + self.filteredIncorrectly
-                + self.mitigatedInvalid + self.mitigatedMissing)
+    def fn(self) -> int:
+        return self.missing + self.wrong_location + self.filtered_incorrectly
+
+    def num_commit_failures(self) -> int:
+        return self.commit_patches - self.commit_success
+
+    def num_patch_failures(self) -> int:
+        return self.file - self.file_success
+
+    def num_line_failures(self) -> int:
+        return self.line - self.line_success
+
+    def total(self) -> int:
+        """
+        Calculates the total count of all classified changes.
+
+        Returns:
+            int: The total count of all classified changes.
+        """
+        return (self.applied + self.invalid
+                + self.wrong_location + self.missing
+                + self.filtered_correctly + self.filtered_incorrectly
+                + self.mitigated_invalid + self.mitigated_missing)
 
     def normed_applied(self) -> float:
         return self.normalize(self.applied)
@@ -46,41 +60,41 @@ class PatchStrategy:
     def normed_invalid(self) -> float:
         return self.normalize(self.invalid)
 
-    def normed_wrongLocation(self) -> float:
-        return self.normalize(self.wrongLocation)
+    def normed_wrong_location(self) -> float:
+        return self.normalize(self.wrong_location)
 
     def normed_missing(self) -> float:
         return self.normalize(self.missing)
 
-    def normed_filteredCorrectly(self) -> float:
-        return self.normalize(self.filteredCorrectly)
+    def normed_filtered_correctly(self) -> float:
+        return self.normalize(self.filtered_correctly)
 
-    def normed_filteredIncorrectly(self) -> float:
-        return self.normalize(self.filteredIncorrectly)
+    def normed_filtered_incorrectly(self) -> float:
+        return self.normalize(self.filtered_incorrectly)
 
-    def normed_mitigatedMissing(self) -> float:
-        return self.normalize(self.mitigatedMissing)
+    def normed_mitigated_missing(self) -> float:
+        return self.normalize(self.mitigated_missing)
 
-    def normed_mitigatedInvalid(self) -> float:
-        return self.normalize(self.mitigatedInvalid)
+    def normed_mitigated_invalid(self) -> float:
+        return self.normalize(self.mitigated_invalid)
 
     def precision(self) -> float:
-        if (self.tp + self.fp) == 0:
-            return 0.
-        return float(self.tp) / float(self.tp + self.fp)
+        if (self.tp() + self.fp()) == 0:
+            return 1.
+        return float(self.tp()) / float(self.tp() + self.fp())
 
     def recall(self) -> float:
-        if (self.tp + self.fn) == 0:
-            return 0.
-        return float(self.tp) / float(self.tp + self.fn)
+        if (self.tp() + self.fn()) == 0:
+            return 1.
+        return float(self.tp()) / float(self.tp() + self.fn())
 
     def tpr(self):
         return self.recall()
 
     def tnr(self):
-        if (self.fp + self.tn) == 0:
-            return 0.
-        return float(self.tn) / float(self.fp + self.tn)
+        if (self.fp() + self.tn()) == 0:
+            return 1.
+        return float(self.tn()) / float(self.fp() + self.tn())
 
     def balanced_accuracy(self) -> float:
         return (self.tpr() + self.tnr()) / 2.

@@ -3,15 +3,13 @@ import sys
 import os
 
 import parse
-import plot
 import serialization
-import colours
 import table
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        result_dir = "testdata"
-        output_base = "testdata/plots"
+        result_dir = "src/main/resources/plot_testdata"
+        output_base = "src/main/resources/plot_testdata/plots"
     else:
         result_dir = sys.argv[1]
         output_base = sys.argv[2]
@@ -27,28 +25,26 @@ if __name__ == "__main__":
         base_name = os.path.basename(result_file)
         # Split the base name into name and extension
         file_name = os.path.splitext(base_name)[0]
-        outputDirectory = output_base + "/" + file_name
-        os.makedirs(outputDirectory, exist_ok=True)
+        output_dir = output_base + "/" + file_name
+        os.makedirs(output_dir, exist_ok=True)
 
-        cachedFile = result_dir + "/" + file_name + ".cache"
+        cached_file = result_dir + "/" + file_name + ".cache"
         subjects.append(file_name)
 
-        colourscheme = colours.CSCHEME1
-
-        if os.path.exists(cachedFile):
-            print("Loading chache", cachedFile)
-            experiment = serialization.deserialize(cachedFile)
+        if os.path.exists(cached_file):
+            print("Loading chache", cached_file)
+            experiment = serialization.deserialize(cached_file)
         else:
-            print("No chache found at", cachedFile)
+            print("No chache found at", cached_file)
             print("Opening", result_file)
-            experiment = parse.parseFileAt(result_file)
-            serialization.serialize(experiment, cachedFile)
+            experiment = parse.parse_file_at(result_file)
+            serialization.serialize(experiment, cached_file)
 
         experiments.append(experiment)
 
         print()
         print("Parsed Values:")
-        print("commitPatches =", experiment.normal.commitPatches)
+        print("commitPatches =", experiment.normal.commit_patches)
         print("normal =", vars(experiment.normal))
         print("filtered =", vars(experiment.filtered))
         print()

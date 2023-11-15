@@ -11,10 +11,9 @@ table_header = """
         \\multirow{2}{*}{Subject} & \\multirow{2}{*}{Approach} & Correct & Invalid & Filtered & Missing & Wrong & Mitigated & Mitigated & \\multirow{2}{*}{Precision} & \\multirow{2}{*}{Recall} & Balanced \\\\
         & & Patches (TP) & Patches (FP) & Patches (TN) & Patches (FN) & Location (FN) & Invalid & Missing & &  & Accuracy\\\\
         \\hline
-        & & & & & & & & & & & \\\\
-        \\hline
     """
 table_end = """
+\\hline
 \\end{tabular}
 \\end{table*}
 """
@@ -28,9 +27,11 @@ def rq1_table(subjects: [str], experiments: [Experiment], outDir):
         f = exp.filtered
 
         row = subj + " & " + generate_row(n)
+        row += "\n"
         row += " & " + generate_row(f)
         row += "\n"
         latex_table += row
+        latex_table += "\\hline \n"
 
     latex_table += table_end
 
@@ -40,17 +41,24 @@ def rq1_table(subjects: [str], experiments: [Experiment], outDir):
 def generate_row(data: PatchStrategy) -> str:
     row = data.name + " & "
 
-    row += str(data.normed_applied()) + " & "
-    row += str(data.normed_invalid()) + " & "
-    row += str(data.normed_missing()) + " & "
-    row += str(data.normed_filteredCorrectly()) + " & "
-    row += str(data.normed_wrongLocation()) + " & "
+    percentages = [
+        data.normed_applied(),
+        data.normed_invalid(),
+        data.normed_missing(),
+        data.normed_filtered_correctly(),
+        data.normed_wrong_location(),
+        data.normed_mitigated_invalid(),
+        data.normed_mitigated_missing(),
+    ]
+    metrics = [
+        data.precision(),
+        data.recall(),
+        data.balanced_accuracy()
+    ]
 
-    row += str(data.normed_mitigatedInvalid()) + " & "
-    row += str(data.normed_mitigatedMissing()) + " & "
+    row += " & ".join("{:6.2f}\\%".format(field)
+                      for field in percentages) + " & "
 
-    row += str(data.precision()) + " & "
-    row += str(data.recall()) + " & "
-    row += str(data.balanced_accuracy()) + " \\\\ "
-
+    row += " & ".join("{:1.2f}".format(field)
+                      for field in metrics) + " \\\\ "
     return row

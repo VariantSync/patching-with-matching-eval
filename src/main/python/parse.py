@@ -3,51 +3,59 @@ import re
 import data
 
 
-REGEX_JSON_FIELD = "^(.*)\s*:\s*([^,]*)\s*(,)?\s*$"
+REGEX_JSON_FIELD = r"^(.*)\s*:\s*([^,]*)\s*(,)?\s*$"
 REGEX_PATTERN_JSON_FIELD = re.compile(REGEX_JSON_FIELD)
 
 
-def parseJsonAndAddToExperiment(json_object, experiment):
+def parse_json_and_add_to_experiment(json_object, experiment):
     outcome = json.loads(json_object)
 
     experiment.normal.applied += int(outcome['normalApplied'])
     experiment.normal.invalid += int(outcome['normalInvalid'])
-    experiment.normal.wrongLocation += int(outcome['normalWrongLocation'])
+    experiment.normal.wrong_location += int(outcome['normalWrongLocation'])
     experiment.normal.missing += int(outcome['normalMissing'])
-    experiment.normal.filteredCorrectly += int(outcome['normalFilteredCorrectly'])
-    experiment.normal.filteredIncorrectly += int(outcome['normalFilteredIncorrectly'])
-    experiment.normal.mitigatedInvalid += int(outcome['normalMitigatedInvalid'])
-    experiment.normal.mitigatedMissing += int(outcome['normalMitigatedMissing'])
+    experiment.normal.filtered_correctly += int(
+        outcome['normalFilteredCorrectly'])
+    experiment.normal.filtered_incorrectly += int(
+        outcome['normalFilteredIncorrectly'])
+    experiment.normal.mitigated_invalid += int(
+        outcome['normalMitigatedInvalid'])
+    experiment.normal.mitigated_missing += int(
+        outcome['normalMitigatedMissing'])
 
     experiment.filtered.applied += int(outcome['filteredApplied'])
     experiment.filtered.invalid += int(outcome['filteredInvalid'])
-    experiment.filtered.wrongLocation += int(outcome['filteredWrongLocation'])
+    experiment.filtered.wrong_location += int(outcome['filteredWrongLocation'])
     experiment.filtered.missing += int(outcome['filteredMissing'])
-    experiment.filtered.filteredCorrectly += int(outcome['filteredFilteredCorrectly'])
-    experiment.filtered.filteredIncorrectly += int(outcome['filteredFilteredIncorrectly'])
-    experiment.filtered.mitigatedInvalid += int(outcome['filteredMitigatedInvalid'])
-    experiment.filtered.mitigatedMissing += int(outcome['filteredMitigatedMissing'])
+    experiment.filtered.filtered_correctly += int(
+        outcome['filteredFilteredCorrectly'])
+    experiment.filtered.filtered_incorrectly += int(
+        outcome['filteredFilteredIncorrectly'])
+    experiment.filtered.mitigated_invalid += int(
+        outcome['filteredMitigatedInvalid'])
+    experiment.filtered.mitigated_missing += int(
+        outcome['filteredMitigatedMissing'])
 
-    experiment.normal.commitPatches = experiment.normal.commitPatches + 1
-    experiment.filtered.commitPatches = experiment.filtered.commitPatches + 1
+    experiment.normal.commit_patches = experiment.normal.commit_patches + 1
+    experiment.filtered.commit_patches = experiment.filtered.commit_patches + 1
     if outcome['lineSuccessNormal'] == outcome['lineNormal']:
-        experiment.normal.commitSuccess = experiment.normal.commitSuccess + 1
+        experiment.normal.commit_success = experiment.normal.commit_success + 1
     if outcome['lineSuccessFiltered'] == outcome['lineFiltered']:
-        experiment.filtered.commitSuccess = experiment.filtered.commitSuccess + 1
+        experiment.filtered.commit_success = experiment.filtered.commit_success + 1
 
     experiment.normal.file += int(outcome['fileNormal'])
-    experiment.normal.fileSuccess += int(outcome['fileSuccessNormal'])
+    experiment.normal.file_success += int(outcome['fileSuccessNormal'])
     experiment.filtered.file += int(outcome['fileFiltered'])
-    experiment.filtered.fileSuccess += int(outcome['fileSuccessFiltered'])
+    experiment.filtered.file_success += int(outcome['fileSuccessFiltered'])
 
     experiment.normal.line += int(outcome['lineNormal'])
-    experiment.normal.lineSuccess += int(outcome['lineSuccessNormal'])
+    experiment.normal.line_success += int(outcome['lineSuccessNormal'])
     experiment.filtered.line += int(outcome['lineFiltered'])
-    experiment.filtered.lineSuccess += int(outcome['lineSuccessFiltered'])
+    experiment.filtered.line_success += int(outcome['lineSuccessFiltered'])
 
 
-def parseFileAt(path):
-    experiment = data.Experiment()
+def parse_file_at(path):
+    experiment = data.Experiment()  # type: Experiment
 
     with open(path) as file:
         json_object = ""
@@ -57,7 +65,7 @@ def parseFileAt(path):
             # print("PARSE", stripped)
             if len(stripped) == 0:
                 # print("CONSUME")
-                parseJsonAndAddToExperiment(json_object, experiment)
+                parse_json_and_add_to_experiment(json_object, experiment)
                 json_object = ""
             else:
                 # print("ADD")
@@ -68,13 +76,13 @@ def parseFileAt(path):
                     comma = match.group(3)
                     if not val.isdigit():
                         stripped = key + ": \"" + val + "\""
-                        if comma != None: # If there is a comma
+                        if comma != None:  # If there is a comma
                             stripped += ","
                 stripped += "\n"
 
                 json_object += stripped
 
         if len(json_object) > 0:
-            parseJsonAndAddToExperiment(json_object, experiment)
-    
+            parse_json_and_add_to_experiment(json_object, experiment)
+
     return experiment
