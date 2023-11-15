@@ -1,6 +1,4 @@
-﻿import numpy
-
-
+﻿
 class PatchStrategy:
     def __init__(self, name):
         self.name = name
