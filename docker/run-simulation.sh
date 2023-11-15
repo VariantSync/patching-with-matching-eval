@@ -5,15 +5,15 @@ evaluation() {
 	echo "Running result evaluation"
 	java -jar result-eval.jar "$1"
 
-	echo "Plotting figures"
-	PD=/home/user/simulation-files/plots
-	if test -d "$PD"; then
-		echo ""
-	else
-		mkdir $PD
-	fi
-	cd plots || exit
-	MPLCONFIGDIR=/home/user/.config/matplotlib python3 main.py /home/user/simulation-files/results /home/user/simulation-files/plots
+	#	echo "Plotting figures"
+	#	PD=/home/user/simulation-files/plots
+	#	if test -d "$PD"; then
+	#		echo ""
+	#	else
+	#		mkdir $PD
+	#	fi
+	#	cd plots || exit
+	#	MPLCONFIGDIR=/home/user/.config/matplotlib python3 main.py /home/user/simulation-files/results /home/user/simulation-files/plots
 }
 
 if [ "$1" == '' ]; then
