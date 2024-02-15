@@ -12,10 +12,7 @@ import org.variantsync.evaluation.baseline.diff.filter.ILineFilter
 import org.variantsync.evaluation.baseline.diff.splitting.DefaultContextProvider
 import org.variantsync.evaluation.baseline.diff.splitting.DiffSplitter
 import org.variantsync.evaluation.baseline.diff.splitting.IContextProvider
-import org.variantsync.evaluation.baseline.shell.CpCommand
-import org.variantsync.evaluation.baseline.shell.DiffCommand
-import org.variantsync.evaluation.baseline.shell.PatchCommand
-import org.variantsync.evaluation.baseline.shell.RmCommand
+import org.variantsync.evaluation.baseline.shell.*
 import org.variantsync.evaluation.common.Change
 import org.variantsync.evaluation.error.Panic
 import org.variantsync.evaluation.error.VariantGenerationException
@@ -179,139 +176,33 @@ class Task(
                     continue
                 }
                 if (inDebug) {
-                    try {
-                        Files.write(
-                            operations.debugDir(currentCommit).resolve(source.name + "_unprocessed_source.diff"),
-                            originalDiff.toLines()
-                        )
-                    } catch (e: IOException) {
-                        Logger.error("Was not able to save diff: {}", e)
-                    }
-                }
-                Logger.debug("Converting diff...")
-                // Convert the original diff into a fine diff
-                val normalPatch = getFineDiff(originalDiff)
-                saveDiff(normalPatch, operations.normalPatchFile)
-                if (inDebug) {
                     saveDiff(
-                        normalPatch,
-                        operations.debugDir(currentCommit).resolve(source.name + "_to_any_patch_normal.diff")
+                        originalDiff,
+                        operations.debugDir(currentCommit).resolve(source.name + "_original.diff")
                     )
                 }
-                Logger.debug("Saved fine diff.")
+                /*
+                evaluateUnixPatch(
+                    originalDiff,
+                    currentCommit,
+                    source,
+                    sample,
+                    groundTruthV0,
+                    groundTruthV1,
+                    runID,
+                    parentCommit
+                )*/
 
-                // For each target variant,
-                Logger.debug("Starting patch application for source variant " + source.name)
-                for (target in sample.variants()) {
-                    if (target === source) {
-                        continue
-                    }
-                    Logger.debug(source.name + " --patch--> " + target.name)
-                    val pathToTarget = operations.variantsDirV0.path().resolve(target.name)
-                    val pathToExpectedResult = operations.variantsDirV1.path().resolve(target.name)
-                    val evolutionDiff = getFineDiff(
-                        getOriginalDiff(pathToTarget, pathToExpectedResult)
-                    )
-                    if (inDebug) {
-                        operations.debugDir(currentCommit).resolve(target.name).toFile().mkdirs()
-                        saveDiff(
-                            evolutionDiff,
-                            operations.debugDir(currentCommit).resolve(target.name)
-                                .resolve(target.name + "_evolution.diff")
-                        )
-                    }
-
-                    /* Application of patches without knowledge about features */Logger.debug("Applying patch without knowledge about features...")
-                    // Apply the fine diff to the target variant
-                    val skippedNormal = applyPatch(
-                        operations.normalPatchFile,
-                        pathToTarget, operations.rejectsNormalFile
-                    )
-                    if (inDebug) {
-                        targetFilesNormalDebug(target, pathToTarget, pathToExpectedResult)
-                    }
-                    // Gather the patch result
-                    val actualVsExpectedNormal = getActualVsExpected(pathToExpectedResult, "normal", target)
-                    val rejectsNormal = readRejects(operations.rejectsNormalFile, normalPatch)
-                    if (inDebug) {
-                        saveDiff(
-                            rejectsNormal,
-                            operations.debugDir(currentCommit).resolve(target.name)
-                                .resolve(target.name + "_rejects_normal.diff")
-                        )
-                    }
-
-                    /* Application of patches with knowledge about PC of edit only */Logger.debug("Applying patch with knowledge about edits' PCs...")
-                    // Create target variant specific patch that respects PCs
-                    val filteredPatch = getFilteredDiff(
-                        originalDiff,
-                        groundTruthV0[source]!!.variant(),
-                        groundTruthV1[source]!!.variant(), target,
-                        operations.variantsDirV0.path(), operations.variantsDirV1.path()
-                    )
-                    val emptyPatch = filteredPatch.content.isEmpty()
-                    saveDiff(filteredPatch, operations.filteredPatchFile)
-                    if (inDebug) {
-                        saveDiff(
-                            filteredPatch,
-                            operations.debugDir(currentCommit).resolve(target.name)
-                                .resolve(source.name + "_to_" + target.name + "_patch_filtered.diff")
-                        )
-                    }
-                    // Apply the patch
-                    val skippedFiltered = applyPatch(
-                        operations.filteredPatchFile,
-                        pathToTarget, operations.rejectsFilteredFile, emptyPatch
-                    )
-                    if (inDebug) {
-                        operations.shell.execute(
-                            CpCommand(
-                                operations.patchDir,
-                                operations.debugDir(currentCommit).resolve(target.name).resolve("patched_filtered")
-                            ).recursive()
-                        )
-                            .expect("Was not able to copy variant $target.name")
-                    }
-                    // Gather the result
-                    val actualVsExpectedFiltered = getActualVsExpected(pathToExpectedResult, "filtered", target)
-                    val rejectsFiltered = readRejects(operations.rejectsFilteredFile, filteredPatch)
-                    if (inDebug) {
-                        saveDiff(
-                            rejectsFiltered,
-                            operations.debugDir(currentCommit).resolve(target.name)
-                                .resolve(target.name + "_rejects_filtered.diff")
-                        )
-                    }
-
-                    val requiredChanges = getRequiredChanges(
-                        originalDiff,
-                        groundTruthV0[source]!!.variant(),
-                        groundTruthV1[source]!!.variant(), target,
-                        operations.variantsDirV0.path(), operations.variantsDirV1.path()
-                    )
-
-                    /* Result Evaluation */
-                    val patchOutcome = ResultAnalysis.processOutcome(
-                        operations,
-                        datasetName, runID, source.name, target.name,
-                        parentCommit, currentCommit, normalPatch, filteredPatch,
-                        requiredChanges,
-                        actualVsExpectedNormal, actualVsExpectedFiltered, rejectsNormal,
-                        rejectsFiltered, evolutionDiff, skippedNormal, skippedFiltered
-                    )
-                    try {
-                        patchOutcome.writeAsJSON(resultsFile, true)
-                    } catch (e: IOException) {
-                        panic(
-                            "Was not able to write filtered patch result file for run "
-                                    + runID, e
-                        )
-                    }
-                    Logger.debug(
-                        "Finished patching for source " + source.name + " and target "
-                                + target.name
-                    )
-                }
+                evaluateMPatch(
+                    originalDiff,
+                    currentCommit,
+                    source,
+                    sample,
+                    groundTruthV0,
+                    groundTruthV1,
+                    runID,
+                    parentCommit
+                )
             }
             if (numProcessed % 100uL == 0uL) {
                 Logger.info(
@@ -329,6 +220,231 @@ class Task(
             currentCommit.forget()
         }
     }
+
+    private fun evaluateUnixPatch(
+        originalDiff: OriginalDiff,
+        currentCommit: SPLCommit,
+        source: Variant,
+        sample: Sample,
+        groundTruthV0: MutableMap<Variant, GroundTruth>,
+        groundTruthV1: MutableMap<Variant, GroundTruth>,
+        runID: ULong,
+        parentCommit: SPLCommit
+    ) {
+        Logger.debug("Converting diff...")
+        // Convert the original diff into a fine diff
+        val finePatch = getFineDiff(originalDiff)
+        saveDiff(finePatch, operations.normalPatchFile)
+        Logger.debug("Saved fine diff.")
+
+        val patchApplier = { _: Path, pathToTarget: Path ->
+            applyPatch(
+                operations.normalPatchFile,
+                pathToTarget,
+                operations.rejectsNormalFile
+            )
+        }
+
+
+        runPatchApplication(
+            source,
+            sample,
+            patchApplier,
+            finePatch,
+            originalDiff,
+            groundTruthV0,
+            groundTruthV1,
+            currentCommit,
+            runID,
+            parentCommit,
+        )
+    }
+
+    private fun evaluateMPatch(
+        originalDiff: OriginalDiff,
+        currentCommit: SPLCommit,
+        source: Variant,
+        sample: Sample,
+        groundTruthV0: MutableMap<Variant, GroundTruth>,
+        groundTruthV1: MutableMap<Variant, GroundTruth>,
+        runID: ULong,
+        parentCommit: SPLCommit
+    ) {
+        saveDiff(originalDiff, operations.normalPatchFile)
+        Logger.debug("Saved original diff.")
+
+        val patchApplier = { pathToSource: Path, pathToTarget: Path ->
+            applyMPatch(
+                operations.normalPatchFile,
+                pathToSource,
+                pathToTarget,
+                operations.rejectsNormalFile
+            )
+        }
+
+        runPatchApplication(
+            source,
+            sample,
+            patchApplier,
+            getFineDiff(originalDiff),
+            originalDiff,
+            groundTruthV0,
+            groundTruthV1,
+            currentCommit,
+            runID,
+            parentCommit,
+        )
+    }
+
+    private fun runPatchApplication(
+        source: Variant,
+        sample: Sample,
+        patchApplier: (Path, Path) -> Set<String>,
+        finePatch: FineDiff,
+        originalDiff: OriginalDiff,
+        groundTruthV0: MutableMap<Variant, GroundTruth>,
+        groundTruthV1: MutableMap<Variant, GroundTruth>,
+        currentCommit: SPLCommit,
+        runID: ULong,
+        parentCommit: SPLCommit,
+    ) {
+        // For each target variant,
+        Logger.debug("Starting patch application for source variant " + source.name)
+        for (target in sample.variants()) {
+            if (target === source) {
+                continue
+            }
+            Logger.debug(source.name + " --patch--> " + target.name)
+            val pathToSource = operations.variantsDirV0.path().resolve(source.name)
+            val pathToTarget = operations.variantsDirV0.path().resolve(target.name)
+            val pathToExpectedResult = operations.variantsDirV1.path().resolve(target.name)
+            val evolutionDiff = getFineDiff(
+                getOriginalDiff(pathToTarget, pathToExpectedResult)
+            )
+
+            /* Application of patches without knowledge about features */
+            Logger.debug("Applying patch without knowledge about features...")
+            // Apply the fine diff to the target variant
+            val skippedNormal = patchApplier(pathToSource, pathToTarget)
+            if (inDebug) {
+                targetFilesNormalDebug(target, pathToTarget, pathToExpectedResult)
+            }
+
+            // Gather the patch result
+            val actualVsExpectedNormal = getActualVsExpected(pathToExpectedResult, "normal", target)
+            // TODO: mpatch specific rejects reading
+            val rejectsNormal = readRejects(operations.rejectsNormalFile, finePatch)
+
+            /* Application of patches with knowledge about PC of edit only */
+            Logger.debug("Applying patch with knowledge about edits' PCs...")
+            // Create target variant specific patch that respects PCs
+            // TODO: mpatch specific filtering
+            val filteredPatch = getFilteredDiff(
+                originalDiff,
+                groundTruthV0[source]!!.variant(),
+                groundTruthV1[source]!!.variant(), target,
+                operations.variantsDirV0.path(), operations.variantsDirV1.path()
+            )
+            val emptyPatch = filteredPatch.content.isEmpty()
+            saveDiff(filteredPatch, operations.filteredPatchFile)
+
+            // Apply the patch
+            val skippedFiltered = applyPatch(
+                operations.filteredPatchFile,
+                pathToTarget, operations.rejectsFilteredFile, emptyPatch
+            )
+
+            // Gather the result
+            val actualVsExpectedFiltered = getActualVsExpected(pathToExpectedResult, "filtered", target)
+            val rejectsFiltered = readRejects(operations.rejectsFilteredFile, filteredPatch)
+            if (inDebug) {
+                patchFilesDebug(
+                    finePatch,
+                    currentCommit,
+                    source,
+                    filteredPatch,
+                    target,
+                    rejectsNormal,
+                    rejectsFiltered,
+                    evolutionDiff
+                )
+            }
+
+            val requiredChanges = getRequiredChanges(
+                originalDiff,
+                groundTruthV0[source]!!.variant(),
+                groundTruthV1[source]!!.variant(), target,
+                operations.variantsDirV0.path(), operations.variantsDirV1.path()
+            )
+
+            /* Result Evaluation */
+            val patchOutcome = ResultAnalysis.processOutcome(
+                operations,
+                datasetName, runID, source.name, target.name,
+                parentCommit, currentCommit, finePatch, filteredPatch,
+                requiredChanges,
+                actualVsExpectedNormal, actualVsExpectedFiltered, rejectsNormal,
+                rejectsFiltered, evolutionDiff, skippedNormal, skippedFiltered
+            )
+            try {
+                patchOutcome.writeAsJSON(resultsFile, true)
+            } catch (e: IOException) {
+                panic(
+                    "Was not able to write filtered patch result file for run "
+                            + runID, e
+                )
+            }
+            Logger.debug(
+                "Finished patching for source " + source.name + " and target "
+                        + target.name
+            )
+        }
+    }
+
+    private fun Task.patchFilesDebug(
+        normalPatch: FineDiff,
+        currentCommit: SPLCommit,
+        source: Variant,
+        filteredPatch: FineDiff,
+        target: Variant,
+        rejectsNormal: FineDiff,
+        rejectsFiltered: FineDiff,
+        evolutionDiff: FineDiff
+    ) {
+        saveDiff(
+            normalPatch,
+            operations.debugDir(currentCommit).resolve(source.name + "_to_any_patch_normal.diff")
+        )
+        saveDiff(
+            filteredPatch,
+            operations.debugDir(currentCommit).resolve(target.name)
+                .resolve(source.name + "_to_" + target.name + "_patch_filtered.diff")
+        )
+        saveDiff(
+            rejectsNormal,
+            operations.debugDir(currentCommit).resolve(target.name)
+                .resolve(target.name + "_rejects_normal.diff")
+        )
+        saveDiff(
+            rejectsFiltered,
+            operations.debugDir(currentCommit).resolve(target.name)
+                .resolve(target.name + "_rejects_filtered.diff")
+        )
+        operations.debugDir(currentCommit).resolve(target.name).toFile().mkdirs()
+        saveDiff(
+            evolutionDiff,
+            operations.debugDir(currentCommit).resolve(target.name)
+                .resolve(target.name + "_evolution.diff")
+        )
+        operations.shell.execute(
+            CpCommand(
+                operations.patchDir,
+                operations.debugDir(currentCommit).resolve(target.name).resolve("patched_filtered")
+            ).recursive()
+        )
+            .expect("Was not able to copy variant $target.name")
+    }
+
 
     private fun generateVariants(
         sample: Sample,
@@ -587,15 +703,55 @@ class Task(
         }
     }
 
-    // Apply a patch file to a target variant
+    // Save the difference as a patch file
+    private fun saveDiff(fineDiff: OriginalDiff, file: Path) {
+        // Save the fine diff to a file
+        try {
+            Files.write(file, fineDiff.toLines())
+        } catch (e: IOException) {
+            panic("Was not able to save diff to file $file")
+        }
+    }
+
+    // Apply a patch file to a target variant using mpatch
+    private fun applyMPatch(
+        patchFile: Path, sourceVariant: Path, targetVariant: Path, rejectFile: Path
+    ): Set<String> {
+        val patchCommand = MPatchCommand.Recommended(sourceVariant, patchFile).strip(2)
+            .rejectsFile(rejectFile)
+        return applyPatch(patchCommand, patchFile, targetVariant, rejectFile, false)
+    }
+
+    // Apply a patch file to a target variant using mpatch
+    private fun applyMPatch(
+        patchFile: Path, sourceVariant: Path, targetVariant: Path, rejectFile: Path, emptyPatch: Boolean
+    ): Set<String> {
+        val patchCommand = MPatchCommand.Recommended(sourceVariant, patchFile).strip(2)
+            .rejectsFile(rejectFile)
+        return applyPatch(patchCommand, patchFile, targetVariant, rejectFile, emptyPatch)
+    }
+
+    // Apply a patch file to a target variant using Unix patch
     private fun applyPatch(
         patchFile: Path, targetVariant: Path, rejectFile: Path
     ): Set<String> {
-        return applyPatch(patchFile, targetVariant, rejectFile, false)
+        val patchCommand = PatchCommand.Recommended(patchFile).strip(2)
+            .rejectFile(rejectFile).force().ignoreWhitespace()
+        return applyPatch(patchCommand, patchFile, targetVariant, rejectFile, false)
+    }
+
+    // Apply a patch file to a target variant using Unix patch
+    private fun applyPatch(
+        patchFile: Path, targetVariant: Path, rejectFile: Path, emptyPatch: Boolean
+    ): Set<String> {
+        val patchCommand = PatchCommand.Recommended(patchFile).strip(2)
+            .rejectFile(rejectFile).force().ignoreWhitespace()
+        return applyPatch(patchCommand, patchFile, targetVariant, rejectFile, emptyPatch)
     }
 
     // Apply a patch file to a target variant
     private fun applyPatch(
+        patchCommand: ShellCommand,
         patchFile: Path, targetVariant: Path,
         rejectFile: Path, emptyPatch: Boolean
     ): Set<String> {
@@ -622,8 +778,7 @@ class Task(
         val skipped: MutableSet<String> = HashSet()
         if (!emptyPatch) {
             val result = operations.shell.execute(
-                PatchCommand.Recommended(patchFile).strip(2)
-                    .rejectFile(rejectFile).force().ignoreWhitespace(),
+                patchCommand,
                 operations.patchDir
             )
             if (result.isSuccess) {
