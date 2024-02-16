@@ -9,7 +9,6 @@ import java.io.IOException
 import java.io.UncheckedIOException
 import java.net.URI
 import java.nio.file.Files
-import java.nio.file.Path
 import kotlin.system.exitProcess
 
 /**
@@ -27,16 +26,8 @@ object Main {
         VEVOS.Initialize()
         val config = StudyConfiguration(File(args[0]))
         Logger.info("Starting experiment initialization.")
-        val mainDir = Path.of(config.EXPERIMENT_DIR_MAIN())
-        val resultsDir = Path.of(config.EXPERIMENT_DIR_RESULTS())
-        val reposDir = Path.of(config.EXPERIMENT_DIR_REPOS())
-        val inDebug = config.EXPERIMENT_DEBUG()
-        val groundTruthPath = Path.of(config.EXPERIMENT_DIR_GROUND_TRUTH())
-        val numRepetitions = config.EXPERIMENT_REPEATS()
-        val numVariants = config.EXPERIMENT_VARIANT_COUNT()
-        val startID = config.EXPERIMENT_START_ID()
         val datasets: List<DatasetDescription> = try {
-            DatasetDescription.fromMarkdown(Path.of(config.EXPERIMENT_DATASETS()))
+            DatasetDescription.fromMarkdown(config.EXPERIMENT_DATASETS())
         } catch (e: IOException) {
             Logger.error(
                 "Was not able to load markdown file with the datasets from '"
@@ -44,21 +35,20 @@ object Main {
             )
             throw UncheckedIOException(e)
         }
-        val datasetMaxSize = config.EXPERIMENT_DATASET_MAX_SIZE()
         for (dataset in datasets) {
             val datasetSize = dataset.commits().replace(",".toRegex(), "").toInt()
-            if (datasetSize > datasetMaxSize) {
+            if (datasetSize > config.EXPERIMENT_DATASET_MAX_SIZE()) {
                 Logger.info(
                     "Skipping %s with %s commits because it exceeds the maximum number of commits (%d) set in the configuration.".format(
                         dataset.name(),
                         dataset.commits(),
-                        datasetMaxSize
+                        config.EXPERIMENT_DATASET_MAX_SIZE()
                     )
                 )
                 continue
             }
-            val repoDir = reposDir.resolve(dataset.name())
-            val repoGroundTruth = groundTruthPath.resolve(dataset.name())
+            val repoDir = config.EXPERIMENT_DIR_REPOS().resolve(dataset.name())
+            val repoGroundTruth = config.EXPERIMENT_DIR_GROUND_TRUTH().resolve(dataset.name())
             if (!Files.exists(repoGroundTruth)) {
                 Logger.info(
                     "Found no ground truth for %s. Skipping the study for %s"
@@ -68,11 +58,8 @@ object Main {
             }
             GitLoader.fromRemote(repoDir, URI.create(dataset.repoURL()))
                 .use { Logger.info("Cloned %s into %s".format(dataset.name(), repoDir)) }
-            val numThreads = config.EXPERIMENT_THREAD_COUNT()
-            val idProvider = IDProvider(startID)
             val synchronizationStudy = SynchronizationStudy(
-                dataset.name(), mainDir, resultsDir, repoDir, repoGroundTruth,
-                numRepetitions, numVariants, idProvider, inDebug, numThreads
+                config, dataset.name(), repoDir, repoGroundTruth
             )
             try {
                 synchronizationStudy.run()

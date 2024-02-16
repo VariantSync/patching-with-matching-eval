@@ -35,21 +35,29 @@ class Operations(mainDir: Path) {
     val patchDir: Path
 
     // Path to the patch file containing the patches without filtering
-    val normalPatchFile: Path
+    val patchFile: Path
 
     // Path to the patch file containing the patches with filtering
     val filteredPatchFile: Path
 
+    // Path to the patch file containing the split patches without filtering
+    val splitPatchFile: Path
+
+    // Path to the patch file containing the split patches with filtering
+    val splitAndFilteredPatchFile: Path
+
     // Path to the rejects file created by patching without filtering
-    val rejectsNormalFile: Path
+    val rejectsFile: Path
 
     // Path to the rejects file created by patching with filtering
-    val rejectsFilteredFile: Path
+    val rejectsFileFiltered: Path
 
     // ShellExecutor for executing shell commands
     val shell: ShellExecutor
 
     val appliedPatchTracker: AppliedPatchTracker
+
+    val patchers: MutableList<Patcher>
 
     init {
         try {
@@ -67,16 +75,23 @@ class Operations(mainDir: Path) {
         variantsDirV0 = CaseSensitivePath(workDir.resolve("V0Variants"))
         variantsDirV1 = CaseSensitivePath(workDir.resolve("V1Variants"))
         patchDir = workDir.resolve("TARGET/V0")
-        normalPatchFile = workDir.resolve("patch.txt")
-        filteredPatchFile = workDir.resolve("filtered-patch.txt")
-        rejectsNormalFile = workDir.resolve("rejects-normal.txt")
-        rejectsFilteredFile = workDir.resolve("rejects-filtered.txt")
+        patchFile = workDir.resolve("patch.diff")
+        filteredPatchFile = workDir.resolve("patch-filtered.diff")
+        splitPatchFile = workDir.resolve("patch-split.diff")
+        splitAndFilteredPatchFile = workDir.resolve("patch-split-filtered.diff")
+        rejectsFile = workDir.resolve("rejects-normal.txt")
+        rejectsFileFiltered = workDir.resolve("rejects-filtered.txt")
         appliedPatchTracker = AppliedPatchTracker()
-        shell = ShellExecutor(
-            appliedPatchTracker,
-            appliedPatchTracker,
-            workDir
-        )
+        shell =
+            ShellExecutor(
+                appliedPatchTracker,
+                appliedPatchTracker,
+                workDir
+            )
+
+        patchers = ArrayList()
+        patchers.add(UnixPatch())
+        patchers.add(MPatch())
     }
 
     fun debugDir(directory: String): Path {

@@ -9,6 +9,7 @@ import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
 import org.variantsync.evaluation.common.Change
+import org.variantsync.evaluation.common.Rejects
 import org.variantsync.vevos.simulation.variability.SPLCommit
 import java.io.File
 import java.io.IOException
@@ -43,10 +44,6 @@ object ResultAnalysis {
      * @param rejectsNormal The rejected patches (aka. failed patches) without filtering
      * @param rejectsFiltered The rejected patches (aka. failed patches) with filtering
      * @param targetChanges The difference between the two versions of the target variant
-     * @param skippedFilesNormal List of files that were not found by patch and therefore not
-     * patched
-     * @param skippedFilesFiltered List of files that were not found by patch and therefore not
-     * patched
      * @return The patch outcome
      */
     fun processOutcome(
@@ -56,8 +53,7 @@ object ResultAnalysis {
         normalPatch: FineDiff, filteredPatch: FineDiff,
         requiredChanges: CountingMap<Change>,
         resultDiffNormal: FineDiff, resultDiffFiltered: FineDiff,
-        rejectsNormal: FineDiff, rejectsFiltered: FineDiff, targetChanges: FineDiff,
-        skippedFilesNormal: Set<String>, skippedFilesFiltered: Set<String>
+        rejectsNormal: Rejects, rejectsFiltered: Rejects, targetChanges: FineDiff
     ): PatchOutcome {
         debug("Processing outcome of $runID for patch process in " + workdir.workDir)
         // evaluate patch rejects
@@ -71,20 +67,16 @@ object ResultAnalysis {
         // number of failed patches
 
         // Determine the number of failed file-level patches (without filtering)
-        var fileNormalFailed: Long = HashSet(
-            rejectsNormal.content.stream()
-                .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toSet())
+        val fileNormalFailed: Long = HashSet(
+            rejectsNormal.rejects.stream()
+                .map { cl: Change -> cl.path.toString() }.collect(Collectors.toSet())
         ).size.toLong()
-        fileNormalFailed += skippedFilesNormal.size
         debug(
             "$fileNormalFailed of $fileNormal normal file-sized patches failed."
         )
 
         // Determine the number of failed line-level patches (without filtering)
-        val lineNormalFailed: MutableList<ChangedLine> = FineDiff.determineChangedLines(rejectsNormal)
-        FineDiff.determineChangedLines(normalPatch).stream()
-            .filter { change: ChangedLine -> skippedFilesNormal.contains(change.file.toString()) }
-            .forEach { e: ChangedLine -> lineNormalFailed.add(e) }
+        val lineNormalFailed: MutableList<ChangedLine> = rejectsNormal.intoChangedLines().toMutableList()
         debug(
             "${lineNormalFailed.size} of ${lineNormal.size} normal line-sized patches failed"
         )
@@ -99,21 +91,17 @@ object ResultAnalysis {
         // Number of failed patches
 
         // Determine the number of failed file-level patches (with filtering)
-        var fileFilteredFailed: Long = HashSet(
-            rejectsFiltered.content.stream()
-                .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
+        val fileFilteredFailed: Long = HashSet(
+            rejectsFiltered.rejects.stream()
+                .map { cl: Change -> cl.path.toString() }.collect(Collectors.toList())
         ).size.toLong()
-        fileFilteredFailed += skippedFilesFiltered.size
         debug(
             "" + fileFilteredFailed + " of " + fileFiltered
                     + " filtered file-sized patches failed."
         )
 
         // Determine the number of failed line-level patches (with filtering)
-        val lineFilteredFailed: MutableList<ChangedLine> = FineDiff.determineChangedLines(rejectsFiltered)
-        FineDiff.determineChangedLines(filteredPatch).stream()
-            .filter { change: ChangedLine -> skippedFilesFiltered.contains(change.file.toString()) }
-            .forEach { e: ChangedLine -> lineFilteredFailed.add(e) }
+        val lineFilteredFailed: MutableList<ChangedLine> = rejectsFiltered.intoChangedLines().toMutableList()
         debug(
             "" + lineFilteredFailed.size + " of " + lineFiltered.size
                     + " filtered line-sized patches failed"
@@ -216,7 +204,7 @@ object ResultAnalysis {
             )
         }
         val config = StudyConfiguration(File(args[0]))
-        val resultsDir = Path.of(config.EXPERIMENT_DIR_RESULTS())
+        val resultsDir = config.EXPERIMENT_DIR_RESULTS()
         Files.list(resultsDir).use { files ->
             files.filter { f: Path ->
                 val fileName = f.fileName.toString()

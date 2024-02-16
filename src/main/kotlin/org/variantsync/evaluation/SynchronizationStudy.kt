@@ -18,9 +18,10 @@ import kotlin.math.ceil
  * This class contains the core workflow of our study as described in our paper.
  */
 class SynchronizationStudy(
-    datasetName: String, mainDir: Path, resultsDir: Path,
-    repositoryPath: Path, groundTruthPath: Path, numRepetitions: Int, numVariants: Int,
-    idProvider: IDProvider, inDebug: Boolean, numThreads: Int
+    config: StudyConfiguration,
+    datasetName: String,
+    repositoryPath: Path,
+    groundTruthPath: Path
 ) {
     // Path to the ground truth dataset
     private val groundTruthPath: Path
@@ -33,13 +34,11 @@ class SynchronizationStudy(
      * Initialize the study from the given configuration
      */
     init {
-        val resultFile = resultsDir.resolve("$datasetName.results")
-        if (!Files.exists(resultFile)) {
-            resultFile.parent.toFile().mkdirs()
-            Files.createFile(resultFile)
+        if (!Files.exists(config.EXPERIMENT_DIR_RESULTS())) {
+            Files.createDirectories(config.EXPERIMENT_DIR_RESULTS())
         }
         this.groundTruthPath = groundTruthPath
-        this.numThreads = numThreads
+        this.numThreads = config.EXPERIMENT_THREAD_COUNT()
         val history = init()
         tasks = ArrayList()
         val clusterSize = ceil(history.size.toDouble() / numThreads).toInt()
@@ -47,10 +46,7 @@ class SynchronizationStudy(
         while (commitClusterIterator.hasNext()) {
             val commits = commitClusterIterator.next()
             tasks.add(
-                Task(
-                    datasetName, mainDir, repositoryPath, resultFile,
-                    commits, numRepetitions, numVariants, inDebug, idProvider
-                )
+                Task(config, datasetName, repositoryPath, commits)
             )
         }
     }

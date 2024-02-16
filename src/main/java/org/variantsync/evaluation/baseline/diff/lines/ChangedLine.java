@@ -9,4 +9,9 @@ import java.nio.file.Path;
  * @param line the changed line in the file
  */
 public record ChangedLine(Path file, Line line) {
+
+    @Override
+    public String toString() {
+        return file + "\n" + line;
+    }
 }

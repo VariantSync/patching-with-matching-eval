@@ -4,6 +4,7 @@ import de.ovgu.featureide.fm.core.base.IFeature
 import de.ovgu.featureide.fm.core.base.IFeatureModel
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.baseline.diff.DiffParser
+import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.diff.filter.CachedPCBasedFilter
@@ -12,15 +13,17 @@ import org.variantsync.evaluation.baseline.diff.filter.ILineFilter
 import org.variantsync.evaluation.baseline.diff.splitting.DefaultContextProvider
 import org.variantsync.evaluation.baseline.diff.splitting.DiffSplitter
 import org.variantsync.evaluation.baseline.diff.splitting.IContextProvider
-import org.variantsync.evaluation.baseline.shell.*
+import org.variantsync.evaluation.baseline.shell.CpCommand
+import org.variantsync.evaluation.baseline.shell.DiffCommand
+import org.variantsync.evaluation.baseline.shell.RmCommand
 import org.variantsync.evaluation.common.Change
+import org.variantsync.evaluation.common.Rejects
 import org.variantsync.evaluation.error.Panic
 import org.variantsync.evaluation.error.VariantGenerationException
 import org.variantsync.vevos.simulation.feature.Variant
 import org.variantsync.vevos.simulation.feature.config.FeatureIDEConfiguration
 import org.variantsync.vevos.simulation.feature.sampling.FeatureIDESampler
 import org.variantsync.vevos.simulation.feature.sampling.Sample
-import org.variantsync.vevos.simulation.feature.sampling.Sampler
 import org.variantsync.vevos.simulation.io.Resources
 import org.variantsync.vevos.simulation.repository.SPLRepository
 import org.variantsync.vevos.simulation.util.io.CaseSensitivePath
@@ -32,26 +35,14 @@ import org.variantsync.vevos.simulation.variability.pc.options.VariantGeneration
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.function.Consumer
 import java.util.stream.Collectors
 
 class Task(
-    datasetName: String, mainDir: Path, repositoryPath: Path,
-    resultsFile: Path, commits: List<SPLCommit>, numRepetitions: Int, numVariants: Int,
-    inDebug: Boolean, idProvider: IDProvider
+    private val config: StudyConfiguration,
+    private val datasetName: String, private val repositoryPath: Path, private val commits: List<SPLCommit>,
 ) : Runnable {
-    private val operations: Operations
-    private val resultsFile: Path
-    private val repositoryPath: Path
-    private val commits: List<SPLCommit>
-    private val idProvider: IDProvider
-    private val numRepetitions: Int
-    private val numVariants: Int
-    private val inDebug: Boolean
-    private val datasetName: String
-
-    // The variant sampler
-    private val sampler: Sampler
+    private val operations: Operations = Operations(config.EXPERIMENT_DIR_MAIN())
+    private val idProvider: IDProvider = IDProvider(config.EXPERIMENT_START_ID())
 
     // The feature model for which variants are sampled
     private var currentModel: IFeatureModel? = null
@@ -59,30 +50,12 @@ class Task(
     // The considered commit
     private var currentCommit: SPLCommit? = null
 
-    init {
-        operations = Operations(mainDir)
-        this.repositoryPath = repositoryPath
-        this.datasetName = datasetName
-        this.resultsFile = resultsFile
-        this.commits = commits
-        this.numRepetitions = numRepetitions
-        this.numVariants = numVariants
-        this.inDebug = inDebug
-        this.idProvider = idProvider
-        sampler = FeatureIDESampler.CreateRandomSampler(this.numVariants)
-    }
-
     override fun run() {
         // Initialize the SPL repositories for different versions
         Logger.info("Initializing SPL repos.")
         initializeSPLCopies()
         val parentRepo = SPLRepository(operations.splCopyA)
         val childRepo = SPLRepository(operations.splCopyB)
-        try {
-            Files.createDirectories(resultsFile.parent)
-        } catch (e: IOException) {
-            panic("Was not able to create results directory for $resultsFile")
-        }
 
         // For each pair
         Logger.info("Starting diffing and patching...")
@@ -118,12 +91,12 @@ class Task(
             }
 
             // While more random configurations to consider
-            for (i in 0 until numRepetitions) {
+            for (i in 0 until config.EXPERIMENT_REPEATS()) {
                 Logger.debug(
-                    "Starting repetition " + (i + 1) + " of " + numRepetitions + " with "
-                            + numVariants + " variants."
+                    "Starting repetition " + (i + 1) + " of " + config.EXPERIMENT_REPEATS() + " with "
+                            + config.EXPERIMENT_VARIANT_COUNT() + " variants."
                 )
-                if (inDebug && operations.debugDir(currentCommit).toFile().mkdirs()) {
+                if (config.EXPERIMENT_DEBUG() && operations.debugDir(currentCommit).toFile().mkdirs()) {
                     Logger.debug("Created Debug directory.")
                 }
 
@@ -141,7 +114,7 @@ class Task(
                 }
 
                 // Write information about the commits
-                if (inDebug) {
+                if (config.EXPERIMENT_DEBUG()) {
                     splPCDebug()
                 }
 
@@ -157,9 +130,9 @@ class Task(
                 // Select the first variant as source
                 val source = sample.variants()[0] ?: continue
                 Logger.debug("Starting diff application for source variant " + source.name)
-                if (Files.exists(operations.normalPatchFile)) {
-                    Logger.debug("Cleaning old patch file " + operations.normalPatchFile)
-                    operations.shell.execute(RmCommand(operations.normalPatchFile))
+                if (Files.exists(operations.splitPatchFile)) {
+                    Logger.debug("Cleaning old patch file " + operations.splitPatchFile)
+                    operations.shell.execute(RmCommand(operations.splitPatchFile))
                 }
                 // Apply diff to both versions of source variant
                 Logger.debug("Diffing source...")
@@ -175,34 +148,26 @@ class Task(
                     )
                     continue
                 }
-                if (inDebug) {
+                if (config.EXPERIMENT_DEBUG()) {
                     saveDiff(
                         originalDiff,
                         operations.debugDir(currentCommit).resolve(source.name + "_original.diff")
                     )
                 }
-                /*
-                evaluateUnixPatch(
-                    originalDiff,
-                    currentCommit,
-                    source,
-                    sample,
-                    groundTruthV0,
-                    groundTruthV1,
-                    runID,
-                    parentCommit
-                )*/
 
-                evaluateMPatch(
-                    originalDiff,
-                    currentCommit,
-                    source,
-                    sample,
-                    groundTruthV0,
-                    groundTruthV1,
-                    runID,
-                    parentCommit
-                )
+                for (patcher in operations.patchers) {
+                    runPatchApplication(
+                        patcher,
+                        source,
+                        sample,
+                        originalDiff,
+                        groundTruthV0,
+                        groundTruthV1,
+                        currentCommit,
+                        runID,
+                        parentCommit
+                    )
+                }
             }
             if (numProcessed % 100uL == 0uL) {
                 Logger.info(
@@ -221,93 +186,26 @@ class Task(
         }
     }
 
-    private fun evaluateUnixPatch(
-        originalDiff: OriginalDiff,
-        currentCommit: SPLCommit,
-        source: Variant,
-        sample: Sample,
-        groundTruthV0: MutableMap<Variant, GroundTruth>,
-        groundTruthV1: MutableMap<Variant, GroundTruth>,
-        runID: ULong,
-        parentCommit: SPLCommit
-    ) {
-        Logger.debug("Converting diff...")
-        // Convert the original diff into a fine diff
-        val finePatch = getFineDiff(originalDiff)
-        saveDiff(finePatch, operations.normalPatchFile)
-        Logger.debug("Saved fine diff.")
-
-        val patchApplier = { _: Path, pathToTarget: Path ->
-            applyPatch(
-                operations.normalPatchFile,
-                pathToTarget,
-                operations.rejectsNormalFile
-            )
-        }
-
-
-        runPatchApplication(
-            source,
-            sample,
-            patchApplier,
-            finePatch,
-            originalDiff,
-            groundTruthV0,
-            groundTruthV1,
-            currentCommit,
-            runID,
-            parentCommit,
-        )
-    }
-
-    private fun evaluateMPatch(
-        originalDiff: OriginalDiff,
-        currentCommit: SPLCommit,
-        source: Variant,
-        sample: Sample,
-        groundTruthV0: MutableMap<Variant, GroundTruth>,
-        groundTruthV1: MutableMap<Variant, GroundTruth>,
-        runID: ULong,
-        parentCommit: SPLCommit
-    ) {
-        saveDiff(originalDiff, operations.normalPatchFile)
-        Logger.debug("Saved original diff.")
-
-        val patchApplier = { pathToSource: Path, pathToTarget: Path ->
-            applyMPatch(
-                operations.normalPatchFile,
-                pathToSource,
-                pathToTarget,
-                operations.rejectsNormalFile
-            )
-        }
-
-        runPatchApplication(
-            source,
-            sample,
-            patchApplier,
-            getFineDiff(originalDiff),
-            originalDiff,
-            groundTruthV0,
-            groundTruthV1,
-            currentCommit,
-            runID,
-            parentCommit,
-        )
-    }
-
     private fun runPatchApplication(
+        patcher: Patcher,
         source: Variant,
         sample: Sample,
-        patchApplier: (Path, Path) -> Set<String>,
-        finePatch: FineDiff,
-        originalDiff: OriginalDiff,
+        originalPatch: OriginalDiff,
         groundTruthV0: MutableMap<Variant, GroundTruth>,
         groundTruthV1: MutableMap<Variant, GroundTruth>,
         currentCommit: SPLCommit,
         runID: ULong,
         parentCommit: SPLCommit,
     ) {
+        saveDiff(originalPatch, operations.patchFile)
+        Logger.debug("Saved original diff.")
+
+        // Convert the original diff into a fine diff
+        Logger.debug("Converting diff...")
+        val finePatch = getFineDiff(operations.workDir, originalPatch)
+        saveDiff(finePatch, operations.splitPatchFile)
+        Logger.debug("Saved fine diff.")
+
         // For each target variant,
         Logger.debug("Starting patch application for source variant " + source.name)
         for (target in sample.variants()) {
@@ -315,54 +213,68 @@ class Task(
                 continue
             }
             Logger.debug(source.name + " --patch--> " + target.name)
-            val pathToSource = operations.variantsDirV0.path().resolve(source.name)
             val pathToTarget = operations.variantsDirV0.path().resolve(target.name)
             val pathToExpectedResult = operations.variantsDirV1.path().resolve(target.name)
             val evolutionDiff = getFineDiff(
+                operations.workDir,
                 getOriginalDiff(pathToTarget, pathToExpectedResult)
             )
 
             /* Application of patches without knowledge about features */
             Logger.debug("Applying patch without knowledge about features...")
-            // Apply the fine diff to the target variant
-            val skippedNormal = patchApplier(pathToSource, pathToTarget)
-            if (inDebug) {
+            // Apply the patch to the target variant
+            resetPatchDirectory(pathToTarget)
+            val rejectsNormal = patcher.applyPatch(operations, source, target, false)
+
+            if (config.EXPERIMENT_DEBUG()) {
                 targetFilesNormalDebug(target, pathToTarget, pathToExpectedResult)
             }
 
             // Gather the patch result
             val actualVsExpectedNormal = getActualVsExpected(pathToExpectedResult, "normal", target)
-            // TODO: mpatch specific rejects reading
-            val rejectsNormal = readRejects(operations.rejectsNormalFile, finePatch)
 
             /* Application of patches with knowledge about PC of edit only */
             Logger.debug("Applying patch with knowledge about edits' PCs...")
             // Create target variant specific patch that respects PCs
-            // TODO: mpatch specific filtering
             val filteredPatch = getFilteredDiff(
-                originalDiff,
+                originalPatch,
                 groundTruthV0[source]!!.variant(),
                 groundTruthV1[source]!!.variant(), target,
                 operations.variantsDirV0.path(), operations.variantsDirV1.path()
             )
-            val emptyPatch = filteredPatch.content.isEmpty()
             saveDiff(filteredPatch, operations.filteredPatchFile)
 
-            // Apply the patch
-            val skippedFiltered = applyPatch(
-                operations.filteredPatchFile,
-                pathToTarget, operations.rejectsFilteredFile, emptyPatch
+            // Create target variant specific patch that respects PCs and is split into line-sized changes
+            val splitAndFilteredPatch = getSplitAndFilteredDiff(
+                originalPatch,
+                groundTruthV0[source]!!.variant(),
+                groundTruthV1[source]!!.variant(), target,
+                operations.variantsDirV0.path(), operations.variantsDirV1.path()
             )
+            saveDiff(splitAndFilteredPatch, operations.splitAndFilteredPatchFile)
+
+            // Apply the filtered patch to the target variant, if there are changes left
+            resetPatchDirectory(pathToTarget)
+            val rejectsFiltered = if (splitAndFilteredPatch.content.isNotEmpty()) {
+                patcher.applyPatch(operations, source, target, true)
+            } else {
+                Rejects(ArrayList())
+            }
 
             // Gather the result
             val actualVsExpectedFiltered = getActualVsExpected(pathToExpectedResult, "filtered", target)
-            val rejectsFiltered = readRejects(operations.rejectsFilteredFile, filteredPatch)
-            if (inDebug) {
+
+            patcher.clean(operations)
+
+            if (config.EXPERIMENT_DEBUG()) {
                 patchFilesDebug(
+                    patcher,
+                    originalPatch,
                     finePatch,
                     currentCommit,
                     source,
                     filteredPatch,
+                    splitAndFilteredPatch,
                     target,
                     rejectsNormal,
                     rejectsFiltered,
@@ -371,7 +283,7 @@ class Task(
             }
 
             val requiredChanges = getRequiredChanges(
-                originalDiff,
+                originalPatch,
                 groundTruthV0[source]!!.variant(),
                 groundTruthV1[source]!!.variant(), target,
                 operations.variantsDirV0.path(), operations.variantsDirV1.path()
@@ -381,13 +293,15 @@ class Task(
             val patchOutcome = ResultAnalysis.processOutcome(
                 operations,
                 datasetName, runID, source.name, target.name,
-                parentCommit, currentCommit, finePatch, filteredPatch,
+                parentCommit, currentCommit, finePatch, splitAndFilteredPatch,
                 requiredChanges,
                 actualVsExpectedNormal, actualVsExpectedFiltered, rejectsNormal,
-                rejectsFiltered, evolutionDiff, skippedNormal, skippedFiltered
+                rejectsFiltered, evolutionDiff
             )
+
+            val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")
             try {
-                patchOutcome.writeAsJSON(resultsFile, true)
+                patchOutcome.writeAsJSON(resultFile, true)
             } catch (e: IOException) {
                 panic(
                     "Was not able to write filtered patch result file for run "
@@ -401,34 +315,63 @@ class Task(
         }
     }
 
+    private fun resetPatchDirectory(pathToTarget: Path?) {
+        // Clean patch directory
+        if (Files.exists(operations.patchDir.toAbsolutePath())) {
+            operations.shell.execute(RmCommand(operations.patchDir.toAbsolutePath()).recursive())
+        }
+        try {
+            Files.createDirectories(operations.patchDir.parent)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            panic("Was not able to create patch directories: ", e)
+        }
+
+        // copy target variant
+        operations.shell.execute(CpCommand(pathToTarget, operations.patchDir).recursive())
+            .expect("Was not able to copy variant $pathToTarget")
+    }
+
     private fun Task.patchFilesDebug(
-        normalPatch: FineDiff,
+        patcher: Patcher,
+        originalPatch: OriginalDiff,
+        splitPatch: FineDiff,
         currentCommit: SPLCommit,
         source: Variant,
-        filteredPatch: FineDiff,
+        filteredPatch: OriginalDiff,
+        splitAndFilteredPatch: FineDiff,
         target: Variant,
-        rejectsNormal: FineDiff,
-        rejectsFiltered: FineDiff,
+        rejectsNormal: Rejects,
+        rejectsFiltered: Rejects,
         evolutionDiff: FineDiff
     ) {
         saveDiff(
-            normalPatch,
-            operations.debugDir(currentCommit).resolve(source.name + "_to_any_patch_normal.diff")
+            splitPatch,
+            operations.debugDir(currentCommit).resolve(source.name + "_split.diff")
+        )
+        saveDiff(
+            splitAndFilteredPatch,
+            operations.debugDir(currentCommit).resolve(target.name)
+                .resolve(source.name + "_to_" + target.name + "_split_filtered.diff")
+        )
+        saveDiff(
+            originalPatch,
+            operations.debugDir(currentCommit).resolve(source.name + ".diff")
         )
         saveDiff(
             filteredPatch,
             operations.debugDir(currentCommit).resolve(target.name)
-                .resolve(source.name + "_to_" + target.name + "_patch_filtered.diff")
+                .resolve(source.name + "_to_" + target.name + "_filtered.diff")
         )
-        saveDiff(
+        saveRejects(
             rejectsNormal,
             operations.debugDir(currentCommit).resolve(target.name)
-                .resolve(target.name + "_rejects_normal.diff")
+                .resolve(target.name + "_rejects_normal_${patcher.name()}.diff")
         )
-        saveDiff(
+        saveRejects(
             rejectsFiltered,
             operations.debugDir(currentCommit).resolve(target.name)
-                .resolve(target.name + "_rejects_filtered.diff")
+                .resolve(target.name + "_rejects_filtered_${patcher.name()}.diff")
         )
         operations.debugDir(currentCommit).resolve(target.name).toFile().mkdirs()
         saveDiff(
@@ -493,7 +436,7 @@ class Task(
      */
     private fun getActualVsExpected(pathToExpectedResult: Path, filePostfix: String, target: Variant): FineDiff {
         val resultDiff = getOriginalDiff(operations.patchDir, pathToExpectedResult)
-        if (inDebug) {
+        if (config.EXPERIMENT_DEBUG()) {
             try {
                 Files.write(
                     operations.debugDir(currentCommit!!).resolve(target.name)
@@ -504,7 +447,7 @@ class Task(
                 Logger.error("Was not able to save resultDiffOriginal:\n{}", e)
             }
         }
-        return getFineDiff(resultDiff)
+        return getFineDiff(operations.workDir, resultDiff)
     }
 
     /**
@@ -520,12 +463,12 @@ class Task(
             currentModel = commit.featureModel().run().orElseThrow()
             featureModelDebug(currentModel)
         }
-        return sampler.sample(currentModel)
+        return FeatureIDESampler.CreateRandomSampler(this.config.EXPERIMENT_VARIANT_COUNT()).sample(currentModel)
     }
 
     // Save the features in the feature models
     private fun featureModelDebug(model: IFeatureModel?) {
-        if (inDebug) {
+        if (config.EXPERIMENT_DEBUG()) {
             try {
                 Files.write(
                     operations.debugDir(currentCommit!!).resolve("features.txt"), model!!.features.stream()
@@ -544,7 +487,7 @@ class Task(
         groundTruthV1: MutableMap<Variant, GroundTruth>, variant: Variant
     ) {
         Logger.debug("Generating variant " + variant.name)
-        if (inDebug && variant.configuration is FeatureIDEConfiguration) {
+        if (config.EXPERIMENT_DEBUG() && variant.configuration is FeatureIDEConfiguration) {
             val config = variant.configuration as FeatureIDEConfiguration
             val p = operations.debugDir(currentCommit).resolve("configs")
             p.toFile().mkdirs()
@@ -590,7 +533,7 @@ class Task(
 
         }
 
-        if (inDebug) {
+        if (config.EXPERIMENT_DEBUG()) {
             try {
                 val p = operations.debugDir(currentCommit)
                     .resolve("PCs")
@@ -629,7 +572,7 @@ class Task(
             )
             throw VariantGenerationException(gtV1.failure)
         }
-        if (inDebug) {
+        if (config.EXPERIMENT_DEBUG()) {
             try {
                 val p = operations.debugDir(currentCommit)
                     .resolve("PCs")
@@ -704,6 +647,16 @@ class Task(
     }
 
     // Save the difference as a patch file
+    private fun saveRejects(rejects: Rejects, file: Path) {
+        // Save the fine diff to a file
+        try {
+            Files.write(file, rejects.toLines())
+        } catch (e: IOException) {
+            panic("Was not able to save diff to file $file")
+        }
+    }
+
+    // Save the difference as a patch file
     private fun saveDiff(fineDiff: OriginalDiff, file: Path) {
         // Save the fine diff to a file
         try {
@@ -713,95 +666,17 @@ class Task(
         }
     }
 
-    // Apply a patch file to a target variant using mpatch
-    private fun applyMPatch(
-        patchFile: Path, sourceVariant: Path, targetVariant: Path, rejectFile: Path
-    ): Set<String> {
-        val patchCommand = MPatchCommand.Recommended(sourceVariant, patchFile).strip(2)
-            .rejectsFile(rejectFile)
-        return applyPatch(patchCommand, patchFile, targetVariant, rejectFile, false)
-    }
-
-    // Apply a patch file to a target variant using mpatch
-    private fun applyMPatch(
-        patchFile: Path, sourceVariant: Path, targetVariant: Path, rejectFile: Path, emptyPatch: Boolean
-    ): Set<String> {
-        val patchCommand = MPatchCommand.Recommended(sourceVariant, patchFile).strip(2)
-            .rejectsFile(rejectFile)
-        return applyPatch(patchCommand, patchFile, targetVariant, rejectFile, emptyPatch)
-    }
-
-    // Apply a patch file to a target variant using Unix patch
-    private fun applyPatch(
-        patchFile: Path, targetVariant: Path, rejectFile: Path
-    ): Set<String> {
-        val patchCommand = PatchCommand.Recommended(patchFile).strip(2)
-            .rejectFile(rejectFile).force().ignoreWhitespace()
-        return applyPatch(patchCommand, patchFile, targetVariant, rejectFile, false)
-    }
-
-    // Apply a patch file to a target variant using Unix patch
-    private fun applyPatch(
-        patchFile: Path, targetVariant: Path, rejectFile: Path, emptyPatch: Boolean
-    ): Set<String> {
-        val patchCommand = PatchCommand.Recommended(patchFile).strip(2)
-            .rejectFile(rejectFile).force().ignoreWhitespace()
-        return applyPatch(patchCommand, patchFile, targetVariant, rejectFile, emptyPatch)
-    }
-
-    // Apply a patch file to a target variant
-    private fun applyPatch(
-        patchCommand: ShellCommand,
-        patchFile: Path, targetVariant: Path,
-        rejectFile: Path, emptyPatch: Boolean
-    ): Set<String> {
-        // Clean patch directory
-        if (Files.exists(operations.patchDir.toAbsolutePath())) {
-            operations.shell.execute(RmCommand(operations.patchDir.toAbsolutePath()).recursive())
-        }
-        try {
-            Files.createDirectories(operations.patchDir.parent)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            panic("Was not able to create patch directories: ", e)
-        }
-        if (Files.exists(rejectFile)) {
-            Logger.debug("Cleaning old rejects file $rejectFile")
-            operations.shell.execute(RmCommand(rejectFile))
-        }
-
-        // copy target variant
-        operations.shell.execute(CpCommand(targetVariant, operations.patchDir).recursive())
-            .expect("Was not able to copy variant $targetVariant")
-
-        // apply patch to copied target variant
-        val skipped: MutableSet<String> = HashSet()
-        if (!emptyPatch) {
-            val result = operations.shell.execute(
-                patchCommand,
-                operations.patchDir
-            )
-            if (result.isSuccess) {
-                result.success.forEach(Consumer { message: String? -> Logger.debug(message) })
-            } else {
-                val lines = result.failure.output
-                Logger.debug("Failed to apply part of patch. See debug log and rejects file for more information")
-                var oldFile: String
-                for (nextLine in lines) {
-                    Logger.debug(nextLine)
-                    if (nextLine.startsWith("|---")) {
-                        oldFile = nextLine.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
-                        skipped.add(oldFile)
-                    }
-                }
-            }
-        }
-        return skipped
-    }
-
-    private fun getFineDiff(originalDiff: OriginalDiff): FineDiff {
-        val contextProvider = DefaultContextProvider(operations.workDir)
-        return DiffSplitter.split(originalDiff, contextProvider)
+    // Get the filtered line-level patches for a given difference
+    private fun getSplitAndFilteredDiff(
+        originalDiff: OriginalDiff,
+        tracesV0: Artefact,
+        tracesV1: Artefact,
+        target: Variant,
+        oldVersionRoot: Path,
+        newVersionRoot: Path
+    ): FineDiff {
+        val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, 2)
+        return getSplitAndFilteredDiff(originalDiff, cachedPCBasedFilter, false)
     }
 
     // Get the filtered line-level patches for a given difference
@@ -812,9 +687,20 @@ class Task(
         target: Variant,
         oldVersionRoot: Path,
         newVersionRoot: Path
-    ): FineDiff {
+    ): OriginalDiff {
         val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, 2)
-        return getFilteredDiff(originalDiff, cachedPCBasedFilter, false)
+        val filteredDiffs = ArrayList<FileDiff>()
+        for (fileDiff in originalDiff.fileDiffs) {
+            if (cachedPCBasedFilter.keepFileDiff(fileDiff)) {
+
+
+                filteredDiffs.add(fileDiff)
+            }
+        }
+
+
+
+        TODO("Not implemented")
     }
 
     // Get the filtered line-level patches for a given difference
@@ -827,12 +713,12 @@ class Task(
         newVersionRoot: Path
     ): CountingMap<Change> {
         val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, 2)
-        val fineDiff = getFilteredDiff(originalDiff, cachedPCBasedFilter, true)
+        val fineDiff = getSplitAndFilteredDiff(originalDiff, cachedPCBasedFilter, true)
         return CountingMap(fineDiff.intoChanges())
     }
 
     // Get the filtered line-level patches for a given difference
-    private fun <T> getFilteredDiff(
+    private fun <T> getSplitAndFilteredDiff(
         originalDiff: OriginalDiff,
         filter: T,
         filterDisabled: Boolean,
@@ -855,65 +741,6 @@ class Task(
         return DiffParser.toOriginalDiff(output)
     }
 
-    // Abort the program
-    private fun panic(message: String) {
-        Logger.error(message)
-        throw Panic(message)
-    }
-
-    // Abort the program
-    private fun panic(message: String, e: Exception) {
-        Logger.error(message)
-        Logger.error(e.message)
-        Logger.error(e)
-        e.printStackTrace()
-        throw Panic(message)
-    }
-
-    // Read a rejects file
-    private fun readRejects(rejectFile: Path, patch: FineDiff): FineDiff {
-        var rejectsDiff: OriginalDiff? = null
-        if (Files.exists(rejectFile)) {
-            try {
-                val rejects = Files.readAllLines(rejectFile)
-                rejectsDiff = DiffParser.toOriginalDiff(rejects)
-            } catch (e: IOException) {
-                panic("Was not able to read rejects file.", e)
-            }
-        }
-        val result: FineDiff =
-            if (rejectsDiff == null) {
-                FineDiff(ArrayList())
-            } else {
-                getFineDiff(rejectsDiff)
-            }
-
-        if (operations.appliedPatchTracker.hasAnyError()) {
-            Logger.error("patch that caused the error: {}", patch.content()[operations.appliedPatchTracker.patchId]);
-        }
-        if (operations.appliedPatchTracker.hasCriticalError()) {
-            // There was a critical error due to a bug in patch
-            // We have to read which file caused the error from our tracker, and then add all patches that came afterward
-            // to the rejects, because patching was aborted
-            val file = operations.appliedPatchTracker.lastPatchTarget()
-            var afterError = false
-            for (fd in patch.content) {
-                if (fd.oldFile.endsWith(file)) {
-                    afterError = true;
-                }
-                if (afterError) {
-                    result.content.add(fd)
-                }
-            }
-        }
-        if (operations.appliedPatchTracker.hasNormalError()) {
-            // A normal error causes only the problematic patch to fail.
-            // We can add this patch to the rejects.
-            result.content.add(patch.content()[operations.appliedPatchTracker.patchId])
-        }
-        operations.appliedPatchTracker.reset()
-        return result
-    }
 
     private fun splPCDebug() {
         try {
@@ -961,4 +788,25 @@ class Task(
         )
             .expect("Was not able to copy variant $target.name")
     }
+}
+
+// Abort the program
+fun panic(message: String, e: Exception) {
+    Logger.error(message)
+    Logger.error(e.message)
+    Logger.error(e)
+    e.printStackTrace()
+    throw Panic(message)
+}
+
+// Abort the program
+fun panic(message: String) {
+    Logger.error(message)
+    throw Panic(message)
+}
+
+
+fun getFineDiff(workDir: Path, originalDiff: OriginalDiff): FineDiff {
+    val contextProvider = DefaultContextProvider(workDir)
+    return DiffSplitter.split(originalDiff, contextProvider)
 }

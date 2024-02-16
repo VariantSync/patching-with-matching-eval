@@ -7,6 +7,7 @@ import org.apache.commons.configuration2.builder.fluent.Parameters
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler
 import org.apache.commons.configuration2.ex.ConfigurationException
 import java.io.File
+import java.nio.file.Path
 
 /**
  * Determines the configuration of our study.
@@ -55,29 +56,29 @@ class StudyConfiguration(propertiesFile: File) {
     /**
      * @return The working directory
      */
-    fun EXPERIMENT_DIR_MAIN(): String {
-        return config!!.getString(EXPERIMENT_DIR_MAIN)
+    fun EXPERIMENT_DIR_MAIN(): Path {
+        return Path.of(config!!.getString(EXPERIMENT_DIR_MAIN))
     }
 
     /**
      * @return The root directory of the ground truth
      */
-    fun EXPERIMENT_DIR_GROUND_TRUTH(): String {
-        return config!!.getString(EXPERIMENT_DIR_GROUND_TRUTH)
+    fun EXPERIMENT_DIR_GROUND_TRUTH(): Path {
+        return Path.of(config!!.getString(EXPERIMENT_DIR_GROUND_TRUTH))
     }
 
     /**
      * @return The directory to which the repositories specified in the dataset file are cloned to
      */
-    fun EXPERIMENT_DIR_REPOS(): String {
-        return config!!.getString(EXPERIMENT_DIR_REPOS);
+    fun EXPERIMENT_DIR_REPOS(): Path {
+        return Path.of(config!!.getString(EXPERIMENT_DIR_REPOS))
     }
 
     /**
      * @return The file with the list of datasets in Markdown format
      */
-    fun EXPERIMENT_DATASETS(): String {
-        return config!!.getString(EXPERIMENT_DATASETS)
+    fun EXPERIMENT_DATASETS(): Path {
+        return Path.of(config!!.getString(EXPERIMENT_DATASETS))
     }
 
     /**
@@ -99,8 +100,8 @@ class StudyConfiguration(propertiesFile: File) {
     /**
      * @return The path to the results directory
      */
-    fun EXPERIMENT_DIR_RESULTS(): String {
-        return config!!.getString(EXPERIMENT_DIR_RESULTS)
+    fun EXPERIMENT_DIR_RESULTS(): Path {
+        return Path.of(config!!.getString(EXPERIMENT_DIR_RESULTS))
     }
 
     /**

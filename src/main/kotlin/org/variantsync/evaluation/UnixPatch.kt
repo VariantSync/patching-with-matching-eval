@@ -1,0 +1,149 @@
+package org.variantsync.evaluation
+
+import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.baseline.diff.DiffParser
+import org.variantsync.evaluation.baseline.diff.components.FineDiff
+import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
+import org.variantsync.evaluation.baseline.shell.PatchCommand
+import org.variantsync.evaluation.common.Change
+import org.variantsync.evaluation.common.Rejects
+import org.variantsync.evaluation.error.ShellException
+import org.variantsync.vevos.simulation.feature.Variant
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.util.function.Consumer
+
+class UnixPatch : Patcher {
+    override fun applyPatch(
+        operations: Operations,
+        sourceVariant: Variant,
+        targetVariant: Variant,
+        withFiler: Boolean,
+    ): Rejects {
+        val rejectFile = if (withFiler) {
+            operations.rejectsFileFiltered
+        } else {
+            operations.rejectsFile
+        }
+
+        val pathToPatchFile = if (withFiler) {
+            operations.splitAndFilteredPatchFile
+        } else {
+            operations.splitPatchFile
+        }
+
+        val patch = getFineDiff(operations.workDir, DiffParser.toOriginalDiff(Files.readAllLines(pathToPatchFile)))
+
+        if (!Files.exists(pathToPatchFile)) {
+            // If there is nothing to patch, there is nothing to reject
+            return Rejects(ArrayList())
+        }
+
+        // apply patch to target variant
+        val patchCommand = PatchCommand.Recommended(pathToPatchFile).strip(2)
+            .rejectFile(rejectFile).force().ignoreWhitespace()
+        val result = operations.shell.execute(
+            patchCommand,
+            operations.patchDir
+        )
+
+        val rejects = Rejects(ArrayList())
+        if (result.isSuccess) {
+            result.success.forEach(Consumer { message: String? -> Logger.debug(message) })
+        } else {
+            rejects.rejects.addAll(readRejectsFromOutput(result.failure, patch).rejects)
+        }
+
+        rejects.rejects.addAll(readRejectsFromFile(operations, rejectFile, patch).rejects)
+
+        return rejects
+    }
+
+    private fun readRejectsFromOutput(
+        patchError: ShellException,
+        patch: FineDiff,
+    ): Rejects {
+        // Handle rejects
+        val skippedFiles: MutableSet<String> = HashSet()
+        val lines = patchError.output
+        Logger.debug("Failed to apply part of patch. See debug log and rejects file for more information")
+        var oldFile: String
+        for (nextLine in lines) {
+            Logger.debug(nextLine)
+            if (nextLine.startsWith("|---")) {
+                oldFile = nextLine.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+                skippedFiles.add(oldFile)
+            }
+        }
+
+        val rejects = ArrayList<Change>()
+        // Add all rejects determined from the output
+        try {
+            for (change in patch.intoChanges()) {
+                if (skippedFiles.contains(change.path.toString())) {
+                    rejects.add(change)
+                    skippedFiles.remove(change.path.toString())
+                }
+            }
+        } catch (e: IOException) {
+            panic("Was not able to read patch file.", e)
+        }
+
+        if (skippedFiles.isNotEmpty()) {
+            panic("Not all skipped files processed!")
+        }
+
+        return Rejects(rejects)
+    }
+
+    override fun name(): String {
+        return "unix_patch"
+    }
+
+    // Read a rejects file
+    private fun readRejectsFromFile(operations: Operations, rejectFile: Path, patch: FineDiff): Rejects {
+        var rejectsDiff: OriginalDiff? = null
+        if (Files.exists(rejectFile)) {
+            try {
+                val rejects = Files.readAllLines(rejectFile)
+                rejectsDiff = DiffParser.toOriginalDiff(rejects)
+            } catch (e: IOException) {
+                panic("Was not able to read rejects file.", e)
+            }
+        }
+        val result: FineDiff =
+            if (rejectsDiff == null) {
+                FineDiff(ArrayList())
+            } else {
+                getFineDiff(operations.workDir, rejectsDiff)
+            }
+
+        if (operations.appliedPatchTracker.hasAnyError()) {
+            Logger.error("patch that caused the error: {}", patch.content()[operations.appliedPatchTracker.patchId])
+        }
+        if (operations.appliedPatchTracker.hasCriticalError()) {
+            // There was a critical error due to a bug in patch
+            // We have to read which file caused the error from our tracker, and then add all patches that came afterward
+            // to the rejects, because patching was aborted
+            val file = operations.appliedPatchTracker.lastPatchTarget()
+            var afterError = false
+            for (fd in patch.content) {
+                if (fd.oldFile.endsWith(file)) {
+                    afterError = true
+                }
+                if (afterError) {
+                    result.content.add(fd)
+                }
+            }
+        }
+        if (operations.appliedPatchTracker.hasNormalError()) {
+            // A normal error causes only the problematic patch to fail.
+            // We can add this patch to the rejects.
+            result.content.add(patch.content()[operations.appliedPatchTracker.patchId])
+        }
+        operations.appliedPatchTracker.reset()
+
+        return Rejects(result.intoChanges())
+    }
+}
