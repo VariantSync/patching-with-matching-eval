@@ -227,6 +227,9 @@ object ResultAnalysis {
         val accumulatedOutcome = loadResultObjects(resultFile)
         sb.append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
+        sb.append("File: ").append(fileName).append(LINE_SEP)
+        sb.append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
         sb.append("Patch Success").append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         printTechnicalSuccess(sb, accumulatedOutcome)
@@ -244,7 +247,6 @@ object ResultAnalysis {
         filteredTN += accumulatedOutcome.filteredResult.mitigatedInvalid.v
         var filteredFN: Long = accumulatedOutcome.filteredResult.wrongLocation.v
         filteredFN += accumulatedOutcome.filteredResult.missing.v
-        sb.append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         sb.append("Correctness").append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
@@ -271,6 +273,8 @@ object ResultAnalysis {
         sb.append(DIV).append(LINE_SEP)
         printAccuracy(sb, normalTP, normalFP, normalTN, normalFN, "Normal")
         printAccuracy(sb, filteredTP, filteredFP, filteredTN, filteredFN, "Filtered")
+        sb.append(DIV).append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         print(sb)
         Files.writeString(resultSummaryFile, sb)

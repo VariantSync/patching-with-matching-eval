@@ -1,7 +1,10 @@
 package org.variantsync.evaluation.baseline.diff.filter;
 
 import org.tinylog.Logger;
-import org.variantsync.evaluation.baseline.diff.components.*;
+import org.variantsync.evaluation.baseline.diff.components.FileDiff;
+import org.variantsync.evaluation.baseline.diff.components.Hunk;
+import org.variantsync.evaluation.baseline.diff.components.HunkLocation;
+import org.variantsync.evaluation.baseline.diff.components.OriginalDiff;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
@@ -19,7 +22,7 @@ public class DiffFilter {
      * @param lineFilter   A line filter that determines whether changes to certain lines are to be kept
      * @return The filtered diff
      */
-    public static FineDiff filter(final OriginalDiff originalDiff, IFileDiffFilter fileFilter, ILineFilter lineFilter) {
+    public static OriginalDiff filter(final OriginalDiff originalDiff, IFileDiffFilter fileFilter, ILineFilter lineFilter) {
         fileFilter = fileFilter == null ? new DefaultFileDiffFilter() : fileFilter;
         lineFilter = lineFilter == null ? new DefaultLineFilter() : lineFilter;
 
@@ -41,7 +44,7 @@ public class DiffFilter {
             }
         }
 
-        return new FineDiff(filteredFileDiffs);
+        return new OriginalDiff(filteredFileDiffs);
     }
 
     // Filter the hunks in the given FileDiff depending on the

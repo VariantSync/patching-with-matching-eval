@@ -4,10 +4,10 @@ import de.ovgu.featureide.fm.core.base.IFeature
 import de.ovgu.featureide.fm.core.base.IFeatureModel
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.baseline.diff.DiffParser
-import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.diff.filter.CachedPCBasedFilter
+import org.variantsync.evaluation.baseline.diff.filter.DiffFilter
 import org.variantsync.evaluation.baseline.diff.filter.IFileDiffFilter
 import org.variantsync.evaluation.baseline.diff.filter.ILineFilter
 import org.variantsync.evaluation.baseline.diff.splitting.DefaultContextProvider
@@ -689,18 +689,7 @@ class Task(
         newVersionRoot: Path
     ): OriginalDiff {
         val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, 2)
-        val filteredDiffs = ArrayList<FileDiff>()
-        for (fileDiff in originalDiff.fileDiffs) {
-            if (cachedPCBasedFilter.keepFileDiff(fileDiff)) {
-
-
-                filteredDiffs.add(fileDiff)
-            }
-        }
-
-
-
-        TODO("Not implemented")
+        return DiffFilter.filter(originalDiff, cachedPCBasedFilter, cachedPCBasedFilter)
     }
 
     // Get the filtered line-level patches for a given difference

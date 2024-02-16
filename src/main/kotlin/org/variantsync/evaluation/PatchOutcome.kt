@@ -87,6 +87,9 @@ class PatchOutcome
         jsonBuilder.append(toJSON("filteredMitigatedMissing", filteredResult.mitigatedMissing.v)).append("\n")
         jsonBuilder.append("}").append("\n\n")
 
+        if (Files.notExists(pathToFile)) {
+            Files.createFile(pathToFile)
+        }
         if (append) {
             Files.writeString(pathToFile, jsonBuilder.toString(), StandardOpenOption.APPEND)
         } else {

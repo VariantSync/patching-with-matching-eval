@@ -4,6 +4,7 @@ import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.shell.MPatchCommand
+import org.variantsync.evaluation.baseline.shell.ShellExecutor
 import org.variantsync.evaluation.common.Rejects
 import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException
@@ -44,7 +45,8 @@ class MPatch : Patcher {
             .rejectsFile(rejectFile)
 
         // apply patch to target variant
-        val result = operations.shell.execute(
+        val customShell = ShellExecutor(Logger::debug, Logger::warn, operations.workDir)
+        val result = customShell.execute(
             patchCommand,
             operations.patchDir
         )
