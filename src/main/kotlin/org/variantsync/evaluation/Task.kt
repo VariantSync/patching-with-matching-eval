@@ -755,6 +755,7 @@ class Task(
     }
 
     private fun targetFilesNormalDebug(target: Variant, pathToTarget: Path, pathToExpectedResult: Path) {
+        operations.debugDir(currentCommit!!).resolve(target.name).toFile().mkdirs()
         operations.shell.execute(
             CpCommand(
                 pathToTarget,
