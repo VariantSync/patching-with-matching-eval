@@ -1,7 +1,6 @@
 package org.variantsync.evaluation.common
 
 import org.variantsync.evaluation.baseline.diff.components.Hunk
-import org.variantsync.evaluation.baseline.diff.components.HunkLocation
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
 import org.variantsync.evaluation.baseline.diff.lines.Line
@@ -47,5 +46,21 @@ class Change(val lineChange: Line, val hunk: Hunk, val path: Path) {
         val location = this.hunk.location()
         val h = Hunk(location, location, this.hunk.content())
         return Change(this.lineChange, h, this.path)
+    }
+
+    override fun toString(): String {
+        val sb = StringBuilder()
+        sb.appendLine(this.path)
+        sb.appendLine(
+            String.format(
+                "@@ -%d,%d +%d,%d @@",
+                this.hunk.rawLocation().startLineSource,
+                1,
+                this.hunk.rawLocation().startLineTarget,
+                1
+            )
+        )
+        sb.appendLine(this.lineChange)
+        return super.toString()
     }
 }
