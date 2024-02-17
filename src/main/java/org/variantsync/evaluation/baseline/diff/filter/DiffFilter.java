@@ -6,6 +6,7 @@ import org.variantsync.evaluation.baseline.diff.components.Hunk;
 import org.variantsync.evaluation.baseline.diff.components.HunkLocation;
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
+import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
 
@@ -63,6 +64,9 @@ public class DiffFilter {
                     if (lineFilter.keepLineChange(fileDiff.oldFile(), hunk.location().startLineSource() + oldIndex)) {
                         filteredLines.add(line);
                         atLeastOneChange = true;
+                    } else {
+                        // Instead of removing the line completely, add it as context line so that the patch alignment does not break
+                        filteredLines.add(new ContextLine(" " + line.line().substring(1)));
                     }
                     oldIndex++;
                 } else if (line instanceof AddedLine) {
