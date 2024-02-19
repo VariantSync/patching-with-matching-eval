@@ -20,11 +20,6 @@ class MPatch : Patcher {
         targetVariant: Variant,
         withFiler: Boolean
     ): Rejects {
-        val rejectFile = if (withFiler) {
-            operations.rejectsFileFiltered
-        } else {
-            operations.rejectsFile
-        }
 
         val pathToPatchFile = if (withFiler) {
             operations.filteredPatchFile
@@ -32,13 +27,17 @@ class MPatch : Patcher {
             operations.patchFile
         }
 
-        val pathToSourceVariant = operations.variantsDirV0.resolve(sourceVariant.name).path
-
-        val patch = getFineDiff(operations.workDir, DiffParser.toOriginalDiff(Files.readAllLines(pathToPatchFile)))
-
         if (!Files.exists(pathToPatchFile)) {
             // If there is nothing to patch, there is nothing to reject
             return Rejects(ArrayList())
+        }
+
+        val pathToSourceVariant = operations.variantsDirV0.resolve(sourceVariant.name).path
+
+        val rejectFile = if (withFiler) {
+            operations.rejectsFileFiltered
+        } else {
+            operations.rejectsFile
         }
 
         val patchCommand = MPatchCommand.Recommended(pathToSourceVariant, pathToPatchFile).strip(2)
@@ -58,7 +57,7 @@ class MPatch : Patcher {
             Logger.error("mpatch failed")
         }
 
-        rejects.rejects.addAll(readRejectsFromFile(rejectFile, patch).rejects)
+        rejects.rejects.addAll(readRejectsFromFile(operations, rejectFile, withFiler).rejects)
 
         return rejects
     }
@@ -68,7 +67,13 @@ class MPatch : Patcher {
     }
 
     // Read a rejects file
-    private fun readRejectsFromFile(rejectFile: Path, patch: FineDiff): Rejects {
+    private fun readRejectsFromFile(operations: Operations, rejectFile: Path, withFiler: Boolean): Rejects {
+        val pathToSplitPatchFile = if (withFiler) {
+            operations.splitAndFilteredPatchFile
+        } else {
+            operations.splitPatchFile
+        }
+        val patch = getFineDiff(operations.workDir, DiffParser.toOriginalDiff(Files.readAllLines(pathToSplitPatchFile)))
         if (Files.exists(rejectFile)) {
             try {
                 val rejects = Files.readAllLines(rejectFile)

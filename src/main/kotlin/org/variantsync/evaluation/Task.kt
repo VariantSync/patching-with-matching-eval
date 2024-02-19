@@ -202,8 +202,8 @@ class Task(
 
         // Convert the original diff into a fine diff
         Logger.debug("Converting diff...")
-        val finePatch = getFineDiff(operations.workDir, originalPatch)
-        saveDiff(finePatch, operations.splitPatchFile)
+        val splitPatch = getFineDiff(operations.workDir, originalPatch)
+        saveDiff(splitPatch, operations.splitPatchFile)
         Logger.debug("Saved fine diff.")
 
         // For each target variant,
@@ -270,7 +270,7 @@ class Task(
                 patchFilesDebug(
                     patcher,
                     originalPatch,
-                    finePatch,
+                    splitPatch,
                     currentCommit,
                     source,
                     filteredPatch,
@@ -293,7 +293,7 @@ class Task(
             val patchOutcome = ResultAnalysis.processOutcome(
                 operations,
                 datasetName, runID, source.name, target.name,
-                parentCommit, currentCommit, finePatch, splitAndFilteredPatch,
+                parentCommit, currentCommit, splitPatch, splitAndFilteredPatch,
                 requiredChanges,
                 actualVsExpectedNormal, actualVsExpectedFiltered, rejectsNormal,
                 rejectsFiltered, evolutionDiff
