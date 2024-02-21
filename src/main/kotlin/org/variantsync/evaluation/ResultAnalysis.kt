@@ -205,17 +205,24 @@ object ResultAnalysis {
         }
         val config = StudyConfiguration(File(args[0]))
         val resultsDir = config.EXPERIMENT_DIR_RESULTS()
+        val resultFiles = ArrayList<Path>()
         Files.list(resultsDir).use { files ->
             files.filter { f: Path ->
                 val fileName = f.fileName.toString()
                 fileName.endsWith(".results")
             }.forEach { f: Path ->
                 try {
-                    analyze(f)
+                    resultFiles.add(f)
                 } catch (e: IOException) {
                     throw UncheckedIOException(e)
                 }
             }
+        }
+
+        resultFiles.sort()
+
+        for (path in resultFiles) {
+            analyze(path)
         }
     }
 
