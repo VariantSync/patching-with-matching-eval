@@ -65,14 +65,20 @@ class UnixPatch : Patcher {
         patch: FineDiff,
     ): Rejects {
         // Handle rejects
-        val skippedFiles: MutableSet<String> = HashSet()
+        val skippedFiles: MutableSet<Path> = HashSet()
         val lines = patchError.output
         Logger.debug("Failed to apply part of patch. See debug log and rejects file for more information")
-        var oldFile: String
+        var oldFile: Path
         for (nextLine in lines) {
             Logger.debug(nextLine)
             if (nextLine.startsWith("|---")) {
-                oldFile = nextLine.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+                oldFile = Path.of(nextLine.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1])
+                oldFile =
+                    if ((oldFile.startsWith("V0Variants") || oldFile.startsWith("V1Variants") || oldFile.startsWith(
+                            "TARGET"
+                        ))
+                    ) oldFile.subpath(2, oldFile.nameCount)
+                    else oldFile
                 skippedFiles.add(oldFile)
             }
         }
@@ -81,9 +87,9 @@ class UnixPatch : Patcher {
         // Add all rejects determined from the output
         try {
             for (change in patch.intoChanges()) {
-                if (skippedFiles.contains(change.path.toString())) {
+                if (skippedFiles.contains(change.path)) {
                     rejects.add(change)
-                    skippedFiles.remove(change.path.toString())
+                    skippedFiles.remove(change.path)
                 }
             }
         } catch (e: IOException) {
@@ -91,6 +97,9 @@ class UnixPatch : Patcher {
         }
 
         if (skippedFiles.isNotEmpty()) {
+            for (file in skippedFiles) {
+                Logger.error(file)
+            }
             panic("Not all skipped files processed!")
         }
 
