@@ -37,7 +37,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.stream.Collectors
 
-class Task(
+class VEVOSEvalTask(
     private val config: StudyConfiguration,
     private val datasetName: String, private val repositoryPath: Path, private val commits: List<SPLCommit>,
 ) : Runnable {
@@ -332,7 +332,7 @@ class Task(
             .expect("Was not able to copy variant $pathToTarget")
     }
 
-    private fun Task.patchFilesDebug(
+    private fun VEVOSEvalTask.patchFilesDebug(
         patcher: Patcher,
         originalPatch: OriginalDiff,
         splitPatch: FineDiff,

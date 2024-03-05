@@ -27,7 +27,7 @@ class SynchronizationStudy(
     private val groundTruthPath: Path
 
     // The study tasks that are to be executed in parallel
-    private val tasks: MutableList<Task>
+    private val VEVOSEvalTasks: MutableList<VEVOSEvalTask>
     private val numThreads: Int
 
     /**
@@ -40,13 +40,13 @@ class SynchronizationStudy(
         this.groundTruthPath = groundTruthPath
         this.numThreads = config.EXPERIMENT_THREAD_COUNT()
         val history = init()
-        tasks = ArrayList()
+        VEVOSEvalTasks = ArrayList()
         val clusterSize = ceil(history.size.toDouble() / numThreads).toInt()
         val commitClusterIterator = ClusteredIterator(history.iterator(), clusterSize)
         while (commitClusterIterator.hasNext()) {
             val commits = commitClusterIterator.next()
-            tasks.add(
-                Task(config, datasetName, repositoryPath, commits)
+            VEVOSEvalTasks.add(
+                VEVOSEvalTask(config, datasetName, repositoryPath, commits)
             )
         }
     }
@@ -56,8 +56,8 @@ class SynchronizationStudy(
      */
     fun run() {
         val threadPool = Executors.newFixedThreadPool(numThreads)
-        val futures = tasks.stream()
-            .map { runnable: Task -> threadPool.submit(runnable) }
+        val futures = VEVOSEvalTasks.stream()
+            .map { runnable: VEVOSEvalTask -> threadPool.submit(runnable) }
             .collect(Collectors.toList())
         threadPool.shutdown()
         for (future in futures) {
