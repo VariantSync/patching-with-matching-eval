@@ -1,13 +1,14 @@
-package org.variantsync.evaluation
+package org.variantsync.evaluation.patching
 
 import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.Operations
 import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.PatchCommand
-import org.variantsync.evaluation.common.Change
-import org.variantsync.evaluation.common.Rejects
 import org.variantsync.evaluation.error.ShellException
+import org.variantsync.evaluation.vevos.getFineDiff
+import org.variantsync.evaluation.vevos.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException
 import java.nio.file.Files
@@ -16,24 +17,24 @@ import java.util.function.Consumer
 
 class UnixPatch : Patcher {
     override fun applyPatch(
-        operations: VEVOSOperations,
+        operations: Operations,
         sourceVariant: Variant,
         targetVariant: Variant,
         withFiler: Boolean,
     ): Rejects {
         val rejectFile = if (withFiler) {
-            operations.rejectsFileFiltered
+            operations.rejectsFileFiltered()
         } else {
-            operations.rejectsFile
+            operations.rejectsFile()
         }
 
         val pathToPatchFile = if (withFiler) {
-            operations.splitAndFilteredPatchFile
+            operations.splitAndFilteredPatchFile()
         } else {
-            operations.splitPatchFile
+            operations.splitPatchFile()
         }
 
-        val patch = getFineDiff(operations.workDir, DiffParser.toOriginalDiff(Files.readAllLines(pathToPatchFile)))
+        val patch = getFineDiff(operations.workDir(), DiffParser.toOriginalDiff(Files.readAllLines(pathToPatchFile)))
 
         if (!Files.exists(pathToPatchFile)) {
             // If there is nothing to patch, there is nothing to reject
@@ -43,9 +44,9 @@ class UnixPatch : Patcher {
         // apply patch to target variant
         val patchCommand = PatchCommand.Recommended(pathToPatchFile).strip(2)
             .rejectFile(rejectFile).force().ignoreWhitespace()
-        val result = operations.shell.execute(
+        val result = operations.shell().execute(
             patchCommand,
-            operations.patchDir
+            operations.patchDir()
         )
 
         val rejects = Rejects(ArrayList())
@@ -111,7 +112,7 @@ class UnixPatch : Patcher {
     }
 
     // Read a rejects file
-    private fun readRejectsFromFile(operations: VEVOSOperations, rejectFile: Path, patch: FineDiff): Rejects {
+    private fun readRejectsFromFile(operations: Operations, rejectFile: Path, patch: FineDiff): Rejects {
         var rejectsDiff: OriginalDiff? = null
         if (Files.exists(rejectFile)) {
             try {
@@ -125,17 +126,17 @@ class UnixPatch : Patcher {
             if (rejectsDiff == null) {
                 FineDiff(ArrayList())
             } else {
-                getFineDiff(operations.workDir, rejectsDiff)
+                getFineDiff(operations.workDir(), rejectsDiff)
             }
 
-        if (operations.appliedPatchTracker.hasAnyError()) {
-            Logger.error("patch that caused the error: {}", patch.content()[operations.appliedPatchTracker.patchId])
+        if (operations.appliedPatchTracker().hasAnyError()) {
+            Logger.error("patch that caused the error: {}", patch.content()[operations.appliedPatchTracker().patchId])
         }
-        if (operations.appliedPatchTracker.hasCriticalError()) {
+        if (operations.appliedPatchTracker().hasCriticalError()) {
             // There was a critical error due to a bug in patch
             // We have to read which file caused the error from our tracker, and then add all patches that came afterward
             // to the rejects, because patching was aborted
-            val file = operations.appliedPatchTracker.lastPatchTarget()
+            val file = operations.appliedPatchTracker().lastPatchTarget()
             var afterError = false
             for (fd in patch.content) {
                 if (fd.oldFile.endsWith(file)) {
@@ -146,12 +147,12 @@ class UnixPatch : Patcher {
                 }
             }
         }
-        if (operations.appliedPatchTracker.hasNormalError()) {
+        if (operations.appliedPatchTracker().hasNormalError()) {
             // A normal error causes only the problematic patch to fail.
             // We can add this patch to the rejects.
-            result.content.add(patch.content()[operations.appliedPatchTracker.patchId])
+            result.content.add(patch.content()[operations.appliedPatchTracker().patchId])
         }
-        operations.appliedPatchTracker.reset()
+        operations.appliedPatchTracker().reset()
 
         return Rejects(result.intoChanges())
     }

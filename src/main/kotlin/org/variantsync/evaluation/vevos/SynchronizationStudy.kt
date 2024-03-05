@@ -1,6 +1,7 @@
-package org.variantsync.evaluation
+package org.variantsync.evaluation.vevos
 
 import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.EvalConfig
 import org.variantsync.functjonal.iteration.ClusteredIterator
 import org.variantsync.vevos.simulation.io.Resources
 import org.variantsync.vevos.simulation.io.data.VariabilityDatasetLoader
@@ -18,7 +19,7 @@ import kotlin.math.ceil
  * This class contains the core workflow of our study as described in our paper.
  */
 class SynchronizationStudy(
-    config: StudyConfiguration,
+    config: EvalConfig,
     datasetName: String,
     repositoryPath: Path,
     groundTruthPath: Path

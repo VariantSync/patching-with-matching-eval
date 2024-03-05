@@ -4,12 +4,17 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.tinylog.kotlin.Logger.debug
 import org.variantsync.diffdetective.util.Assert
-import org.variantsync.evaluation.PatchOutcome.Companion.fromJSON
+import org.variantsync.evaluation.analysis.AccumulatedResult
+import org.variantsync.evaluation.analysis.CountingMap
+import org.variantsync.evaluation.analysis.EvaluationResult
+import org.variantsync.evaluation.analysis.EvaluationScenario
+import org.variantsync.evaluation.patching.PatchOutcome.Companion.fromJSON
 import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
-import org.variantsync.evaluation.common.Change
-import org.variantsync.evaluation.common.Rejects
+import org.variantsync.evaluation.patching.Change
+import org.variantsync.evaluation.patching.PatchOutcome
+import org.variantsync.evaluation.patching.Rejects
 import org.variantsync.vevos.simulation.variability.SPLCommit
 import java.io.File
 import java.io.IOException
@@ -47,7 +52,7 @@ object ResultAnalysis {
      * @return The patch outcome
      */
     fun processOutcome(
-        workdir: VEVOSOperations,
+        workdir: Operations,
         dataset: String, runID: ULong, sourceVariant: String,
         targetVariant: String, commitV0: SPLCommit, commitV1: SPLCommit,
         normalPatch: FineDiff, filteredPatch: FineDiff,
@@ -55,7 +60,7 @@ object ResultAnalysis {
         resultDiffNormal: FineDiff, resultDiffFiltered: FineDiff,
         rejectsNormal: Rejects, rejectsFiltered: Rejects, targetChanges: FineDiff
     ): PatchOutcome {
-        debug("Processing outcome of $runID for patch process in " + workdir.workDir)
+        debug("Processing outcome of $runID for patch process in " + workdir.workDir())
         // evaluate patch rejects
         // number of tried file-level patches
         val fileNormal = HashSet(
@@ -203,7 +208,7 @@ object ResultAnalysis {
                 "The first argument should provide the path to the configuration file that is to be used"
             )
         }
-        val config = StudyConfiguration(File(args[0]))
+        val config = EvalConfig(File(args[0]))
         val resultsDir = config.EXPERIMENT_DIR_RESULTS()
         val resultFiles = ArrayList<Path>()
         Files.list(resultsDir).use { files ->

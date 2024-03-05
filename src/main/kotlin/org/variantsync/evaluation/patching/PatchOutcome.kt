@@ -1,6 +1,8 @@
-package org.variantsync.evaluation
+package org.variantsync.evaluation.patching
 
 import com.google.gson.JsonObject
+import org.variantsync.evaluation.*
+import org.variantsync.evaluation.analysis.*
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path

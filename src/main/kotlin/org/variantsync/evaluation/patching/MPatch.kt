@@ -1,11 +1,13 @@
-package org.variantsync.evaluation
+package org.variantsync.evaluation.patching
 
 import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.Operations
 import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.shell.MPatchCommand
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
-import org.variantsync.evaluation.common.Rejects
+import org.variantsync.evaluation.vevos.getFineDiff
+import org.variantsync.evaluation.vevos.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException
 import java.nio.file.Files
@@ -15,16 +17,16 @@ import java.util.function.Consumer
 class MPatch : Patcher {
 
     override fun applyPatch(
-        operations: VEVOSOperations,
+        operations: Operations,
         sourceVariant: Variant,
         targetVariant: Variant,
         withFiler: Boolean
     ): Rejects {
 
         val pathToPatchFile = if (withFiler) {
-            operations.filteredPatchFile
+            operations.filteredPatchFile()
         } else {
-            operations.patchFile
+            operations.patchFile()
         }
 
         if (!Files.exists(pathToPatchFile)) {
@@ -32,22 +34,22 @@ class MPatch : Patcher {
             return Rejects(ArrayList())
         }
 
-        val pathToSourceVariant = operations.variantsDirV0.resolve(sourceVariant.name).path
+        val pathToSourceVariant = operations.sourceV0Path(sourceVariant.name)
 
         val rejectFile = if (withFiler) {
-            operations.rejectsFileFiltered
+            operations.rejectsFileFiltered()
         } else {
-            operations.rejectsFile
+            operations.rejectsFile()
         }
 
         val patchCommand = MPatchCommand.Recommended(pathToSourceVariant, pathToPatchFile).strip(2)
             .rejectsFile(rejectFile)
 
         // apply patch to target variant
-        val customShell = ShellExecutor(Logger::debug, Logger::warn, operations.workDir)
+        val customShell = ShellExecutor(Logger::debug, Logger::warn, operations.workDir())
         val result = customShell.execute(
             patchCommand,
-            operations.patchDir
+            operations.patchDir()
         )
 
         val rejects = Rejects(ArrayList())
@@ -67,13 +69,14 @@ class MPatch : Patcher {
     }
 
     // Read a rejects file
-    private fun readRejectsFromFile(operations: VEVOSOperations, rejectFile: Path, withFiler: Boolean): Rejects {
+    private fun readRejectsFromFile(operations: Operations, rejectFile: Path, withFiler: Boolean): Rejects {
         val pathToSplitPatchFile = if (withFiler) {
-            operations.splitAndFilteredPatchFile
+            operations.splitAndFilteredPatchFile()
         } else {
-            operations.splitPatchFile
+            operations.splitPatchFile()
         }
-        val patch = getFineDiff(operations.workDir, DiffParser.toOriginalDiff(Files.readAllLines(pathToSplitPatchFile)))
+        val patch =
+            getFineDiff(operations.workDir(), DiffParser.toOriginalDiff(Files.readAllLines(pathToSplitPatchFile)))
         if (Files.exists(rejectFile)) {
             try {
                 val rejects = Files.readAllLines(rejectFile)
@@ -85,6 +88,7 @@ class MPatch : Patcher {
         return Rejects(ArrayList())
     }
 }
+
 
 private class RejectId(val path: Path, val index: Int) {
     override fun equals(other: Any?): Boolean {

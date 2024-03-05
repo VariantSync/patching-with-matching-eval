@@ -1,4 +1,4 @@
-package org.variantsync.evaluation
+package org.variantsync.evaluation.analysis
 
 class CountingMap<K>() {
     private var map: HashMap<K, Int> = HashMap()

@@ -1,8 +1,10 @@
-package org.variantsync.evaluation
+package org.variantsync.evaluation.vevos
 
 import de.ovgu.featureide.fm.core.base.IFeature
 import de.ovgu.featureide.fm.core.base.IFeatureModel
 import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.*
+import org.variantsync.evaluation.analysis.CountingMap
 import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
@@ -16,10 +18,11 @@ import org.variantsync.evaluation.baseline.diff.splitting.IContextProvider
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.DiffCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
-import org.variantsync.evaluation.common.Change
-import org.variantsync.evaluation.common.Rejects
+import org.variantsync.evaluation.patching.Change
+import org.variantsync.evaluation.patching.Rejects
 import org.variantsync.evaluation.error.Panic
 import org.variantsync.evaluation.error.VariantGenerationException
+import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.vevos.simulation.feature.Variant
 import org.variantsync.vevos.simulation.feature.config.FeatureIDEConfiguration
 import org.variantsync.vevos.simulation.feature.sampling.FeatureIDESampler
@@ -38,7 +41,7 @@ import java.nio.file.Path
 import java.util.stream.Collectors
 
 class VEVOSEvalTask(
-    private val config: StudyConfiguration,
+    private val config: EvalConfig,
     private val datasetName: String, private val repositoryPath: Path, private val commits: List<SPLCommit>,
 ) : Runnable {
     private val operations: VEVOSOperations = VEVOSOperations(config.EXPERIMENT_DIR_MAIN())

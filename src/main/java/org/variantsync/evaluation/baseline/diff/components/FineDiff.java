@@ -4,7 +4,7 @@ import org.variantsync.diffdetective.util.Assert;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
-import org.variantsync.evaluation.common.Change;
+import org.variantsync.evaluation.patching.Change;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

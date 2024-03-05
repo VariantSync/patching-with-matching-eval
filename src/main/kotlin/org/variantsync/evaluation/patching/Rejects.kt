@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.common
+package org.variantsync.evaluation.patching
 
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
 import java.util.stream.Collectors

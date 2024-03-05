@@ -12,7 +12,7 @@ import java.nio.file.Path
 /**
  * Determines the configuration of our study.
  */
-class StudyConfiguration(propertiesFile: File) {
+class EvalConfig(propertiesFile: File) {
     // Configuration object holding key-value properties.
     private var config: Configuration? = null
 

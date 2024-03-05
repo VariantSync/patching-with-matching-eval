@@ -3,6 +3,7 @@ package org.variantsync.evaluation
 import org.tinylog.kotlin.Logger
 import org.variantsync.diffdetective.datasets.DatasetDescription
 import org.variantsync.diffdetective.load.GitLoader
+import org.variantsync.evaluation.vevos.SynchronizationStudy
 import org.variantsync.vevos.simulation.VEVOS
 import java.io.File
 import java.io.IOException
@@ -24,7 +25,7 @@ object Main {
         }
         // Initialize the VEVOS Simulation library
         VEVOS.Initialize()
-        val config = StudyConfiguration(File(args[0]))
+        val config = EvalConfig(File(args[0]))
         Logger.info("Starting experiment initialization.")
         val datasets: List<DatasetDescription> = try {
             DatasetDescription.fromMarkdown(config.EXPERIMENT_DATASETS())
