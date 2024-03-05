@@ -16,7 +16,7 @@ import java.util.function.Consumer
 
 class UnixPatch : Patcher {
     override fun applyPatch(
-        operations: Operations,
+        operations: VEVOSOperations,
         sourceVariant: Variant,
         targetVariant: Variant,
         withFiler: Boolean,
@@ -111,7 +111,7 @@ class UnixPatch : Patcher {
     }
 
     // Read a rejects file
-    private fun readRejectsFromFile(operations: Operations, rejectFile: Path, patch: FineDiff): Rejects {
+    private fun readRejectsFromFile(operations: VEVOSOperations, rejectFile: Path, patch: FineDiff): Rejects {
         var rejectsDiff: OriginalDiff? = null
         if (Files.exists(rejectFile)) {
             try {

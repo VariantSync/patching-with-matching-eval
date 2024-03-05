@@ -41,7 +41,7 @@ class VEVOSEvalTask(
     private val config: StudyConfiguration,
     private val datasetName: String, private val repositoryPath: Path, private val commits: List<SPLCommit>,
 ) : Runnable {
-    private val operations: Operations = Operations(config.EXPERIMENT_DIR_MAIN())
+    private val operations: VEVOSOperations = VEVOSOperations(config.EXPERIMENT_DIR_MAIN())
     private val idProvider: IDProvider = IDProvider(config.EXPERIMENT_START_ID())
 
     // The feature model for which variants are sampled

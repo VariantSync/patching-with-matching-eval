@@ -8,7 +8,7 @@ import java.nio.file.Files
 interface Patcher {
 
     fun applyPatch(
-        operations: Operations,
+        operations: VEVOSOperations,
         sourceVariant: Variant,
         targetVariant: Variant,
         withFiler: Boolean,
@@ -16,7 +16,7 @@ interface Patcher {
 
     fun name(): String
 
-    fun clean(operations: Operations) {
+    fun clean(operations: VEVOSOperations) {
         if (Files.exists(operations.rejectsFile)) {
             Logger.debug("Cleaning old rejects file ${operations.rejectsFile} for unix patch")
             Files.delete(operations.rejectsFile)

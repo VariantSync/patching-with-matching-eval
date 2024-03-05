@@ -15,7 +15,7 @@ import java.util.function.Consumer
 class MPatch : Patcher {
 
     override fun applyPatch(
-        operations: Operations,
+        operations: VEVOSOperations,
         sourceVariant: Variant,
         targetVariant: Variant,
         withFiler: Boolean
@@ -67,7 +67,7 @@ class MPatch : Patcher {
     }
 
     // Read a rejects file
-    private fun readRejectsFromFile(operations: Operations, rejectFile: Path, withFiler: Boolean): Rejects {
+    private fun readRejectsFromFile(operations: VEVOSOperations, rejectFile: Path, withFiler: Boolean): Rejects {
         val pathToSplitPatchFile = if (withFiler) {
             operations.splitAndFilteredPatchFile
         } else {

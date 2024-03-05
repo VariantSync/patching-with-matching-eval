@@ -10,7 +10,7 @@ import java.io.UncheckedIOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class Operations(mainDir: Path) {
+class VEVOSOperations(mainDir: Path) {
     // Working directory
     @JvmField
     var workDir: Path
