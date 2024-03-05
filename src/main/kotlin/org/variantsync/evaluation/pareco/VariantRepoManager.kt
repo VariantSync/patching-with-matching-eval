@@ -2,7 +2,7 @@ package org.variantsync.evaluation.pareco
 
 import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.vevos.panic
+import org.variantsync.evaluation.syncstudy.panic
 import java.nio.file.Path
 
 class VariantRepoManager(private val operations: PaReCoOperations) {

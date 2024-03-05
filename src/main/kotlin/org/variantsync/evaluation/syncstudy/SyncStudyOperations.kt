@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.vevos
+package org.variantsync.evaluation.syncstudy
 
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.Operations
@@ -14,7 +14,7 @@ import java.io.UncheckedIOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class VEVOSOperations(mainDir: Path) : Operations() {
+class SyncStudyOperations(mainDir: Path) : Operations() {
     // Working directory
     @JvmField
     var workDir: Path

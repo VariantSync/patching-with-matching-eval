@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.vevos
+package org.variantsync.evaluation.syncstudy
 
 import de.ovgu.featureide.fm.core.base.IFeature
 import de.ovgu.featureide.fm.core.base.IFeatureModel
@@ -40,11 +40,11 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.stream.Collectors
 
-class VEVOSEvalTask(
+class SyncStudyTask(
     private val config: EvalConfig,
     private val datasetName: String, private val repositoryPath: Path, private val commits: List<SPLCommit>,
 ) : Runnable {
-    private val operations: VEVOSOperations = VEVOSOperations(config.EXPERIMENT_DIR_MAIN())
+    private val operations: SyncStudyOperations = SyncStudyOperations(config.EXPERIMENT_DIR_MAIN())
     private val idProvider: IDProvider = IDProvider(config.EXPERIMENT_START_ID())
 
     // The feature model for which variants are sampled
@@ -335,7 +335,7 @@ class VEVOSEvalTask(
             .expect("Was not able to copy variant $pathToTarget")
     }
 
-    private fun VEVOSEvalTask.patchFilesDebug(
+    private fun SyncStudyTask.patchFilesDebug(
         patcher: Patcher,
         originalPatch: OriginalDiff,
         splitPatch: FineDiff,

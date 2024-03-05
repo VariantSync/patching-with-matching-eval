@@ -11,8 +11,8 @@ import org.variantsync.evaluation.baseline.shell.DiffCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
-import org.variantsync.evaluation.vevos.getFineDiff
-import org.variantsync.evaluation.vevos.panic
+import org.variantsync.evaluation.syncstudy.getFineDiff
+import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import org.variantsync.vevos.simulation.variability.SPLCommit
 import java.io.IOException

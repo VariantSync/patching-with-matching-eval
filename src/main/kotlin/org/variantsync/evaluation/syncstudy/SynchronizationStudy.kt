@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.vevos
+package org.variantsync.evaluation.syncstudy
 
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
@@ -28,7 +28,7 @@ class SynchronizationStudy(
     private val groundTruthPath: Path
 
     // The study tasks that are to be executed in parallel
-    private val VEVOSEvalTasks: MutableList<VEVOSEvalTask>
+    private val SyncStudyTasks: MutableList<SyncStudyTask>
     private val numThreads: Int
 
     /**
@@ -41,13 +41,13 @@ class SynchronizationStudy(
         this.groundTruthPath = groundTruthPath
         this.numThreads = config.EXPERIMENT_THREAD_COUNT()
         val history = init()
-        VEVOSEvalTasks = ArrayList()
+        SyncStudyTasks = ArrayList()
         val clusterSize = ceil(history.size.toDouble() / numThreads).toInt()
         val commitClusterIterator = ClusteredIterator(history.iterator(), clusterSize)
         while (commitClusterIterator.hasNext()) {
             val commits = commitClusterIterator.next()
-            VEVOSEvalTasks.add(
-                VEVOSEvalTask(config, datasetName, repositoryPath, commits)
+            SyncStudyTasks.add(
+                SyncStudyTask(config, datasetName, repositoryPath, commits)
             )
         }
     }
@@ -57,8 +57,8 @@ class SynchronizationStudy(
      */
     fun run() {
         val threadPool = Executors.newFixedThreadPool(numThreads)
-        val futures = VEVOSEvalTasks.stream()
-            .map { runnable: VEVOSEvalTask -> threadPool.submit(runnable) }
+        val futures = SyncStudyTasks.stream()
+            .map { runnable: SyncStudyTask -> threadPool.submit(runnable) }
             .collect(Collectors.toList())
         threadPool.shutdown()
         for (future in futures) {

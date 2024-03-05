@@ -3,7 +3,7 @@ package org.variantsync.evaluation
 import org.tinylog.kotlin.Logger
 import org.variantsync.diffdetective.datasets.DatasetDescription
 import org.variantsync.diffdetective.load.GitLoader
-import org.variantsync.evaluation.vevos.SynchronizationStudy
+import org.variantsync.evaluation.syncstudy.SynchronizationStudy
 import org.variantsync.vevos.simulation.VEVOS
 import java.io.File
 import java.io.IOException
