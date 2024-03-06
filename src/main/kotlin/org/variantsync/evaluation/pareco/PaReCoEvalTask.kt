@@ -1,7 +1,9 @@
 package org.variantsync.evaluation.pareco
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.*
+import org.variantsync.evaluation.EvalConfig
+import org.variantsync.evaluation.IDProvider
+import org.variantsync.evaluation.ResultAnalysis
 import org.variantsync.evaluation.analysis.CountingMap
 import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
@@ -19,11 +21,11 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class PaReCoEvalTask (
+class PaReCoEvalTask(
     private val config: EvalConfig,
-    private val datasetName: String, private val sourceVariantPath: Path, private val targetVariantPath: Path,
+    private val datasetName: String, private val gitHubRepoPath: Path,
     private val pullRequests: List<PullRequest>,
-    ) : Runnable {
+) : Runnable {
     private val operations: PaReCoOperations = PaReCoOperations(config.EXPERIMENT_DIR_MAIN())
     private val idProvider: IDProvider = IDProvider(config.EXPERIMENT_START_ID())
 
@@ -55,7 +57,7 @@ class PaReCoEvalTask (
                 repoManager.cleanRepoStates()
                 repoManager.preparePullRequest(pullRequest)
             } catch (e: Exception) {
-                Logger.error("Was not able to check out pull request commits in variant directories")
+                Logger.error("Was not able to checkout pull request commits in variant directories")
                 Logger.error(e)
                 e.printStackTrace()
                 continue
@@ -116,7 +118,7 @@ class PaReCoEvalTask (
                 val rejectsNormal = patcher.applyPatch(operations, source, target, false)
 
                 // Gather the patch result
-                val actualVsExpectedNormal = getActualVsExpected(operations.targetVariantV1, "normal", target, pullRequest)
+                val actualVsExpectedNormal = getActualVsExpected(operations.targetVariantV1, target, pullRequest)
 
                 patcher.clean(operations)
 
@@ -173,13 +175,13 @@ class PaReCoEvalTask (
 
     private fun prepareVariantDirectories() {
         Logger.debug("Creating new source and target variant copies.")
-        operations.shell.execute(CpCommand(sourceVariantPath, operations.sourceVariantV0).recursive())
+        operations.shell.execute(CpCommand(gitHubRepoPath, operations.sourceVariantV0).recursive())
             .expect("Was not able to copy source variant V0.")
-        operations.shell.execute(CpCommand(sourceVariantPath, operations.sourceVariantV1).recursive())
+        operations.shell.execute(CpCommand(gitHubRepoPath, operations.sourceVariantV1).recursive())
             .expect("Was not able to copy source variant V1.")
-        operations.shell.execute(CpCommand(targetVariantPath, operations.targetVariantV0).recursive())
+        operations.shell.execute(CpCommand(gitHubRepoPath, operations.targetVariantV0).recursive())
             .expect("Was not able to copy target variant V0.")
-        operations.shell.execute(CpCommand(targetVariantPath, operations.targetVariantV1).recursive())
+        operations.shell.execute(CpCommand(gitHubRepoPath, operations.targetVariantV1).recursive())
             .expect("Was not able to copy target variant V1.")
     }
 
@@ -208,13 +210,13 @@ class PaReCoEvalTask (
      * next de.variantsync.studies.evolution step. Then, filter all differences that do not belong
      * to the source variant and could have therefore not been synchronized in any case.
      */
-    private fun getActualVsExpected(pathToExpectedResult: Path, filePostfix: String, target: Variant, currentPR: PullRequest): FineDiff {
+    private fun getActualVsExpected(pathToExpectedResult: Path, target: Variant, currentPR: PullRequest): FineDiff {
         val resultDiff = getOriginalDiff(operations.patchDir(), pathToExpectedResult)
         if (config.EXPERIMENT_DEBUG()) {
             try {
                 Files.write(
                     operations.debugDir(currentPR).resolve(target.name)
-                        .resolve(target.name + "_actual_expected-$filePostfix.diff"),
+                        .resolve(target.name + "_actual_expected.diff"),
                     resultDiff.toLines()
                 )
             } catch (e: IOException) {

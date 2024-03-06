@@ -13,10 +13,10 @@ class VariantRepoManager(private val operations: PaReCoOperations) {
 
     fun preparePullRequest(pr: PullRequest) {
         Logger.debug("Checking out commits of next pull request")
-        this.sourceV0.checkout().setStartPoint(pr.sourceV0).call()
-        this.sourceV1.checkout().setStartPoint(pr.sourceV1).call()
-        this.targetV0.checkout().setStartPoint(pr.targetV0).call()
-        this.targetV1.checkout().setStartPoint(pr.targetV1).call()
+        this.sourceV0.checkout().setName(pr.sourceV0).setForced(true).call()
+        this.sourceV1.checkout().setName(pr.sourceV1).setForced(true).call()
+        this.targetV0.checkout().setName(pr.targetV0).setForced(true).call()
+        this.targetV1.checkout().setName(pr.targetV1).setForced(true).call()
     }
 
     fun cleanRepoStates() {
@@ -28,11 +28,11 @@ class VariantRepoManager(private val operations: PaReCoOperations) {
 
     private fun cleanRepo(repo: Git, path: Path) {
         // Stash all changes and drop the stash. This is a workaround as the JGit API does not support restore.
-        Logger.warn("Cleaning state of V0 repo.")
+        Logger.debug("Cleaning state of V0 repo.")
         try {
             repo.stashCreate().setIncludeUntracked(true).call()
             repo.stashDrop().setAll(true).call()
-            Logger.warn("Cleaning state of repo.")
+            Logger.debug("Cleaning state of repo.")
         } catch (e: Exception) {
             panic("Was not able to clean repository (${path}).", e)
         }
