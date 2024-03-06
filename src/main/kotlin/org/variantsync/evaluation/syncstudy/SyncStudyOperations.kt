@@ -94,8 +94,8 @@ class SyncStudyOperations(mainDir: Path) : Operations() {
             )
 
         patchers = ArrayList()
-        patchers.add(UnixPatch())
-        patchers.add(MPatch())
+        patchers.add(UnixPatch(2))
+        patchers.add(MPatch(2))
     }
 
     fun debugDir(directory: String): Path {

@@ -1,10 +1,10 @@
 package org.variantsync.evaluation.pareco
 
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.api.errors.JGitInternalException
 import org.eclipse.jgit.lib.ObjectId
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.revwalk.RevCommit
-import org.eclipse.jgit.revwalk.RevSort
 import org.eclipse.jgit.revwalk.RevWalk
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.syncstudy.panic
@@ -16,13 +16,40 @@ class VariantRepoManager(private val operations: PaReCoOperations) {
     private val targetV0: Git = Git.open(operations.targetVariantV0.toFile())
     private val targetV1: Git = Git.open(operations.targetVariantV1.toFile())
 
-    fun preparePullRequest(pr: PullRequest) {
+    fun preparePullRequest(pr: PullRequest): Boolean {
         Logger.debug("Checking out commits of next pull request")
-        this.sourceV0.checkout().setName(pr.sourceV0).setForced(true).call()
-        this.sourceV1.checkout().setName(pr.sourceV1).setForced(true).call()
-        this.targetV0.checkout().setName(pr.targetV0).setForced(true).call()
-        this.targetV1.checkout().setName(findExpectedResultCommit(targetV1, pr.sourceV0, pr.sourceV1)).setForced(true)
-            .call()
+        try {
+            this.sourceV0.checkout().setName(pr.sourceV0).setForced(true).call()
+        } catch (e: JGitInternalException) {
+            Logger.info("Was not able to find source variant V0 (source before changes)")
+            Logger.info(e.message)
+            return false;
+        }
+        try {
+            this.sourceV1.checkout().setName(pr.sourceV1).setForced(true).call()
+        } catch (e: JGitInternalException) {
+            Logger.info("Was not able to find source variant V1 (source after changes)")
+            Logger.info(e.message)
+            return false;
+        }
+        try {
+            this.targetV0.checkout().setName(pr.targetV0).setForced(true).call()
+        } catch (e: JGitInternalException) {
+            Logger.info("Was not able to find target variant V0 (target before change propagation)")
+            Logger.info(e.message)
+            return false;
+        }
+        val expectedResultCommitId = findExpectedResultCommit(targetV1, pr.sourceV0, pr.sourceV1) ?: return false
+
+        try {
+            this.targetV1.checkout().setName(expectedResultCommitId).setForced(true)
+                .call()
+        } catch (e: JGitInternalException) {
+            Logger.info("Was not able to find source variant V1 (expected result of change propagation)")
+            Logger.info(e.message)
+            return false;
+        }
+        return true;
     }
 
     fun cleanRepoStates() {
@@ -48,10 +75,14 @@ class VariantRepoManager(private val operations: PaReCoOperations) {
         val repository: Repository = git.repository
 
         val revWalk = RevWalk(repository)
-        revWalk.sort(RevSort.TOPO)
+
+        // Iterate over all refs in the repository (e.g., branches, tags, etc.)
+        for (ref in repository.refDatabase.refs) {
+            revWalk.markStart(revWalk.parseCommit(ref.objectId))
+        }
+
         val parent1 = revWalk.parseCommit(ObjectId.fromString(parent1Id))
         val parent2 = revWalk.parseCommit(ObjectId.fromString(parent2Id))
-        revWalk.markStart(revWalk.parseCommit(repository.resolve("HEAD")))
 
         var mergeCommit: RevCommit? = null
         for (commit in revWalk) {

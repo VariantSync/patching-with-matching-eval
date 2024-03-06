@@ -1,11 +1,5 @@
 package org.variantsync.evaluation.pareco
 
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.lib.ObjectId
-import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.revwalk.RevCommit
-import org.eclipse.jgit.revwalk.RevSort
-import org.eclipse.jgit.revwalk.RevWalk
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
 import org.variantsync.evaluation.IDProvider
@@ -23,7 +17,6 @@ import org.variantsync.evaluation.syncstudy.getFineDiff
 import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import org.variantsync.vevos.simulation.variability.SPLCommit
-import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -49,7 +42,7 @@ class PaReCoEvalTask(
         var runID: ULong
         var numProcessed = 0uL
         val numPRs = pullRequests.size.toLong()
-        Logger.info("There are $numPRs commits to work on.")
+        Logger.info("There are $numPRs pull requests to work on.")
         for (pullRequest in pullRequests) {
             // Increase one extra time for the first parent in the sequence
             numProcessed++
@@ -62,7 +55,10 @@ class PaReCoEvalTask(
 
             try {
                 repoManager.cleanRepoStates()
-                repoManager.preparePullRequest(pullRequest)
+                if (!repoManager.preparePullRequest(pullRequest)) {
+                    Logger.info("Not all commits of the PR could be found... skipping PR ${pullRequest.id} of $datasetName")
+                    continue
+                }
             } catch (e: Exception) {
                 Logger.error("Was not able to checkout pull request commits in variant directories")
                 Logger.error(e)
@@ -270,7 +266,7 @@ class PaReCoEvalTask(
         val diffCommand: DiffCommand = DiffCommand.Recommended(
             operations.workDir.relativize(v0Path),
             operations.workDir.relativize(v1Path)
-        )
+        ).exclude(".git")
         val output = operations.shell.execute(diffCommand, operations.workDir)
             .expect("Was not able to diff variants.")
         return DiffParser.toOriginalDiff(output)

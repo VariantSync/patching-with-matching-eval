@@ -90,6 +90,11 @@ public class DiffCommand extends ShellCommand {
         return this;
     }
 
+    public DiffCommand exclude(final String pattern) {
+        args.add("--exclude=" + pattern);
+        return this;
+    }
+
     @Override
     public String toString() {
         return "diff: " + Arrays.toString(parts());

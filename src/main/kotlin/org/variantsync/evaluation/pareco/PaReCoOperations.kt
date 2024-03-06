@@ -2,11 +2,11 @@ package org.variantsync.evaluation.pareco
 
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.Operations
-import org.variantsync.evaluation.patching.Patcher
-import org.variantsync.evaluation.patching.UnixPatch
 import org.variantsync.evaluation.baseline.shell.AppliedPatchTracker
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
 import org.variantsync.evaluation.patching.MPatch
+import org.variantsync.evaluation.patching.Patcher
+import org.variantsync.evaluation.patching.UnixPatch
 import java.io.IOException
 import java.io.UncheckedIOException
 import java.nio.file.Files
@@ -71,8 +71,8 @@ class PaReCoOperations(mainDir: Path) : Operations() {
             )
 
         patchers = ArrayList()
-        patchers.add(UnixPatch())
-        patchers.add(MPatch())
+        patchers.add(UnixPatch(1))
+        patchers.add(MPatch(1))
     }
 
     fun debugDir(directory: String): Path {

@@ -15,7 +15,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
 
-class UnixPatch : Patcher {
+class UnixPatch(private val strip: Int) : Patcher {
     override fun applyPatch(
         operations: Operations,
         sourceVariant: Variant,
@@ -42,7 +42,7 @@ class UnixPatch : Patcher {
         }
 
         // apply patch to target variant
-        val patchCommand = PatchCommand.Recommended(pathToPatchFile).strip(2)
+        val patchCommand = PatchCommand.Recommended(pathToPatchFile).strip(strip)
             .rejectFile(rejectFile).force().ignoreWhitespace()
         val result = operations.shell().execute(
             patchCommand,
@@ -78,7 +78,7 @@ class UnixPatch : Patcher {
                     if ((oldFile.startsWith("V0Variants") || oldFile.startsWith("V1Variants") || oldFile.startsWith(
                             "TARGET"
                         ))
-                    ) oldFile.subpath(2, oldFile.nameCount)
+                    ) oldFile.subpath(strip, oldFile.nameCount)
                     else oldFile
                 skippedFiles.add(oldFile)
             }

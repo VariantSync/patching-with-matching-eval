@@ -14,7 +14,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
 
-class MPatch : Patcher {
+class MPatch(private val strip: Int) : Patcher {
 
     override fun applyPatch(
         operations: Operations,
@@ -42,7 +42,7 @@ class MPatch : Patcher {
             operations.rejectsFile()
         }
 
-        val patchCommand = MPatchCommand.Recommended(pathToSourceVariant, pathToPatchFile).strip(2)
+        val patchCommand = MPatchCommand.Recommended(pathToSourceVariant, pathToPatchFile).strip(strip)
             .rejectsFile(rejectFile)
 
         // apply patch to target variant
@@ -87,6 +87,117 @@ class MPatch : Patcher {
         }
         return Rejects(ArrayList())
     }
+
+    // Parse and convert the lines belonging to the difference of a specific file
+    private fun parseMPatchRejects(fileDiffContent: List<String>?): HashSet<RejectId> {
+        var index = 0
+        var nextLine = fileDiffContent!![index]
+
+        // Parse the header
+        val header: MutableList<String> = ArrayList()
+        var oldFile: String? = null
+        run {
+            var atHeader = true
+            while (atHeader) {
+                if (nextLine.startsWith("--- ")) {
+                    oldFile = nextLine.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+                } else if (nextLine.startsWith("+++ ")) {
+                    atHeader = false
+                }
+                header.add(nextLine)
+                index++
+                nextLine = fileDiffContent[index]
+            }
+        }
+
+        // Parse the rejects
+        val rejects: HashSet<RejectId> = HashSet()
+        run {
+            index += 1
+            while (index < fileDiffContent.size) {
+                nextLine = fileDiffContent[index]
+                val id = nextLine.split(":")[0].toInt()
+                val path = Path.of(oldFile!!)
+                rejects.add(RejectId(path.subpath(strip, path.nameCount), id))
+                index++
+            }
+        }
+
+        return rejects
+    }
+
+
+    private fun parseRejects(patch: FineDiff, lines: List<String>): Rejects {
+        // The rejects are empty
+        if (lines.isEmpty()) {
+            return Rejects(ArrayList())
+        }
+
+        // Determine the substring which a FileDiff starts with
+        var fileDiffStart = ""
+        var fileDiffFollow = ""
+        if (lines[0].startsWith("diff")) {
+            // Several files were processed, the diff of each file starts with the 'diff' command that was used
+            fileDiffStart = "diff"
+            fileDiffFollow = "--- "
+        } else if (lines[0].startsWith("--- ")) {
+            // Only one file was processed, the diff of the file starts with the hunk header
+            fileDiffStart = "--- "
+            fileDiffFollow = "+++ "
+        }
+
+        val mPatchRejects = HashSet<RejectId>()
+        var fileDiffContent: MutableList<String>? = null
+        var indexNext = 0
+        for (line in lines) {
+            indexNext++
+            if (line.startsWith(fileDiffStart)) {
+                if (indexNext < lines.size) {
+                    val nextLine = lines[indexNext]
+                    if (nextLine.startsWith(fileDiffFollow)) {
+                        // Create a FileDiff from the collected lines
+                        if (fileDiffContent != null) {
+                            mPatchRejects.addAll(parseMPatchRejects(fileDiffContent))
+                        }
+                        // Reset the lines that should go into the next FileDiff
+                        fileDiffContent = ArrayList()
+                    }
+                }
+            } else if (line.contains(fileDiffStart)) {
+                if (indexNext < lines.size) {
+                    val nextLine = lines[indexNext]
+                    if (nextLine.startsWith(fileDiffFollow)) {
+                        val additionalContent = line.substring(0, line.indexOf(fileDiffStart))
+                        // Create a FileDiff from the collected lines
+                        if (fileDiffContent != null) {
+                            fileDiffContent.add(additionalContent)
+                            mPatchRejects.addAll(parseMPatchRejects(fileDiffContent))
+                        }
+                        // Reset the lines that should go into the next FileDiff
+                        fileDiffContent = ArrayList()
+                        fileDiffContent.add(line.substring(line.indexOf(fileDiffStart)))
+                        continue
+                    }
+                }
+            }
+            requireNotNull(fileDiffContent) { "The provided lines do not contain one of the expected fileDiffStart values" }
+            fileDiffContent.add(line)
+        }
+        // Parse the content of the last file diff
+        mPatchRejects.addAll(parseMPatchRejects(fileDiffContent))
+
+        val rejects = Rejects(ArrayList())
+        for ((changeId, change) in patch.intoChanges().withIndex()) {
+            val id = RejectId(change.path, changeId)
+            if (mPatchRejects.contains(id)) {
+                mPatchRejects.remove(id)
+                rejects.rejects.add(change)
+            }
+        }
+
+        return rejects
+    }
+
 }
 
 
@@ -110,111 +221,4 @@ private class RejectId(val path: Path, val index: Int) {
     }
 }
 
-private fun parseRejects(patch: FineDiff, lines: List<String>): Rejects {
-    // The rejects are empty
-    if (lines.isEmpty()) {
-        return Rejects(ArrayList())
-    }
 
-    // Determine the substring which a FileDiff starts with
-    var fileDiffStart = ""
-    var fileDiffFollow = ""
-    if (lines[0].startsWith("diff")) {
-        // Several files were processed, the diff of each file starts with the 'diff' command that was used
-        fileDiffStart = "diff"
-        fileDiffFollow = "--- "
-    } else if (lines[0].startsWith("--- ")) {
-        // Only one file was processed, the diff of the file starts with the hunk header
-        fileDiffStart = "--- "
-        fileDiffFollow = "+++ "
-    }
-
-    val mPatchRejects = HashSet<RejectId>()
-    var fileDiffContent: MutableList<String>? = null
-    var indexNext = 0
-    for (line in lines) {
-        indexNext++
-        if (line.startsWith(fileDiffStart)) {
-            if (indexNext < lines.size) {
-                val nextLine = lines[indexNext]
-                if (nextLine.startsWith(fileDiffFollow)) {
-                    // Create a FileDiff from the collected lines
-                    if (fileDiffContent != null) {
-                        mPatchRejects.addAll(parseMPatchRejects(fileDiffContent))
-                    }
-                    // Reset the lines that should go into the next FileDiff
-                    fileDiffContent = ArrayList()
-                }
-            }
-        } else if (line.contains(fileDiffStart)) {
-            if (indexNext < lines.size) {
-                val nextLine = lines[indexNext]
-                if (nextLine.startsWith(fileDiffFollow)) {
-                    val additionalContent = line.substring(0, line.indexOf(fileDiffStart))
-                    // Create a FileDiff from the collected lines
-                    if (fileDiffContent != null) {
-                        fileDiffContent.add(additionalContent)
-                        mPatchRejects.addAll(parseMPatchRejects(fileDiffContent))
-                    }
-                    // Reset the lines that should go into the next FileDiff
-                    fileDiffContent = ArrayList()
-                    fileDiffContent.add(line.substring(line.indexOf(fileDiffStart)))
-                    continue
-                }
-            }
-        }
-        requireNotNull(fileDiffContent) { "The provided lines do not contain one of the expected fileDiffStart values" }
-        fileDiffContent.add(line)
-    }
-    // Parse the content of the last file diff
-    mPatchRejects.addAll(parseMPatchRejects(fileDiffContent))
-
-    val rejects = Rejects(ArrayList())
-    for ((changeId, change) in patch.intoChanges().withIndex()) {
-        val id = RejectId(change.path, changeId)
-        if (mPatchRejects.contains(id)) {
-            mPatchRejects.remove(id)
-            rejects.rejects.add(change)
-        }
-    }
-
-    return rejects
-}
-
-// Parse and convert the lines belonging to the difference of a specific file
-private fun parseMPatchRejects(fileDiffContent: List<String>?): HashSet<RejectId> {
-    var index = 0
-    var nextLine = fileDiffContent!![index]
-
-    // Parse the header
-    val header: MutableList<String> = ArrayList()
-    var oldFile: String? = null
-    run {
-        var atHeader = true
-        while (atHeader) {
-            if (nextLine.startsWith("--- ")) {
-                oldFile = nextLine.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
-            } else if (nextLine.startsWith("+++ ")) {
-                atHeader = false
-            }
-            header.add(nextLine)
-            index++
-            nextLine = fileDiffContent[index]
-        }
-    }
-
-    // Parse the rejects
-    val rejects: HashSet<RejectId> = HashSet()
-    run {
-        index += 1
-        while (index < fileDiffContent.size) {
-            nextLine = fileDiffContent[index]
-            val id = nextLine.split(":")[0].toInt()
-            val path = Path.of(oldFile!!)
-            rejects.add(RejectId(path.subpath(2, path.nameCount), id))
-            index++
-        }
-    }
-
-    return rejects
-}
