@@ -1,5 +1,11 @@
 package org.variantsync.evaluation.pareco
 
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.lib.ObjectId
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.revwalk.RevCommit
+import org.eclipse.jgit.revwalk.RevSort
+import org.eclipse.jgit.revwalk.RevWalk
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
 import org.variantsync.evaluation.IDProvider
@@ -17,6 +23,7 @@ import org.variantsync.evaluation.syncstudy.getFineDiff
 import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import org.variantsync.vevos.simulation.variability.SPLCommit
+import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path

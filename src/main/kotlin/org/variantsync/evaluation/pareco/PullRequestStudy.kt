@@ -1,6 +1,11 @@
 package org.variantsync.evaluation.pareco
 
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.lib.ObjectId
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.revwalk.RevCommit
+import org.eclipse.jgit.revwalk.RevSort
+import org.eclipse.jgit.revwalk.RevWalk
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
 import org.variantsync.functjonal.iteration.ClusteredIterator
@@ -214,13 +219,12 @@ fun loadDataset(pathToYaml: Path): Optional<PRDataset> {
         val sourceVariantV0 = prFields["target_base_id"]
         val sourceVariantV1 = prFields["target_pull_id"]
         val targetVariantV0 = prFields["source_base_id"]
-        val targetVariantV1 = prFields["source_merge_id"]
 
-        if (sourceVariantV0 !is String || sourceVariantV1 !is String || targetVariantV0 !is String || targetVariantV1 !is String) {
+        if (sourceVariantV0 !is String || sourceVariantV1 !is String || targetVariantV0 !is String) {
             return Optional.empty()
         }
 
-        pullRequests.add(PullRequest(prId.toInt(), sourceVariantV0, sourceVariantV1, targetVariantV0, targetVariantV1))
+        pullRequests.add(PullRequest(prId.toInt(), sourceVariantV0, sourceVariantV1, targetVariantV0))
     }
 
     return Optional.of(PRDataset(pathToYaml.fileName.toString(), source, destination, pullRequests))

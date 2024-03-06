@@ -1,6 +1,11 @@
 package org.variantsync.evaluation.pareco
 
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.lib.ObjectId
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.revwalk.RevCommit
+import org.eclipse.jgit.revwalk.RevSort
+import org.eclipse.jgit.revwalk.RevWalk
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.syncstudy.panic
 import java.nio.file.Path
@@ -16,7 +21,8 @@ class VariantRepoManager(private val operations: PaReCoOperations) {
         this.sourceV0.checkout().setName(pr.sourceV0).setForced(true).call()
         this.sourceV1.checkout().setName(pr.sourceV1).setForced(true).call()
         this.targetV0.checkout().setName(pr.targetV0).setForced(true).call()
-        this.targetV1.checkout().setName(pr.targetV1).setForced(true).call()
+        this.targetV1.checkout().setName(findExpectedResultCommit(targetV1, pr.sourceV0, pr.sourceV1)).setForced(true)
+            .call()
     }
 
     fun cleanRepoStates() {
@@ -36,5 +42,29 @@ class VariantRepoManager(private val operations: PaReCoOperations) {
         } catch (e: Exception) {
             panic("Was not able to clean repository (${path}).", e)
         }
+    }
+
+    private fun findExpectedResultCommit(git: Git, parent1Id: String, parent2Id: String): String? {
+        val repository: Repository = git.repository
+
+        val revWalk = RevWalk(repository)
+        revWalk.sort(RevSort.TOPO)
+        val parent1 = revWalk.parseCommit(ObjectId.fromString(parent1Id))
+        val parent2 = revWalk.parseCommit(ObjectId.fromString(parent2Id))
+        revWalk.markStart(revWalk.parseCommit(repository.resolve("HEAD")))
+
+        var mergeCommit: RevCommit? = null
+        for (commit in revWalk) {
+            if (commit.parentCount == 2) {
+                if (commit.parents.contains(parent1) && commit.parents.contains(parent2)) {
+                    mergeCommit = commit
+                    break
+                }
+            }
+        }
+
+        revWalk.close()
+
+        return mergeCommit?.name
     }
 }
