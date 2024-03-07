@@ -1,11 +1,6 @@
-package org.variantsync.evaluation.pareco
+package org.variantsync.evaluation.prstudy
 
 import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.lib.ObjectId
-import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.revwalk.RevCommit
-import org.eclipse.jgit.revwalk.RevSort
-import org.eclipse.jgit.revwalk.RevWalk
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
 import org.variantsync.functjonal.iteration.ClusteredIterator
@@ -30,7 +25,7 @@ class PullRequestStudy(
     dataset: PRDataset,
 ) {
     // The study tasks that are to be executed in parallel
-    private val paReCoEvalTasks: MutableList<PaReCoEvalTask>
+    private val evalTask: MutableList<PREvalTask>
     private val numThreads: Int
 
     /**
@@ -44,12 +39,12 @@ class PullRequestStudy(
 
         val repoPath: Path = cloneGitHubRepo(config, dataset.targetRepoId)
 
-        paReCoEvalTasks = ArrayList()
+        evalTask = ArrayList()
         val clusterSize = ceil(dataset.pullRequests.size.toDouble() / numThreads).toInt()
         val clusterIterator = ClusteredIterator(dataset.pullRequests.iterator(), clusterSize)
         while (clusterIterator.hasNext()) {
-            paReCoEvalTasks.add(
-                PaReCoEvalTask(
+            evalTask.add(
+                PREvalTask(
                     config,
                     dataset.datasetName,
                     repoPath,
@@ -78,8 +73,8 @@ class PullRequestStudy(
      */
     fun run() {
         val threadPool = Executors.newFixedThreadPool(numThreads)
-        val futures = paReCoEvalTasks.stream()
-            .map { runnable: PaReCoEvalTask -> threadPool.submit(runnable) }
+        val futures = evalTask.stream()
+            .map { runnable: PREvalTask -> threadPool.submit(runnable) }
             .collect(Collectors.toList())
         threadPool.shutdown()
         for (future in futures) {

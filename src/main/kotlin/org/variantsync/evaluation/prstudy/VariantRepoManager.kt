@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.pareco
+package org.variantsync.evaluation.prstudy
 
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.errors.JGitInternalException
@@ -11,7 +11,7 @@ import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.syncstudy.panic
 import java.nio.file.Path
 
-class VariantRepoManager(private val operations: PaReCoOperations) {
+class VariantRepoManager(private val operations: PREvalOperations) {
     private val sourceV0: Git = Git.open(operations.sourceVariantV0.toFile())
     private val sourceV1: Git = Git.open(operations.sourceVariantV1.toFile())
     private val targetV0: Git = Git.open(operations.targetVariantV0.toFile())

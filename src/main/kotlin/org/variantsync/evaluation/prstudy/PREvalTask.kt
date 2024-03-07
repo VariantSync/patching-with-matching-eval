@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.pareco
+package org.variantsync.evaluation.prstudy
 
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
@@ -21,12 +21,12 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class PaReCoEvalTask(
+class PREvalTask(
     private val config: EvalConfig,
     private val datasetName: String, private val gitHubRepoPath: Path,
     private val pullRequests: List<PullRequest>,
 ) : Runnable {
-    private val operations: PaReCoOperations = PaReCoOperations(config.EXPERIMENT_DIR_MAIN())
+    private val operations: PREvalOperations = PREvalOperations(config.EXPERIMENT_DIR_MAIN())
     private val idProvider: IDProvider = IDProvider(config.EXPERIMENT_START_ID())
 
     override fun run() {

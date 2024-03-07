@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.pareco
+package org.variantsync.evaluation.prstudy
 
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.Operations
@@ -12,7 +12,7 @@ import java.io.UncheckedIOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class PaReCoOperations(mainDir: Path) : Operations() {
+class PREvalOperations(mainDir: Path) : Operations() {
     // Working directory
     @JvmField
     var workDir: Path
