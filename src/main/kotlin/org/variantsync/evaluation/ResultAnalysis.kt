@@ -455,13 +455,6 @@ object ResultAnalysis {
     }
 
     @Throws(IOException::class)
-    fun loadResultObjects(path: Path): AccumulatedOutcome {
-        val list = ArrayList<Path>()
-        list.add(path)
-        return loadResultObjects(list)
-    }
-
-    @Throws(IOException::class)
     fun loadResultObjects(paths: List<Path>): AccumulatedOutcome {
         var commitPatches: Long = 0
         var commitSuccessNormal: Long = 0

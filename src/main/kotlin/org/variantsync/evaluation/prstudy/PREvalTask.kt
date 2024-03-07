@@ -11,7 +11,6 @@ import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.DiffCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
-import org.variantsync.evaluation.patching.PatchOutcome
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
 import org.variantsync.evaluation.saveResult
