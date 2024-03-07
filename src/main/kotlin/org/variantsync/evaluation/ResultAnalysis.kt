@@ -8,12 +8,12 @@ import org.variantsync.evaluation.analysis.AccumulatedResult
 import org.variantsync.evaluation.analysis.CountingMap
 import org.variantsync.evaluation.analysis.EvaluationResult
 import org.variantsync.evaluation.analysis.EvaluationScenario
-import org.variantsync.evaluation.patching.PatchOutcome.Companion.fromJSON
 import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
 import org.variantsync.evaluation.patching.Change
 import org.variantsync.evaluation.patching.PatchOutcome
+import org.variantsync.evaluation.patching.PatchOutcome.Companion.fromJSON
 import org.variantsync.evaluation.patching.Rejects
 import org.variantsync.vevos.simulation.variability.SPLCommit
 import java.io.File
@@ -23,6 +23,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
 import java.util.stream.Collectors
+import kotlin.io.path.name
 
 /**
  * Performs the result analysis presented in our paper.
@@ -226,20 +227,43 @@ object ResultAnalysis {
 
         resultFiles.sort()
 
+
+        val unixPatchResults = ArrayList<Path>()
+        val mpatchResults = ArrayList<Path>()
         for (path in resultFiles) {
             analyze(path)
+            if (path.name.endsWith("unix_patch.results")) {
+                unixPatchResults.add(path)
+            } else if (path.name.endsWith("mpatch.results")) {
+                mpatchResults.add(path)
+            }
         }
+
+        // Determine the overall results
+
+        println()
+        println("+++++++++++++++++++++++++++")
+        println("ACC. RESULTS UNIX PATCH")
+        println("+++++++++++++++++++++++++++")
+        println()
+        analyze(unixPatchResults, "unix_patch_overview")
+
+        println()
+        println("+++++++++++++++++++++++++++")
+        println("ACC. RESULTS MPATCH PATCH")
+        println("+++++++++++++++++++++++++++")
+        println()
+        analyze(mpatchResults, "mpatch_overview")
     }
 
     @Throws(IOException::class)
-    private fun analyze(resultFile: Path) {
-        val fileName = resultFile.fileName.getName(0).toString()
-        val resultSummaryFile = resultFile.parent.resolve("%s.summary".format(fileName))
+    private fun analyze(resultFiles: List<Path>, summaryFileName: String) {
+        val resultSummaryFile = resultFiles.first().parent.resolve("%s.summary".format(summaryFileName))
         val sb = StringBuilder()
-        val accumulatedOutcome = loadResultObjects(resultFile)
+        val accumulatedOutcome = loadResultObjects(resultFiles)
         sb.append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
-        sb.append("File: ").append(fileName).append(LINE_SEP)
+        sb.append("File: ").append(summaryFileName).append(LINE_SEP)
         sb.append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         sb.append("Patch Success").append(LINE_SEP)
@@ -290,6 +314,14 @@ object ResultAnalysis {
         sb.append(DIV).append(LINE_SEP)
         print(sb)
         Files.writeString(resultSummaryFile, sb)
+    }
+
+    @Throws(IOException::class)
+    private fun analyze(resultFile: Path) {
+        val fileName = resultFile.fileName.getName(0).toString()
+        val list = ArrayList<Path>()
+        list.add(resultFile)
+        analyze(list, fileName)
     }
 
     private fun printAccuracy(
@@ -423,7 +455,14 @@ object ResultAnalysis {
     }
 
     @Throws(IOException::class)
-    fun loadResultObjects(path: Path?): AccumulatedOutcome {
+    fun loadResultObjects(path: Path): AccumulatedOutcome {
+        val list = ArrayList<Path>()
+        list.add(path)
+        return loadResultObjects(list)
+    }
+
+    @Throws(IOException::class)
+    fun loadResultObjects(paths: List<Path>): AccumulatedOutcome {
         var commitPatches: Long = 0
         var commitSuccessNormal: Long = 0
         var commitSuccessFiltered: Long = 0
@@ -437,34 +476,37 @@ object ResultAnalysis {
         var lineSuccessFiltered: Long = 0
         val accumulatedNormal = AccumulatedResult()
         val accumulatedFiltered = AccumulatedResult()
-        Files.newBufferedReader(path).use { reader ->
-            val outcomeLines: MutableList<String> = ArrayList()
-            var line = reader.readLine()
-            while (line != null) {
-                if (line.isEmpty()) {
-                    val outcome = parseResult(outcomeLines)
-                    accumulatedNormal.add(outcome.normalResult)
-                    accumulatedFiltered.add(outcome.filteredResult)
-                    commitPatches++
-                    if (outcome.lineSuccessNormal == outcome.lineNormal) {
-                        commitSuccessNormal++
+
+        for (path in paths) {
+            Files.newBufferedReader(path).use { reader ->
+                val outcomeLines: MutableList<String> = ArrayList()
+                var line = reader.readLine()
+                while (line != null) {
+                    if (line.isEmpty()) {
+                        val outcome = parseResult(outcomeLines)
+                        accumulatedNormal.add(outcome.normalResult)
+                        accumulatedFiltered.add(outcome.filteredResult)
+                        commitPatches++
+                        if (outcome.lineSuccessNormal == outcome.lineNormal) {
+                            commitSuccessNormal++
+                        }
+                        if (outcome.lineSuccessFiltered == outcome.lineFiltered) {
+                            commitSuccessFiltered++
+                        }
+                        fileNormal += outcome.fileNormal
+                        fileSuccessNormal += outcome.fileSuccessNormal
+                        fileFiltered += outcome.fileFiltered
+                        fileSuccessFiltered += outcome.fileSuccessFiltered
+                        lineNormal += outcome.lineNormal
+                        lineSuccessNormal += outcome.lineSuccessNormal
+                        lineFiltered += outcome.lineFiltered
+                        lineSuccessFiltered += outcome.lineSuccessFiltered
+                        outcomeLines.clear()
+                    } else {
+                        outcomeLines.add(line)
                     }
-                    if (outcome.lineSuccessFiltered == outcome.lineFiltered) {
-                        commitSuccessFiltered++
-                    }
-                    fileNormal += outcome.fileNormal
-                    fileSuccessNormal += outcome.fileSuccessNormal
-                    fileFiltered += outcome.fileFiltered
-                    fileSuccessFiltered += outcome.fileSuccessFiltered
-                    lineNormal += outcome.lineNormal
-                    lineSuccessNormal += outcome.lineSuccessNormal
-                    lineFiltered += outcome.lineFiltered
-                    lineSuccessFiltered += outcome.lineSuccessFiltered
-                    outcomeLines.clear()
-                } else {
-                    outcomeLines.add(line)
+                    line = reader.readLine()
                 }
-                line = reader.readLine()
             }
         }
         System.out.printf("Read a total of %d results.", commitPatches)
