@@ -11,8 +11,10 @@ import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.DiffCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
+import org.variantsync.evaluation.patching.PatchOutcome
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
+import org.variantsync.evaluation.saveResult
 import org.variantsync.evaluation.syncstudy.getFineDiff
 import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
@@ -151,18 +153,7 @@ class PREvalTask(
                 )
 
                 val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")
-                try {
-                    patchOutcome.writeAsJSON(resultFile, true)
-                } catch (e: IOException) {
-                    panic(
-                        "Was not able to write filtered patch result file for run "
-                                + runID, e
-                    )
-                }
-                Logger.debug(
-                    "Finished patching for source " + source.name + " and target "
-                            + target.name
-                )
+                saveResult(patchOutcome, resultFile, runID, source, target)
             }
             if (numProcessed % 100uL == 0uL) {
                 Logger.info(
@@ -175,6 +166,8 @@ class PREvalTask(
             }
         }
     }
+
+
 
     private fun prepareVariantDirectories() {
         Logger.debug("Creating new source and target variant copies.")

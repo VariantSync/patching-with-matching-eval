@@ -303,18 +303,7 @@ class SyncStudyTask(
             )
 
             val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")
-            try {
-                patchOutcome.writeAsJSON(resultFile, true)
-            } catch (e: IOException) {
-                panic(
-                    "Was not able to write filtered patch result file for run "
-                            + runID, e
-                )
-            }
-            Logger.debug(
-                "Finished patching for source " + source.name + " and target "
-                        + target.name
-            )
+            saveResult(patchOutcome, resultFile, runID, source, target)
         }
     }
 

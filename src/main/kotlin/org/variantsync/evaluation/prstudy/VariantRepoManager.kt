@@ -24,21 +24,21 @@ class VariantRepoManager(private val operations: PREvalOperations) {
         } catch (e: JGitInternalException) {
             Logger.info("Was not able to find source variant V0 (source before changes)")
             Logger.info(e.message)
-            return false;
+            return false
         }
         try {
             this.sourceV1.checkout().setName(pr.sourceV1).setForced(true).call()
         } catch (e: JGitInternalException) {
             Logger.info("Was not able to find source variant V1 (source after changes)")
             Logger.info(e.message)
-            return false;
+            return false
         }
         try {
             this.targetV0.checkout().setName(pr.targetV0).setForced(true).call()
         } catch (e: JGitInternalException) {
             Logger.info("Was not able to find target variant V0 (target before change propagation)")
             Logger.info(e.message)
-            return false;
+            return false
         }
         val expectedResultCommitId = findExpectedResultCommit(targetV1, pr.sourceV0, pr.sourceV1) ?: return false
 
@@ -48,9 +48,9 @@ class VariantRepoManager(private val operations: PREvalOperations) {
         } catch (e: JGitInternalException) {
             Logger.info("Was not able to find source variant V1 (expected result of change propagation)")
             Logger.info(e.message)
-            return false;
+            return false
         }
-        return true;
+        return true
     }
 
     fun cleanRepoStates() {

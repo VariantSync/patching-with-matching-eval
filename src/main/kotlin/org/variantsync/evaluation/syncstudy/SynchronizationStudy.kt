@@ -4,6 +4,7 @@ import org.tinylog.kotlin.Logger
 import org.variantsync.diffdetective.datasets.DatasetDescription
 import org.variantsync.diffdetective.load.GitLoader
 import org.variantsync.evaluation.EvalConfig
+import org.variantsync.evaluation.waitForShutdown
 import org.variantsync.functjonal.iteration.ClusteredIterator
 import org.variantsync.vevos.simulation.VEVOS
 import org.variantsync.vevos.simulation.io.Resources
@@ -17,7 +18,9 @@ import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 import kotlin.math.ceil
@@ -36,7 +39,7 @@ class SynchronizationStudy(
     private val groundTruthPath: Path
 
     // The study tasks that are to be executed in parallel
-    private val SyncStudyTasks: MutableList<SyncStudyTask>
+    private val syncStudyTasks: MutableList<SyncStudyTask>
     private val numThreads: Int
 
     /**
@@ -49,12 +52,12 @@ class SynchronizationStudy(
         this.groundTruthPath = groundTruthPath
         this.numThreads = config.EXPERIMENT_THREAD_COUNT()
         val history = init()
-        SyncStudyTasks = ArrayList()
+        syncStudyTasks = ArrayList()
         val clusterSize = ceil(history.size.toDouble() / numThreads).toInt()
         val commitClusterIterator = ClusteredIterator(history.iterator(), clusterSize)
         while (commitClusterIterator.hasNext()) {
             val commits = commitClusterIterator.next()
-            SyncStudyTasks.add(
+            syncStudyTasks.add(
                 SyncStudyTask(config, datasetName, repositoryPath, commits)
             )
         }
@@ -65,24 +68,10 @@ class SynchronizationStudy(
      */
     fun run() {
         val threadPool = Executors.newFixedThreadPool(numThreads)
-        val futures = SyncStudyTasks.stream()
+        val futures = syncStudyTasks.stream()
             .map { runnable: SyncStudyTask -> threadPool.submit(runnable) }
             .collect(Collectors.toList())
-        threadPool.shutdown()
-        for (future in futures) {
-            try {
-                future.get()
-            } catch (e: Throwable) {
-                Logger.error("Failed to finish task!")
-                Logger.error(e)
-                e.printStackTrace()
-            }
-        }
-        if (!threadPool.awaitTermination(7, TimeUnit.DAYS)) {
-            Logger.error("Thread pool timeout.")
-        }
-
-        Logger.info("All done.")
+        waitForShutdown(threadPool, futures)
     }
 
     // Initialize the study by loading the required data

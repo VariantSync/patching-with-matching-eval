@@ -3,6 +3,7 @@ package org.variantsync.evaluation.prstudy
 import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
+import org.variantsync.evaluation.waitForShutdown
 import org.variantsync.functjonal.iteration.ClusteredIterator
 import org.yaml.snakeyaml.Yaml
 import java.io.File
@@ -76,21 +77,7 @@ class PullRequestStudy(
         val futures = evalTask.stream()
             .map { runnable: PREvalTask -> threadPool.submit(runnable) }
             .collect(Collectors.toList())
-        threadPool.shutdown()
-        for (future in futures) {
-            try {
-                future.get()
-            } catch (e: Throwable) {
-                Logger.error("Failed to finish task!")
-                Logger.error(e)
-                e.printStackTrace()
-            }
-        }
-        if (!threadPool.awaitTermination(7, TimeUnit.DAYS)) {
-            Logger.error("Thread pool timeout.")
-        }
-
-        Logger.info("All done.")
+        waitForShutdown(threadPool, futures)
     }
 }
 
