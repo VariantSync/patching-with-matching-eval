@@ -2,6 +2,7 @@ package org.variantsync.evaluation.pareco
 
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.errors.JGitInternalException
+import org.eclipse.jgit.errors.IncorrectObjectTypeException
 import org.eclipse.jgit.lib.ObjectId
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.revwalk.RevCommit
@@ -78,7 +79,11 @@ class VariantRepoManager(private val operations: PaReCoOperations) {
 
         // Iterate over all refs in the repository (e.g., branches, tags, etc.)
         for (ref in repository.refDatabase.refs) {
-            revWalk.markStart(revWalk.parseCommit(ref.objectId))
+            try {
+                revWalk.markStart(revWalk.parseCommit(ref.objectId))
+            } catch (e: IncorrectObjectTypeException) {
+                Logger.debug("found ref ${ref.objectId} is not a commit")
+            }
         }
 
         val parent1 = revWalk.parseCommit(ObjectId.fromString(parent1Id))
