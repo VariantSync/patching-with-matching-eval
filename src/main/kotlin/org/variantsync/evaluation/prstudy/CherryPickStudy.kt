@@ -5,6 +5,7 @@ import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
 import org.variantsync.evaluation.waitForShutdown
 import org.variantsync.functjonal.iteration.ClusteredIterator
+import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.io.IOException
@@ -20,12 +21,12 @@ import java.util.stream.Collectors
 import kotlin.math.ceil
 import kotlin.system.exitProcess
 
-class PullRequestStudy(
+class CherryPickStudy(
     config: EvalConfig,
-    dataset: PRDataset,
+    dataset: CherryDataset,
 ) {
     // The study tasks that are to be executed in parallel
-    private val evalTask: MutableList<PREvalTask>
+    private val evalTask: MutableList<CherryPickEvalTask>
     private val numThreads: Int
 
     /**
@@ -37,14 +38,14 @@ class PullRequestStudy(
         }
         this.numThreads = config.EXPERIMENT_THREAD_COUNT()
 
-        val repoPath: Path = cloneGitHubRepo(config, dataset.targetRepoId)
+        val repoPath: Path = cloneGitHubRepo(config, dataset.repositoryId)
 
         evalTask = ArrayList()
-        val clusterSize = ceil(dataset.pullRequests.size.toDouble() / numThreads).toInt()
-        val clusterIterator = ClusteredIterator(dataset.pullRequests.iterator(), clusterSize)
+        val clusterSize = ceil(dataset.cherryPicks.size.toDouble() / numThreads).toInt()
+        val clusterIterator = ClusteredIterator(dataset.cherryPicks.iterator(), clusterSize)
         while (clusterIterator.hasNext()) {
             evalTask.add(
-                PREvalTask(
+                CherryPickEvalTask(
                     config,
                     dataset.datasetName,
                     repoPath,
@@ -74,7 +75,7 @@ class PullRequestStudy(
     fun run() {
         val threadPool = Executors.newFixedThreadPool(numThreads)
         val futures = evalTask.stream()
-            .map { runnable: PREvalTask -> threadPool.submit(runnable) }
+            .map { runnable: CherryPickEvalTask -> threadPool.submit(runnable) }
             .collect(Collectors.toList())
         waitForShutdown(threadPool, futures)
     }
@@ -88,7 +89,7 @@ fun main(args: Array<String>) {
     }
     val config = EvalConfig(File(args[0]))
     Logger.info("Starting experiment initialization.")
-    val datasets: List<PRDataset> = try {
+    val datasets: List<CherryDataset> = try {
         loadPRDatasets(config.EXPERIMENT_DATASETS())
     } catch (e: IOException) {
         Logger.error(
@@ -99,7 +100,7 @@ fun main(args: Array<String>) {
     }
 
     for (dataset in datasets) {
-        val datasetSize = dataset.pullRequests.size
+        val datasetSize = dataset.cherryPicks.size
         Logger.info("using next dataset ${dataset.datasetName} with $datasetSize pull requests")
         if (datasetSize > config.EXPERIMENT_DATASET_MAX_SIZE()) {
             Logger.info(
@@ -111,7 +112,7 @@ fun main(args: Array<String>) {
             )
             continue
         }
-        val study = PullRequestStudy(config, dataset)
+        val study = CherryPickStudy(config, dataset)
         try {
             study.run()
         } catch (e: Exception) {
@@ -138,8 +139,8 @@ class YamlFileVisitor : SimpleFileVisitor<Path>() {
     }
 }
 
-fun loadPRDatasets(datasetsDir: Path): List<PRDataset> {
-    val datasets = ArrayList<PRDataset>()
+fun loadPRDatasets(datasetsDir: Path): List<CherryDataset> {
+    val datasets = ArrayList<CherryDataset>()
     for (yamlFile in getYamlFiles(datasetsDir)) {
         val dataset = loadDataset(yamlFile)
         if (dataset.isPresent) {
@@ -157,56 +158,71 @@ fun getYamlFiles(directoryPath: Path): List<Path> {
     return yamlFileVisitor.yamlFiles
 }
 
-fun loadDataset(pathToYaml: Path): Optional<PRDataset> {
+fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
     val parseException = IllegalArgumentException("the yaml file under $pathToYaml cannot be parsed into a pr dataset")
 
-    val yaml = Yaml()
-    val fileEntries = yaml.loadAll(Files.readString(pathToYaml)).iterator().next()
+    val loaderOptions = LoaderOptions()
+    loaderOptions.codePointLimit = Integer.MAX_VALUE
+    val yaml = Yaml(loaderOptions)
+    val entries = yaml.loadAll(Files.readString(pathToYaml)).iterator().next()
 
-    if (fileEntries !is List<*>) {
+    if (entries !is List<*>) {
         throw parseException
     }
 
-    val destination = fileEntries[0]
-    val source = fileEntries[1]
-    if (source !is String || destination !is String) {
+    val repoId = entries[0]
+    if (repoId !is String) {
         throw parseException
     }
 
-    val pullRequests = ArrayList<PullRequest>()
-    val prEntries = fileEntries[2]
-    if (prEntries !is HashMap<*, *>) {
+    val cherryPicks = ArrayList<CherryPick>()
+    val prEntries = entries[1]
+    if (prEntries !is List<*>) {
         throw parseException
     }
-    for (pr in prEntries.entries) {
-        val prId = pr.key
-        if (prId !is String) {
+
+    var id = 0
+    for (cp in prEntries) {
+        if (cp !is HashMap<*, *>) {
             throw parseException
         }
-        if (prId == "nan") {
-            // No valid dataset found
-            return Optional.empty()
-        }
-
-        val prFields = pr.value
-        if (prFields !is Map<*, *>) {
+        val cherryAndTarget = cp["cherry_and_target"]
+        if (cherryAndTarget !is HashMap<*, *>) {
             throw parseException
         }
 
-        // The names 'source' and 'target' are switched deliberately. In the PaReCo dataset 'source' refers to the
-        // original repository for a fork, and 'target' refers to the fork repository. Pull requests are always considered
-        // from the fork to the original (i.e., from 'target' to 'source'). The 'source' and 'target' terms which we use
-        // refer to the source and target of a change propagation.
-        val sourceVariantV0 = prFields["target_base_id"]
-        val sourceVariantV1 = prFields["target_pull_id"]
-        val targetVariantV0 = prFields["source_base_id"]
+        val cherry = cherryAndTarget["cherry"]
+        val target = cherryAndTarget["target"]
 
-        if (sourceVariantV0 !is String || sourceVariantV1 !is String || targetVariantV0 !is String) {
+        if (cherry !is HashMap<*, *> || target !is HashMap<*, *>) {
+            throw parseException
+        }
+
+        val cherryParents = cherry["parent_ids"]
+        val targetParents = target["parent_ids"]
+        if (cherryParents !is List<*> || targetParents !is List<*>) {
+            throw parseException
+        }
+        if (cherryParents.size != 1 || targetParents.size != 1) {
+            // We filter all cherry-pick scenarios with merges
+            continue
+        }
+
+
+        val cherryId = cherry["id"]
+        val cherryParentId = cherryParents[0]
+        // The target of a cherry-pick is what we consider the expected result
+        // The parent of this target is our actual target to which we want to propagate the changes
+        val targetId = targetParents[0]
+        val expectedResultId = target["id"]
+
+        if (cherryParentId !is String || expectedResultId !is String || cherryId !is String || targetId !is String) {
             return Optional.empty()
         }
 
-        pullRequests.add(PullRequest(prId.toInt(), sourceVariantV0, sourceVariantV1, targetVariantV0))
+        cherryPicks.add(CherryPick(id, cherryId, cherryParentId, targetId, expectedResultId))
+        id++
     }
 
-    return Optional.of(PRDataset(pathToYaml.fileName.toString(), source, destination, pullRequests))
+    return Optional.of(CherryDataset(pathToYaml.fileName.toString(), repoId, cherryPicks))
 }

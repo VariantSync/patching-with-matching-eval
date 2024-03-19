@@ -12,7 +12,7 @@ import java.io.UncheckedIOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class PREvalOperations(mainDir: Path) : Operations() {
+class CherryEvalOperations(mainDir: Path) : Operations() {
     // Working directory
     @JvmField
     var workDir: Path
@@ -79,8 +79,8 @@ class PREvalOperations(mainDir: Path) : Operations() {
         return debugBaseDir.resolve(directory)
     }
 
-    fun debugDir(commit: PullRequest): Path {
-        return debugDir(commit.sourceV1)
+    fun debugDir(commit: CherryPick): Path {
+        return debugDir(commit.cherryCommit)
     }
 
     override fun rejectsFile(): Path {

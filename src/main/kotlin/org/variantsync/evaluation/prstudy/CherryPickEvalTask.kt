@@ -22,12 +22,12 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class PREvalTask(
+class CherryPickEvalTask(
     private val config: EvalConfig,
     private val datasetName: String, private val gitHubRepoPath: Path,
-    private val pullRequests: List<PullRequest>,
+    private val cherryPicks: List<CherryPick>,
 ) : Runnable {
-    private val operations: PREvalOperations = PREvalOperations(config.EXPERIMENT_DIR_MAIN())
+    private val operations: CherryEvalOperations = CherryEvalOperations(config.EXPERIMENT_DIR_MAIN())
     private val idProvider: IDProvider = IDProvider(config.EXPERIMENT_START_ID())
 
     override fun run() {
@@ -42,9 +42,9 @@ class PREvalTask(
         Logger.info("Starting diffing and patching for pull requests...")
         var runID: ULong
         var numProcessed = 0uL
-        val numPRs = pullRequests.size.toLong()
+        val numPRs = cherryPicks.size.toLong()
         Logger.info("There are $numPRs pull requests to work on.")
-        for (pullRequest in pullRequests) {
+        for (cherryPick in cherryPicks) {
             // Increase one extra time for the first parent in the sequence
             numProcessed++
             // Skip pairs until the start ID has been reached.
@@ -56,8 +56,8 @@ class PREvalTask(
 
             try {
                 repoManager.cleanRepoStates()
-                if (!repoManager.preparePullRequest(pullRequest)) {
-                    Logger.info("Not all commits of the PR could be found... skipping PR ${pullRequest.id} of $datasetName")
+                if (!repoManager.prepareCherryPick(cherryPick)) {
+                    Logger.info("Not all commits of the PR could be found... skipping PR ${cherryPick.id} of $datasetName")
                     continue
                 }
             } catch (e: Exception) {
@@ -67,7 +67,7 @@ class PREvalTask(
                 continue
             }
 
-            if (config.EXPERIMENT_DEBUG() && operations.debugDir(pullRequest).toFile().mkdirs()) {
+            if (config.EXPERIMENT_DEBUG() && operations.debugDir(cherryPick).toFile().mkdirs()) {
                 Logger.debug("Created Debug directory.")
             }
 
@@ -89,7 +89,7 @@ class PREvalTask(
             if (originalPatch.isEmpty) {
                 // There was no change to this variant, so we can skip it as source
                 Logger.warn(
-                    "Skipping PR " + pullRequest.id + " because there are no changes to code. Diff of code files is empty."
+                    "Skipping PR " + cherryPick.id + " because there are no changes to code. Diff of code files is empty."
                 )
                 continue
             }
@@ -97,7 +97,7 @@ class PREvalTask(
             if (config.EXPERIMENT_DEBUG()) {
                 saveDiff(
                     originalPatch,
-                    operations.debugDir(pullRequest).resolve("original.diff")
+                    operations.debugDir(cherryPick).resolve("original.diff")
                 )
             }
 
@@ -111,7 +111,7 @@ class PREvalTask(
                 saveDiff(splitPatch, operations.splitPatchFile)
                 Logger.debug("Saved fine diff.")
 
-                Logger.debug("Starting patch application for pull request " + pullRequest.id)
+                Logger.debug("Starting patch application for pull request " + cherryPick.id)
                 val evolutionDiff = getFineDiff(
                     operations.workDir,
                     getOriginalDiff(operations.targetVariantV0, operations.targetVariantV1)
@@ -122,7 +122,7 @@ class PREvalTask(
                 val rejectsNormal = patcher.applyPatch(operations, source, target, false)
 
                 // Gather the patch result
-                val actualVsExpectedNormal = getActualVsExpected(operations.targetVariantV1, target, pullRequest)
+                val actualVsExpectedNormal = getActualVsExpected(operations.targetVariantV1, target, cherryPick)
 
                 patcher.clean(operations)
 
@@ -131,7 +131,7 @@ class PREvalTask(
                         patcher,
                         originalPatch,
                         splitPatch,
-                        pullRequest,
+                        cherryPick,
                         source,
                         target,
                         rejectsNormal,
@@ -144,11 +144,20 @@ class PREvalTask(
                 /* Result Evaluation */
                 val patchOutcome = ResultAnalysis.processOutcome(
                     operations,
-                    datasetName, runID, source.name, target.name,
-                    SPLCommit(pullRequest.sourceV0), SPLCommit(pullRequest.sourceV1), splitPatch, splitPatch,
+                    datasetName,
+                    runID,
+                    source.name,
+                    target.name,
+                    SPLCommit(cherryPick.cherryCommit),
+                    SPLCommit(cherryPick.expectedResultCommit),
+                    splitPatch,
+                    splitPatch,
                     requiredChanges,
-                    actualVsExpectedNormal, actualVsExpectedNormal, rejectsNormal,
-                    rejectsNormal, evolutionDiff
+                    actualVsExpectedNormal,
+                    actualVsExpectedNormal,
+                    rejectsNormal,
+                    rejectsNormal,
+                    evolutionDiff
                 )
 
                 val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")
@@ -165,7 +174,6 @@ class PREvalTask(
             }
         }
     }
-
 
 
     private fun prepareVariantDirectories() {
@@ -205,7 +213,7 @@ class PREvalTask(
      * next de.variantsync.studies.evolution step. Then, filter all differences that do not belong
      * to the source variant and could have therefore not been synchronized in any case.
      */
-    private fun getActualVsExpected(pathToExpectedResult: Path, target: Variant, currentPR: PullRequest): FineDiff {
+    private fun getActualVsExpected(pathToExpectedResult: Path, target: Variant, currentPR: CherryPick): FineDiff {
         val resultDiff = getOriginalDiff(operations.patchDir(), pathToExpectedResult)
         if (config.EXPERIMENT_DEBUG()) {
             try {
@@ -268,7 +276,7 @@ class PREvalTask(
         patcher: Patcher,
         originalPatch: OriginalDiff,
         splitPatch: FineDiff,
-        currentPR: PullRequest,
+        currentPR: CherryPick,
         source: Variant,
         target: Variant,
         rejectsNormal: Rejects,
