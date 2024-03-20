@@ -18,11 +18,11 @@ interface Patcher {
 
     fun clean(operations: Operations) {
         if (Files.exists(operations.rejectsFile())) {
-            Logger.debug("Cleaning old rejects file ${operations.rejectsFile()} for unix patch")
+            Logger.debug("Cleaning old rejects file ${operations.rejectsFile()}")
             Files.delete(operations.rejectsFile())
         }
         if (Files.exists(operations.rejectsFileFiltered())) {
-            Logger.debug("Cleaning old rejects file ${operations.rejectsFileFiltered()} for unix patch")
+            Logger.debug("Cleaning old rejects file ${operations.rejectsFileFiltered()}")
             Files.delete(operations.rejectsFileFiltered())
         }
     }

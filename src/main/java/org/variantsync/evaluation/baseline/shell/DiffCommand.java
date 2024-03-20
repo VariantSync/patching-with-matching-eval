@@ -32,7 +32,8 @@ public class DiffCommand extends ShellCommand {
                 .newFile()
                 .text()
                 .unified()
-                .recursive();
+                .recursive()
+                .ignoreTrailingSpace();
     }
 
     @Override
@@ -87,6 +88,16 @@ public class DiffCommand extends ShellCommand {
      */
     public DiffCommand recursive() {
         args.add("-r");
+        return this;
+    }
+
+    /**
+     * Ignore white space at line end
+     *
+     * @return this command
+     */
+    public DiffCommand ignoreTrailingSpace() {
+        args.add("-Z");
         return this;
     }
 

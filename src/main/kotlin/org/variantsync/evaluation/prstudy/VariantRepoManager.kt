@@ -66,4 +66,8 @@ class VariantRepoManager(private val operations: CherryEvalOperations) {
         }
     }
 
+    fun resetTargetVariant() {
+        cleanRepo(this.targetV0, operations.targetVariantV0)
+    }
+
 }

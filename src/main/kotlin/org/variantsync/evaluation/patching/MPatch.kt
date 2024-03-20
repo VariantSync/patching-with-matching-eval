@@ -113,7 +113,6 @@ class MPatch(private val strip: Int) : Patcher {
         // Parse the rejects
         val rejects: HashSet<RejectId> = HashSet()
         run {
-            index += 1
             while (index < fileDiffContent.size) {
                 nextLine = fileDiffContent[index]
                 val id = nextLine.split(":")[0].toInt()
@@ -186,9 +185,10 @@ class MPatch(private val strip: Int) : Patcher {
         // Parse the content of the last file diff
         mPatchRejects.addAll(parseMPatchRejects(fileDiffContent))
 
+
         val rejects = Rejects(ArrayList())
         for ((changeId, change) in patch.intoChanges().withIndex()) {
-            val id = RejectId(change.path, changeId)
+            val id = RejectId(change.path.subpath(strip, change.path.nameCount), changeId)
             if (mPatchRejects.contains(id)) {
                 mPatchRejects.remove(id)
                 rejects.rejects.add(change)

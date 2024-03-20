@@ -43,7 +43,7 @@ class CherryPickEvalTask(
         var runID: ULong
         var numProcessed = 0uL
         val numPRs = cherryPicks.size.toLong()
-        Logger.info("There are $numPRs pull requests to work on.")
+        Logger.info("There are $numPRs cherry-picks to work on.")
         for (cherryPick in cherryPicks) {
             // Increase one extra time for the first parent in the sequence
             numProcessed++
@@ -55,7 +55,7 @@ class CherryPickEvalTask(
             }
 
             try {
-                repoManager.cleanRepoStates()
+                // repoManager.cleanRepoStates()
                 if (!repoManager.prepareCherryPick(cherryPick)) {
                     Logger.info("Not all commits of the PR could be found... skipping PR ${cherryPick.id} of $datasetName")
                     continue
@@ -101,24 +101,24 @@ class CherryPickEvalTask(
                 )
             }
 
+            saveDiff(originalPatch, operations.patchFile)
+            Logger.debug("Saved original diff.")
+
+            // Convert the original diff into a fine diff
+            Logger.debug("Converting diff...")
+            val splitPatch = getFineDiff(operations.workDir, originalPatch)
+            saveDiff(splitPatch, operations.splitPatchFile)
+            Logger.debug("Saved fine diff.")
+
+            Logger.debug("Starting patch application for cherry-pick " + cherryPick.id)
+            val evolutionDiff = getFineDiff(
+                operations.workDir,
+                getOriginalDiff(operations.targetVariantV0, operations.targetVariantV1)
+            )
+
             for (patcher in operations.patchers) {
-                saveDiff(originalPatch, operations.patchFile)
-                Logger.debug("Saved original diff.")
-
-                // Convert the original diff into a fine diff
-                Logger.debug("Converting diff...")
-                val splitPatch = getFineDiff(operations.workDir, originalPatch)
-                saveDiff(splitPatch, operations.splitPatchFile)
-                Logger.debug("Saved fine diff.")
-
-                Logger.debug("Starting patch application for pull request " + cherryPick.id)
-                val evolutionDiff = getFineDiff(
-                    operations.workDir,
-                    getOriginalDiff(operations.targetVariantV0, operations.targetVariantV1)
-                )
-
                 /* Application of patches without knowledge about features */
-                Logger.debug("Applying patch from pull request...")
+                Logger.debug("Applying patch from cherry-pick...")
                 val rejectsNormal = patcher.applyPatch(operations, source, target, false)
 
                 // Gather the patch result
@@ -162,11 +162,12 @@ class CherryPickEvalTask(
 
                 val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")
                 saveResult(patchOutcome, resultFile, runID, source, target)
+                repoManager.resetTargetVariant()
             }
             if (numProcessed % 100uL == 0uL) {
                 Logger.info(
                     String.format(
-                        "Finished pull request %s of %s.%n",
+                        "Finished cherry-pick %s of %s.%n",
                         numProcessed.toString(),
                         numPRs.toString()
                     )
