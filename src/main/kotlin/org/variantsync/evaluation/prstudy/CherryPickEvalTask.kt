@@ -116,53 +116,57 @@ class CherryPickEvalTask(
                 getOriginalDiff(operations.targetVariantV0, operations.targetVariantV1)
             )
 
-            for (patcher in operations.patchers) {
-                /* Application of patches without knowledge about features */
-                Logger.debug("Applying patch from cherry-pick...")
-                val rejectsNormal = patcher.applyPatch(operations, source, target, false)
+            try {
+                for (patcher in operations.patchers) {
+                    /* Application of patches without knowledge about features */
+                    Logger.debug("Applying patch from cherry-pick...")
+                    val rejectsNormal = patcher.applyPatch(operations, source, target, false)
 
-                // Gather the patch result
-                val actualVsExpectedNormal = getActualVsExpected(operations.targetVariantV1, target, cherryPick)
+                    // Gather the patch result
+                    val actualVsExpectedNormal = getActualVsExpected(operations.targetVariantV1, target, cherryPick)
 
-                patcher.clean(operations)
+                    patcher.clean(operations)
 
-                if (config.EXPERIMENT_DEBUG()) {
-                    patchFilesDebug(
-                        patcher,
-                        originalPatch,
+                    if (config.EXPERIMENT_DEBUG()) {
+                        patchFilesDebug(
+                            patcher,
+                            originalPatch,
+                            splitPatch,
+                            cherryPick,
+                            source,
+                            target,
+                            rejectsNormal,
+                            evolutionDiff
+                        )
+                    }
+
+                    val requiredChanges = CountingMap(splitPatch.intoChanges())
+
+                    /* Result Evaluation */
+                    val patchOutcome = ResultAnalysis.processOutcome(
+                        operations,
+                        datasetName,
+                        runID,
+                        source.name,
+                        target.name,
+                        SPLCommit(cherryPick.cherryCommit),
+                        SPLCommit(cherryPick.expectedResultCommit),
                         splitPatch,
-                        cherryPick,
-                        source,
-                        target,
+                        splitPatch,
+                        requiredChanges,
+                        actualVsExpectedNormal,
+                        actualVsExpectedNormal,
+                        rejectsNormal,
                         rejectsNormal,
                         evolutionDiff
                     )
+
+                    val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")
+                    saveResult(patchOutcome, resultFile, runID, source, target)
+                    repoManager.resetTargetVariant()
                 }
-
-                val requiredChanges = CountingMap(splitPatch.intoChanges())
-
-                /* Result Evaluation */
-                val patchOutcome = ResultAnalysis.processOutcome(
-                    operations,
-                    datasetName,
-                    runID,
-                    source.name,
-                    target.name,
-                    SPLCommit(cherryPick.cherryCommit),
-                    SPLCommit(cherryPick.expectedResultCommit),
-                    splitPatch,
-                    splitPatch,
-                    requiredChanges,
-                    actualVsExpectedNormal,
-                    actualVsExpectedNormal,
-                    rejectsNormal,
-                    rejectsNormal,
-                    evolutionDiff
-                )
-
-                val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")
-                saveResult(patchOutcome, resultFile, runID, source, target)
-                repoManager.resetTargetVariant()
+            } catch (e: Exception) {
+                Logger.error("Captured exception for cherry pick ${cherryPick.id}: ", e)
             }
             if (numProcessed % 100uL == 0uL) {
                 Logger.info(
@@ -215,7 +219,7 @@ class CherryPickEvalTask(
      * to the source variant and could have therefore not been synchronized in any case.
      */
     private fun getActualVsExpected(pathToExpectedResult: Path, target: Variant, currentPR: CherryPick): FineDiff {
-        val resultDiff = getOriginalDiff(operations.patchDir(), pathToExpectedResult)
+        val resultDiff = getOriginalDiff(operations.patchDir(), pathToExpectedResult, true)
         if (config.EXPERIMENT_DEBUG()) {
             try {
                 Files.write(
@@ -264,13 +268,28 @@ class CherryPickEvalTask(
     private fun getOriginalDiff(
         v0Path: Path, v1Path: Path
     ): OriginalDiff {
+        return getOriginalDiff(v0Path, v1Path, false)
+    }
+
+    // Get the difference between two directories using UNIX diff
+    private fun getOriginalDiff(
+        v0Path: Path, v1Path: Path, ignoreBlanks: Boolean
+    ): OriginalDiff {
         val diffCommand: DiffCommand = DiffCommand.Recommended(
             operations.workDir.relativize(v0Path),
             operations.workDir.relativize(v1Path)
         ).exclude(".git")
+        if (ignoreBlanks) {
+            diffCommand.ignoreBlankLines()
+        }
         val output = operations.shell.execute(diffCommand, operations.workDir)
-            .expect("Was not able to diff variants.")
-        return DiffParser.toOriginalDiff(output)
+        //.expect("Was not able to diff variants.")
+        return if (output.isSuccess) {
+            DiffParser.toOriginalDiff(output.success)
+        } else {
+            // Assume that the error lines still contain valid diffs, which is usually the case
+            DiffParser.toOriginalDiff(output.failure.output)
+        }
     }
 
     private fun patchFilesDebug(

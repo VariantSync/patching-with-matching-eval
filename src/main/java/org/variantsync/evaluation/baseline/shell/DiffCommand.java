@@ -101,6 +101,16 @@ public class DiffCommand extends ShellCommand {
         return this;
     }
 
+    /**
+     * Ignore changes where lines are all blank
+     *
+     * @return this command
+     */
+    public DiffCommand ignoreBlankLines() {
+        args.add("-B");
+        return this;
+    }
+
     public DiffCommand exclude(final String pattern) {
         args.add("--exclude=" + pattern);
         return this;

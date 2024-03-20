@@ -7,12 +7,14 @@ import org.variantsync.evaluation.syncstudy.panic
 import java.nio.file.Path
 
 class VariantRepoManager(private val operations: CherryEvalOperations) {
+    private var lastCherry: CherryPick? = null
     private val sourceV0: Git = Git.open(operations.sourceVariantV0.toFile())
     private val sourceV1: Git = Git.open(operations.sourceVariantV1.toFile())
     private val targetV0: Git = Git.open(operations.targetVariantV0.toFile())
     private val targetV1: Git = Git.open(operations.targetVariantV1.toFile())
 
     fun prepareCherryPick(cherryPick: CherryPick): Boolean {
+        lastCherry = cherryPick
         Logger.debug("Checking out commits of next pull request")
         try {
             this.sourceV0.checkout().setName(cherryPick.cherryParentCommit).setForced(true).call()
@@ -67,7 +69,13 @@ class VariantRepoManager(private val operations: CherryEvalOperations) {
     }
 
     fun resetTargetVariant() {
-        cleanRepo(this.targetV0, operations.targetVariantV0)
+        try {
+            Logger.debug("Cleaning state of target.")
+            this.targetV0.checkout().setForced(true).setName(this.lastCherry!!.targetCommit).call()
+            this.targetV0.clean().setForce(true).call()
+        } catch (e: Exception) {
+            panic("Was not able to clean target.", e)
+        }
     }
 
 }
