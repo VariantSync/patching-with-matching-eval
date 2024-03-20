@@ -104,19 +104,19 @@ class CherryPickEvalTask(
             saveDiff(originalPatch, operations.patchFile)
             Logger.debug("Saved original diff.")
 
-            // Convert the original diff into a fine diff
-            Logger.debug("Converting diff...")
-            val splitPatch = getFineDiff(operations.workDir, originalPatch)
-            saveDiff(splitPatch, operations.splitPatchFile)
-            Logger.debug("Saved fine diff.")
-
-            Logger.debug("Starting patch application for cherry-pick " + cherryPick.id)
-            val evolutionDiff = getFineDiff(
-                operations.workDir,
-                getOriginalDiff(operations.targetVariantV0, operations.targetVariantV1)
-            )
-
             try {
+                // Convert the original diff into a fine diff
+                Logger.debug("Converting diff...")
+                val splitPatch = getFineDiff(operations.workDir, originalPatch)
+                saveDiff(splitPatch, operations.splitPatchFile)
+                Logger.debug("Saved fine diff.")
+
+                Logger.debug("Starting patch application for cherry-pick " + cherryPick.id)
+                val evolutionDiff = getFineDiff(
+                    operations.workDir,
+                    getOriginalDiff(operations.targetVariantV0, operations.targetVariantV1)
+                )
+
                 for (patcher in operations.patchers) {
                     /* Application of patches without knowledge about features */
                     Logger.debug("Applying patch from cherry-pick...")
