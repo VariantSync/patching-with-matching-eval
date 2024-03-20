@@ -166,7 +166,7 @@ class CherryPickEvalTask(
                     repoManager.resetTargetVariant()
                 }
             } catch (e: Exception) {
-                Logger.error("Captured exception for cherry pick ${cherryPick.id}: ", e)
+                Logger.debug("Captured exception for cherry pick ${cherryPick.id}: ", e.message)
             }
             if (numProcessed % 100uL == 0uL) {
                 Logger.info(

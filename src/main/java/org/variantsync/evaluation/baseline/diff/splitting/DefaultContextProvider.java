@@ -81,7 +81,7 @@ public class DefaultContextProvider implements IContextProvider {
             }
             return context;
         } catch (final IOException e) {
-            Logger.error("Was not able to load file:" + rootDir.resolve(fileDiff.newFile()), e);
+            Logger.debug("Was not able to load file:" + rootDir.resolve(fileDiff.newFile()), e);
             throw new UncheckedIOException(e);
         }
     }
