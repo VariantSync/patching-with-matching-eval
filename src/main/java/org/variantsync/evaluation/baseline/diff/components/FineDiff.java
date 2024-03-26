@@ -25,15 +25,13 @@ public record FineDiff(List<FileDiff> content) implements IDiffComponent {
      * @param diff The difference from which changed lines are to be extracted
      * @return A list of all changed lines (i.e., added and removed source code)
      */
-    public static List<ChangedLine> determineChangedLines(FineDiff diff) {
+    public static List<ChangedLine> determineChangedLines(FineDiff diff, int strip) {
         final List<ChangedLine> changedLines = new ArrayList<>();
         for (FileDiff fd : diff.content()) {
             // Filter the hunks of each patch to extract changed lines
             fd.hunks().stream().flatMap(hunk -> hunk.content().stream()).forEach(line -> {
 
-                        Path filePath = (fd.oldFile().startsWith("V0Variants") || fd.oldFile().startsWith("V1Variants") || fd.oldFile().startsWith("TARGET"))
-                                ? fd.oldFile().subpath(2, fd.oldFile().getNameCount())
-                                : fd.oldFile();
+                        Path filePath = fd.oldFile().subpath(strip, fd.oldFile().getNameCount());
                         if (line instanceof AddedLine addedLine) {
                             changedLines.add(new ChangedLine(filePath, addedLine));
                         } else if (line instanceof RemovedLine removedLine) {
@@ -46,15 +44,13 @@ public record FineDiff(List<FileDiff> content) implements IDiffComponent {
         return changedLines;
     }
 
-    public List<Change> intoChanges() {
+    public List<Change> intoChanges(int strip) {
         final List<Change> changes = new ArrayList<>();
         for (FileDiff fd : this.content()) {
             // Filter the hunks of each patch to extract changed lines
             for (Hunk hunk : fd.hunks()) {
                 Assert.assertTrue(hunk.changeCount() == 1);
-                Path filePath = (fd.oldFile().startsWith("V0Variants") || fd.oldFile().startsWith("V1Variants") || fd.oldFile().startsWith("TARGET"))
-                        ? fd.oldFile().subpath(2, fd.oldFile().getNameCount())
-                        : fd.oldFile();
+                Path filePath = fd.oldFile().subpath(strip, fd.oldFile().getNameCount());
                 changes.add(new Change(hunk.changedLines().get(0), hunk, filePath));
             }
 

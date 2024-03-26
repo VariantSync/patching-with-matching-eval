@@ -28,6 +28,7 @@ import kotlin.io.path.name
 object SyncStudyResultAnalysis {
     private const val DIV = "++++++++++++++++++++++++++++++++++++++"
     private val LINE_SEP = System.lineSeparator()
+    private const val STRIP = 2
 
     /**
      * Analyze the outcome of applying patches to a target variant
@@ -66,7 +67,7 @@ object SyncStudyResultAnalysis {
                 .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
         ).size
         // number of tried line-level patches
-        val lineNormal = FineDiff.determineChangedLines(normalPatch)
+        val lineNormal = FineDiff.determineChangedLines(normalPatch, STRIP)
         // number of failed patches
 
         // Determine the number of failed file-level patches (without filtering)
@@ -90,7 +91,7 @@ object SyncStudyResultAnalysis {
                 .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
         ).size
         // Number of tried line-level patches (with filtering)
-        val lineFiltered = FineDiff.determineChangedLines(filteredPatch)
+        val lineFiltered = FineDiff.determineChangedLines(filteredPatch, STRIP)
         // Number of failed patches
 
         // Determine the number of failed file-level patches (with filtering)
@@ -111,14 +112,14 @@ object SyncStudyResultAnalysis {
         )
         val scenario = initScenario(normalPatch, requiredChanges, targetChanges)
         val normalResult: EvaluationResult = scenario.evaluate(
-            CountingMap(normalPatch.intoChanges()),
+            CountingMap(normalPatch.intoChanges(STRIP)),
             CountingMap(rejectsNormal.intoChanges()),
-            CountingMap(FineDiff.determineChangedLines(resultDiffNormal))
+            CountingMap(FineDiff.determineChangedLines(resultDiffNormal, STRIP))
         )
         val filteredResult: EvaluationResult = scenario.evaluate(
-            CountingMap(filteredPatch.intoChanges()),
+            CountingMap(filteredPatch.intoChanges(STRIP)),
             CountingMap(rejectsFiltered.intoChanges()),
-            CountingMap(FineDiff.determineChangedLines(resultDiffFiltered))
+            CountingMap(FineDiff.determineChangedLines(resultDiffFiltered, STRIP))
         )
         Assert.assertEquals(normalResult.resultCount(), filteredResult.resultCount())
         Assert.assertEquals(normalResult.resultCount(), lineNormal.size.toLong())
@@ -141,8 +142,8 @@ object SyncStudyResultAnalysis {
         targetEvolutionDiff: FineDiff
     ): EvaluationScenario {
         debug("Calculating result table with TP, FP, TN, and FN.")
-        val changesToClassify = CountingMap<Change>(unfilteredPatch.intoChanges())
-        val changesInEvolution = CountingMap<ChangedLine>(FineDiff.determineChangedLines(targetEvolutionDiff))
+        val changesToClassify = CountingMap<Change>(unfilteredPatch.intoChanges(STRIP))
+        val changesInEvolution = CountingMap<ChangedLine>(FineDiff.determineChangedLines(targetEvolutionDiff, STRIP))
 
         // Changes in the target variant's evolution that cannot be
         // synchronized, because they are not part of the source variant and therefore not of the
@@ -151,7 +152,7 @@ object SyncStudyResultAnalysis {
         // Expected changes, i.e., changes in the target variant's
         // evolution that can be synchronized
         run {
-            val tempChanges: CountingMap<ChangedLine> = CountingMap(FineDiff.determineChangedLines(unfilteredPatch))
+            val tempChanges: CountingMap<ChangedLine> = CountingMap(FineDiff.determineChangedLines(unfilteredPatch, STRIP))
             for (evolutionChange in changesInEvolution) {
                 if (!tempChanges.contains(evolutionChange)) {
                     unpatchableChanges.addOne(evolutionChange)

@@ -24,6 +24,7 @@ import kotlin.io.path.name
 object CherryPickResultAnalysis {
     private const val DIV = "++++++++++++++++++++++++++++++++++++++"
     private val LINE_SEP = System.lineSeparator()
+    private const val STRIP = 1
 
     /**
      * Run the result analysis on the collected results. This method is called by the Docker
@@ -96,7 +97,7 @@ object CherryPickResultAnalysis {
     ): CherryPickPatchOutcome {
         Logger.debug("Processing outcome of $runID for patch process in " + workdir.workDir())
         // number of tried line-level patches
-        val lineNormal = FineDiff.determineChangedLines(normalPatch)
+        val lineNormal = FineDiff.determineChangedLines(normalPatch, STRIP)
         // number of failed patches
 
         // Determine the number of failed line-level patches
@@ -107,9 +108,9 @@ object CherryPickResultAnalysis {
 
         val scenario = initCherryScenario(normalPatch, evolutionChanges)
         val normalResult: EvaluationResult = scenario.evaluate(
-            CountingMap(normalPatch.intoChanges()),
+            CountingMap(normalPatch.intoChanges(STRIP)),
             CountingMap(rejectsNormal.intoChanges()),
-            CountingMap(FineDiff.determineChangedLines(resultDiffNormal))
+            CountingMap(FineDiff.determineChangedLines(resultDiffNormal, STRIP))
         )
 
         Assert.assertEquals(normalResult.resultCount(), lineNormal.size.toLong())
@@ -124,8 +125,8 @@ object CherryPickResultAnalysis {
         targetEvolutionDiff: FineDiff
     ): EvaluationScenario {
         Logger.debug("Calculating result table with TP, FP, TN, and FN.")
-        val changesToClassify = CountingMap<Change>(patch.intoChanges())
-        val changesInEvolution = CountingMap<ChangedLine>(FineDiff.determineChangedLines(targetEvolutionDiff))
+        val changesToClassify = CountingMap<Change>(patch.intoChanges(STRIP))
+        val changesInEvolution = CountingMap<ChangedLine>(FineDiff.determineChangedLines(targetEvolutionDiff, STRIP))
 
         // Changes in the target variant's evolution that cannot be
         // synchronized, because they are not part of the source variant and therefore not of the
@@ -134,7 +135,7 @@ object CherryPickResultAnalysis {
         // Expected changes, i.e., changes in the target variant's
         // evolution that can be synchronized
         run {
-            val tempChanges: CountingMap<ChangedLine> = CountingMap(FineDiff.determineChangedLines(patch))
+            val tempChanges: CountingMap<ChangedLine> = CountingMap(FineDiff.determineChangedLines(patch, STRIP))
             for (evolutionChange in changesInEvolution) {
                 if (!tempChanges.contains(evolutionChange)) {
                     unpatchableChanges.addOne(evolutionChange)
@@ -150,7 +151,7 @@ object CherryPickResultAnalysis {
         val requiredChanges: CountingMap<Change> = CountingMap()
         run {
             val evoChanges: CountingMap<ChangedLine> = CountingMap(changesInEvolution)
-            val patchChanges = CountingMap<Change>(patch.intoChanges())
+            val patchChanges = CountingMap<Change>(patch.intoChanges(STRIP))
             for (patchChange in patchChanges) {
                 if (!evoChanges.contains(patchChange.asChangedLine())) {
                     undesiredChanges.addOne(patchChange)

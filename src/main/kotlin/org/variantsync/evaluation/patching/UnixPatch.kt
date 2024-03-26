@@ -87,7 +87,7 @@ class UnixPatch(private val strip: Int) : Patcher {
         val rejects = ArrayList<Change>()
         // Add all rejects determined from the output
         try {
-            for (change in patch.intoChanges()) {
+            for (change in patch.intoChanges(strip)) {
                 if (skippedFiles.contains(change.path)) {
                     rejects.add(change)
                     skippedFiles.remove(change.path)
@@ -154,6 +154,6 @@ class UnixPatch(private val strip: Int) : Patcher {
         }
         operations.appliedPatchTracker().reset()
 
-        return Rejects(result.intoChanges())
+        return Rejects(result.intoChanges(strip))
     }
 }

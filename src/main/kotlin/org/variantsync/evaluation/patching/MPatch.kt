@@ -187,8 +187,8 @@ class MPatch(private val strip: Int) : Patcher {
 
 
         val rejects = Rejects(ArrayList())
-        for ((changeId, change) in patch.intoChanges().withIndex()) {
-            val id = RejectId(change.path.subpath(strip, change.path.nameCount), changeId)
+        for ((changeId, change) in patch.intoChanges(strip).withIndex()) {
+            val id = RejectId(change.path, changeId)
             if (mPatchRejects.contains(id)) {
                 mPatchRejects.remove(id)
                 rejects.rejects.add(change)

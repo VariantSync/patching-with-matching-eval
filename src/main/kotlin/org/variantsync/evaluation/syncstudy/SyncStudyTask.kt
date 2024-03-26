@@ -698,7 +698,7 @@ class SyncStudyTask(
     ): CountingMap<Change> {
         val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, 2)
         val fineDiff = getSplitAndFilteredDiff(originalDiff, cachedPCBasedFilter, true)
-        return CountingMap(fineDiff.intoChanges())
+        return CountingMap(fineDiff.intoChanges(2))
     }
 
     // Get the filtered line-level patches for a given difference
