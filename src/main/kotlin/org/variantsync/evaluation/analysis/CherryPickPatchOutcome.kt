@@ -49,7 +49,7 @@ class CherryPickPatchOutcome
         jsonBuilder.append(toJSON("normalFilteredCorrectly", normalResult.filteredCorrectly.v)).append(",\n")
         jsonBuilder.append(toJSON("normalFilteredIncorrectly", normalResult.filteredIncorrectly.v)).append(",\n")
         jsonBuilder.append(toJSON("normalMitigatedInvalid", normalResult.mitigatedInvalid.v)).append(",\n")
-        jsonBuilder.append(toJSON("normalMitigatedMissing", normalResult.mitigatedMissing.v)).append(",\n")
+        jsonBuilder.append(toJSON("normalMitigatedMissing", normalResult.mitigatedMissing.v)).append("\n")
         jsonBuilder.append("}").append("\n\n")
 
         synchronized(SyncStudyPatchOutcome) {

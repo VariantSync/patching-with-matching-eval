@@ -74,12 +74,7 @@ class UnixPatch(private val strip: Int) : Patcher {
             Logger.debug(nextLine)
             if (nextLine.startsWith("|---")) {
                 oldFile = Path.of(nextLine.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1])
-                oldFile =
-                    if ((oldFile.startsWith("V0Variants") || oldFile.startsWith("V1Variants") || oldFile.startsWith(
-                            "TARGET"
-                        ))
-                    ) oldFile.subpath(strip, oldFile.nameCount)
-                    else oldFile
+                oldFile = oldFile.subpath(strip, oldFile.nameCount)
                 skippedFiles.add(oldFile)
             }
         }

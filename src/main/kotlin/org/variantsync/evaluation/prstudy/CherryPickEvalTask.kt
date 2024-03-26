@@ -31,7 +31,7 @@ class CherryPickEvalTask(
         // Copy the source and target variant to the respective variant directories
         prepareVariantDirectories()
 
-        val repoManager = VariantRepoManager(operations)
+        val repoManager = VariantRepoManager(operations, gitHubRepoPath)
 
         // For each pull request
         Logger.info("Starting diffing and patching for pull requests...")
@@ -154,7 +154,7 @@ class CherryPickEvalTask(
             } catch (e: Exception) {
                 Logger.debug("Captured exception for cherry pick ${cherryPick.id}: ", e.message)
             }
-            if (numProcessed % 100uL == 0uL) {
+            if (numProcessed % 25uL == 0uL) {
                 Logger.info(
                     String.format(
                         "Finished cherry-pick %s of %s.%n",
@@ -164,6 +164,7 @@ class CherryPickEvalTask(
                 )
             }
         }
+        repoManager.close()
     }
 
 
