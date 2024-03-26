@@ -1,10 +1,7 @@
 package org.variantsync.evaluation.prstudy
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.EvalConfig
-import org.variantsync.evaluation.IDProvider
-import org.variantsync.evaluation.ResultAnalysis
-import org.variantsync.evaluation.analysis.CountingMap
+import org.variantsync.evaluation.*
 import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
@@ -13,11 +10,9 @@ import org.variantsync.evaluation.baseline.shell.DiffCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
-import org.variantsync.evaluation.saveResult
 import org.variantsync.evaluation.syncstudy.getFineDiff
 import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
-import org.variantsync.vevos.simulation.variability.SPLCommit
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -140,29 +135,20 @@ class CherryPickEvalTask(
                         )
                     }
 
-                    val requiredChanges = CountingMap(splitPatch.intoChanges())
-
                     /* Result Evaluation */
-                    val patchOutcome = ResultAnalysis.processOutcome(
+                    val patchOutcome = CherryPickResultAnalysis.processCherriesOutcome(
                         operations,
+                        cherryPick,
                         datasetName,
                         runID,
-                        source.name,
-                        target.name,
-                        SPLCommit(cherryPick.cherryCommit),
-                        SPLCommit(cherryPick.expectedResultCommit),
                         splitPatch,
-                        splitPatch,
-                        requiredChanges,
                         actualVsExpectedNormal,
-                        actualVsExpectedNormal,
-                        rejectsNormal,
                         rejectsNormal,
                         evolutionDiff
                     )
 
                     val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")
-                    saveResult(patchOutcome, resultFile, runID, source, target)
+                    saveResult(patchOutcome, cherryPick, resultFile, runID)
                     repoManager.resetTargetVariant()
                 }
             } catch (e: Exception) {

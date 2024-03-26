@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.patching
+package org.variantsync.evaluation.analysis
 
 import com.google.gson.JsonObject
 import org.variantsync.evaluation.*
@@ -11,7 +11,7 @@ import java.nio.file.StandardOpenOption
 /**
  * Represents the outcome of a single experimental run in the study.
  */
-class PatchOutcome
+class SyncStudyPatchOutcome
 /**
  * @param dataset                  The considered subject
  * @param runID                    The id of this run
@@ -89,7 +89,7 @@ class PatchOutcome
         jsonBuilder.append(toJSON("filteredMitigatedMissing", filteredResult.mitigatedMissing.v)).append("\n")
         jsonBuilder.append("}").append("\n\n")
 
-        synchronized(PatchOutcome) {
+        synchronized(SyncStudyPatchOutcome) {
             if (Files.notExists(pathToFile)) {
                 Files.createFile(pathToFile)
             }
@@ -134,8 +134,8 @@ class PatchOutcome
         }
 
         @JvmStatic
-        fun fromJSON(`object`: JsonObject): PatchOutcome {
-            return PatchOutcome(
+        fun fromJSON(`object`: JsonObject): SyncStudyPatchOutcome {
+            return SyncStudyPatchOutcome(
                 `object`["dataset"].asString,
                 `object`["runID"].asLong.toULong(),
                 `object`["commitV0"].asString,

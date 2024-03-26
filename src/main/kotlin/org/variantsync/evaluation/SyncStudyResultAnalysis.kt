@@ -4,17 +4,14 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.tinylog.kotlin.Logger.debug
 import org.variantsync.diffdetective.util.Assert
-import org.variantsync.evaluation.analysis.AccumulatedResult
-import org.variantsync.evaluation.analysis.CountingMap
-import org.variantsync.evaluation.analysis.EvaluationResult
-import org.variantsync.evaluation.analysis.EvaluationScenario
+import org.variantsync.evaluation.analysis.*
+import org.variantsync.evaluation.analysis.SyncStudyPatchOutcome.Companion.fromJSON
 import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
 import org.variantsync.evaluation.patching.Change
-import org.variantsync.evaluation.patching.PatchOutcome
-import org.variantsync.evaluation.patching.PatchOutcome.Companion.fromJSON
 import org.variantsync.evaluation.patching.Rejects
+import org.variantsync.evaluation.prstudy.CherryPick
 import org.variantsync.vevos.simulation.variability.SPLCommit
 import java.io.File
 import java.io.IOException
@@ -28,7 +25,7 @@ import kotlin.io.path.name
 /**
  * Performs the result analysis presented in our paper.
  */
-object ResultAnalysis {
+object SyncStudyResultAnalysis {
     private const val DIV = "++++++++++++++++++++++++++++++++++++++"
     private val LINE_SEP = System.lineSeparator()
 
@@ -60,7 +57,7 @@ object ResultAnalysis {
         requiredChanges: CountingMap<Change>,
         resultDiffNormal: FineDiff, resultDiffFiltered: FineDiff,
         rejectsNormal: Rejects, rejectsFiltered: Rejects, targetChanges: FineDiff
-    ): PatchOutcome {
+    ): SyncStudyPatchOutcome {
         debug("Processing outcome of $runID for patch process in " + workdir.workDir())
         // evaluate patch rejects
         // number of tried file-level patches
@@ -126,7 +123,7 @@ object ResultAnalysis {
         Assert.assertEquals(normalResult.resultCount(), filteredResult.resultCount())
         Assert.assertEquals(normalResult.resultCount(), lineNormal.size.toLong())
         Assert.assertEquals(filteredResult.resultCount(), lineNormal.size.toLong())
-        return PatchOutcome(
+        return SyncStudyPatchOutcome(
             dataset, runID, commitV0.id(), commitV1.id(), sourceVariant,
             targetVariant, resultDiffNormal.content.size.toLong(),
             resultDiffFiltered.content.size.toLong(), fileNormal.toLong(), lineNormal.size.toLong(),
@@ -255,7 +252,6 @@ object ResultAnalysis {
         println()
         analyze(mpatchResults, "mpatch_overview")
     }
-
     @Throws(IOException::class)
     private fun analyze(resultFiles: List<Path>, summaryFileName: String) {
         val resultSummaryFile = resultFiles.first().parent.resolve("%s.summary".format(summaryFileName))
@@ -393,7 +389,7 @@ object ResultAnalysis {
             .append(LINE_SEP)
     }
 
-    private fun printPrecisionRecall(
+    fun printPrecisionRecall(
         sb: StringBuilder, tp: Long, fp: Long,
         tn: Long, fn: Long
     ) {
@@ -409,7 +405,7 @@ object ResultAnalysis {
         sb.append(String.format("F-Measure: %1.2f", fMeasure)).append(LINE_SEP)
     }
 
-    private fun printCorrectness(sb: StringBuilder, result: AccumulatedResult) {
+    fun printCorrectness(sb: StringBuilder, result: AccumulatedResult) {
         val correct = result.correctCount().toDouble()
         val incorrect = result.incorrectCount().toDouble()
         val total = result.resultCount().toDouble()
@@ -511,7 +507,7 @@ object ResultAnalysis {
         )
     }
 
-    private fun parseResult(lines: List<String>): PatchOutcome {
+    private fun parseResult(lines: List<String>): SyncStudyPatchOutcome {
         val gson = Gson()
         val sb = StringBuilder()
         lines.forEach(Consumer { l: String? -> sb.append(l).append("\n") })
