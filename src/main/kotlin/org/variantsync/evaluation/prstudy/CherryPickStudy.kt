@@ -21,6 +21,9 @@ import java.util.stream.Collectors
 import kotlin.math.ceil
 import kotlin.system.exitProcess
 
+// TODO: Implement different handling of parallel tasks. Each thread should use its own workspace, but each task only processes a single cherry pick
+// TODO: Implement timeout?
+// TODO: Ignore files in hidden directories (i.e., directories whose name starts with a dot '.')
 class CherryPickStudy(
     config: EvalConfig,
     dataset: CherryDataset,
