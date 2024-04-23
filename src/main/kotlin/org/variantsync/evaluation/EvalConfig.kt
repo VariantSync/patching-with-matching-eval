@@ -130,6 +130,21 @@ class EvalConfig(propertiesFile: File) {
         return count
     }
 
+    fun sampleZ(): Double {
+        // 1.96 is the z score for 95% confidence
+        return config!!.getDouble(SAMPLING_Z, 1.96)
+    }
+
+    fun sampleE(): Double {
+        // 0.05 is the error margin for 95% confidence
+        return config!!.getDouble(SAMPLING_E, 0.05)
+    }
+
+    fun sampleP(): Double {
+        // 0.5 is the default proportion if there is no knowledge about the population
+        return config!!.getDouble(SAMPLING_P, 0.5)
+    }
+
     companion object {
         // The number of repetitions for each commit and source target combination
         private const val EXPERIMENT_REPEATS = "experiment.repeats"
@@ -166,5 +181,14 @@ class EvalConfig(propertiesFile: File) {
 
         // The number of threads for parallel execution
         private const val EXPERIMENT_THREAD_COUNT = "experiment.thread-count"
+
+        // The z score for sample size computation
+        private const val SAMPLING_Z = "sampling.z"
+
+        // The error margin for sample size computation
+        private const val SAMPLING_E = "sampling.e"
+
+        // The sample proportion for sample size computation
+        private const val SAMPLING_P = "sampling.p"
     }
 }
