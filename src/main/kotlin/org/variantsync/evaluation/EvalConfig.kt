@@ -130,6 +130,13 @@ class EvalConfig(propertiesFile: File) {
         return count
     }
 
+    /**
+     * @return Whether sampling of commits that are processed is enabled
+     */
+    fun EXPERIMENT_ENABLE_SAMPLING(): Boolean {
+        return config!!.getBoolean(EXPERIMENT_ENABLE_SAMPLING)
+    }
+
     fun sampleZ(): Double {
         // 1.96 is the z score for 95% confidence
         return config!!.getDouble(SAMPLING_Z, 1.96)
@@ -181,6 +188,9 @@ class EvalConfig(propertiesFile: File) {
 
         // The number of threads for parallel execution
         private const val EXPERIMENT_THREAD_COUNT = "experiment.thread-count"
+
+        // Should sampling be enabled to reduce the amount of data to process?
+        private const val EXPERIMENT_ENABLE_SAMPLING = "experiment.enable-sampling"
 
         // The z score for sample size computation
         private const val SAMPLING_Z = "sampling.z"

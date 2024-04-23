@@ -3,6 +3,7 @@ package org.variantsync.evaluation.prstudy
 import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
+import org.variantsync.evaluation.determineSampleSize
 import org.variantsync.evaluation.waitForShutdown
 import org.variantsync.functjonal.iteration.ClusteredIterator
 import org.yaml.snakeyaml.LoaderOptions
@@ -41,6 +42,11 @@ class CherryPickStudy(
         this.numThreads = config.EXPERIMENT_THREAD_COUNT()
 
         val repoPath: Path = cloneGitHubRepo(config, dataset.repositoryId)
+
+        if (config.EXPERIMENT_ENABLE_SAMPLING()) {
+            val sampleSize = determineSampleSize(config, dataset.cherryPicks.size)
+            dataset.cherryPicks = dataset.cherryPicks.shuffled().subList(0, sampleSize)
+        }
 
         evalTask = ArrayList()
         val clusterSize = ceil(dataset.cherryPicks.size.toDouble() / numThreads).toInt()

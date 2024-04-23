@@ -4,6 +4,7 @@ import org.tinylog.kotlin.Logger
 import org.variantsync.diffdetective.datasets.DatasetDescription
 import org.variantsync.diffdetective.load.GitLoader
 import org.variantsync.evaluation.EvalConfig
+import org.variantsync.evaluation.determineSampleSize
 import org.variantsync.evaluation.waitForShutdown
 import org.variantsync.functjonal.iteration.ClusteredIterator
 import org.variantsync.vevos.simulation.VEVOS
@@ -20,6 +21,7 @@ import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.stream.Collectors
+import kotlin.collections.ArrayList
 import kotlin.math.ceil
 import kotlin.system.exitProcess
 
@@ -48,7 +50,13 @@ class SynchronizationStudy(
         }
         this.groundTruthPath = groundTruthPath
         this.numThreads = config.EXPERIMENT_THREAD_COUNT()
-        val history = init()
+        var history = init()
+
+        if (config.EXPERIMENT_ENABLE_SAMPLING()) {
+            val sampleSize = determineSampleSize(config, history.size)
+            history = history.shuffled().subList(0, sampleSize)
+        }
+
         syncStudyTasks = ArrayList()
         val clusterSize = ceil(history.size.toDouble() / numThreads).toInt()
         val commitClusterIterator = ClusteredIterator(history.iterator(), clusterSize)
