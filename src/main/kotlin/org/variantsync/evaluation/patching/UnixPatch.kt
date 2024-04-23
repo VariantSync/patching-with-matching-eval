@@ -149,6 +149,6 @@ class UnixPatch(private val strip: Int) : Patcher {
         }
         operations.appliedPatchTracker().reset()
 
-        return Rejects(result.intoChanges(strip))
+        return Rejects(result.intoChanges(0))
     }
 }
