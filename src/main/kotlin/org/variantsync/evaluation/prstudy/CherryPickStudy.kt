@@ -45,6 +45,7 @@ class CherryPickStudy(
 
         if (config.EXPERIMENT_ENABLE_SAMPLING()) {
             val sampleSize = determineSampleSize(config, dataset.cherryPicks.size)
+            Logger.info("Considering a representative sample of $sampleSize cherry picks.")
             dataset.cherryPicks = dataset.cherryPicks.shuffled().subList(0, sampleSize)
         }
 

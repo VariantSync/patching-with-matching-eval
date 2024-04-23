@@ -89,8 +89,8 @@ class SyncStudyPatchOutcome
         jsonBuilder.append(toJSON("filteredFilteredIncorrectly", filteredResult.filteredIncorrectly.v))
             .append(",\n")
         jsonBuilder.append(toJSON("filteredMitigatedInvalid", filteredResult.mitigatedInvalid.v)).append(",\n")
-        jsonBuilder.append(toJSON("filteredMitigatedMissing", filteredResult.mitigatedMissing.v)).append("\n")
-        jsonBuilder.append(toJSON("normalDuration", normalDuration.toMillis())).append("\n")
+        jsonBuilder.append(toJSON("filteredMitigatedMissing", filteredResult.mitigatedMissing.v)).append(",\n")
+        jsonBuilder.append(toJSON("normalDuration", normalDuration.toMillis())).append(",\n")
         jsonBuilder.append(toJSON("filteredDuration", filteredDuration.toMillis())).append("\n")
         jsonBuilder.append("}").append("\n\n")
 

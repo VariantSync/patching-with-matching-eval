@@ -54,6 +54,7 @@ class SynchronizationStudy(
 
         if (config.EXPERIMENT_ENABLE_SAMPLING()) {
             val sampleSize = determineSampleSize(config, history.size)
+            Logger.info("Considering a representative sample of $sampleSize commits.")
             history = history.shuffled().subList(0, sampleSize)
         }
 
