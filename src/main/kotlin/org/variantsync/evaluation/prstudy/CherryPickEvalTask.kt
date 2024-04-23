@@ -19,6 +19,10 @@ import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.Duration
+import java.time.Instant
+
+
 
 class CherryPickEvalTask(
     private val config: EvalConfig,
@@ -118,7 +122,10 @@ class CherryPickEvalTask(
                 for (patcher in operations.patchers) {
                     /* Application of patches without knowledge about features */
                     Logger.debug("Applying patch from cherry-pick...")
+                    val start = Instant.now()
                     val rejectsNormal = patcher.applyPatch(operations, source, target, false)
+                    val end = Instant.now()
+                    val patchDuration = Duration.between(start, end)
 
                     // Gather the patch result
                     val actualVsExpectedNormal = getActualVsExpected(operations.targetVariantV1, target, cherryPick)
@@ -147,7 +154,8 @@ class CherryPickEvalTask(
                         splitPatch,
                         actualVsExpectedNormal,
                         rejectsNormal,
-                        evolutionDiff
+                        evolutionDiff,
+                        patchDuration,
                     )
 
                     val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")

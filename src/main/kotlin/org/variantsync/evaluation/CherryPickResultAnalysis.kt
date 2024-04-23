@@ -18,6 +18,7 @@ import java.io.IOException
 import java.io.UncheckedIOException
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.Duration
 import java.util.function.Consumer
 import kotlin.io.path.name
 
@@ -93,7 +94,8 @@ object CherryPickResultAnalysis {
         dataset: String, runID: ULong,
         normalPatch: FineDiff,
         resultDiffNormal: FineDiff,
-        rejectsNormal: Rejects, evolutionChanges: FineDiff
+        rejectsNormal: Rejects, evolutionChanges: FineDiff,
+        patchDuration: Duration,
     ): CherryPickPatchOutcome {
         Logger.debug("Processing outcome of $runID for patch process in " + workdir.workDir())
         // number of tried line-level patches
@@ -116,7 +118,9 @@ object CherryPickResultAnalysis {
         Assert.assertEquals(normalResult.resultCount(), lineNormal.size.toLong())
         return CherryPickPatchOutcome(
             dataset, runID, cherryPick.cherryCommit, cherryPick.targetCommit, resultDiffNormal.content.size.toLong(),
-            lineNormal.size.toLong(), lineNormal.size.toLong() - lineNormalFailed.size.toLong(), normalResult
+            lineNormal.size.toLong(), lineNormal.size.toLong() - lineNormalFailed.size.toLong(),
+            normalResult,
+            patchDuration
         )
     }
 

@@ -7,6 +7,7 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
+import java.time.Duration
 
 /**
  * Represents the outcome of a single experimental run in the study.
@@ -29,6 +30,7 @@ class CherryPickPatchOutcome
     val lineNormal: Long,
     val lineSuccessNormal: Long,
     val normalResult: EvaluationResult,
+    private val patchDuration: Duration,
 ) {
 
     @Throws(IOException::class)
@@ -50,6 +52,7 @@ class CherryPickPatchOutcome
         jsonBuilder.append(toJSON("normalFilteredIncorrectly", normalResult.filteredIncorrectly.v)).append(",\n")
         jsonBuilder.append(toJSON("normalMitigatedInvalid", normalResult.mitigatedInvalid.v)).append(",\n")
         jsonBuilder.append(toJSON("normalMitigatedMissing", normalResult.mitigatedMissing.v)).append("\n")
+        jsonBuilder.append(toJSON("patchDuration", patchDuration.toMillis())).append("\n")
         jsonBuilder.append("}").append("\n\n")
 
         synchronized(SyncStudyPatchOutcome) {
@@ -106,6 +109,7 @@ class CherryPickPatchOutcome
                     MitigatedInvalid(`object`["normalMitigatedInvalid"].asLong),
                     MitigatedMissing(`object`["normalMitigatedMissing"].asLong)
                 ),
+                Duration.ofMillis(`object`["patchDuration"].asLong),
             )
         }
     }
