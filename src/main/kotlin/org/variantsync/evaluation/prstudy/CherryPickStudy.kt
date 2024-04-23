@@ -29,7 +29,7 @@ class CherryPickStudy(
     dataset: CherryDataset,
 ) {
     // The study tasks that are to be executed in parallel
-    private val evalTask: MutableList<CherryPickEvalTask>
+    private val evalTasks: MutableList<CherryPickEvalTask>
     private val numThreads: Int
 
     /**
@@ -49,11 +49,11 @@ class CherryPickStudy(
             dataset.cherryPicks = dataset.cherryPicks.shuffled().subList(0, sampleSize)
         }
 
-        evalTask = ArrayList()
+        evalTasks = ArrayList()
         val clusterSize = ceil(dataset.cherryPicks.size.toDouble() / numThreads).toInt()
         val clusterIterator = ClusteredIterator(dataset.cherryPicks.iterator(), clusterSize)
         while (clusterIterator.hasNext()) {
-            evalTask.add(
+            evalTasks.add(
                 CherryPickEvalTask(
                     config,
                     dataset.datasetName,
@@ -83,7 +83,7 @@ class CherryPickStudy(
      */
     fun run() {
         val threadPool = Executors.newFixedThreadPool(numThreads)
-        val futures = evalTask.stream()
+        val futures = evalTasks.stream()
             .map { runnable: CherryPickEvalTask -> threadPool.submit(runnable) }
             .collect(Collectors.toList())
         waitForShutdown(threadPool, futures)
