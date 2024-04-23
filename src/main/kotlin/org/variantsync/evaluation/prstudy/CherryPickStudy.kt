@@ -3,9 +3,11 @@ package org.variantsync.evaluation.prstudy
 import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
+import org.variantsync.evaluation.IDProvider
+import org.variantsync.evaluation.baseline.shell.CpCommand
+import org.variantsync.evaluation.baseline.shell.RmCommand
 import org.variantsync.evaluation.determineSampleSize
 import org.variantsync.evaluation.waitForShutdown
-import org.variantsync.functjonal.iteration.ClusteredIterator
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.File
@@ -19,7 +21,7 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.stream.Collectors
-import kotlin.math.ceil
+import kotlin.collections.ArrayDeque
 import kotlin.system.exitProcess
 
 // TODO: Implement different handling of parallel tasks. Each thread should use its own workspace, but each task only processes a single cherry pick
@@ -31,6 +33,8 @@ class CherryPickStudy(
     // The study tasks that are to be executed in parallel
     private val evalTasks: MutableList<CherryPickEvalTask>
     private val numThreads: Int
+    private val idProvider: IDProvider
+    private val repoManagers: Map<CherryEvalOperations, VariantRepoManager>
 
     /**
      * Initialize the study from the given configuration
@@ -49,16 +53,38 @@ class CherryPickStudy(
             dataset.cherryPicks = dataset.cherryPicks.shuffled().subList(0, sampleSize)
         }
 
-        evalTasks = ArrayList()
-        val clusterSize = ceil(dataset.cherryPicks.size.toDouble() / numThreads).toInt()
-        val clusterIterator = ClusteredIterator(dataset.cherryPicks.iterator(), clusterSize)
-        while (clusterIterator.hasNext()) {
+        this.evalTasks = ArrayList()
+        val availableOperations = ArrayDeque<CherryEvalOperations>(numThreads)
+        this.repoManagers = HashMap<CherryEvalOperations, VariantRepoManager>()
+
+        for (i in 1..numThreads) {
+            // Add one operations instance for each thread; each instance defines its own working directory
+            val operations = CherryEvalOperations(config.EXPERIMENT_DIR_MAIN())
+            // Clean old variant files
+            cleanVariantDirectories(operations)
+            // Copy the source and target variant to the respective variant directories
+            prepareVariantDirectories(operations, repoPath)
+            availableOperations.add(operations)
+            val repoManager = VariantRepoManager(operations, repoPath)
+            repoManagers[operations] = repoManager
+        }
+
+        idProvider = IDProvider(config.EXPERIMENT_START_ID())
+        for (cherryPick in dataset.cherryPicks) {
+            val runID = idProvider.next()
+            if (runID < idProvider.start) {
+                Logger.info("Skipped commit $runID")
+                continue
+            }
             evalTasks.add(
                 CherryPickEvalTask(
                     config,
                     dataset.datasetName,
                     repoPath,
-                    clusterIterator.next()
+                    cherryPick,
+                    availableOperations,
+                    repoManagers,
+                    runID
                 )
             )
         }
@@ -83,10 +109,18 @@ class CherryPickStudy(
      */
     fun run() {
         val threadPool = Executors.newFixedThreadPool(numThreads)
+        Logger.info("Starting diffing and patching for cherry picks...")
+
         val futures = evalTasks.stream()
             .map { runnable: CherryPickEvalTask -> threadPool.submit(runnable) }
             .collect(Collectors.toList())
+
         waitForShutdown(threadPool, futures)
+
+        // Finally, close all repo managers
+        for (repoManager in this.repoManagers.values) {
+            repoManager.close()
+        }
     }
 }
 
@@ -234,4 +268,36 @@ fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
     }
 
     return Optional.of(CherryDataset(pathToYaml.fileName.toString(), repoId, cherryPicks))
+}
+
+private fun prepareVariantDirectories(operations: CherryEvalOperations, gitHubRepoPath: Path) {
+    Logger.debug("Creating new source and target variant copies.")
+    operations.shell.execute(CpCommand(gitHubRepoPath, operations.sourceVariantV0).recursive())
+        .expect("Was not able to copy source variant V0.")
+    operations.shell.execute(CpCommand(gitHubRepoPath, operations.sourceVariantV1).recursive())
+        .expect("Was not able to copy source variant V1.")
+    operations.shell.execute(CpCommand(gitHubRepoPath, operations.targetVariantV0).recursive())
+        .expect("Was not able to copy target variant V0.")
+    operations.shell.execute(CpCommand(gitHubRepoPath, operations.targetVariantV1).recursive())
+        .expect("Was not able to copy target variant V1.")
+}
+
+private fun cleanVariantDirectories(operations: CherryEvalOperations) {
+    Logger.debug("Cleaning old variant files.")
+    if (Files.exists(operations.sourceVariantV0)) {
+        operations.shell.execute(RmCommand(operations.sourceVariantV0).recursive())
+            .expect("Was not able to remove source variant V0.")
+    }
+    if (Files.exists(operations.sourceVariantV1)) {
+        operations.shell.execute(RmCommand(operations.sourceVariantV1).recursive())
+            .expect("Was not able to remove source variant V1.")
+    }
+    if (Files.exists(operations.targetVariantV0)) {
+        operations.shell.execute(RmCommand(operations.targetVariantV0).recursive())
+            .expect("Was not able to remove target variant V0.")
+    }
+    if (Files.exists(operations.targetVariantV1)) {
+        operations.shell.execute(RmCommand(operations.sourceVariantV1).recursive())
+            .expect("Was not able to remove target variant V1.")
+    }
 }

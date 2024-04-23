@@ -43,12 +43,13 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
+import java.util.concurrent.Callable
 import java.util.stream.Collectors
 
 class SyncStudyTask(
     private val config: EvalConfig,
     private val datasetName: String, private val repositoryPath: Path, private val commits: List<SPLCommit>,
-) : Runnable {
+) : Callable<ULong> {
     private val operations: SyncStudyOperations = SyncStudyOperations(config.EXPERIMENT_DIR_MAIN())
     private val idProvider: IDProvider = IDProvider(config.EXPERIMENT_START_ID())
 
@@ -58,7 +59,7 @@ class SyncStudyTask(
     // The considered commit
     private var currentCommit: SPLCommit? = null
 
-    override fun run() {
+    override fun call(): ULong {
         // Initialize the SPL repositories for different versions
         Logger.info("Initializing SPL repos.")
         initializeSPLCopies()
@@ -192,6 +193,7 @@ class SyncStudyTask(
             // Free memory of commit V1
             currentCommit.forget()
         }
+        return 0UL;
     }
 
     private fun runPatchApplication(

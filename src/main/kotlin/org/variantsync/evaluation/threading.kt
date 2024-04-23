@@ -7,12 +7,23 @@ import java.util.concurrent.TimeUnit
 
 fun waitForShutdown(
     threadPool: ExecutorService,
-    futures: MutableList<Future<*>>
+    futures: MutableList<Future<ULong>>
 ) {
     threadPool.shutdown()
     for (future in futures) {
         try {
-            future.get()
+            // TODO: Handle premature return
+            // TODO: Handle timeouts
+            val runID: ULong = future.get()
+            if (runID % 25uL == 0uL) {
+                Logger.info(
+                    String.format(
+                        "Finished cherry-pick %s of %s.%n",
+                        runID.toString(),
+                        futures.size.toString()
+                    )
+                )
+            }
         } catch (e: Throwable) {
             Logger.error("Failed to finish task!")
             Logger.error(e)
