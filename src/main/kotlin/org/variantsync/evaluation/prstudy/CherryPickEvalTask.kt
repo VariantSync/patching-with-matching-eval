@@ -89,8 +89,8 @@ class CherryPickEvalTask(
 
             if (originalPatch.isEmpty) {
                 // There was no change to this variant, so we can skip it as source
-                Logger.warn(
-                    "Skipping PR " + cherryPick.id + " because there are no changes to code. Diff of code files is empty."
+                Logger.info(
+                    "Skipping cherry pick " + cherryPick.id + " because there are no changes to code. Diff of code files is empty."
                 )
                 continue
             }
