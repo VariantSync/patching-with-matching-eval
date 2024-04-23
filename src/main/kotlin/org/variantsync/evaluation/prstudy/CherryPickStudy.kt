@@ -110,10 +110,10 @@ fun main(args: Array<String>) {
 
     for (dataset in datasets) {
         val datasetSize = dataset.cherryPicks.size
-        Logger.info("using next dataset ${dataset.datasetName} with $datasetSize pull requests")
+        Logger.info("using next dataset ${dataset.datasetName} with $datasetSize cherry picks")
         if (datasetSize > config.EXPERIMENT_DATASET_MAX_SIZE()) {
             Logger.info(
-                "Skipping %s with %s pull requests because it exceeds the maximum number of pull requests (%d) set in the configuration.".format(
+                "Skipping %s with %s cherry picks because it exceeds the maximum number of cherry picks (%d) set in the configuration.".format(
                     dataset.datasetName,
                     datasetSize,
                     config.EXPERIMENT_DATASET_MAX_SIZE()

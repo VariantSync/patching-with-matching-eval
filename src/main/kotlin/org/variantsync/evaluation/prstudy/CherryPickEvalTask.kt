@@ -23,7 +23,6 @@ import java.time.Duration
 import java.time.Instant
 
 
-
 class CherryPickEvalTask(
     private val config: EvalConfig,
     private val datasetName: String, private val gitHubRepoPath: Path,
@@ -41,7 +40,7 @@ class CherryPickEvalTask(
         val repoManager = VariantRepoManager(operations, gitHubRepoPath)
 
         // For each pull request
-        Logger.info("Starting diffing and patching for pull requests...")
+        Logger.info("Starting diffing and patching for cherry picks...")
         var runID: ULong
         var numProcessed = 0uL
         val numPRs = cherryPicks.size.toLong()
@@ -63,7 +62,7 @@ class CherryPickEvalTask(
                     continue
                 }
             } catch (e: Exception) {
-                Logger.error("Was not able to checkout pull request commits in variant directories")
+                Logger.error("Was not able to checkout cherry pick commits in variant directories")
                 Logger.error(e)
                 e.printStackTrace()
                 continue

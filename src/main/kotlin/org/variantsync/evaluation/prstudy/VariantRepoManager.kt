@@ -17,7 +17,7 @@ class VariantRepoManager(private val operations: CherryEvalOperations, private v
 
     fun prepareCherryPick(cherryPick: CherryPick): Boolean {
         lastCherry = cherryPick
-        Logger.debug("Checking out commits of next pull request")
+        Logger.debug("Checking out commits of next cherry pick")
         try {
             this.sourceV0.checkout().setName(cherryPick.cherryParentCommit).setForced(true).call()
         } catch (e: JGitInternalException) {
