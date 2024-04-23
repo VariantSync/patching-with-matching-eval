@@ -41,6 +41,8 @@ import org.variantsync.vevos.simulation.variability.pc.options.VariantGeneration
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.Duration
+import java.time.Instant
 import java.util.stream.Collectors
 
 class SyncStudyTask(
@@ -230,7 +232,10 @@ class SyncStudyTask(
             Logger.debug("Applying patch without knowledge about features...")
             // Apply the patch to the target variant
             resetPatchDirectory(pathToTarget)
+            val normalStart = Instant.now()
             val rejectsNormal = patcher.applyPatch(operations, source, target, false)
+            val normalEnd = Instant.now()
+            val normalDuration = Duration.between(normalStart, normalEnd)
 
             if (config.EXPERIMENT_DEBUG()) {
                 targetFilesNormalDebug(target, pathToTarget, pathToExpectedResult)
@@ -261,11 +266,14 @@ class SyncStudyTask(
 
             // Apply the filtered patch to the target variant, if there are changes left
             resetPatchDirectory(pathToTarget)
+            val filteredStart = Instant.now()
             val rejectsFiltered = if (splitAndFilteredPatch.content.isNotEmpty()) {
                 patcher.applyPatch(operations, source, target, true)
             } else {
                 Rejects(ArrayList())
             }
+            val filteredEnd = Instant.now()
+            val filteredDuration = Duration.between(filteredStart, filteredEnd)
 
             // Gather the result
             val actualVsExpectedFiltered = getActualVsExpected(pathToExpectedResult, "filtered", target)
@@ -302,7 +310,8 @@ class SyncStudyTask(
                 parentCommit, currentCommit, splitPatch, splitAndFilteredPatch,
                 requiredChanges,
                 actualVsExpectedNormal, actualVsExpectedFiltered, rejectsNormal,
-                rejectsFiltered, evolutionDiff
+                rejectsFiltered, evolutionDiff,
+                normalDuration, filteredDuration
             )
 
             val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")

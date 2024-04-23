@@ -11,13 +11,13 @@ import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
 import org.variantsync.evaluation.patching.Change
 import org.variantsync.evaluation.patching.Rejects
-import org.variantsync.evaluation.prstudy.CherryPick
 import org.variantsync.vevos.simulation.variability.SPLCommit
 import java.io.File
 import java.io.IOException
 import java.io.UncheckedIOException
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.Duration
 import java.util.function.Consumer
 import java.util.stream.Collectors
 import kotlin.io.path.name
@@ -57,7 +57,9 @@ object SyncStudyResultAnalysis {
         normalPatch: FineDiff, filteredPatch: FineDiff,
         requiredChanges: CountingMap<Change>,
         resultDiffNormal: FineDiff, resultDiffFiltered: FineDiff,
-        rejectsNormal: Rejects, rejectsFiltered: Rejects, targetChanges: FineDiff
+        rejectsNormal: Rejects, rejectsFiltered: Rejects, targetChanges: FineDiff,
+        normalDuration: Duration,
+        filteredDuration: Duration,
     ): SyncStudyPatchOutcome {
         debug("Processing outcome of $runID for patch process in " + workdir.workDir())
         // evaluate patch rejects
@@ -132,7 +134,9 @@ object SyncStudyResultAnalysis {
                     fileNormal - fileNormalFailed), (lineNormal.size - lineNormalFailed.size).toLong(),
             fileFiltered.toLong(), lineFiltered.size.toLong(), (fileFiltered - fileFilteredFailed),
             (
-                    lineFiltered.size - lineFilteredFailed.size).toLong(), normalResult, filteredResult
+                    lineFiltered.size - lineFilteredFailed.size).toLong(), normalResult, filteredResult,
+            normalDuration,
+            filteredDuration
         )
     }
 
@@ -152,7 +156,8 @@ object SyncStudyResultAnalysis {
         // Expected changes, i.e., changes in the target variant's
         // evolution that can be synchronized
         run {
-            val tempChanges: CountingMap<ChangedLine> = CountingMap(FineDiff.determineChangedLines(unfilteredPatch, STRIP))
+            val tempChanges: CountingMap<ChangedLine> =
+                CountingMap(FineDiff.determineChangedLines(unfilteredPatch, STRIP))
             for (evolutionChange in changesInEvolution) {
                 if (!tempChanges.contains(evolutionChange)) {
                     unpatchableChanges.addOne(evolutionChange)
@@ -253,6 +258,7 @@ object SyncStudyResultAnalysis {
         println()
         analyze(mpatchResults, "mpatch_overview")
     }
+
     @Throws(IOException::class)
     private fun analyze(resultFiles: List<Path>, summaryFileName: String) {
         val resultSummaryFile = resultFiles.first().parent.resolve("%s.summary".format(summaryFileName))

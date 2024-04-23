@@ -7,6 +7,7 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
+import java.time.Duration
 
 /**
  * Represents the outcome of a single experimental run in the study.
@@ -47,7 +48,9 @@ class SyncStudyPatchOutcome
     val fileSuccessFiltered: Long,
     val lineSuccessFiltered: Long,
     val normalResult: EvaluationResult,
-    val filteredResult: EvaluationResult
+    val filteredResult: EvaluationResult,
+    val normalDuration: Duration,
+    val filteredDuration: Duration,
 ) {
 
     @Throws(IOException::class)
@@ -87,6 +90,8 @@ class SyncStudyPatchOutcome
             .append(",\n")
         jsonBuilder.append(toJSON("filteredMitigatedInvalid", filteredResult.mitigatedInvalid.v)).append(",\n")
         jsonBuilder.append(toJSON("filteredMitigatedMissing", filteredResult.mitigatedMissing.v)).append("\n")
+        jsonBuilder.append(toJSON("normalDuration", normalDuration.toMillis())).append("\n")
+        jsonBuilder.append(toJSON("filteredDuration", filteredDuration.toMillis())).append("\n")
         jsonBuilder.append("}").append("\n\n")
 
         synchronized(SyncStudyPatchOutcome) {
@@ -171,7 +176,9 @@ class SyncStudyPatchOutcome
                     FilteredIncorrectly(`object`["filteredFilteredIncorrectly"].asLong),
                     MitigatedInvalid(`object`["filteredMitigatedInvalid"].asLong),
                     MitigatedMissing(`object`["filteredMitigatedMissing"].asLong)
-                )
+                ),
+                Duration.ofMillis(`object`["normalDuration"].asLong),
+                Duration.ofMillis(`object`["filteredDuration"].asLong),
             )
         }
     }
