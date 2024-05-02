@@ -24,8 +24,6 @@ import java.util.stream.Collectors
 import kotlin.collections.ArrayDeque
 import kotlin.system.exitProcess
 
-// TODO: Implement different handling of parallel tasks. Each thread should use its own workspace, but each task only processes a single cherry pick
-// TODO: Implement timeout?
 class CherryPickStudy(
     config: EvalConfig,
     dataset: CherryDataset,
@@ -80,7 +78,6 @@ class CherryPickStudy(
                 CherryPickEvalTask(
                     config,
                     dataset.datasetName,
-                    repoPath,
                     cherryPick,
                     availableOperations,
                     repoManagers,

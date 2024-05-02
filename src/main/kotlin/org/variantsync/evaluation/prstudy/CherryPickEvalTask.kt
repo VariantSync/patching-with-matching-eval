@@ -3,7 +3,6 @@ package org.variantsync.evaluation.prstudy
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.CherryPickResultAnalysis
 import org.variantsync.evaluation.EvalConfig
-import org.variantsync.evaluation.IDProvider
 import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
@@ -22,26 +21,46 @@ import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.Callable
+import kotlin.system.exitProcess
 
 
 class CherryPickEvalTask(
     private val config: EvalConfig,
-    private val datasetName: String, private val gitHubRepoPath: Path,
+    private val datasetName: String,
     private val cherryPick: CherryPick,
     private val availableOperations: ArrayDeque<CherryEvalOperations>,
     private val repoManagers: Map<CherryEvalOperations, VariantRepoManager>,
     private val runID: ULong,
 ) : Callable<ULong> {
+    private val MAX_SYNC_TRIES = 5;
+    private val RETRY_TIME_IN_MS = 1000L;
 
-    override fun call() : ULong {
+    override fun call(): ULong {
         val operations: CherryEvalOperations
         val repoManager: VariantRepoManager
 
         synchronized(CherryPickEvalTask::class) {
             // Retrieve the operations and the repo manager for this task
             Logger.debug("Getting the next available operations")
-            operations = availableOperations.removeFirst()
-            repoManager = this.repoManagers[operations]!!
+            try {
+                var tempOperations: CherryEvalOperations? = availableOperations.removeFirst()
+                var tries = 0;
+                // Linter says that this can never be null, but this is not true.
+                while (tempOperations == null) {
+                    Logger.info("Waiting for operations availability")
+                    Thread.sleep(RETRY_TIME_IN_MS)
+                    tempOperations = availableOperations.removeFirst()
+                    tries++
+                    if (tries > MAX_SYNC_TRIES) {
+                        Logger.error("Reached the maximum number of retries on task synchronization.")
+                        exitProcess(2)
+                    }
+                }
+                operations = tempOperations
+                repoManager = this.repoManagers[operations]!!
+            } catch (e: NullPointerException) {
+                throw e
+            }
         }
 
         try {
@@ -54,6 +73,8 @@ class CherryPickEvalTask(
             Logger.error("Was not able to checkout cherry pick commits in variant directories")
             Logger.error(e)
             e.printStackTrace()
+            // Place the operations back in the queue to make them available to the next task
+            availableOperations.add(operations)
             return runID
         }
 
@@ -82,6 +103,8 @@ class CherryPickEvalTask(
             Logger.info(
                 "Skipping cherry pick " + cherryPick.id + " because there are no changes to code. Diff of code files is empty."
             )
+            // Place the operations back in the queue to make them available to the next task
+            availableOperations.add(operations)
             return runID
         }
 
