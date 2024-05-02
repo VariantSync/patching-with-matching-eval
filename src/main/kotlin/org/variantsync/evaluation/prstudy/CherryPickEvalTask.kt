@@ -63,6 +63,7 @@ class CherryPickEvalTask(
             // repoManager.cleanRepoStates()
             if (!repoManager.prepareCherryPick(cherryPick)) {
                 Logger.info("Not all commits of the cherry pick could be found... skipping cherry pick ${cherryPick.id} of $datasetName")
+                availableOperations.add(operations)
                 return runID
             }
         } catch (e: Exception) {
