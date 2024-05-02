@@ -42,25 +42,21 @@ class CherryPickEvalTask(
         synchronized(CherryPickEvalTask::class) {
             // Retrieve the operations and the repo manager for this task
             Logger.debug("Getting the next available operations")
-            try {
-                var tempOperations: CherryEvalOperations? = availableOperations.removeFirst()
-                var tries = 0;
-                // Linter says that this can never be null, but this is not true.
-                while (tempOperations == null) {
-                    Logger.info("Waiting for operations availability")
-                    Thread.sleep(RETRY_TIME_IN_MS)
-                    tempOperations = availableOperations.removeFirst()
-                    tries++
-                    if (tries > MAX_SYNC_TRIES) {
-                        Logger.error("Reached the maximum number of retries on task synchronization.")
-                        exitProcess(2)
-                    }
+            var tempOperations: CherryEvalOperations? = availableOperations.removeFirstOrNull()
+            var tries = 0;
+            // Linter says that this can never be null, but this is not true.
+            while (tempOperations == null) {
+                Logger.info("Waiting for operations availability")
+                Thread.sleep(RETRY_TIME_IN_MS)
+                tempOperations = availableOperations.removeFirstOrNull()
+                tries++
+                if (tries > MAX_SYNC_TRIES) {
+                    Logger.error("Reached the maximum number of retries on task synchronization.")
+                    exitProcess(2)
                 }
-                operations = tempOperations
-                repoManager = this.repoManagers[operations]!!
-            } catch (e: NullPointerException) {
-                throw e
             }
+            operations = tempOperations
+            repoManager = this.repoManagers[operations]!!
         }
 
         try {
