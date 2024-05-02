@@ -39,5 +39,12 @@ fun waitForShutdown(
         Logger.error("Thread pool timeout.")
     }
 
+    Logger.info(
+        String.format(
+            "Finished all %s cherry-picks.%n",
+            futures.size.toString()
+        )
+    )
+
     Logger.info("All done.")
 }
