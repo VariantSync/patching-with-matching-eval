@@ -20,6 +20,7 @@ dependencies {
     implementation("org.variantsync.vevos:simulation:1.2.0")
     // https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2
     implementation("org.apache.commons:commons-configuration2:2.9.0")
+    implementation("commons-logging:commons-logging:1.3.1")
     // https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
     implementation("commons-beanutils:commons-beanutils:1.9.4")
     implementation("org.tinylog:tinylog-api-kotlin:2.6.2")
