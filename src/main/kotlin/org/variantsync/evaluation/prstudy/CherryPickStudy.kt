@@ -1,5 +1,6 @@
 package org.variantsync.evaluation.prstudy
 
+import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
@@ -33,6 +34,7 @@ class CherryPickStudy(
     private val numThreads: Int
     private val idProvider: IDProvider
     private val repoManagers: Map<CherryEvalOperations, VariantRepoManager>
+    private val availableOperations: ArrayDeque<CherryEvalOperations>
 
     /**
      * Initialize the study from the given configuration
@@ -52,7 +54,7 @@ class CherryPickStudy(
         }
 
         this.evalTasks = ArrayList()
-        val availableOperations = ArrayDeque<CherryEvalOperations>(numThreads)
+        this.availableOperations = ArrayDeque(numThreads)
         this.repoManagers = HashMap<CherryEvalOperations, VariantRepoManager>()
 
         for (i in 1..numThreads) {
@@ -117,6 +119,11 @@ class CherryPickStudy(
         // Finally, close all repo managers
         for (repoManager in this.repoManagers.values) {
             repoManager.close()
+        }
+
+        // And delete all workdirs
+        for (operations in this.availableOperations) {
+            FileUtils.deleteDirectory(operations.workDir.toFile())
         }
     }
 }
