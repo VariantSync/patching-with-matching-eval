@@ -60,19 +60,30 @@ class CherryPickEvalTask(
         }
 
         try {
+            callExecution(repoManager, operations)
+        } catch (e: Throwable) {
+            Logger.error("Failed to finish task with runID $runID")
+            Logger.error(e)
+            e.printStackTrace()
+        } finally {
+            // Place the operations back in the queue to make them available to the next task
+            availableOperations.add(operations)
+        }
+
+        return runID
+    }
+
+    fun callExecution(repoManager: VariantRepoManager, operations: CherryEvalOperations) {
+        try {
             // repoManager.cleanRepoStates()
             if (!repoManager.prepareCherryPick(cherryPick)) {
                 Logger.info("Not all commits of the cherry pick could be found... skipping cherry pick ${cherryPick.id} of $datasetName")
-                availableOperations.add(operations)
-                return runID
+                return
             }
         } catch (e: Exception) {
             Logger.error("Was not able to checkout cherry pick commits in variant directories")
             Logger.error(e)
-            e.printStackTrace()
-            // Place the operations back in the queue to make them available to the next task
-            availableOperations.add(operations)
-            return runID
+            return
         }
 
         if (config.EXPERIMENT_DEBUG() && operations.debugDir(cherryPick).toFile().mkdirs()) {
@@ -100,9 +111,7 @@ class CherryPickEvalTask(
             Logger.info(
                 "Skipping cherry pick " + cherryPick.id + " because there are no changes to code. Diff of code files is empty."
             )
-            // Place the operations back in the queue to make them available to the next task
-            availableOperations.add(operations)
-            return runID
+            return
         }
 
         if (config.EXPERIMENT_DEBUG()) {
@@ -179,7 +188,6 @@ class CherryPickEvalTask(
 
         // Place the operations back in the queue to make them available to the next task
         availableOperations.add(operations)
-        return runID
     }
 
 
