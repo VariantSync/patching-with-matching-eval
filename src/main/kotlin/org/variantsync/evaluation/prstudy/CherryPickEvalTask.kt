@@ -20,42 +20,29 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
+import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Callable
-import kotlin.system.exitProcess
 
 
 class CherryPickEvalTask(
     private val config: EvalConfig,
     private val datasetName: String,
     private val cherryPick: CherryPick,
-    private val availableOperations: ArrayDeque<CherryEvalOperations>,
+    private val availableOperations: BlockingQueue<CherryEvalOperations>,
     private val repoManagers: Map<CherryEvalOperations, VariantRepoManager>,
     private val runID: ULong,
 ) : Callable<ULong> {
-    private val MAX_SYNC_TRIES = 5;
-    private val RETRY_TIME_IN_MS = 1000L;
 
     override fun call(): ULong {
         val operations: CherryEvalOperations
         val repoManager: VariantRepoManager
 
-        synchronized(CherryPickEvalTask::class) {
+        synchronized(CherryPickEvalTask::class.java) {
             // Retrieve the operations and the repo manager for this task
-            Logger.debug("Getting the next available operations")
-            var tempOperations: CherryEvalOperations? = availableOperations.removeFirstOrNull()
-            var tries = 0;
-            // Linter says that this can never be null, but this is not true.
-            while (tempOperations == null) {
-                Logger.info("Waiting for operations availability")
-                Thread.sleep(RETRY_TIME_IN_MS)
-                tempOperations = availableOperations.removeFirstOrNull()
-                tries++
-                if (tries > MAX_SYNC_TRIES) {
-                    Logger.error("Reached the maximum number of retries on task synchronization.")
-                    exitProcess(2)
-                }
-            }
-            operations = tempOperations
+            Logger.debug("Getting the next available operations (" + availableOperations.size + ")")
+            operations = availableOperations.take()
+            Logger.debug("There are now " + availableOperations.size + " operations available. Took $operations")
+            Logger.debug("Remaining after take: " + opsToString())
             repoManager = this.repoManagers[operations]!!
         }
 
@@ -67,10 +54,22 @@ class CherryPickEvalTask(
             e.printStackTrace()
         } finally {
             // Place the operations back in the queue to make them available to the next task
+            Logger.debug("Placing operation $operations back in queue (" + availableOperations.size + ")")
+            Logger.debug("Remaining before place back: " + opsToString())
             availableOperations.add(operations)
+            Logger.debug("There are now " + availableOperations.size + " operations available.")
         }
 
         return runID
+    }
+
+    private fun opsToString(): String {
+        val sb = StringBuilder()
+        for (op in availableOperations) {
+            sb.append(op)
+            sb.append(",")
+        }
+        return sb.toString()
     }
 
     fun callExecution(repoManager: VariantRepoManager, operations: CherryEvalOperations) {
@@ -185,9 +184,6 @@ class CherryPickEvalTask(
         } catch (e: Exception) {
             Logger.debug("Captured exception for cherry pick ${cherryPick.id}: ", e.message)
         }
-
-        // Place the operations back in the queue to make them available to the next task
-        availableOperations.add(operations)
     }
 
 

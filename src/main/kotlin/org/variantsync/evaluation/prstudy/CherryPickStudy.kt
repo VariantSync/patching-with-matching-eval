@@ -20,9 +20,10 @@ import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
+import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Executors
+import java.util.concurrent.LinkedBlockingQueue
 import java.util.stream.Collectors
-import kotlin.collections.ArrayDeque
 import kotlin.system.exitProcess
 
 class CherryPickStudy(
@@ -34,7 +35,7 @@ class CherryPickStudy(
     private val numThreads: Int
     private val idProvider: IDProvider
     private val repoManagers: Map<CherryEvalOperations, VariantRepoManager>
-    private val availableOperations: ArrayDeque<CherryEvalOperations>
+    private val availableOperations: BlockingQueue<CherryEvalOperations>
 
     /**
      * Initialize the study from the given configuration
@@ -54,7 +55,7 @@ class CherryPickStudy(
         }
 
         this.evalTasks = ArrayList()
-        this.availableOperations = ArrayDeque(numThreads)
+        this.availableOperations = LinkedBlockingQueue(numThreads)
         this.repoManagers = HashMap<CherryEvalOperations, VariantRepoManager>()
 
         for (i in 1..numThreads) {

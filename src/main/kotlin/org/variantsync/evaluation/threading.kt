@@ -19,7 +19,7 @@ fun waitForShutdown(
             if (runID % 25uL == 0uL) {
                 Logger.info(
                     String.format(
-                        "Finished cherry-pick %s of %s.%n",
+                        "Finished cherry-pick %s of %s.",
                         runID.toString(),
                         futures.size.toString()
                     )
@@ -35,7 +35,10 @@ fun waitForShutdown(
             e.printStackTrace()
         }
     }
-    if (!threadPool.awaitTermination(7, TimeUnit.DAYS)) {
+    Logger.info("Waiting for thread pool shutdown")
+    threadPool.shutdownNow()
+    // TODO: Configure timeout
+    if (!threadPool.awaitTermination(10, TimeUnit.MINUTES)) {
         Logger.error("Thread pool timeout.")
     }
 
