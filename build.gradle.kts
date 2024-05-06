@@ -40,8 +40,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
 
-tasks.create<ShadowJar>("Experiment") {
-    archiveBaseName.set("experiment-execution")
+tasks.create<ShadowJar>("SyncStudy") {
+    archiveBaseName.set("synchronization-study")
     archiveVersion.set("")
 
     // Exclude signature files
@@ -55,13 +55,32 @@ tasks.create<ShadowJar>("Experiment") {
     configurations = listOf(project.configurations.runtimeClasspath.get())
 
     manifest {
-        attributes["Main-Class"] = "org.variantsync.evaluation.Main"
+        attributes["Main-Class"] = "org.variantsync.evaluation.syncstudy.SynchronizationStudyKt"
+    }
+}
+
+tasks.create<ShadowJar>("Cherries") {
+    archiveBaseName.set("cherries")
+    archiveVersion.set("")
+
+    // Exclude signature files
+    exclude("META-INF/*.SF")
+    exclude("META-INF/*.DSA")
+    exclude("META-INF/*.RSA")
+
+    // Include the main source sets (classes and resources)
+    from(sourceSets.main.get().output)
+
+    configurations = listOf(project.configurations.runtimeClasspath.get())
+
+    manifest {
+        attributes["Main-Class"] = "org.variantsync.evaluation.cherries.CherryPickStudyKt"
     }
 }
 
 // Second JAR task
-tasks.create<ShadowJar>("Evaluation") {
-    archiveBaseName.set("result-eval")
+tasks.create<ShadowJar>("CherriesAnalysis") {
+    archiveBaseName.set("result-analysis-cherries")
     archiveVersion.set("")
 
     // Exclude signature files
@@ -75,7 +94,26 @@ tasks.create<ShadowJar>("Evaluation") {
     configurations = listOf(project.configurations.runtimeClasspath.get())
 
     manifest {
-        attributes["Main-Class"] = "org.variantsync.evaluation.ResultAnalysis"
+        attributes["Main-Class"] = "org.variantsync.evaluation.CherryPickResultAnalysis"
+    }
+}
+
+tasks.create<ShadowJar>("SyncStudyAnalysis") {
+    archiveBaseName.set("result-analysis-sync-study")
+    archiveVersion.set("")
+
+    // Exclude signature files
+    exclude("META-INF/*.SF")
+    exclude("META-INF/*.DSA")
+    exclude("META-INF/*.RSA")
+
+    // Include the main source sets (classes and resources)
+    from(sourceSets.main.get().output)
+
+    configurations = listOf(project.configurations.runtimeClasspath.get())
+
+    manifest {
+        attributes["Main-Class"] = "org.variantsync.evaluation.SyncStudyResultAnalysis"
     }
 }
 

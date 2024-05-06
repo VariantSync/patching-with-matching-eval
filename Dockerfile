@@ -7,8 +7,10 @@ COPY local-maven-repo local-maven-repo
 COPY *gradle.kts ./
 COPY gradlew ./
 COPY gradle gradle
-RUN ./gradlew Experiment || exit
-RUN ./gradlew Evaluation || exit
+RUN ./gradlew Cherries || exit
+RUN ./gradlew SyncStudy || exit
+RUN ./gradlew SyncStudyAnalysis || exit
+RUN ./gradlew CherriesAnalysis || exit
 
 FROM --platform=linux/amd64 openjdk:19-alpine
 
@@ -25,7 +27,6 @@ WORKDIR /home/user
 
 # Copy the docker resources
 COPY docker/* ./
-COPY plots ./plots
 
 # Copy all relevant files from the previous stage
 COPY --from=0 /home/user/build/libs/* ./
