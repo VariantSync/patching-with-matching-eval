@@ -219,7 +219,11 @@ fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
     }
 
     val repoId = entries[0]
-    if (repoId !is String) {
+    if (repoId !is HashMap<*, *>) {
+        throw parseException
+    }
+    val repoName = repoId["repo_name"]
+    if (repoName !is String) {
         throw parseException
     }
 
@@ -272,7 +276,7 @@ fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
         id++
     }
 
-    return Optional.of(CherryDataset(pathToYaml.fileName.toString(), repoId, cherryPicks))
+    return Optional.of(CherryDataset(pathToYaml.fileName.toString(), repoName, cherryPicks))
 }
 
 private fun prepareVariantDirectories(operations: CherryEvalOperations, gitHubRepoPath: Path) {
