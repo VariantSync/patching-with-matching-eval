@@ -34,21 +34,12 @@ cherries() {
 
 	if [ "$1" == 'replication' ]; then
 		java -jar -Dtinylog.configuration=/home/user/tinylog.properties cherries.jar config-replication.cherries.properties
-		if [ $? -eq 1 ]; then
-			mkdir /home/user/simulation-files/results/ERROR
-			cp -r /home/user/simulation-files /home/user/simulation-files/ERROR/
-			cp -r /home/user/TARGET /home/user/simulation-files/results/ERROR/
-		fi
 		java -jar result-analysis-cherries.jar config-replication.cherries.properties
 	elif [ "$1" == 'validation' ]; then
 		echo "Running a (hopefully) short validation of the installation."
 		echo ""
 		echo ""
 		java -jar -Dtinylog.configuration=/home/user/tinylog.properties cherries.jar config-validation.cherries.properties
-		if [ $? -eq 1 ]; then
-			mkdir /home/user/simulation-files/results/ERROR
-			cp -r /home/user/simulation-files/main/workdir* /home/user/simulation-files/results/ERROR/
-		fi
 		java -jar result-analysis-cherries.jar config-validation.cherries.properties
 	elif [ "$1" == 'evaluation' ]; then
 		echo "Running evaluation of results.txt"
