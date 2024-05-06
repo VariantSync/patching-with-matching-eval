@@ -3,7 +3,7 @@ package org.variantsync.evaluation
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.analysis.CherryPickPatchOutcome
 import org.variantsync.evaluation.analysis.SyncStudyPatchOutcome
-import org.variantsync.evaluation.prstudy.CherryPick
+import org.variantsync.evaluation.cherries.CherryPick
 import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException

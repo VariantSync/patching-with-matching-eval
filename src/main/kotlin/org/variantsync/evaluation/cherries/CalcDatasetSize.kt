@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.prstudy
+package org.variantsync.evaluation.cherries
 
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig

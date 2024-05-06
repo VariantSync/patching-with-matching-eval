@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.prstudy
+package org.variantsync.evaluation.cherries
 
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.errors.JGitInternalException

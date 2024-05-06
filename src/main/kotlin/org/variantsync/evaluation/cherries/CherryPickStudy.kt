@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.prstudy
+package org.variantsync.evaluation.cherries
 
 import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.Git

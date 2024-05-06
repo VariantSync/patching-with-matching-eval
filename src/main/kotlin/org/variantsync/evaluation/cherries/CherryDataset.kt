@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.prstudy
+package org.variantsync.evaluation.cherries
 
 class CherryDataset(
     val datasetName: String,

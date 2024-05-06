@@ -10,9 +10,9 @@ import org.variantsync.evaluation.SyncStudyResultAnalysis.printPrecisionRecall
 import org.variantsync.evaluation.analysis.*
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
+import org.variantsync.evaluation.cherries.CherryPick
 import org.variantsync.evaluation.patching.Change
 import org.variantsync.evaluation.patching.Rejects
-import org.variantsync.evaluation.prstudy.CherryPick
 import java.io.File
 import java.io.IOException
 import java.io.UncheckedIOException
