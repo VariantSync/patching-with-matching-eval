@@ -47,6 +47,8 @@ cherries() {
 	elif [ "$1" == 'cleanup' ]; then
 		echo "Running cleanup of old result files."
 		rm -r /home/user/simulation-files/results/
+	else
+		echo "Invalid argument: $1"
 	fi
 }
 

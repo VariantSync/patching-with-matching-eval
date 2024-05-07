@@ -15,7 +15,11 @@ RUN ./gradlew CherriesAnalysis || exit
 FROM --platform=linux/amd64 openjdk:19-alpine
 
 RUN apk update
+# Install dependencies for unix patch
 RUN apk add --no-cache --upgrade bash diffutils patch git python3 py3-matplotlib unzip
+
+# Install dependencies for patching with matching
+RUN apk add --no-cache curl bash gcc musl-dev
 
 ARG GROUP_ID
 ARG USER_ID
@@ -24,6 +28,9 @@ ARG USER_ID
 RUN addgroup -g $GROUP_ID user
 RUN adduser --disabled-password -G user -u $USER_ID --home /home/user --gecos '' user
 WORKDIR /home/user
+
+# Copy mpatch
+COPY mpatch ./mpatch
 
 # Copy the docker resources
 COPY docker/* ./
@@ -37,4 +44,16 @@ RUN chmod +x run-simulation.sh
 RUN chmod +x entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh", "./run-simulation.sh"]
+
+# Install Rust and mpatch for the new user
 USER user
+
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y \
+    && source $HOME/.cargo/env
+# Set the PATH
+ENV PATH="/home/user/.cargo/bin:${PATH}"
+# Set the Rust toolchain to stable (or nightly if preferred)
+RUN rustup default stable
+# RUN rustup default nightly
+
+RUN cargo install --path /home/user/mpatch
