@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("org.variantsync.vevos:simulation:1.2.0")
+    implementation("org.variantsync.vevos:simulation:2.0.0")
     // https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2
     implementation("org.apache.commons:commons-configuration2:2.9.0")
     implementation("commons-logging:commons-logging:1.3.1")
