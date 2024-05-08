@@ -178,7 +178,7 @@ class SyncStudyTask(
                     )
                 }
             }
-            if (numProcessed % 100uL == 0uL) {
+            if (numProcessed % 50uL == 0uL) {
                 Logger.info(
                     String.format(
                         "Finished commit %s of %s.%n",
@@ -556,6 +556,7 @@ class SyncStudyTask(
             }
         }
         groundTruthV0[variant] = gtV0.success
+
         val gtV1 = currentCommit.presenceConditionsAfter().run()
             .orElseThrow {
                 NoSuchElementException(
