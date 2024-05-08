@@ -2,6 +2,7 @@ package org.variantsync.evaluation.syncstudy
 
 import de.ovgu.featureide.fm.core.base.IFeature
 import de.ovgu.featureide.fm.core.base.IFeatureModel
+import org.apache.commons.io.FileUtils
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
 import org.variantsync.evaluation.IDProvider
@@ -50,6 +51,7 @@ class SyncStudyTask(
     private val config: EvalConfig,
     private val datasetName: String, private val repositoryPath: Path, private val commits: List<SPLCommit>,
 ) : Callable<ULong> {
+    private val strip = 2
     private val operations: SyncStudyOperations = SyncStudyOperations(config.EXPERIMENT_DIR_MAIN())
     private val idProvider: IDProvider = IDProvider(config.EXPERIMENT_START_ID())
 
@@ -181,7 +183,7 @@ class SyncStudyTask(
             if (numProcessed % 50uL == 0uL) {
                 Logger.info(
                     String.format(
-                        "Finished commit %s of %s.%n",
+                        "Finished commit %s of %s.",
                         numProcessed.toString(),
                         numCommits.toString()
                     )
@@ -193,7 +195,8 @@ class SyncStudyTask(
             // Free memory of commit V1
             currentCommit.forget()
         }
-        return 0UL;
+        FileUtils.deleteDirectory(operations.workDir.toFile())
+        return 0UL
     }
 
     private fun runPatchApplication(
@@ -225,9 +228,17 @@ class SyncStudyTask(
             Logger.debug(source.name + " --patch--> " + target.name)
             val pathToTarget = operations.variantsDirV0.path().resolve(target.name)
             val pathToExpectedResult = operations.variantsDirV1.path().resolve(target.name)
+            val originalEvolutionDiff = getOriginalDiff(pathToTarget, pathToExpectedResult)
+
+            if (originalPatch.partiallyEquals(originalEvolutionDiff, strip)) {
+                // We only focus on variability, which is expressed by differences in the patch and evolution
+                Logger.debug("Skipping patching because the patch is trivial")
+                continue
+            }
+
             val evolutionDiff = getFineDiff(
                 operations.workDir,
-                getOriginalDiff(pathToTarget, pathToExpectedResult)
+                originalEvolutionDiff
             )
 
             /* Application of patches without knowledge about features */
@@ -682,7 +693,7 @@ class SyncStudyTask(
         oldVersionRoot: Path,
         newVersionRoot: Path
     ): FineDiff {
-        val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, 2)
+        val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, strip)
         return getSplitAndFilteredDiff(originalDiff, cachedPCBasedFilter, false)
     }
 
@@ -695,7 +706,7 @@ class SyncStudyTask(
         oldVersionRoot: Path,
         newVersionRoot: Path
     ): OriginalDiff {
-        val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, 2)
+        val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, strip)
         return DiffFilter.filter(originalDiff, cachedPCBasedFilter, cachedPCBasedFilter)
     }
 
@@ -708,9 +719,9 @@ class SyncStudyTask(
         oldVersionRoot: Path,
         newVersionRoot: Path
     ): CountingMap<Change> {
-        val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, 2)
+        val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, strip)
         val fineDiff = getSplitAndFilteredDiff(originalDiff, cachedPCBasedFilter, true)
-        return CountingMap(fineDiff.intoChanges(2))
+        return CountingMap(fineDiff.intoChanges(strip))
     }
 
     // Get the filtered line-level patches for a given difference
