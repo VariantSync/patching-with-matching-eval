@@ -44,6 +44,8 @@ class CherryEvalOperations(mainDir: Path) : Operations() {
 
     val patchers: MutableList<Patcher>
 
+    val strip = 1
+
     init {
         try {
             if (mainDir.toFile().mkdirs()) {
@@ -71,8 +73,8 @@ class CherryEvalOperations(mainDir: Path) : Operations() {
             )
 
         patchers = ArrayList()
-        patchers.add(UnixPatch(1))
-        patchers.add(MPatch(1))
+        patchers.add(UnixPatch(strip))
+        patchers.add(MPatch(strip))
     }
 
     fun debugDir(directory: String): Path {
@@ -125,5 +127,9 @@ class CherryEvalOperations(mainDir: Path) : Operations() {
 
     override fun sourceV0Path(name: String): Path {
         return sourceVariantV0
+    }
+
+    fun strip(): Int {
+        return strip
     }
 }

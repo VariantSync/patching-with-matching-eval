@@ -131,9 +131,21 @@ class CherryPickEvalTask(
             Logger.debug("Saved fine diff.")
 
             Logger.debug("Starting patch application for cherry-pick " + cherryPick.id)
+            val originalEvolutionDiff =
+                getOriginalDiff(operations, operations.targetVariantV0, operations.targetVariantV1)
+
+            if (originalPatch.partiallyEquals(originalEvolutionDiff, operations.strip)) {
+                // TODO: Integrate in results instead of returning
+                // We only focus on variability, which is expressed by differences in the patch and evolution
+                Logger.info("Skipping patching because the patch is trivial")
+                return
+            } else {
+                Logger.info("Applying non-trivial patch")
+            }
+
             val evolutionDiff = getFineDiff(
                 operations.workDir,
-                getOriginalDiff(operations, operations.targetVariantV0, operations.targetVariantV1)
+                originalEvolutionDiff
             )
 
             for (patcher in operations.patchers) {

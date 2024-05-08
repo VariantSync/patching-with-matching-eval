@@ -233,6 +233,7 @@ class SyncStudyTask(
             if (originalPatch.partiallyEquals(originalEvolutionDiff, strip)) {
                 // We only focus on variability, which is expressed by differences in the patch and evolution
                 Logger.debug("Skipping patching because the patch is trivial")
+                // TODO: Integrate in results instead of returning
                 continue
             }
 
