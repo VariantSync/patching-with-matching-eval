@@ -34,4 +34,22 @@ public record FileDiff(List<String> header, List<Hunk> hunks, Path oldFile, Path
         }
         return sb.toString();
     }
+
+    public boolean partiallyEquals(FileDiff other, int strip) {
+        if (other == null) {
+            return false;
+        }
+        if (!strippedPathsAreEqual(this.oldFile, other.oldFile, strip)) {
+            return false;
+        }
+        if (!strippedPathsAreEqual(this.newFile, other.newFile, strip)) {
+            return false;
+        }
+
+        return this.hunks.equals(other.hunks);
+    }
+
+    private boolean strippedPathsAreEqual(final Path a, final Path b, int strip) {
+        return a.subpath(strip, a.getNameCount()).equals(b.subpath(strip, b.getNameCount()));
+    }
 }
