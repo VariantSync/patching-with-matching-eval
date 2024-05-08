@@ -19,14 +19,14 @@ fun waitForShutdown(
             if (runID % 25uL == 0uL) {
                 Logger.info(
                     String.format(
-                        "Finished cherry-pick %s of %s.",
+                        "Finished task %s of %s.",
                         runID.toString(),
                         futures.size.toString()
                     )
                 )
             }
         } catch (e: TimeoutException) {
-            Logger.warn("Timed out while simulating one cherry pick. Skipping this cherry pick in the evaluation")
+            Logger.warn("Timed out while running task. Skipping this task")
 
             future.cancel(true)
         } catch (e: Throwable) {
@@ -44,7 +44,7 @@ fun waitForShutdown(
 
     Logger.info(
         String.format(
-            "Finished all %s cherry-picks.%n",
+            "Finished all %s tasks.%n",
             futures.size.toString()
         )
     )
