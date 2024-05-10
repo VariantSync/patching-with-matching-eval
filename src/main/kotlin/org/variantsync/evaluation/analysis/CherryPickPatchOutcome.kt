@@ -31,6 +31,7 @@ class CherryPickPatchOutcome
     val lineSuccessNormal: Long,
     val normalResult: EvaluationResult,
     private val patchDuration: Duration,
+    private val patchIsTrivial: Boolean,
 ) {
 
     @Throws(IOException::class)
@@ -52,7 +53,8 @@ class CherryPickPatchOutcome
         jsonBuilder.append(toJSON("normalFilteredIncorrectly", normalResult.filteredIncorrectly.v)).append(",\n")
         jsonBuilder.append(toJSON("normalMitigatedInvalid", normalResult.mitigatedInvalid.v)).append(",\n")
         jsonBuilder.append(toJSON("normalMitigatedMissing", normalResult.mitigatedMissing.v)).append(",\n")
-        jsonBuilder.append(toJSON("patchDuration", patchDuration.toMillis())).append("\n")
+        jsonBuilder.append(toJSON("patchDuration", patchDuration.toMillis())).append(",\n")
+        jsonBuilder.append(toJSON("patchIsTrivial", patchIsTrivial)).append("\n")
         jsonBuilder.append("}").append("\n\n")
 
         synchronized(SyncStudyPatchOutcome) {
@@ -110,6 +112,7 @@ class CherryPickPatchOutcome
                     MitigatedMissing(`object`["normalMitigatedMissing"].asLong)
                 ),
                 Duration.ofMillis(`object`["patchDuration"].asLong),
+                `object`["patchIsTrivial"].asBoolean,
             )
         }
     }

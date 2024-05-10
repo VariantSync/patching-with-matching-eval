@@ -230,11 +230,12 @@ class SyncStudyTask(
             val pathToExpectedResult = operations.variantsDirV1.path().resolve(target.name)
             val originalEvolutionDiff = getOriginalDiff(pathToTarget, pathToExpectedResult)
 
-            if (originalPatch.partiallyEquals(originalEvolutionDiff, strip)) {
+            val patchIsTrivial = originalPatch.partiallyEquals(originalEvolutionDiff, strip)
+            if (patchIsTrivial) {
                 // We only focus on variability, which is expressed by differences in the patch and evolution
-                Logger.debug("Skipping patching because the patch is trivial")
-                // TODO: Integrate in results instead of returning
-                continue
+                Logger.debug("Patch is trivial")
+            } else {
+                Logger.debug("Patch is not trivial")
             }
 
             val evolutionDiff = getFineDiff(
@@ -325,7 +326,8 @@ class SyncStudyTask(
                 requiredChanges,
                 actualVsExpectedNormal, actualVsExpectedFiltered, rejectsNormal,
                 rejectsFiltered, evolutionDiff,
-                normalDuration, filteredDuration
+                normalDuration, filteredDuration,
+                patchIsTrivial,
             )
 
             val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")

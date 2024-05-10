@@ -134,13 +134,12 @@ class CherryPickEvalTask(
             val originalEvolutionDiff =
                 getOriginalDiff(operations, operations.targetVariantV0, operations.targetVariantV1)
 
-            if (originalPatch.partiallyEquals(originalEvolutionDiff, operations.strip)) {
-                // TODO: Integrate in results instead of returning
+            val patchIsTrivial = originalPatch.partiallyEquals(originalEvolutionDiff, operations.strip)
+            if (patchIsTrivial) {
                 // We only focus on variability, which is expressed by differences in the patch and evolution
-                Logger.info("Skipping patching because the patch is trivial")
-                return
+                Logger.debug("Patch is trivial")
             } else {
-                Logger.info("Applying non-trivial patch")
+                Logger.debug("Patch is not trivial")
             }
 
             val evolutionDiff = getFineDiff(
@@ -187,6 +186,7 @@ class CherryPickEvalTask(
                     rejectsNormal,
                     evolutionDiff,
                     patchDuration,
+                    patchIsTrivial,
                 )
 
                 val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")

@@ -49,8 +49,9 @@ class SyncStudyPatchOutcome
     val lineSuccessFiltered: Long,
     val normalResult: EvaluationResult,
     val filteredResult: EvaluationResult,
-    val normalDuration: Duration,
-    val filteredDuration: Duration,
+    private val normalDuration: Duration,
+    private val filteredDuration: Duration,
+    private val patchIsTrivial: Boolean,
 ) {
 
     @Throws(IOException::class)
@@ -91,7 +92,8 @@ class SyncStudyPatchOutcome
         jsonBuilder.append(toJSON("filteredMitigatedInvalid", filteredResult.mitigatedInvalid.v)).append(",\n")
         jsonBuilder.append(toJSON("filteredMitigatedMissing", filteredResult.mitigatedMissing.v)).append(",\n")
         jsonBuilder.append(toJSON("normalDuration", normalDuration.toMillis())).append(",\n")
-        jsonBuilder.append(toJSON("filteredDuration", filteredDuration.toMillis())).append("\n")
+        jsonBuilder.append(toJSON("filteredDuration", filteredDuration.toMillis())).append(",\n")
+        jsonBuilder.append(toJSON("patchIsTrivial", patchIsTrivial)).append("\n")
         jsonBuilder.append("}").append("\n\n")
 
         synchronized(SyncStudyPatchOutcome) {
@@ -179,6 +181,7 @@ class SyncStudyPatchOutcome
                 ),
                 Duration.ofMillis(`object`["normalDuration"].asLong),
                 Duration.ofMillis(`object`["filteredDuration"].asLong),
+                `object`["patchIsTrivial"].asBoolean,
             )
         }
     }

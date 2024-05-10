@@ -60,6 +60,7 @@ object SyncStudyResultAnalysis {
         rejectsNormal: Rejects, rejectsFiltered: Rejects, targetChanges: FineDiff,
         normalDuration: Duration,
         filteredDuration: Duration,
+        patchIsTrivial: Boolean,
     ): SyncStudyPatchOutcome {
         debug("Processing outcome of $runID for patch process in " + workdir.workDir())
         // evaluate patch rejects
@@ -136,7 +137,8 @@ object SyncStudyResultAnalysis {
             (
                     lineFiltered.size - lineFilteredFailed.size).toLong(), normalResult, filteredResult,
             normalDuration,
-            filteredDuration
+            filteredDuration,
+            patchIsTrivial,
         )
     }
 
