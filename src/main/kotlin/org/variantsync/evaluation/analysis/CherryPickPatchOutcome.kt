@@ -31,7 +31,7 @@ class CherryPickPatchOutcome
     val lineSuccessNormal: Long,
     val normalResult: EvaluationResult,
     private val patchDuration: Duration,
-    private val patchIsTrivial: Boolean,
+    val patchIsTrivial: Boolean,
 ) {
 
     @Throws(IOException::class)

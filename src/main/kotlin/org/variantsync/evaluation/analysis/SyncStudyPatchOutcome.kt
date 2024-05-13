@@ -51,7 +51,7 @@ class SyncStudyPatchOutcome
     val filteredResult: EvaluationResult,
     private val normalDuration: Duration,
     private val filteredDuration: Duration,
-    private val patchIsTrivial: Boolean,
+    val patchIsTrivial: Boolean,
 ) {
 
     @Throws(IOException::class)

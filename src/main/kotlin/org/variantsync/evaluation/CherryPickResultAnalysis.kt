@@ -64,7 +64,6 @@ object CherryPickResultAnalysis {
         val unixPatchResults = ArrayList<Path>()
         val mpatchResults = ArrayList<Path>()
         for (path in resultFiles) {
-            analyze(path)
             if (path.name.endsWith("unix_patch.results")) {
                 unixPatchResults.add(path)
             } else if (path.name.endsWith("mpatch.results")) {
@@ -75,17 +74,33 @@ object CherryPickResultAnalysis {
         // Determine the overall results
         println()
         println("+++++++++++++++++++++++++++")
-        println("ACC. RESULTS UNIX PATCH")
+        println("RESULTS FOR TRIVIAL - MPATCH")
         println("+++++++++++++++++++++++++++")
         println()
-        analyze(unixPatchResults, "unix_patch_overview")
+        analyze(mpatchResults, "mpatch_overview", AnalysisMode.Trivial)
+
+        // Determine the overall results
+        println()
+        println("+++++++++++++++++++++++++++")
+        println("RESULTS FOR TRIVIAL - UNIX PATCH")
+        println("+++++++++++++++++++++++++++")
+        println()
+        analyze(unixPatchResults, "unix_patch_overview", AnalysisMode.Trivial)
 
         println()
         println("+++++++++++++++++++++++++++")
-        println("ACC. RESULTS MPATCH PATCH")
+        println("RESULTS FOR NON-TRIVIAL - MPATCH")
         println("+++++++++++++++++++++++++++")
         println()
-        analyze(mpatchResults, "mpatch_overview")
+        analyze(mpatchResults, "mpatch_overview", AnalysisMode.NonTrivial)
+
+        // Determine the overall results
+        println()
+        println("+++++++++++++++++++++++++++")
+        println("RESULTS FOR NON-TRIVIAL - UNIX PATCH")
+        println("+++++++++++++++++++++++++++")
+        println()
+        analyze(unixPatchResults, "unix_patch_overview", AnalysisMode.NonTrivial)
     }
 
     fun processCherriesOutcome(
@@ -177,10 +192,10 @@ object CherryPickResultAnalysis {
     }
 
     @Throws(IOException::class)
-    private fun analyze(resultFiles: List<Path>, summaryFileName: String) {
+    private fun analyze(resultFiles: List<Path>, summaryFileName: String, analysisMode: AnalysisMode) {
         val resultSummaryFile = resultFiles.first().parent.resolve("%s.summary".format(summaryFileName))
         val sb = StringBuilder()
-        val accumulatedOutcome = loadResultObjects(resultFiles)
+        val accumulatedOutcome = loadResultObjects(resultFiles, analysisMode)
         sb.append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         sb.append("File: ").append(summaryFileName).append(LINE_SEP)
@@ -219,11 +234,11 @@ object CherryPickResultAnalysis {
     }
 
     @Throws(IOException::class)
-    private fun analyze(resultFile: Path) {
+    private fun analyze(resultFile: Path, analysisMode: AnalysisMode) {
         val fileName = resultFile.fileName.getName(0).toString()
         val list = ArrayList<Path>()
         list.add(resultFile)
-        analyze(list, fileName)
+        analyze(list, fileName, analysisMode)
     }
 
     private fun printAccuracy(
@@ -275,7 +290,7 @@ object CherryPickResultAnalysis {
     }
 
     @Throws(IOException::class)
-    fun loadResultObjects(paths: List<Path>): AccumulatedOutcome {
+    fun loadResultObjects(paths: List<Path>, analysisMode: AnalysisMode): AccumulatedOutcome {
         var commitPatches: Long = 0
         var commitSuccessNormal: Long = 0
         var lineNormal: Long = 0
@@ -289,13 +304,20 @@ object CherryPickResultAnalysis {
                 while (line != null) {
                     if (line.isEmpty()) {
                         val outcome = parseResult(outcomeLines)
-                        accumulatedNormal.add(outcome.normalResult)
-                        commitPatches++
-                        if (outcome.lineSuccessNormal == outcome.lineNormal) {
-                            commitSuccessNormal++
+
+                        if (analysisMode == AnalysisMode.NonTrivial && outcome.patchIsTrivial) {
+                            // Nothing
+                        } else if (analysisMode == AnalysisMode.Trivial && !outcome.patchIsTrivial) {
+                            // Nothing
+                        } else {
+                            accumulatedNormal.add(outcome.normalResult)
+                            commitPatches++
+                            if (outcome.lineSuccessNormal == outcome.lineNormal) {
+                                commitSuccessNormal++
+                            }
+                            lineNormal += outcome.lineNormal
+                            lineSuccessNormal += outcome.lineSuccessNormal
                         }
-                        lineNormal += outcome.lineNormal
-                        lineSuccessNormal += outcome.lineSuccessNormal
                         outcomeLines.clear()
                     } else {
                         outcomeLines.add(line)

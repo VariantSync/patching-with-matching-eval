@@ -132,10 +132,12 @@ object SyncStudyResultAnalysis {
             targetVariant, resultDiffNormal.content.size.toLong(),
             resultDiffFiltered.content.size.toLong(), fileNormal.toLong(), lineNormal.size.toLong(),
             (
-                    fileNormal - fileNormalFailed), (lineNormal.size - lineNormalFailed.size).toLong(),
+                    fileNormal - fileNormalFailed),
+            (lineNormal.size - lineNormalFailed.size).toLong(),
             fileFiltered.toLong(), lineFiltered.size.toLong(), (fileFiltered - fileFilteredFailed),
             (
-                    lineFiltered.size - lineFilteredFailed.size).toLong(), normalResult, filteredResult,
+                    lineFiltered.size - lineFilteredFailed.size).toLong(),
+            normalResult, filteredResult,
             normalDuration,
             filteredDuration,
             patchIsTrivial,
@@ -236,7 +238,6 @@ object SyncStudyResultAnalysis {
         val unixPatchResults = ArrayList<Path>()
         val mpatchResults = ArrayList<Path>()
         for (path in resultFiles) {
-            analyze(path)
             if (path.name.endsWith("unix_patch.results")) {
                 unixPatchResults.add(path)
             } else if (path.name.endsWith("mpatch.results")) {
@@ -245,27 +246,42 @@ object SyncStudyResultAnalysis {
         }
 
         // Determine the overall results
+        println()
+        println("+++++++++++++++++++++++++++")
+        println("RESULTS FOR TRIVIAL - MPATCH")
+        println("+++++++++++++++++++++++++++")
+        println()
+        analyze(mpatchResults, "mpatch_overview", AnalysisMode.Trivial)
+
+        // Determine the overall results
+        println()
+        println("+++++++++++++++++++++++++++")
+        println("RESULTS FOR TRIVIAL - UNIX PATCH")
+        println("+++++++++++++++++++++++++++")
+        println()
+        analyze(unixPatchResults, "unix_patch_overview", AnalysisMode.Trivial)
 
         println()
         println("+++++++++++++++++++++++++++")
-        println("ACC. RESULTS UNIX PATCH")
+        println("RESULTS FOR NON-TRIVIAL - MPATCH")
         println("+++++++++++++++++++++++++++")
         println()
-        analyze(unixPatchResults, "unix_patch_overview")
+        analyze(mpatchResults, "mpatch_overview", AnalysisMode.NonTrivial)
 
+        // Determine the overall results
         println()
         println("+++++++++++++++++++++++++++")
-        println("ACC. RESULTS MPATCH PATCH")
+        println("RESULTS FOR NON-TRIVIAL - UNIX PATCH")
         println("+++++++++++++++++++++++++++")
         println()
-        analyze(mpatchResults, "mpatch_overview")
+        analyze(unixPatchResults, "unix_patch_overview", AnalysisMode.NonTrivial)
     }
 
     @Throws(IOException::class)
-    private fun analyze(resultFiles: List<Path>, summaryFileName: String) {
+    private fun analyze(resultFiles: List<Path>, summaryFileName: String, analysisMode: AnalysisMode) {
         val resultSummaryFile = resultFiles.first().parent.resolve("%s.summary".format(summaryFileName))
         val sb = StringBuilder()
-        val accumulatedOutcome = loadResultObjects(resultFiles)
+        val accumulatedOutcome = loadResultObjects(resultFiles, analysisMode)
         sb.append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         sb.append("File: ").append(summaryFileName).append(LINE_SEP)
@@ -322,11 +338,11 @@ object SyncStudyResultAnalysis {
     }
 
     @Throws(IOException::class)
-    private fun analyze(resultFile: Path) {
+    private fun analyze(resultFile: Path, analysisMode: AnalysisMode) {
         val fileName = resultFile.fileName.getName(0).toString()
         val list = ArrayList<Path>()
         list.add(resultFile)
-        analyze(list, fileName)
+        analyze(list, fileName, analysisMode)
     }
 
     private fun printAccuracy(
@@ -460,7 +476,7 @@ object SyncStudyResultAnalysis {
     }
 
     @Throws(IOException::class)
-    fun loadResultObjects(paths: List<Path>): AccumulatedOutcome {
+    fun loadResultObjects(paths: List<Path>, analysisMode: AnalysisMode): AccumulatedOutcome {
         var commitPatches: Long = 0
         var commitSuccessNormal: Long = 0
         var commitSuccessFiltered: Long = 0
@@ -482,23 +498,30 @@ object SyncStudyResultAnalysis {
                 while (line != null) {
                     if (line.isEmpty()) {
                         val outcome = parseResult(outcomeLines)
-                        accumulatedNormal.add(outcome.normalResult)
-                        accumulatedFiltered.add(outcome.filteredResult)
-                        commitPatches++
-                        if (outcome.lineSuccessNormal == outcome.lineNormal) {
-                            commitSuccessNormal++
+
+                        if (analysisMode == AnalysisMode.NonTrivial && outcome.patchIsTrivial) {
+                            // Nothing
+                        } else if (analysisMode == AnalysisMode.Trivial && !outcome.patchIsTrivial) {
+                            // Nothing
+                        } else {
+                            accumulatedNormal.add(outcome.normalResult)
+                            accumulatedFiltered.add(outcome.filteredResult)
+                            commitPatches++
+                            if (outcome.lineSuccessNormal == outcome.lineNormal) {
+                                commitSuccessNormal++
+                            }
+                            if (outcome.lineSuccessFiltered == outcome.lineFiltered) {
+                                commitSuccessFiltered++
+                            }
+                            fileNormal += outcome.fileNormal
+                            fileSuccessNormal += outcome.fileSuccessNormal
+                            fileFiltered += outcome.fileFiltered
+                            fileSuccessFiltered += outcome.fileSuccessFiltered
+                            lineNormal += outcome.lineNormal
+                            lineSuccessNormal += outcome.lineSuccessNormal
+                            lineFiltered += outcome.lineFiltered
+                            lineSuccessFiltered += outcome.lineSuccessFiltered
                         }
-                        if (outcome.lineSuccessFiltered == outcome.lineFiltered) {
-                            commitSuccessFiltered++
-                        }
-                        fileNormal += outcome.fileNormal
-                        fileSuccessNormal += outcome.fileSuccessNormal
-                        fileFiltered += outcome.fileFiltered
-                        fileSuccessFiltered += outcome.fileSuccessFiltered
-                        lineNormal += outcome.lineNormal
-                        lineSuccessNormal += outcome.lineSuccessNormal
-                        lineFiltered += outcome.lineFiltered
-                        lineSuccessFiltered += outcome.lineSuccessFiltered
                         outcomeLines.clear()
                     } else {
                         outcomeLines.add(line)
