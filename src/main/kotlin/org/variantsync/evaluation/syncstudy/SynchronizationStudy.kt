@@ -21,7 +21,6 @@ import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.stream.Collectors
-import kotlin.collections.ArrayList
 import kotlin.math.ceil
 import kotlin.system.exitProcess
 
@@ -54,8 +53,13 @@ class SynchronizationStudy(
 
         if (config.EXPERIMENT_ENABLE_SAMPLING()) {
             val sampleSize = determineSampleSize(config, history.size)
-            Logger.info("Considering a representative sample of $sampleSize commits.")
-            history = history.shuffled().subList(0, sampleSize)
+            Logger.info("The dataset comprises a total of " + history.size + " commits.")
+            if (history.size < sampleSize) {
+                Logger.info("Skipping $datasetName because it contains fewer commits than the sample size of $sampleSize.")
+            } else {
+                Logger.info("Considering a representative sample of $sampleSize commits.")
+                history = history.shuffled().subList(0, sampleSize)
+            }
         }
 
         syncStudyTasks = ArrayList()
