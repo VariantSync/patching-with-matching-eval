@@ -82,6 +82,7 @@ class SyncStudyPatchOutcome
         jsonBuilder.append(toJSON("normalFilteredIncorrectly", normalResult.filteredIncorrectly.v)).append(",\n")
         jsonBuilder.append(toJSON("normalMitigatedInvalid", normalResult.mitigatedInvalid.v)).append(",\n")
         jsonBuilder.append(toJSON("normalMitigatedMissing", normalResult.mitigatedMissing.v)).append(",\n")
+        jsonBuilder.append(toJSON("normalEditDistance", normalResult.editDistance.v)).append(",\n")
         jsonBuilder.append(toJSON("filteredApplied", filteredResult.applied.v)).append(",\n")
         jsonBuilder.append(toJSON("filteredInvalid", filteredResult.invalid.v)).append(",\n")
         jsonBuilder.append(toJSON("filteredWrongLocation", filteredResult.wrongLocation.v)).append(",\n")
@@ -91,6 +92,7 @@ class SyncStudyPatchOutcome
             .append(",\n")
         jsonBuilder.append(toJSON("filteredMitigatedInvalid", filteredResult.mitigatedInvalid.v)).append(",\n")
         jsonBuilder.append(toJSON("filteredMitigatedMissing", filteredResult.mitigatedMissing.v)).append(",\n")
+        jsonBuilder.append(toJSON("filteredEditDistance", filteredResult.editDistance.v)).append(",\n")
         jsonBuilder.append(toJSON("normalDuration", normalDuration.toMillis())).append(",\n")
         jsonBuilder.append(toJSON("filteredDuration", filteredDuration.toMillis())).append(",\n")
         jsonBuilder.append(toJSON("patchIsTrivial", patchIsTrivial)).append("\n")
@@ -167,7 +169,8 @@ class SyncStudyPatchOutcome
                     FilteredCorrectly(`object`["normalFilteredCorrectly"].asLong),
                     FilteredIncorrectly(`object`["normalFilteredIncorrectly"].asLong),
                     MitigatedInvalid(`object`["normalMitigatedInvalid"].asLong),
-                    MitigatedMissing(`object`["normalMitigatedMissing"].asLong)
+                    MitigatedMissing(`object`["normalMitigatedMissing"].asLong),
+                    EditDistance(`object`["normalEditDistance"].asInt.toUInt()),
                 ),
                 EvaluationResult(
                     Applied(`object`["filteredApplied"].asLong),
@@ -177,7 +180,8 @@ class SyncStudyPatchOutcome
                     FilteredCorrectly(`object`["filteredFilteredCorrectly"].asLong),
                     FilteredIncorrectly(`object`["filteredFilteredIncorrectly"].asLong),
                     MitigatedInvalid(`object`["filteredMitigatedInvalid"].asLong),
-                    MitigatedMissing(`object`["filteredMitigatedMissing"].asLong)
+                    MitigatedMissing(`object`["filteredMitigatedMissing"].asLong),
+                    EditDistance(`object`["filteredEditDistance"].asInt.toUInt()),
                 ),
                 Duration.ofMillis(`object`["normalDuration"].asLong),
                 Duration.ofMillis(`object`["filteredDuration"].asLong),

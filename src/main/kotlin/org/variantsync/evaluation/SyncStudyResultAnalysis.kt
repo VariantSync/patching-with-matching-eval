@@ -127,6 +127,8 @@ object SyncStudyResultAnalysis {
         Assert.assertEquals(normalResult.resultCount(), filteredResult.resultCount())
         Assert.assertEquals(normalResult.resultCount(), lineNormal.size.toLong())
         Assert.assertEquals(filteredResult.resultCount(), lineNormal.size.toLong())
+
+
         return SyncStudyPatchOutcome(
             dataset, runID, commitV0.id(), commitV1.id(), sourceVariant,
             targetVariant, resultDiffNormal.content.size.toLong(),
@@ -331,6 +333,22 @@ object SyncStudyResultAnalysis {
         printAccuracy(sb, normalTP, normalFP, normalTN, normalFN, "Normal")
         printAccuracy(sb, filteredTP, filteredFP, filteredTN, filteredFN, "Filtered")
         sb.append(DIV).append(LINE_SEP)
+        sb.append("Edit Distance").append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
+        sb.append("Edit Distance Normal: ").append(accumulatedOutcome.normalResult.editDistance.v).append(
+            LINE_SEP
+        )
+        sb.append("Average Edit Distance Normal: ").append(accumulatedOutcome.normalResult.averageEditDistance())
+            .append(
+                LINE_SEP
+            )
+        sb.append("Edit Distance Filtered: ").append(accumulatedOutcome.filteredResult.editDistance.v).append(
+            LINE_SEP
+        )
+        sb.append("Average Edit Distance Filtered: ").append(accumulatedOutcome.filteredResult.averageEditDistance())
+            .append(
+                LINE_SEP
+            )
         sb.append(DIV).append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         print(sb)

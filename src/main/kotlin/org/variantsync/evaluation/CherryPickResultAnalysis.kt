@@ -228,6 +228,13 @@ object CherryPickResultAnalysis {
         sb.append(DIV).append(LINE_SEP)
         printAccuracy(sb, normalTP, normalFP, normalTN, normalFN)
         sb.append(DIV).append(LINE_SEP)
+        sb.append("Edit Distance").append(LINE_SEP)
+        sb.append(DIV).append(LINE_SEP)
+        sb.append("Edit Distance: ").append(accumulatedOutcome.normalResult.editDistance.v).append(LINE_SEP)
+        sb.append("Average Edit Distance: ").append(accumulatedOutcome.normalResult.averageEditDistance()).append(
+            LINE_SEP
+        )
+        sb.append(DIV).append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         print(sb)
         Files.writeString(resultSummaryFile, sb)

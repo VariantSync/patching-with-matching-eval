@@ -3,7 +3,8 @@ package org.variantsync.evaluation.analysis
 class EvaluationResult(
     val applied: Applied, val invalid: Invalid, val wrongLocation: WrongLocation, val missing: Missing,
     val filteredCorrectly: FilteredCorrectly, val filteredIncorrectly: FilteredIncorrectly,
-    val mitigatedInvalid: MitigatedInvalid, val mitigatedMissing: MitigatedMissing
+    val mitigatedInvalid: MitigatedInvalid, val mitigatedMissing: MitigatedMissing,
+    val editDistance: EditDistance,
 ) {
     fun resultCount(): Long {
         return applied.v + invalid.v + wrongLocation.v + missing.v + filteredCorrectly.v + filteredIncorrectly.v + mitigatedInvalid.v + mitigatedMissing.v
@@ -15,7 +16,9 @@ class AccumulatedResult(
     var applied: Applied, var invalid: Invalid,
     var wrongLocation: WrongLocation, var missing: Missing,
     var filteredCorrectly: FilteredCorrectly, var filteredIncorrectly: FilteredIncorrectly,
-    var mitigatedInvalid: MitigatedInvalid, var mitigatedMissing: MitigatedMissing
+    var mitigatedInvalid: MitigatedInvalid, var mitigatedMissing: MitigatedMissing,
+    var editDistance: EditDistance,
+    private var numResultsTotal: UInt,
 ) {
 
     constructor() : this(
@@ -26,7 +29,9 @@ class AccumulatedResult(
         FilteredCorrectly(0),
         FilteredIncorrectly(0),
         MitigatedInvalid(0),
-        MitigatedMissing(0)
+        MitigatedMissing(0),
+        EditDistance(0u),
+        0u,
     )
 
     fun resultCount(): Long {
@@ -41,6 +46,10 @@ class AccumulatedResult(
         return invalid.v + wrongLocation.v + missing.v + filteredIncorrectly.v
     }
 
+    fun averageEditDistance(): Double {
+        return this.editDistance.v.toDouble() / this.numResultsTotal.toDouble()
+    }
+
     fun add(other: EvaluationResult) {
         this.applied = Applied(this.applied.v + other.applied.v)
         this.invalid = Invalid(this.invalid.v + other.invalid.v)
@@ -50,6 +59,8 @@ class AccumulatedResult(
         this.filteredIncorrectly = FilteredIncorrectly(this.filteredIncorrectly.v + other.filteredIncorrectly.v)
         this.mitigatedInvalid = MitigatedInvalid(this.mitigatedInvalid.v + other.mitigatedInvalid.v)
         this.mitigatedMissing = MitigatedMissing(this.mitigatedMissing.v + other.mitigatedMissing.v)
+        this.editDistance = EditDistance(this.editDistance.v + other.editDistance.v)
+        this.numResultsTotal++
     }
 }
 
@@ -76,3 +87,6 @@ value class MitigatedInvalid(val v: Long)
 
 @JvmInline
 value class MitigatedMissing(val v: Long)
+
+@JvmInline
+value class EditDistance(val v: UInt)

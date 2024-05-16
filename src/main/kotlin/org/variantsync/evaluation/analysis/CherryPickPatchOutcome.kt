@@ -53,6 +53,7 @@ class CherryPickPatchOutcome
         jsonBuilder.append(toJSON("normalFilteredIncorrectly", normalResult.filteredIncorrectly.v)).append(",\n")
         jsonBuilder.append(toJSON("normalMitigatedInvalid", normalResult.mitigatedInvalid.v)).append(",\n")
         jsonBuilder.append(toJSON("normalMitigatedMissing", normalResult.mitigatedMissing.v)).append(",\n")
+        jsonBuilder.append(toJSON("editDistance", normalResult.editDistance.v)).append(",\n")
         jsonBuilder.append(toJSON("patchDuration", patchDuration.toMillis())).append(",\n")
         jsonBuilder.append(toJSON("patchIsTrivial", patchIsTrivial)).append("\n")
         jsonBuilder.append("}").append("\n\n")
@@ -109,7 +110,8 @@ class CherryPickPatchOutcome
                     FilteredCorrectly(`object`["normalFilteredCorrectly"].asLong),
                     FilteredIncorrectly(`object`["normalFilteredIncorrectly"].asLong),
                     MitigatedInvalid(`object`["normalMitigatedInvalid"].asLong),
-                    MitigatedMissing(`object`["normalMitigatedMissing"].asLong)
+                    MitigatedMissing(`object`["normalMitigatedMissing"].asLong),
+                    EditDistance(`object`["editDistance"].asInt.toUInt()),
                 ),
                 Duration.ofMillis(`object`["patchDuration"].asLong),
                 `object`["patchIsTrivial"].asBoolean,

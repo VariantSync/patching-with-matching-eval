@@ -22,6 +22,7 @@ class EvaluationScenario(
         var filteredIncorrectly = 0L
         var mitigatedInvalid = 0L
         var mitigatedMissing = 0L
+        val editDistance = observedDifference.elementCount()
 
         // Second, clean the observed differences from all un-patchable changes
         for (unpatchable in this.unPatchable) {
@@ -100,7 +101,8 @@ class EvaluationScenario(
             FilteredCorrectly(filteredCorrectly),
             FilteredIncorrectly(filteredIncorrectly),
             MitigatedInvalid(mitigatedInvalid),
-            MitigatedMissing(mitigatedMissing)
+            MitigatedMissing(mitigatedMissing),
+            EditDistance(editDistance),
         )
     }
 }
