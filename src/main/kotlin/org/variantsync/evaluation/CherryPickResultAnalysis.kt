@@ -201,10 +201,6 @@ object CherryPickResultAnalysis {
         sb.append("File: ").append(summaryFileName).append(LINE_SEP)
         sb.append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
-        sb.append("Patch Success").append(LINE_SEP)
-        sb.append(DIV).append(LINE_SEP)
-
-        printTechnicalSuccess(sb, accumulatedOutcome)
 
         var normalTP: Long = accumulatedOutcome.normalResult.applied.v
         normalTP += accumulatedOutcome.normalResult.mitigatedMissing.v
@@ -224,16 +220,16 @@ object CherryPickResultAnalysis {
         sb.append(DIV).append(LINE_SEP)
         printPrecisionRecall(sb, normalTP, normalFP, normalTN, normalFN)
         sb.append(LINE_SEP)
-        sb.append("Accuracy").append(LINE_SEP)
-        sb.append(DIV).append(LINE_SEP)
-        printAccuracy(sb, normalTP, normalFP, normalTN, normalFN)
-        sb.append(DIV).append(LINE_SEP)
         sb.append("Edit Distance").append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         sb.append("Edit Distance: ").append(accumulatedOutcome.normalResult.editDistance.v).append(LINE_SEP)
         sb.append("Average Edit Distance: ").append(accumulatedOutcome.normalResult.averageEditDistance()).append(
             LINE_SEP
         )
+        sb.append("Fully correct commit percentage: ").append(accumulatedOutcome.normalResult.fullyCorrectPercentage())
+            .append(
+                LINE_SEP
+            )
         sb.append(DIV).append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         print(sb)

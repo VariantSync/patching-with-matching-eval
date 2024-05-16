@@ -10,6 +10,10 @@ class EvaluationResult(
         return applied.v + invalid.v + wrongLocation.v + missing.v + filteredCorrectly.v + filteredIncorrectly.v + mitigatedInvalid.v + mitigatedMissing.v
     }
 
+    fun incorrectCount(): Long {
+        return invalid.v + wrongLocation.v + missing.v + filteredIncorrectly.v
+    }
+
 }
 
 class AccumulatedResult(
@@ -18,7 +22,8 @@ class AccumulatedResult(
     var filteredCorrectly: FilteredCorrectly, var filteredIncorrectly: FilteredIncorrectly,
     var mitigatedInvalid: MitigatedInvalid, var mitigatedMissing: MitigatedMissing,
     var editDistance: EditDistance,
-    private var numResultsTotal: UInt,
+    private var fullyCorrectCommits: FullyCorrectCommits,
+    private var numResultsTotal: NumResultsTotal,
 ) {
 
     constructor() : this(
@@ -31,7 +36,8 @@ class AccumulatedResult(
         MitigatedInvalid(0),
         MitigatedMissing(0),
         EditDistance(0u),
-        0u,
+        FullyCorrectCommits(0u),
+        NumResultsTotal(0u),
     )
 
     fun resultCount(): Long {
@@ -47,7 +53,11 @@ class AccumulatedResult(
     }
 
     fun averageEditDistance(): Double {
-        return this.editDistance.v.toDouble() / this.numResultsTotal.toDouble()
+        return this.editDistance.v.toDouble() / this.numResultsTotal.v.toDouble()
+    }
+
+    fun fullyCorrectPercentage(): Double {
+        return 100.0 * (this.fullyCorrectCommits.v.toDouble() / this.numResultsTotal.v.toDouble())
     }
 
     fun add(other: EvaluationResult) {
@@ -60,7 +70,11 @@ class AccumulatedResult(
         this.mitigatedInvalid = MitigatedInvalid(this.mitigatedInvalid.v + other.mitigatedInvalid.v)
         this.mitigatedMissing = MitigatedMissing(this.mitigatedMissing.v + other.mitigatedMissing.v)
         this.editDistance = EditDistance(this.editDistance.v + other.editDistance.v)
-        this.numResultsTotal++
+        this.numResultsTotal = NumResultsTotal(this.numResultsTotal.v + 1u)
+
+        if (other.incorrectCount() == 0L) {
+            this.fullyCorrectCommits = FullyCorrectCommits(this.fullyCorrectCommits.v + 1u)
+        }
     }
 }
 
@@ -90,3 +104,9 @@ value class MitigatedMissing(val v: Long)
 
 @JvmInline
 value class EditDistance(val v: UInt)
+
+@JvmInline
+value class FullyCorrectCommits(val v: UInt)
+
+@JvmInline
+value class NumResultsTotal(val v: UInt)

@@ -289,9 +289,6 @@ object SyncStudyResultAnalysis {
         sb.append("File: ").append(summaryFileName).append(LINE_SEP)
         sb.append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
-        sb.append("Patch Success").append(LINE_SEP)
-        sb.append(DIV).append(LINE_SEP)
-        printTechnicalSuccess(sb, accumulatedOutcome)
         var normalTP: Long = accumulatedOutcome.normalResult.applied.v
         normalTP += accumulatedOutcome.normalResult.mitigatedMissing.v
         val normalFP: Long = accumulatedOutcome.normalResult.invalid.v
@@ -328,11 +325,6 @@ object SyncStudyResultAnalysis {
         sb.append(LINE_SEP)
         printPrecisionRecall(sb, filteredTP, filteredFP, filteredTN, filteredFN)
         sb.append(DIV).append(LINE_SEP)
-        sb.append("Accuracy").append(LINE_SEP)
-        sb.append(DIV).append(LINE_SEP)
-        printAccuracy(sb, normalTP, normalFP, normalTN, normalFN, "Normal")
-        printAccuracy(sb, filteredTP, filteredFP, filteredTN, filteredFN, "Filtered")
-        sb.append(DIV).append(LINE_SEP)
         sb.append("Edit Distance").append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         sb.append("Edit Distance Normal: ").append(accumulatedOutcome.normalResult.editDistance.v).append(
@@ -342,10 +334,20 @@ object SyncStudyResultAnalysis {
             .append(
                 LINE_SEP
             )
+        sb.append("Fully correct commit percentage Normal: ")
+            .append(accumulatedOutcome.normalResult.fullyCorrectPercentage())
+            .append(
+                LINE_SEP
+            )
         sb.append("Edit Distance Filtered: ").append(accumulatedOutcome.filteredResult.editDistance.v).append(
             LINE_SEP
         )
         sb.append("Average Edit Distance Filtered: ").append(accumulatedOutcome.filteredResult.averageEditDistance())
+            .append(
+                LINE_SEP
+            )
+        sb.append("Fully correct commit percentage Filtered: ")
+            .append(accumulatedOutcome.filteredResult.fullyCorrectPercentage())
             .append(
                 LINE_SEP
             )
