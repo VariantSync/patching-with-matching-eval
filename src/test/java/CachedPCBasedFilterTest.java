@@ -1,11 +1,11 @@
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.variantsync.evaluation.baseline.diff.DiffParser;
 import org.variantsync.evaluation.baseline.diff.components.FineDiff;
 import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
 import org.variantsync.evaluation.baseline.diff.splitting.DefaultContextProvider;
 import org.variantsync.evaluation.baseline.diff.splitting.DiffSplitter;
 import org.variantsync.evaluation.baseline.diff.splitting.IContextProvider;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,7 +34,7 @@ public class CachedPCBasedFilterTest {
             Assertions.assertEquals(expectedLine, actualLine, "Mismatch in line " + (i+1));
         }
     }
-    
+
     @Test
     public void filteredInsertion() throws IOException {
         Path pathToExpectedResult = resourceDir.resolve("fine-diff-A-B.txt");

@@ -14,6 +14,7 @@ public class SampleSizeTest {
     private static Stream<Arguments> providesSampleSizes() {
         return Stream.of(
                 Arguments.of(5, 5),
+                Arguments.of(7, 7),
                 Arguments.of(50, 45),
                 Arguments.of(100, 80),
                 Arguments.of(1000, 278),

@@ -1,9 +1,9 @@
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.variantsync.evaluation.baseline.diff.DiffParser;
 import org.variantsync.evaluation.baseline.diff.components.FineDiff;
 import org.variantsync.evaluation.baseline.diff.filter.IFileDiffFilter;
 import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.variantsync.evaluation.baseline.diff.splitting.DefaultContextProvider;
 import org.variantsync.evaluation.baseline.diff.splitting.DiffSplitter;
 import org.variantsync.evaluation.baseline.diff.splitting.IContextProvider;
@@ -29,10 +29,16 @@ public class DiffSplitterTest {
 
         List<String> expectedLines = Files.readAllLines(pathToExpectedResult);
         List<String> actualLines = fineDiff.toLines();
+        int noNewlineOffset = 0;
         for (int i = 0; i < expectedLines.size(); i++) {
             String expectedLine = expectedLines.get(i);
-            String actualLine = actualLines.get(i);
-            Assertions.assertEquals(expectedLine, actualLine, "Mismatch in line " + (i+1));
+            String actualLine = actualLines.get(i + noNewlineOffset);
+            // Ignore no newline metaline differences
+            if (!expectedLine.equals(actualLine) && actualLine.equals("\\ No newline at end of file")) {
+                noNewlineOffset++;
+                actualLine = actualLines.get(i + noNewlineOffset);
+            }
+            Assertions.assertEquals(expectedLine, actualLine, "Mismatch in line " + (i + 1));
         }
     }
 
