@@ -46,7 +46,7 @@ public record FileDiff(List<String> header, List<Hunk> hunks, Path oldFile, Path
             return false;
         }
 
-        return this.hunks.equals(other.hunks);
+        return PartiallyEquals.subsetPartiallyEquals(this.hunks, other.hunks, Hunk::partiallyEquals);
     }
 
     private boolean strippedPathsAreEqual(final Path a, final Path b, int strip) {

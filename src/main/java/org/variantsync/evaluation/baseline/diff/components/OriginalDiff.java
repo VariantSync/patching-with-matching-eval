@@ -32,24 +32,7 @@ public record OriginalDiff(List<FileDiff> fileDiffs) implements IDiffComponent {
             return false;
         }
 
-        List<FileDiff> otherFileDiffsModifiable = new ArrayList<>(other.fileDiffs);
-
-        for (FileDiff fileDiff : this.fileDiffs) {
-            int deletionIndex = -1;
-            for (int i = 0; i < otherFileDiffsModifiable.size(); i++) {
-                if (fileDiff.partiallyEquals(otherFileDiffsModifiable.get(i), strip)) {
-                    deletionIndex = i;
-                    // Exit on the first partially equal diff
-                    break;
-                }
-            }
-            if (deletionIndex == -1) {
-                // If no partially equal diff is found, the diffs are not equal
-                return false;
-            } else {
-                otherFileDiffsModifiable.remove(deletionIndex);
-            }
-        }
-        return true;
+        return PartiallyEquals.subsetPartiallyEquals(this.fileDiffs, other.fileDiffs, (leftDiff, rightDiff)
+                -> leftDiff.partiallyEquals(rightDiff, strip));
     }
 }

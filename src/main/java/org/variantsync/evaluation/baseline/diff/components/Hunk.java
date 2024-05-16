@@ -123,6 +123,10 @@ public final class Hunk implements IDiffComponent {
         return new Hunk(this.location, this.rawLocation, lines);
     }
 
+    public boolean partiallyEquals(Hunk other) {
+        return this.location.equals(other.location) && this.allLines.equals(other.allLines);
+    }
+
     public boolean endsWithEmptyLine() {
         return allLines.get(allLines.size()-1).line().isEmpty();
     }
