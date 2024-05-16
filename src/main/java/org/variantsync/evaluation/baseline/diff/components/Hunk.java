@@ -8,7 +8,6 @@ import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * A Hunk represents a changed text block in the difference between two versions of a file.
