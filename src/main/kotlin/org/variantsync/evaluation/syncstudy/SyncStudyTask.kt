@@ -2,10 +2,8 @@ package org.variantsync.evaluation.syncstudy
 
 import de.ovgu.featureide.fm.core.base.IFeature
 import de.ovgu.featureide.fm.core.base.IFeatureModel
-import org.apache.commons.io.FileUtils
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
-import org.variantsync.evaluation.IDProvider
 import org.variantsync.evaluation.SyncStudyResultAnalysis
 import org.variantsync.evaluation.analysis.CountingMap
 import org.variantsync.evaluation.baseline.diff.DiffParser
@@ -44,162 +42,163 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
+import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Callable
 import java.util.stream.Collectors
 
 class SyncStudyTask(
     private val config: EvalConfig,
-    private val datasetName: String, private val repositoryPath: Path, private val commits: List<SPLCommit>,
+    private val datasetName: String,
+    private val commit: SPLCommit,
+    private val availableOperations: BlockingQueue<SyncStudyOperations>,
+    private val parentRepos: Map<SyncStudyOperations, SPLRepository>,
+    private val childRepos: Map<SyncStudyOperations, SPLRepository>,
+    private val runID: ULong,
 ) : Callable<ULong> {
     private val strip = 2
-    private val operations: SyncStudyOperations = SyncStudyOperations(config.EXPERIMENT_DIR_MAIN())
-    private val idProvider: IDProvider = IDProvider(config.EXPERIMENT_START_ID())
 
     // The feature model for which variants are sampled
     private var currentModel: IFeatureModel? = null
 
-    // The considered commit
-    private var currentCommit: SPLCommit? = null
-
     override fun call(): ULong {
-        // Initialize the SPL repositories for different versions
-        Logger.info("Initializing SPL repos.")
-        initializeSPLCopies()
-        val parentRepo = SPLRepository(operations.splCopyA)
-        val childRepo = SPLRepository(operations.splCopyB)
+        val operations: SyncStudyOperations
+        val parentRepo: SPLRepository
+        val childRepo: SPLRepository
 
-        // For each pair
-        Logger.info("Starting diffing and patching...")
-        var runID: ULong
-        var numProcessed = 0uL
-        val numCommits = commits.size.toLong()
-        Logger.info("There are $numCommits commits to work on.")
-        for (currentCommit in commits) {
-            // Increase one extra time for the first parent in the sequence
-            numProcessed++
-            // Skip pairs until the start ID has been reached.
-            runID = idProvider.next()
-            if (runID < idProvider.start) {
-                Logger.info("Skipped commit $runID")
-                continue
-            }
-            // We can only process the commit if it has at least one parent
-            if (currentCommit.parents().isEmpty) {
-                continue
-            }
-            val parentCommit = currentCommit.parents().get()[0]
-            if (parentCommit.id().trim().isEmpty()) {
-                continue
-            }
-
-            try {
-                splRepoPreparation(parentRepo, childRepo, parentCommit, currentCommit)
-            } catch (e: Exception) {
-                Logger.error("Was not able to prepare SPL repositories for commit pair ${parentCommit.id()} -> ${currentCommit.id()}")
-                Logger.error(e)
-                e.printStackTrace()
-                continue
-            }
-
-            // While more random configurations to consider
-            for (i in 0 until config.EXPERIMENT_REPEATS()) {
-                Logger.debug(
-                    "Starting repetition " + (i + 1) + " of " + config.EXPERIMENT_REPEATS() + " with "
-                            + config.EXPERIMENT_VARIANT_COUNT() + " variants."
-                )
-                if (config.EXPERIMENT_DEBUG() && operations.debugDir(currentCommit).toFile().mkdirs()) {
-                    Logger.debug("Created Debug directory.")
-                }
-
-                // Sample set of random variants
-                Logger.debug("Sampling next set of variants...")
-                val sample = sample(currentCommit)
-                Logger.debug("Done. Sampled " + sample.variants().size + " variants.")
-                if (Files.exists(operations.variantsDirV0.path())) {
-                    Logger.debug("Cleaning variants dir V0.")
-                    operations.shell.execute(RmCommand(operations.variantsDirV0.path()).recursive())
-                }
-                if (Files.exists(operations.variantsDirV1.path())) {
-                    Logger.debug("Cleaning variants dir V1.")
-                    operations.shell.execute(RmCommand(operations.variantsDirV1.path()).recursive())
-                }
-
-                // Write information about the commits
-                if (config.EXPERIMENT_DEBUG()) {
-                    splPCDebug()
-                }
-
-                // Generate the randomly selected variants at both versions
-                val groundTruthV0: MutableMap<Variant, GroundTruth> = HashMap()
-                val groundTruthV1: MutableMap<Variant, GroundTruth> = HashMap()
-                Logger.debug("Generating variants...")
-                if (!generateVariants(sample, groundTruthV0, groundTruthV1)) {
-                    continue
-                }
-                Logger.debug("Done.")
-
-                // Select the first variant as source
-                val source = sample.variants()[0] ?: continue
-                Logger.debug("Starting diff application for source variant " + source.name)
-                if (Files.exists(operations.splitPatchFile)) {
-                    Logger.debug("Cleaning old patch file " + operations.splitPatchFile)
-                    operations.shell.execute(RmCommand(operations.splitPatchFile))
-                }
-                // Apply diff to both versions of source variant
-                Logger.debug("Diffing source...")
-                val originalDiff = getOriginalDiff(
-                    operations.variantsDirV0.path().resolve(source.name),
-                    operations.variantsDirV1.path().resolve(source.name)
-                )
-                if (originalDiff.isEmpty) {
-                    // There was no change to this variant, so we can skip it as source
-                    Logger.debug(
-                        "Skipping " + source.name
-                                + " because there are no changes to code. Diff of code files is empty."
-                    )
-                    continue
-                }
-                if (config.EXPERIMENT_DEBUG()) {
-                    saveDiff(
-                        originalDiff,
-                        operations.debugDir(currentCommit).resolve(source.name + "_original.diff")
-                    )
-                }
-
-                for (patcher in operations.patchers) {
-                    runPatchApplication(
-                        patcher,
-                        source,
-                        sample,
-                        originalDiff,
-                        groundTruthV0,
-                        groundTruthV1,
-                        currentCommit,
-                        runID,
-                        parentCommit
-                    )
-                }
-            }
-            if (numProcessed % 50uL == 0uL) {
-                Logger.info(
-                    String.format(
-                        "Finished commit %s of %s.",
-                        numProcessed.toString(),
-                        numCommits.toString()
-                    )
-                )
-            }
-
-            // Free memory of parentCommit
-            parentCommit.forget()
-            // Free memory of commit V1
-            currentCommit.forget()
+        synchronized(SyncStudyTask::class.java) {
+            // Retrieve the operations and the repo manager for this task
+            Logger.debug("Getting the next available operations (" + availableOperations.size + ")")
+            operations = availableOperations.take()
+            Logger.debug("There are now " + availableOperations.size + " operations available. Took $operations")
+            parentRepo = this.parentRepos[operations]!!
+            childRepo = this.childRepos[operations]!!
         }
-        FileUtils.deleteDirectory(operations.workDir.toFile())
-        return 0UL
+
+        try {
+            callExecution(operations, parentRepo, childRepo)
+        } catch (e: Throwable) {
+            Logger.error("Failed to finish task with runID $runID")
+            Logger.error(e)
+            e.printStackTrace()
+        } finally {
+            // Place the operations back in the queue to make them available to the next task
+            Logger.debug("Placing operation $operations back in queue (" + availableOperations.size + ")")
+            availableOperations.add(operations)
+            Logger.debug("There are now " + availableOperations.size + " operations available.")
+        }
+
+        return runID
+    }
+
+    private fun callExecution(operations: SyncStudyOperations, parentRepo: SPLRepository, childRepo: SPLRepository) {
+        // We can only process the commit if it has at least one parent
+        if (this.commit.parents().isEmpty) {
+            return
+        }
+        val parentCommit = this.commit.parents().get()[0]
+        if (parentCommit.id().trim().isEmpty()) {
+            return
+        }
+
+        try {
+            splRepoPreparation(parentRepo, childRepo, parentCommit, this.commit)
+        } catch (e: Exception) {
+            Logger.error("Was not able to prepare SPL repositories for commit pair ${parentCommit.id()} -> ${this.commit.id()}")
+            Logger.error(e)
+            e.printStackTrace()
+            return
+        }
+
+        // While more random configurations to consider
+        for (i in 0 until config.EXPERIMENT_REPEATS()) {
+            Logger.debug(
+                "Starting repetition " + (i + 1) + " of " + config.EXPERIMENT_REPEATS() + " with "
+                        + config.EXPERIMENT_VARIANT_COUNT() + " variants."
+            )
+            if (config.EXPERIMENT_DEBUG() && operations.debugDir(this.commit).toFile().mkdirs()) {
+                Logger.debug("Created Debug directory.")
+            }
+
+            // Sample set of random variants
+            Logger.debug("Sampling next set of variants...")
+            val sample = sample(operations)
+            Logger.debug("Done. Sampled " + sample.variants().size + " variants.")
+            if (Files.exists(operations.variantsDirV0.path())) {
+                Logger.debug("Cleaning variants dir V0.")
+                operations.shell.execute(RmCommand(operations.variantsDirV0.path()).recursive())
+            }
+            if (Files.exists(operations.variantsDirV1.path())) {
+                Logger.debug("Cleaning variants dir V1.")
+                operations.shell.execute(RmCommand(operations.variantsDirV1.path()).recursive())
+            }
+
+            // Write information about the commits
+            if (config.EXPERIMENT_DEBUG()) {
+                splPCDebug(operations)
+            }
+
+            // Generate the randomly selected variants at both versions
+            val groundTruthV0: MutableMap<Variant, GroundTruth> = HashMap()
+            val groundTruthV1: MutableMap<Variant, GroundTruth> = HashMap()
+            Logger.debug("Generating variants...")
+            if (!generateVariants(operations, sample, groundTruthV0, groundTruthV1)) {
+                continue
+            }
+            Logger.debug("Done.")
+
+            // Select the first variant as source
+            val source = sample.variants()[0] ?: continue
+            Logger.debug("Starting diff application for source variant " + source.name)
+            if (Files.exists(operations.splitPatchFile)) {
+                Logger.debug("Cleaning old patch file " + operations.splitPatchFile)
+                operations.shell.execute(RmCommand(operations.splitPatchFile))
+            }
+            // Apply diff to both versions of source variant
+            Logger.debug("Diffing source...")
+            val originalDiff = getOriginalDiff(
+                operations,
+                operations.variantsDirV0.path().resolve(source.name),
+                operations.variantsDirV1.path().resolve(source.name)
+            )
+            if (originalDiff.isEmpty) {
+                // There was no change to this variant, so we can skip it as source
+                Logger.debug(
+                    "Skipping " + source.name
+                            + " because there are no changes to code. Diff of code files is empty."
+                )
+                continue
+            }
+            if (config.EXPERIMENT_DEBUG()) {
+                saveDiff(
+                    originalDiff,
+                    operations.debugDir(this.commit).resolve(source.name + "_original.diff")
+                )
+            }
+
+            for (patcher in operations.patchers) {
+                runPatchApplication(
+                    operations,
+                    patcher,
+                    source,
+                    sample,
+                    originalDiff,
+                    groundTruthV0,
+                    groundTruthV1,
+                    this.commit,
+                    runID,
+                    parentCommit
+                )
+            }
+        }
+
+        // Free memory of parentCommit
+        parentCommit.forget()
+        // Free memory of commit V1
+        this.commit.forget()
     }
 
     private fun runPatchApplication(
+        operations: SyncStudyOperations,
         patcher: Patcher,
         source: Variant,
         sample: Sample,
@@ -228,7 +227,7 @@ class SyncStudyTask(
             Logger.debug(source.name + " --patch--> " + target.name)
             val pathToTarget = operations.variantsDirV0.path().resolve(target.name)
             val pathToExpectedResult = operations.variantsDirV1.path().resolve(target.name)
-            val originalEvolutionDiff = getOriginalDiff(pathToTarget, pathToExpectedResult)
+            val originalEvolutionDiff = getOriginalDiff(operations, pathToTarget, pathToExpectedResult)
 
             val patchIsTrivial = originalPatch.partiallyEquals(originalEvolutionDiff, strip)
             if (patchIsTrivial) {
@@ -246,18 +245,18 @@ class SyncStudyTask(
             /* Application of patches without knowledge about features */
             Logger.debug("Applying patch without knowledge about features...")
             // Apply the patch to the target variant
-            resetPatchDirectory(pathToTarget)
+            resetPatchDirectory(operations, pathToTarget)
             val normalStart = Instant.now()
             val rejectsNormal = patcher.applyPatch(operations, source, target, false)
             val normalEnd = Instant.now()
             val normalDuration = Duration.between(normalStart, normalEnd)
 
             if (config.EXPERIMENT_DEBUG()) {
-                targetFilesNormalDebug(target, pathToTarget, pathToExpectedResult)
+                targetFilesNormalDebug(operations, target, pathToTarget, pathToExpectedResult)
             }
 
             // Gather the patch result
-            val actualVsExpectedNormal = getActualVsExpected(pathToExpectedResult, "normal", target)
+            val actualVsExpectedNormal = getActualVsExpected(operations, pathToExpectedResult, "normal", target)
 
             /* Application of patches with knowledge about PC of edit only */
             Logger.debug("Applying patch with knowledge about edits' PCs...")
@@ -272,6 +271,7 @@ class SyncStudyTask(
 
             // Create target variant specific patch that respects PCs and is split into line-sized changes
             val splitAndFilteredPatch = getSplitAndFilteredDiff(
+                operations,
                 originalPatch,
                 groundTruthV0[source]!!.variant(),
                 groundTruthV1[source]!!.variant(), target,
@@ -280,7 +280,7 @@ class SyncStudyTask(
             saveDiff(splitAndFilteredPatch, operations.splitAndFilteredPatchFile)
 
             // Apply the filtered patch to the target variant, if there are changes left
-            resetPatchDirectory(pathToTarget)
+            resetPatchDirectory(operations, pathToTarget)
             val filteredStart = Instant.now()
             val rejectsFiltered = if (splitAndFilteredPatch.content.isNotEmpty()) {
                 patcher.applyPatch(operations, source, target, true)
@@ -291,16 +291,16 @@ class SyncStudyTask(
             val filteredDuration = Duration.between(filteredStart, filteredEnd)
 
             // Gather the result
-            val actualVsExpectedFiltered = getActualVsExpected(pathToExpectedResult, "filtered", target)
+            val actualVsExpectedFiltered = getActualVsExpected(operations, pathToExpectedResult, "filtered", target)
 
             patcher.clean(operations)
 
             if (config.EXPERIMENT_DEBUG()) {
                 patchFilesDebug(
+                    operations,
                     patcher,
                     originalPatch,
                     splitPatch,
-                    currentCommit,
                     source,
                     filteredPatch,
                     splitAndFilteredPatch,
@@ -312,6 +312,7 @@ class SyncStudyTask(
             }
 
             val requiredChanges = getRequiredChanges(
+                operations,
                 originalPatch,
                 groundTruthV0[source]!!.variant(),
                 groundTruthV1[source]!!.variant(), target,
@@ -335,7 +336,7 @@ class SyncStudyTask(
         }
     }
 
-    private fun resetPatchDirectory(pathToTarget: Path?) {
+    private fun resetPatchDirectory(operations: SyncStudyOperations, pathToTarget: Path?) {
         // Clean patch directory
         if (Files.exists(operations.patchDir.toAbsolutePath())) {
             operations.shell.execute(RmCommand(operations.patchDir.toAbsolutePath()).recursive())
@@ -353,10 +354,10 @@ class SyncStudyTask(
     }
 
     private fun SyncStudyTask.patchFilesDebug(
+        operations: SyncStudyOperations,
         patcher: Patcher,
         originalPatch: OriginalDiff,
         splitPatch: FineDiff,
-        currentCommit: SPLCommit,
         source: Variant,
         filteredPatch: OriginalDiff,
         splitAndFilteredPatch: FineDiff,
@@ -367,42 +368,42 @@ class SyncStudyTask(
     ) {
         saveDiff(
             splitPatch,
-            operations.debugDir(currentCommit).resolve(source.name + "_split.diff")
+            operations.debugDir(commit).resolve(source.name + "_split.diff")
         )
         saveDiff(
             splitAndFilteredPatch,
-            operations.debugDir(currentCommit).resolve(target.name)
+            operations.debugDir(commit).resolve(target.name)
                 .resolve(source.name + "_to_" + target.name + "_split_filtered.diff")
         )
         saveDiff(
             originalPatch,
-            operations.debugDir(currentCommit).resolve(source.name + ".diff")
+            operations.debugDir(commit).resolve(source.name + ".diff")
         )
         saveDiff(
             filteredPatch,
-            operations.debugDir(currentCommit).resolve(target.name)
+            operations.debugDir(commit).resolve(target.name)
                 .resolve(source.name + "_to_" + target.name + "_filtered.diff")
         )
         saveRejects(
             rejectsNormal,
-            operations.debugDir(currentCommit).resolve(target.name)
+            operations.debugDir(commit).resolve(target.name)
                 .resolve(target.name + "_rejects_normal_${patcher.name()}.diff")
         )
         saveRejects(
             rejectsFiltered,
-            operations.debugDir(currentCommit).resolve(target.name)
+            operations.debugDir(commit).resolve(target.name)
                 .resolve(target.name + "_rejects_filtered_${patcher.name()}.diff")
         )
-        operations.debugDir(currentCommit).resolve(target.name).toFile().mkdirs()
+        operations.debugDir(commit).resolve(target.name).toFile().mkdirs()
         saveDiff(
             evolutionDiff,
-            operations.debugDir(currentCommit).resolve(target.name)
+            operations.debugDir(commit).resolve(target.name)
                 .resolve(target.name + "_evolution.diff")
         )
         operations.shell.execute(
             CpCommand(
                 operations.patchDir,
-                operations.debugDir(currentCommit).resolve(target.name).resolve("patched_filtered")
+                operations.debugDir(commit).resolve(target.name).resolve("patched_filtered")
             ).recursive()
         )
             .expect("Was not able to copy variant $target.name")
@@ -410,6 +411,7 @@ class SyncStudyTask(
 
 
     private fun generateVariants(
+        operations: SyncStudyOperations,
         sample: Sample,
         groundTruthV0: MutableMap<Variant, GroundTruth>,
         groundTruthV1: MutableMap<Variant, GroundTruth>,
@@ -417,10 +419,10 @@ class SyncStudyTask(
         var success = true
         for (variant in sample.variants()) {
             try {
-                generateVariant(currentCommit!!, groundTruthV0, groundTruthV1, variant)
+                generateVariant(operations, groundTruthV0, groundTruthV1, variant)
             } catch (e: Exception) {
                 Logger.warn(
-                    "Was not able to generate all variants for commit ${currentCommit!!.id()}:\n" +
+                    "Was not able to generate all variants for commit ${this.commit.id()}:\n" +
                             "{}", e
                 )
                 Logger.warn("Skipping commit.")
@@ -430,36 +432,22 @@ class SyncStudyTask(
         return success
     }
 
-    private fun initializeSPLCopies() {
-        // Clean old SPL repo files
-        Logger.debug("Cleaning old repo files.")
-        if (Files.exists(operations.splCopyA)) {
-            operations.shell.execute(RmCommand(operations.splCopyA).recursive())
-                .expect("Was not able to remove SPL-V0.")
-        }
-        if (Files.exists(operations.splCopyB)) {
-            operations.shell.execute(RmCommand(operations.splCopyB).recursive())
-                .expect("Was not able to remove SPL-V1.")
-        }
-        // Copy the SPL repo
-        Logger.debug("Creating new SPL repo copies.")
-        operations.shell.execute(CpCommand(repositoryPath, operations.splCopyA).recursive())
-            .expect("Was not able to copy SPL-V0.")
-        operations.shell.execute(CpCommand(repositoryPath, operations.splCopyB).recursive())
-            .expect("Was not able to copy SPL-V1.")
-    }
-
     /**
      * Get the difference between the target variant after patching and the target variant in the
      * next de.variantsync.studies.evolution step. Then, filter all differences that do not belong
      * to the source variant and could have therefore not been synchronized in any case.
      */
-    private fun getActualVsExpected(pathToExpectedResult: Path, filePostfix: String, target: Variant): FineDiff {
-        val resultDiff = getOriginalDiff(operations.patchDir, pathToExpectedResult)
+    private fun getActualVsExpected(
+        operations: SyncStudyOperations,
+        pathToExpectedResult: Path,
+        filePostfix: String,
+        target: Variant
+    ): FineDiff {
+        val resultDiff = getOriginalDiff(operations, operations.patchDir, pathToExpectedResult)
         if (config.EXPERIMENT_DEBUG()) {
             try {
                 Files.write(
-                    operations.debugDir(currentCommit!!).resolve(target.name)
+                    operations.debugDir(this.commit).resolve(target.name)
                         .resolve(target.name + "_actual_expected-$filePostfix.diff"),
                     resultDiff.toLines()
                 )
@@ -473,25 +461,23 @@ class SyncStudyTask(
     /**
      * Randomly sample a set of variants valid in both commits.
      *
-     * @param commit The id of the parent commit
      * @return The sampled variants
      */
-    fun sample(commit: SPLCommit): Sample {
-        if (currentModel == null || currentCommit !== commit) {
+    fun sample(operations: SyncStudyOperations): Sample {
+        if (currentModel == null || this.commit !== commit) {
             Logger.debug("Loading feature models.")
-            currentCommit = commit
             currentModel = commit.featureModel().run().orElseThrow()
-            featureModelDebug(currentModel)
+            featureModelDebug(operations, currentModel)
         }
         return FeatureIDESampler.CreateRandomSampler(this.config.EXPERIMENT_VARIANT_COUNT()).sample(currentModel)
     }
 
     // Save the features in the feature models
-    private fun featureModelDebug(model: IFeatureModel?) {
+    private fun featureModelDebug(operations: SyncStudyOperations, model: IFeatureModel?) {
         if (config.EXPERIMENT_DEBUG()) {
             try {
                 Files.write(
-                    operations.debugDir(currentCommit!!).resolve("features.txt"), model!!.features.stream()
+                    operations.debugDir(this.commit).resolve("features.txt"), model!!.features.stream()
                         .map { obj: IFeature -> obj.name }.collect(Collectors.toSet())
                 )
             } catch (e: IOException) {
@@ -502,14 +488,14 @@ class SyncStudyTask(
 
     // Generate the two versions of a variant
     private fun generateVariant(
-        currentCommit: SPLCommit,
+        operations: SyncStudyOperations,
         groundTruthV0: MutableMap<Variant, GroundTruth>,
         groundTruthV1: MutableMap<Variant, GroundTruth>, variant: Variant
     ) {
         Logger.debug("Generating variant " + variant.name)
         if (config.EXPERIMENT_DEBUG() && variant.configuration is FeatureIDEConfiguration) {
             val config = variant.configuration as FeatureIDEConfiguration
-            val p = operations.debugDir(currentCommit).resolve("configs")
+            val p = operations.debugDir(commit).resolve("configs")
             p.toFile().mkdirs()
             try {
                 Files.write(
@@ -532,11 +518,11 @@ class SyncStudyTask(
             e.printStackTrace()
             panic("Was not able to create directory for variant: " + variant.name)
         }
-        val gtV0 = currentCommit.presenceConditionsBefore().run().orElseThrow {
+        val gtV0 = commit.presenceConditionsBefore().run().orElseThrow {
             NoSuchElementException(
                 "%s ; %s ; %s".format(
                     variant,
-                    operations.splCopyB, currentCommit
+                    operations.splCopyB, commit
                 )
             )
         }
@@ -555,7 +541,7 @@ class SyncStudyTask(
 
         if (config.EXPERIMENT_DEBUG()) {
             try {
-                val p = operations.debugDir(currentCommit)
+                val p = operations.debugDir(commit)
                     .resolve("PCs")
                     .resolve("parentCommit-" + variant.name + ".variant.csv")
                 p.parent.toFile().mkdirs()
@@ -571,12 +557,12 @@ class SyncStudyTask(
         }
         groundTruthV0[variant] = gtV0.success
 
-        val gtV1 = currentCommit.presenceConditionsAfter().run()
+        val gtV1 = commit.presenceConditionsAfter().run()
             .orElseThrow {
                 NoSuchElementException(
                     "%s ; %s ; %s".format(
                         variant,
-                        operations.splCopyB, currentCommit
+                        operations.splCopyB, commit
                     )
                 )
             }
@@ -595,7 +581,7 @@ class SyncStudyTask(
         }
         if (config.EXPERIMENT_DEBUG()) {
             try {
-                val p = operations.debugDir(currentCommit)
+                val p = operations.debugDir(commit)
                     .resolve("PCs")
                     .resolve("childCommit-" + variant.name + ".variant.csv")
                 p.parent.toFile().mkdirs()
@@ -689,6 +675,7 @@ class SyncStudyTask(
 
     // Get the filtered line-level patches for a given difference
     private fun getSplitAndFilteredDiff(
+        operations: SyncStudyOperations,
         originalDiff: OriginalDiff,
         tracesV0: Artefact,
         tracesV1: Artefact,
@@ -697,7 +684,7 @@ class SyncStudyTask(
         newVersionRoot: Path
     ): FineDiff {
         val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, strip)
-        return getSplitAndFilteredDiff(originalDiff, cachedPCBasedFilter, false)
+        return getSplitAndFilteredDiff(operations, originalDiff, cachedPCBasedFilter, false)
     }
 
     // Get the filtered line-level patches for a given difference
@@ -715,6 +702,7 @@ class SyncStudyTask(
 
     // Get the filtered line-level patches for a given difference
     private fun getRequiredChanges(
+        operations: SyncStudyOperations,
         originalDiff: OriginalDiff,
         tracesV0: Artefact,
         tracesV1: Artefact,
@@ -723,12 +711,13 @@ class SyncStudyTask(
         newVersionRoot: Path
     ): CountingMap<Change> {
         val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, strip)
-        val fineDiff = getSplitAndFilteredDiff(originalDiff, cachedPCBasedFilter, true)
+        val fineDiff = getSplitAndFilteredDiff(operations, originalDiff, cachedPCBasedFilter, true)
         return CountingMap(fineDiff.intoChanges(strip))
     }
 
     // Get the filtered line-level patches for a given difference
     private fun <T> getSplitAndFilteredDiff(
+        operations: SyncStudyOperations,
         originalDiff: OriginalDiff,
         filter: T,
         filterDisabled: Boolean,
@@ -740,6 +729,7 @@ class SyncStudyTask(
 
     // Get the difference between two directories using UNIX diff
     private fun getOriginalDiff(
+        operations: SyncStudyOperations,
         v0Path: Path, v1Path: Path
     ): OriginalDiff {
         val diffCommand: DiffCommand = DiffCommand.Recommended(
@@ -752,10 +742,10 @@ class SyncStudyTask(
     }
 
 
-    private fun splPCDebug() {
+    private fun splPCDebug(operations: SyncStudyOperations) {
         try {
-            val v0PCs = currentCommit!!.presenceConditionsBefore().run()
-            val p = operations.debugDir(currentCommit!!).resolve("PCs")
+            val v0PCs = this.commit.presenceConditionsBefore().run()
+            val p = operations.debugDir(this.commit).resolve("PCs")
             p.toFile().mkdirs()
             if (v0PCs.isPresent) {
                 Resources.Instance().write(
@@ -763,7 +753,7 @@ class SyncStudyTask(
                     p.resolve("pcs-parent.spl.csv")
                 )
             }
-            val v1PCs = currentCommit!!.presenceConditionsAfter().run()
+            val v1PCs = this.commit.presenceConditionsAfter().run()
             if (v1PCs.isPresent) {
                 Resources.Instance().write(
                     Artefact::class.java, v1PCs.get(),
@@ -775,26 +765,31 @@ class SyncStudyTask(
         }
     }
 
-    private fun targetFilesNormalDebug(target: Variant, pathToTarget: Path, pathToExpectedResult: Path) {
-        operations.debugDir(currentCommit!!).resolve(target.name).toFile().mkdirs()
+    private fun targetFilesNormalDebug(
+        operations: SyncStudyOperations,
+        target: Variant,
+        pathToTarget: Path,
+        pathToExpectedResult: Path
+    ) {
+        operations.debugDir(this.commit).resolve(target.name).toFile().mkdirs()
         operations.shell.execute(
             CpCommand(
                 pathToTarget,
-                operations.debugDir(currentCommit!!).resolve(target.name).resolve("original")
+                operations.debugDir(this.commit).resolve(target.name).resolve("original")
             ).recursive()
         )
             .expect("Was not able to copy variant $target.name")
         operations.shell.execute(
             CpCommand(
                 operations.patchDir,
-                operations.debugDir(currentCommit!!).resolve(target.name).resolve("patched_normal")
+                operations.debugDir(this.commit).resolve(target.name).resolve("patched_normal")
             ).recursive()
         )
             .expect("Was not able to copy variant $target.name")
         operations.shell.execute(
             CpCommand(
                 pathToExpectedResult,
-                operations.debugDir(currentCommit!!).resolve(target.name).resolve("expected")
+                operations.debugDir(this.commit).resolve(target.name).resolve("expected")
             ).recursive()
         )
             .expect("Was not able to copy variant $target.name")
