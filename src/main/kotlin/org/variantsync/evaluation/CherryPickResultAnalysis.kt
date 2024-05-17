@@ -223,10 +223,15 @@ object CherryPickResultAnalysis {
         sb.append("Edit Distance").append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         sb.append("Edit Distance: ").append(accumulatedOutcome.normalResult.editDistance.v).append(LINE_SEP)
-        sb.append("Average Edit Distance: ").append(accumulatedOutcome.normalResult.averageEditDistance()).append(
-            LINE_SEP
-        )
-        sb.append("Fully correct commit percentage: ").append(accumulatedOutcome.normalResult.fullyCorrectPercentage())
+        sb.append("Average Edit Distance: ")
+            .append(String.format("%.2f%%", accumulatedOutcome.normalResult.averageEditDistance()))
+            .append(
+                LINE_SEP
+            )
+        sb.append("Fully-Correct Commit Percentage: ")
+            .append(String.format("%.2f%%", accumulatedOutcome.normalResult.fullyCorrectPercentage()))
+            .append(" of ")
+            .append(accumulatedOutcome.normalResult.resultCount())
             .append(
                 LINE_SEP
             )

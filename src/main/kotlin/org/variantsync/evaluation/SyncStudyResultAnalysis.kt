@@ -330,24 +330,30 @@ object SyncStudyResultAnalysis {
         sb.append("Edit Distance Normal: ").append(accumulatedOutcome.normalResult.editDistance.v).append(
             LINE_SEP
         )
-        sb.append("Average Edit Distance Normal: ").append(accumulatedOutcome.normalResult.averageEditDistance())
+        sb.append("Average Edit Distance Normal: ")
+            .append(String.format("%.2f%%", accumulatedOutcome.normalResult.averageEditDistance()))
             .append(
                 LINE_SEP
             )
-        sb.append("Fully correct commit percentage Normal: ")
-            .append(accumulatedOutcome.normalResult.fullyCorrectPercentage())
+        sb.append("Fully-Correct Commit Percentage Normal: ")
+            .append(String.format("%.2f%%", accumulatedOutcome.normalResult.fullyCorrectPercentage()))
+            .append(" of ")
+            .append(accumulatedOutcome.normalResult.resultCount())
             .append(
                 LINE_SEP
             )
         sb.append("Edit Distance Filtered: ").append(accumulatedOutcome.filteredResult.editDistance.v).append(
             LINE_SEP
         )
-        sb.append("Average Edit Distance Filtered: ").append(accumulatedOutcome.filteredResult.averageEditDistance())
+        sb.append("Average Edit Distance Filtered: ")
+            .append(String.format("%.2f%%", accumulatedOutcome.filteredResult.averageEditDistance()))
             .append(
                 LINE_SEP
             )
-        sb.append("Fully correct commit percentage Filtered: ")
-            .append(accumulatedOutcome.filteredResult.fullyCorrectPercentage())
+        sb.append("Fully-Correct Commit Percentage Filtered: ")
+            .append(String.format("%.2f%%", accumulatedOutcome.filteredResult.fullyCorrectPercentage()))
+            .append(" of ")
+            .append(accumulatedOutcome.filteredResult.resultCount())
             .append(
                 LINE_SEP
             )
