@@ -1,11 +1,11 @@
 package org.variantsync.evaluation
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.tinylog.kotlin.Logger
 import org.tinylog.kotlin.Logger.debug
 import org.variantsync.diffdetective.util.Assert
 import org.variantsync.evaluation.analysis.*
-import org.variantsync.evaluation.analysis.SyncStudyPatchOutcome.Companion.fromJSON
 import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
@@ -560,11 +560,16 @@ object SyncStudyResultAnalysis {
     }
 
     private fun parseResult(lines: List<String>): SyncStudyPatchOutcome {
-        val gson = Gson()
         val sb = StringBuilder()
         lines.forEach(Consumer { l: String? -> sb.append(l).append("\n") })
-        val `object` = gson.fromJson(sb.toString(), JsonObject::class.java)
-        return fromJSON(`object`)
+        val mapper = jacksonObjectMapper()
+        try {
+            mapper.registerModule(JavaTimeModule())
+            return mapper.readValue(sb.toString(), SyncStudyPatchOutcome::class.java)
+        } catch (e: Exception) {
+            Logger.error(e)
+            throw e
+        }
     }
 
     fun percentage(x: Long, y: Long): String {

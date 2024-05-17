@@ -1,7 +1,7 @@
 package org.variantsync.evaluation
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.tinylog.kotlin.Logger
 import org.variantsync.diffdetective.util.Assert
 import org.variantsync.evaluation.SyncStudyResultAnalysis.percentage
@@ -337,11 +337,11 @@ object CherryPickResultAnalysis {
     }
 
     private fun parseResult(lines: List<String>): CherryPickPatchOutcome {
-        val gson = Gson()
         val sb = StringBuilder()
         lines.forEach(Consumer { l: String? -> sb.append(l).append("\n") })
-        val `object` = gson.fromJson(sb.toString(), JsonObject::class.java)
-        return CherryPickPatchOutcome.fromJSON(`object`)
+        val mapper = jacksonObjectMapper()
+        mapper.registerModule(JavaTimeModule())
+        return mapper.readValue(sb.toString(), CherryPickPatchOutcome::class.java)
     }
 
     data class AccumulatedOutcome(

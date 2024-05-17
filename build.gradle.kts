@@ -16,7 +16,6 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.variantsync.vevos:simulation:2.0.0")
     // https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2
     implementation("org.apache.commons:commons-configuration2:2.9.0")
@@ -37,6 +36,9 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.5")
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml
     implementation("org.yaml:snakeyaml:2.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
 
