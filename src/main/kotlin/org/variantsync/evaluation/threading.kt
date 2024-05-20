@@ -15,7 +15,7 @@ fun waitForShutdown(
         val runID: ULong
         try {
             // TODO: Make timeout configurable
-            runID = future.get(5, TimeUnit.MINUTES)
+            runID = future.get(10, TimeUnit.MINUTES)
             if (runID % 25uL == 0uL) {
                 Logger.info(
                     String.format(

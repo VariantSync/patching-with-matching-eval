@@ -227,7 +227,6 @@ fun main(args: Array<String>) {
         } catch (e: Exception) {
             e.printStackTrace()
             Logger.error(e)
-            exitProcess(1)
         }
     }
     exitProcess(0)
