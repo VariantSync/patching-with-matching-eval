@@ -52,25 +52,6 @@ class VariantRepoManager(private val operations: CherryEvalOperations, private v
         return true
     }
 
-    fun cleanRepoStates() {
-        cleanRepo(this.sourceV0, operations.sourceVariantV0)
-        cleanRepo(this.sourceV1, operations.sourceVariantV1)
-        cleanRepo(this.targetV0, operations.targetVariantV0)
-        cleanRepo(this.targetV1, operations.targetVariantV1)
-    }
-
-    private fun cleanRepo(repo: Git, path: Path) {
-        // Stash all changes and drop the stash. This is a workaround as the JGit API does not support restore.
-        Logger.debug("Cleaning state of V0 repo.")
-        try {
-            repo.stashCreate().setIncludeUntracked(true).call()
-            repo.stashDrop().setAll(true).call()
-            Logger.debug("Cleaning state of repo.")
-        } catch (e: Exception) {
-            panic("Was not able to clean repository (${path}).", e)
-        }
-    }
-
     fun resetTargetVariant() {
         try {
             Logger.debug("Cleaning state of target.")
@@ -84,7 +65,7 @@ class VariantRepoManager(private val operations: CherryEvalOperations, private v
                 operations.shell.execute(CpCommand(githubRepoPath, operations.targetVariantV0).recursive())
                     .expect("Was not able to copy target variant V0.")
             } catch (e2: Exception) {
-                panic("Was not able to clean target.", e)
+                panic("Was not able to clean target.", e2)
             }
         }
     }
