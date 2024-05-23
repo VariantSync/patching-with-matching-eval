@@ -213,10 +213,9 @@ class CherryPickEvalTask(
         val resultDiff = getOriginalDiff(operations, operations.patchDir(), pathToExpectedResult, true)
         if (config.EXPERIMENT_DEBUG()) {
             try {
-                Files.write(
-                    operations.debugDir(currentPR).resolve(target.name)
-                        .resolve(target.name + "_actual_expected.diff"),
-                    resultDiff.toLines()
+                saveDiff(
+                    resultDiff, operations.debugDir(currentPR).resolve(target.name)
+                        .resolve(target.name + "_actual_expected.diff")
                 )
             } catch (e: IOException) {
                 Logger.error("Was not able to save resultDiffOriginal:\n{}", e)
@@ -229,6 +228,7 @@ class CherryPickEvalTask(
     private fun saveDiff(fineDiff: FineDiff, file: Path) {
         // Save the fine diff to a file
         try {
+            Files.createDirectories(file.parent)
             Files.write(file, fineDiff.toLines())
         } catch (e: IOException) {
             panic("Was not able to save diff to file $file")
@@ -239,6 +239,7 @@ class CherryPickEvalTask(
     private fun saveRejects(rejects: Rejects, file: Path) {
         // Save the fine diff to a file
         try {
+            Files.createDirectories(file.parent)
             Files.write(file, rejects.toLines())
         } catch (e: IOException) {
             panic("Was not able to save diff to file $file")
@@ -249,6 +250,7 @@ class CherryPickEvalTask(
     private fun saveDiff(fineDiff: OriginalDiff, file: Path) {
         // Save the fine diff to a file
         try {
+            Files.createDirectories(file.parent)
             Files.write(file, fineDiff.toLines())
         } catch (e: IOException) {
             panic("Was not able to save diff to file $file")
