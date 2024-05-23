@@ -152,6 +152,10 @@ class EvalConfig(propertiesFile: File) {
         return config!!.getDouble(SAMPLING_P, 0.5)
     }
 
+    fun SEED(): Long {
+        return config!!.getLong(SAMPLING_SEED, 42)
+    }
+
     companion object {
         // The number of repetitions for each commit and source target combination
         private const val EXPERIMENT_REPEATS = "experiment.repeats"
@@ -200,5 +204,8 @@ class EvalConfig(propertiesFile: File) {
 
         // The sample proportion for sample size computation
         private const val SAMPLING_P = "sampling.p"
+
+        // The seed for the SecureRandom that chooses a random subset
+        private const val SAMPLING_SEED = "sampling.seed"
     }
 }

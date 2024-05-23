@@ -20,8 +20,10 @@ import java.io.File
 import java.io.IOException
 import java.io.UncheckedIOException
 import java.net.URI
+import java.nio.ByteBuffer
 import java.nio.file.Files
 import java.nio.file.Path
+import java.security.SecureRandom
 import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Executors
@@ -65,7 +67,8 @@ class SynchronizationStudy(
                 Logger.info("Skipping $datasetName because it contains fewer commits than the sample size of $sampleSize.")
             } else {
                 Logger.info("Considering a representative sample of $sampleSize commits.")
-                history = history.shuffled().subList(0, sampleSize)
+                val seed: ByteArray = ByteBuffer.allocate(java.lang.Long.BYTES).putLong(config.SEED()).array()
+                history = history.shuffled(SecureRandom(seed)).subList(0, sampleSize)
             }
         }
 

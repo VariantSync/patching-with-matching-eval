@@ -14,11 +14,13 @@ import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.io.IOException
 import java.io.UncheckedIOException
+import java.nio.ByteBuffer
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
+import java.security.SecureRandom
 import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Executors
@@ -51,7 +53,9 @@ class CherryPickStudy(
         if (config.EXPERIMENT_ENABLE_SAMPLING()) {
             val sampleSize = determineSampleSize(config, dataset.cherryPicks.size)
             Logger.info("Considering a representative sample of $sampleSize cherry picks.")
-            dataset.cherryPicks = dataset.cherryPicks.shuffled().subList(0, sampleSize)
+            val seed: ByteArray = ByteBuffer.allocate(java.lang.Long.BYTES).putLong(config.SEED()).array()
+            dataset.cherryPicks =
+                dataset.cherryPicks.shuffled(SecureRandom(seed)).subList(0, sampleSize)
         }
 
         this.evalTasks = ArrayList()
