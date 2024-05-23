@@ -614,16 +614,15 @@ class SyncStudyTask(
             parentRepo.checkoutCommit(parentCommit, true)
             childRepo.checkoutCommit(childCommit, true)
         } catch (e: Exception) {
-            Logger.error(
+            Logger.warn(
                 "Was not able to checkout commits ($parentCommit -> $childCommit) for SPL repository:\n" +
                         "{}", e
             )
-            // Try to clean and checkout again
-            cleanRepo(parentRepo)
-            cleanRepo(childRepo)
+            // Try checkout again
             Logger.warn("Retry of commits in SPL repo.")
             parentRepo.checkoutCommit(parentCommit, true)
             childRepo.checkoutCommit(childCommit, true)
+            Logger.warn("Retry succeeded")
         }
         Logger.debug("Done.")
     }
