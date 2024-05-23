@@ -211,7 +211,7 @@ class CherryPickEvalTask(
         currentPR: CherryPick
     ): FineDiff {
         val resultDiff = getOriginalDiff(operations, operations.patchDir(), pathToExpectedResult, true)
-        if (config.EXPERIMENT_DEBUG()) {
+        if (config.EXPERIMENT_DEBUG() && !resultDiff.isEmpty) {
             try {
                 saveDiff(
                     resultDiff, operations.debugDir(currentPR).resolve(target.name)
