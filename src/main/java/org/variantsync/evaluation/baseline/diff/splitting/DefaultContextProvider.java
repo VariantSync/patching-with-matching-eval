@@ -5,8 +5,6 @@ import org.variantsync.evaluation.baseline.diff.components.FileDiff;
 import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
 import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
-import org.variantsync.evaluation.baseline.diff.lines.MetaLine;
-import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -111,21 +109,6 @@ public class DefaultContextProvider implements IContextProvider {
                     context.addLast(new ContextLine(currentLine));
                 }
             }
-            // If the first hunk starts at '0' in the source file, the file is created.
-            // In this case, we do not want to add a meta line, because it would break the patch application.
-            boolean originalHadMetaLine = fileDiff.hunks().get(0).hasMetaLine();
-            boolean fitsInContext = context.size() < contextSize || i >= lines.size();
-            // We only add a meta line if
-            // (a) it is allowed for the change and context (i.e., it does not follow an empty line)
-            // (b) it fits in the context (i.e., the context is not full, or we reached the end of the file)
-            // (c) it belongs to a patch removing a line, or it is the last added line and had a meta line
-            if (
-                    metaLineAllowed(change.isEmpty(), context)
-                    && fitsInContext
-                    && (change instanceof RemovedLine ||  (originalHadMetaLine && (!context.isEmpty() || isLastChange)))
-            ) {
-                context.add(new MetaLine());
-            }
             return context;
         } catch (final IOException e) {
             Logger.error("Was not able to load file:" + rootDir.resolve(fileDiff.newFile()), e);
@@ -136,14 +119,5 @@ public class DefaultContextProvider implements IContextProvider {
     @Override
     public int contextSize() {
         return contextSize;
-    }
-
-    private static boolean metaLineAllowed(boolean changeIsEmpty, List<Line> trailingContext) {
-        // A meta line must never follow an empty context line
-        boolean followsEmptyLine = !trailingContext.isEmpty() && trailingContext.get(trailingContext.size()-1).isEmpty();
-        // A meta line must never follow an empty change if there is no trailing context
-        followsEmptyLine = followsEmptyLine || (trailingContext.isEmpty() && changeIsEmpty);
-
-        return !followsEmptyLine;
     }
 }
