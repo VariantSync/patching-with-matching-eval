@@ -447,7 +447,7 @@ class SyncStudyTask(
         filePostfix: String,
         target: Variant
     ): FineDiff {
-        val resultDiff = getOriginalDiff(operations, operations.patchDir, pathToExpectedResult)
+        val resultDiff = getOriginalDiff(operations, operations.patchDir, pathToExpectedResult, true)
         if (config.EXPERIMENT_DEBUG()) {
             try {
                 Files.write(
@@ -735,15 +735,26 @@ class SyncStudyTask(
         operations: SyncStudyOperations,
         v0Path: Path, v1Path: Path
     ): OriginalDiff {
+        return getOriginalDiff(operations, v0Path, v1Path, false)
+    }
+
+    // Get the difference between two directories using UNIX diff
+    private fun getOriginalDiff(
+        operations: SyncStudyOperations,
+        v0Path: Path, v1Path: Path,
+        ignoreBlankLines: Boolean,
+    ): OriginalDiff {
         val diffCommand: DiffCommand = DiffCommand.Recommended(
             operations.workDir.relativize(v0Path),
             operations.workDir.relativize(v1Path)
         )
+        if (ignoreBlankLines) {
+            diffCommand.ignoreBlankLines()
+        }
         val output = operations.shell.execute(diffCommand, operations.workDir)
             .expect("Was not able to diff variants.")
         return DiffParser.toOriginalDiff(output)
     }
-
 
     private fun splPCDebug(operations: SyncStudyOperations) {
         try {
