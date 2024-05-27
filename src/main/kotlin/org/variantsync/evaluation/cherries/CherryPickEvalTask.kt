@@ -4,11 +4,13 @@ import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.CherryPickResultAnalysis
 import org.variantsync.evaluation.EvalConfig
 import org.variantsync.evaluation.baseline.diff.DiffParser
+import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.DiffCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
+import org.variantsync.evaluation.filterUnpatchedFiles
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
 import org.variantsync.evaluation.saveResult
@@ -142,10 +144,12 @@ class CherryPickEvalTask(
                 Logger.debug("Patch is not trivial")
             }
 
-            val evolutionDiff = getFineDiff(
+            var evolutionDiff = getFineDiff(
                 operations.workDir,
                 originalEvolutionDiff
             )
+
+            evolutionDiff = filterUnpatchedFiles(originalPatch, evolutionDiff, operations.strip)
 
             for (patcher in operations.patchers) {
                 /* Application of patches without knowledge about features */
@@ -156,8 +160,9 @@ class CherryPickEvalTask(
                 val patchDuration = Duration.between(start, end)
 
                 // Gather the patch result
-                val actualVsExpectedNormal =
+                var actualVsExpectedNormal =
                     getActualVsExpected(operations, operations.targetVariantV1, target, cherryPick)
+                actualVsExpectedNormal = filterUnpatchedFiles(originalPatch, actualVsExpectedNormal, operations.strip)
 
                 patcher.clean(operations)
 
@@ -197,6 +202,7 @@ class CherryPickEvalTask(
             Logger.debug("Captured exception for cherry pick ${cherryPick.id}: ", e.message)
         }
     }
+
 
 
     /**

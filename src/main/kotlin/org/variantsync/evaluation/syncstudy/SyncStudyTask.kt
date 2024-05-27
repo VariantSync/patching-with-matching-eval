@@ -21,6 +21,7 @@ import org.variantsync.evaluation.baseline.shell.DiffCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
 import org.variantsync.evaluation.error.Panic
 import org.variantsync.evaluation.error.VariantGenerationException
+import org.variantsync.evaluation.filterUnpatchedFiles
 import org.variantsync.evaluation.patching.Change
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
@@ -237,10 +238,11 @@ class SyncStudyTask(
                 Logger.debug("Patch is not trivial")
             }
 
-            val evolutionDiff = getFineDiff(
+            var evolutionDiff = getFineDiff(
                 operations.workDir,
                 originalEvolutionDiff
             )
+            evolutionDiff = filterUnpatchedFiles(originalPatch, evolutionDiff, strip)
 
             /* Application of patches without knowledge about features */
             Logger.debug("Applying patch without knowledge about features...")
@@ -256,7 +258,8 @@ class SyncStudyTask(
             }
 
             // Gather the patch result
-            val actualVsExpectedNormal = getActualVsExpected(operations, pathToExpectedResult, "normal", target)
+            var actualVsExpectedNormal = getActualVsExpected(operations, pathToExpectedResult, "normal", target)
+            actualVsExpectedNormal = filterUnpatchedFiles(originalPatch, actualVsExpectedNormal, strip)
 
             /* Application of patches with knowledge about PC of edit only */
             Logger.debug("Applying patch with knowledge about edits' PCs...")
@@ -291,7 +294,8 @@ class SyncStudyTask(
             val filteredDuration = Duration.between(filteredStart, filteredEnd)
 
             // Gather the result
-            val actualVsExpectedFiltered = getActualVsExpected(operations, pathToExpectedResult, "filtered", target)
+            var actualVsExpectedFiltered = getActualVsExpected(operations, pathToExpectedResult, "filtered", target)
+            actualVsExpectedFiltered = filterUnpatchedFiles(originalPatch, actualVsExpectedFiltered, strip)
 
             patcher.clean(operations)
 
