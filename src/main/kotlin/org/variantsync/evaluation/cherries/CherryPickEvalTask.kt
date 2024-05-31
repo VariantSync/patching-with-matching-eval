@@ -4,7 +4,6 @@ import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.CherryPickResultAnalysis
 import org.variantsync.evaluation.EvalConfig
 import org.variantsync.evaluation.baseline.diff.DiffParser
-import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.CpCommand
@@ -82,8 +81,8 @@ class CherryPickEvalTask(
                 return
             }
         } catch (e: Exception) {
-            Logger.error("Was not able to checkout cherry pick commits in variant directories")
-            Logger.error(e)
+            Logger.debug("Was not able to checkout cherry pick commits in variant directories")
+            Logger.debug(e)
             return
         }
 
@@ -202,7 +201,6 @@ class CherryPickEvalTask(
             Logger.debug("Captured exception for cherry pick ${cherryPick.id}: ", e.message)
         }
     }
-
 
 
     /**
