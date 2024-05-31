@@ -6,6 +6,7 @@ import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.UnixPatch
 import org.variantsync.evaluation.baseline.shell.AppliedPatchTracker
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
+import org.variantsync.evaluation.defaultPatchers
 import org.variantsync.evaluation.patching.MPatch
 import org.variantsync.vevos.simulation.util.io.CaseSensitivePath
 import org.variantsync.vevos.simulation.variability.SPLCommit
@@ -15,6 +16,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class SyncStudyOperations(mainDir: Path) : Operations() {
+    val STRIP = 2
+
     // Working directory
     @JvmField
     var workDir: Path
@@ -61,7 +64,7 @@ class SyncStudyOperations(mainDir: Path) : Operations() {
 
     val appliedPatchTracker: AppliedPatchTracker
 
-    val patchers: MutableList<Patcher>
+    val patchers: List<Patcher>
 
     init {
         try {
@@ -93,9 +96,7 @@ class SyncStudyOperations(mainDir: Path) : Operations() {
                 workDir
             )
 
-        patchers = ArrayList()
-        patchers.add(UnixPatch(2))
-        patchers.add(MPatch(2))
+        patchers = defaultPatchers(STRIP)
     }
 
     fun debugDir(directory: String): Path {

@@ -4,6 +4,7 @@ import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.Operations
 import org.variantsync.evaluation.baseline.shell.AppliedPatchTracker
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
+import org.variantsync.evaluation.defaultPatchers
 import org.variantsync.evaluation.patching.MPatch
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.UnixPatch
@@ -42,9 +43,9 @@ class CherryEvalOperations(mainDir: Path) : Operations() {
 
     val appliedPatchTracker: AppliedPatchTracker
 
-    val patchers: MutableList<Patcher>
+    val patchers: List<Patcher>
 
-    val strip = 1
+    val STRIP = 1
 
     init {
         try {
@@ -72,9 +73,7 @@ class CherryEvalOperations(mainDir: Path) : Operations() {
                 workDir
             )
 
-        patchers = ArrayList()
-        patchers.add(UnixPatch(strip))
-        patchers.add(MPatch(strip))
+        patchers = defaultPatchers(STRIP)
     }
 
     fun debugDir(directory: String): Path {
@@ -130,6 +129,6 @@ class CherryEvalOperations(mainDir: Path) : Operations() {
     }
 
     fun strip(): Int {
-        return strip
+        return STRIP
     }
 }

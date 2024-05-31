@@ -13,7 +13,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
 
-class MPatch(private val strip: Int) : Patcher {
+class MPatch(private val name: String, private val strip: Int) : Patcher {
 
     override fun applyPatch(
         operations: Operations,
@@ -64,7 +64,7 @@ class MPatch(private val strip: Int) : Patcher {
     }
 
     override fun name(): String {
-        return "mpatch"
+        return this.name
     }
 
     // Read a rejects file

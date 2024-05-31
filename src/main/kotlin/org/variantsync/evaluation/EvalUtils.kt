@@ -2,6 +2,9 @@ package org.variantsync.evaluation
 
 import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
+import org.variantsync.evaluation.patching.MPatch
+import org.variantsync.evaluation.patching.Patcher
+import org.variantsync.evaluation.patching.UnixPatch
 import java.nio.file.Path
 
 fun filterUnpatchedFiles(originalPatch: OriginalDiff, diffToFilter: OriginalDiff, strip: Int): OriginalDiff {
@@ -21,4 +24,11 @@ fun filterUnpatchedFiles(originalPatch: OriginalDiff, diffToFilter: OriginalDiff
         }
     }
     return OriginalDiff(filteredDiffs)
+}
+
+fun defaultPatchers(strip: Int): List<Patcher> {
+    val patchers = ArrayList<Patcher>()
+    patchers.add(UnixPatch("unix_patch", strip))
+    patchers.add(MPatch("mpatch", strip))
+    return patchers
 }

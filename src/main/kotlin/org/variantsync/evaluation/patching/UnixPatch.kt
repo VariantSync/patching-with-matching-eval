@@ -13,7 +13,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
 
-class UnixPatch(private val strip: Int) : Patcher {
+class UnixPatch(private val name: String, private val strip: Int) : Patcher {
     override fun applyPatch(
         operations: Operations,
         sourceVariant: Variant,
@@ -101,7 +101,7 @@ class UnixPatch(private val strip: Int) : Patcher {
     }
 
     override fun name(): String {
-        return "unix_patch"
+        return this.name
     }
 
     // Read a rejects file

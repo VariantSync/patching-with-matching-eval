@@ -127,7 +127,7 @@ class CherryPickEvalTask(
             var evolutionDiff =
                 getOriginalDiff(operations, operations.targetVariantV0, operations.targetVariantV1)
 
-            val patchIsTrivial = originalPatch.partiallyEquals(evolutionDiff, operations.strip)
+            val patchIsTrivial = originalPatch.partiallyEquals(evolutionDiff, operations.STRIP)
             if (patchIsTrivial) {
                 // We only focus on variability, which is expressed by differences in the patch and evolution
                 Logger.debug("Patch is trivial")
@@ -135,7 +135,7 @@ class CherryPickEvalTask(
                 Logger.debug("Patch is not trivial")
             }
 
-            evolutionDiff = filterUnpatchedFiles(originalPatch, evolutionDiff, operations.strip)
+            evolutionDiff = filterUnpatchedFiles(originalPatch, evolutionDiff, operations.STRIP)
 
             for (patcher in operations.patchers) {
                 /* Application of patches without knowledge about features */
@@ -148,7 +148,7 @@ class CherryPickEvalTask(
                 // Gather the patch result
                 var actualVsExpectedNormal =
                     getActualVsExpected(operations, operations.targetVariantV1, target, cherryPick)
-                actualVsExpectedNormal = filterUnpatchedFiles(originalPatch, actualVsExpectedNormal, operations.strip)
+                actualVsExpectedNormal = filterUnpatchedFiles(originalPatch, actualVsExpectedNormal, operations.STRIP)
 
                 patcher.clean(operations)
 
