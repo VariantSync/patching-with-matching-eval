@@ -223,7 +223,8 @@ object CherryPickResultAnalysis {
 
         var normalTP: Long = accumulatedOutcome.normalResult.applied.v
         normalTP += accumulatedOutcome.normalResult.mitigatedMissing.v
-        val normalFP: Long = accumulatedOutcome.normalResult.invalid.v
+        var normalFP: Long = accumulatedOutcome.normalResult.invalid.v
+        normalFP += accumulatedOutcome.normalResult.wrongLocation.v
         var normalTN: Long = accumulatedOutcome.normalResult.filteredCorrectly.v
         normalTN += accumulatedOutcome.normalResult.mitigatedInvalid.v
         var normalFN: Long = accumulatedOutcome.normalResult.wrongLocation.v

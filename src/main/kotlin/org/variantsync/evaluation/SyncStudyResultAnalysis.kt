@@ -153,7 +153,8 @@ object SyncStudyResultAnalysis {
     ): EvaluationScenario {
         debug("Calculating result table with TP, FP, TN, and FN.")
         val changesToClassify = CountingMap<Change>(unfilteredPatch.intoChanges(STRIP))
-        val changesInEvolution = CountingMap<ChangedLine>(OriginalDiff.determineChangedLines(targetEvolutionDiff, STRIP))
+        val changesInEvolution =
+            CountingMap<ChangedLine>(OriginalDiff.determineChangedLines(targetEvolutionDiff, STRIP))
 
         // Changes in the target variant's evolution that cannot be
         // synchronized, because they are not part of the source variant and therefore not of the
@@ -239,11 +240,14 @@ object SyncStudyResultAnalysis {
 
         val unixPatchResults = ArrayList<Path>()
         val mpatchResults = ArrayList<Path>()
+        val gitApplyResults = ArrayList<Path>()
         for (path in resultFiles) {
             if (path.name.endsWith("unix_patch.results")) {
                 unixPatchResults.add(path)
             } else if (path.name.endsWith("mpatch.results")) {
                 mpatchResults.add(path)
+            } else if (path.name.endsWith("cherry_pick.results")) {
+                gitApplyResults.add(path)
             }
         }
 
@@ -263,6 +267,14 @@ object SyncStudyResultAnalysis {
         println()
         analyze(unixPatchResults, "unix_patch_overview", AnalysisMode.Trivial)
 
+        // Determine the overall results
+        println()
+        println("+++++++++++++++++++++++++++")
+        println("RESULTS FOR TRIVIAL - GIT APPLY")
+        println("+++++++++++++++++++++++++++")
+        println()
+        analyze(unixPatchResults, "cherry_pick_overview", AnalysisMode.Trivial)
+
         println()
         println("+++++++++++++++++++++++++++")
         println("RESULTS FOR NON-TRIVIAL - MPATCH")
@@ -277,6 +289,14 @@ object SyncStudyResultAnalysis {
         println("+++++++++++++++++++++++++++")
         println()
         analyze(unixPatchResults, "unix_patch_overview", AnalysisMode.NonTrivial)
+
+        // Determine the overall results
+        println()
+        println("+++++++++++++++++++++++++++")
+        println("RESULTS FOR NON-TRIVIAL - GIT APPLY")
+        println("+++++++++++++++++++++++++++")
+        println()
+        analyze(unixPatchResults, "cherry_pick_overview", AnalysisMode.NonTrivial)
     }
 
     @Throws(IOException::class)
@@ -291,7 +311,8 @@ object SyncStudyResultAnalysis {
         sb.append(DIV).append(LINE_SEP)
         var normalTP: Long = accumulatedOutcome.normalResult.applied.v
         normalTP += accumulatedOutcome.normalResult.mitigatedMissing.v
-        val normalFP: Long = accumulatedOutcome.normalResult.invalid.v
+        var normalFP: Long = accumulatedOutcome.normalResult.invalid.v
+        normalFP += accumulatedOutcome.normalResult.wrongLocation.v
         var normalTN: Long = accumulatedOutcome.normalResult.filteredCorrectly.v
         normalTN += accumulatedOutcome.normalResult.mitigatedInvalid.v
         var normalFN: Long = accumulatedOutcome.normalResult.wrongLocation.v
@@ -309,21 +330,21 @@ object SyncStudyResultAnalysis {
         sb.append("Without Domain Knowledge").append(LINE_SEP)
         printCorrectness(sb, accumulatedOutcome.normalResult)
         sb.append(LINE_SEP)
-        sb.append(DIV).append(LINE_SEP)
-        sb.append("With Domain Knowledge").append(LINE_SEP)
-        sb.append(LINE_SEP)
-        printCorrectness(sb, accumulatedOutcome.filteredResult)
-        sb.append(LINE_SEP)
+        //  sb.append(DIV).append(LINE_SEP)
+        //  sb.append("With Domain Knowledge").append(LINE_SEP)
+        //  sb.append(LINE_SEP)
+        //  printCorrectness(sb, accumulatedOutcome.filteredResult)
+        // sb.append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         sb.append("Precision / Recall").append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         sb.append("Without Domain Knowledge").append(LINE_SEP)
         printPrecisionRecall(sb, normalTP, normalFP, normalTN, normalFN)
         sb.append(LINE_SEP)
-        sb.append(DIV).append(LINE_SEP)
-        sb.append("With Domain Knowledge").append(LINE_SEP)
-        sb.append(LINE_SEP)
-        printPrecisionRecall(sb, filteredTP, filteredFP, filteredTN, filteredFN)
+        //  sb.append(DIV).append(LINE_SEP)
+        //  sb.append("With Domain Knowledge").append(LINE_SEP)
+        //  sb.append(LINE_SEP)
+        //  printPrecisionRecall(sb, filteredTP, filteredFP, filteredTN, filteredFN)
         sb.append(DIV).append(LINE_SEP)
         sb.append("Edit Distance").append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
@@ -342,21 +363,21 @@ object SyncStudyResultAnalysis {
             .append(
                 LINE_SEP
             )
-        sb.append("Edit Distance Filtered: ").append(accumulatedOutcome.filteredResult.editDistance.v).append(
-            LINE_SEP
-        )
-        sb.append("Average Edit Distance Filtered: ")
-            .append(String.format("%.2f%%", accumulatedOutcome.filteredResult.averageEditDistance()))
-            .append(
-                LINE_SEP
-            )
-        sb.append("Fully-Correct Commit Percentage Filtered: ")
-            .append(String.format("%.2f%%", accumulatedOutcome.filteredResult.fullyCorrectPercentage()))
-            .append(" of ")
-            .append(accumulatedOutcome.filteredResult.resultCount())
-            .append(
-                LINE_SEP
-            )
+        // sb.append("Edit Distance Filtered: ").append(accumulatedOutcome.filteredResult.editDistance.v).append(
+        //     LINE_SEP
+        // )
+        // sb.append("Average Edit Distance Filtered: ")
+        //     .append(String.format("%.2f%%", accumulatedOutcome.filteredResult.averageEditDistance()))
+        //     .append(
+        //         LINE_SEP
+        //     )
+        // sb.append("Fully-Correct Commit Percentage Filtered: ")
+        //     .append(String.format("%.2f%%", accumulatedOutcome.filteredResult.fullyCorrectPercentage()))
+        //     .append(" of ")
+        //     .append(accumulatedOutcome.filteredResult.resultCount())
+        //     .append(
+        //         LINE_SEP
+        //     )
         sb.append(DIV).append(LINE_SEP)
         sb.append(DIV).append(LINE_SEP)
         print(sb)
