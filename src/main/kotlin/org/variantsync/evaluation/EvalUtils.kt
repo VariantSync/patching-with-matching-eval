@@ -31,7 +31,6 @@ fun defaultPatchers(strip: Int): List<Patcher> {
     val patchers = ArrayList<Patcher>()
     patchers.add(UnixPatch("unix_patch", strip))
     patchers.add(MPatch("mpatch", strip))
-    // patchers.add(GitCP("cherry_pick", strip))
-    patchers.add(GitApply("cherry_pick", strip))
+    patchers.add(GitApply("git_apply", strip))
     return patchers
 }

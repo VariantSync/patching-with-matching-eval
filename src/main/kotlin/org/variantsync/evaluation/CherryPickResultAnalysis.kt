@@ -69,7 +69,7 @@ object CherryPickResultAnalysis {
                 unixPatchResults.add(path)
             } else if (path.name.endsWith("mpatch.results")) {
                 mpatchResults.add(path)
-            } else if (path.name.endsWith("cherry_pick.results")) {
+            } else if (path.name.endsWith("git_apply.results")) {
                 gitCPResults.add(path)
             }
         }
@@ -93,10 +93,10 @@ object CherryPickResultAnalysis {
         // Determine the overall results
         println()
         println("+++++++++++++++++++++++++++")
-        println("RESULTS FOR TRIVIAL - GIT CHERRY PICK")
+        println("RESULTS FOR TRIVIAL - GIT APPLY")
         println("+++++++++++++++++++++++++++")
         println()
-        analyze(gitCPResults, "cherry_pick_overview", AnalysisMode.Trivial)
+        analyze(gitCPResults, "git_apply_overview", AnalysisMode.Trivial)
 
         println()
         println("+++++++++++++++++++++++++++")
@@ -115,10 +115,10 @@ object CherryPickResultAnalysis {
 
         println()
         println("+++++++++++++++++++++++++++")
-        println("RESULTS FOR NON-TRIVIAL - GIT CHERRY PICK")
+        println("RESULTS FOR NON-TRIVIAL - GIT APPLY")
         println("+++++++++++++++++++++++++++")
         println()
-        analyze(gitCPResults, "cherry_pick_overview", AnalysisMode.NonTrivial)
+        analyze(gitCPResults, "git_apply_overview", AnalysisMode.NonTrivial)
     }
 
     fun processCherriesOutcome(

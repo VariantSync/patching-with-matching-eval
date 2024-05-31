@@ -246,7 +246,7 @@ object SyncStudyResultAnalysis {
                 unixPatchResults.add(path)
             } else if (path.name.endsWith("mpatch.results")) {
                 mpatchResults.add(path)
-            } else if (path.name.endsWith("cherry_pick.results")) {
+            } else if (path.name.endsWith("git_apply.results")) {
                 gitApplyResults.add(path)
             }
         }
@@ -273,7 +273,7 @@ object SyncStudyResultAnalysis {
         println("RESULTS FOR TRIVIAL - GIT APPLY")
         println("+++++++++++++++++++++++++++")
         println()
-        analyze(unixPatchResults, "cherry_pick_overview", AnalysisMode.Trivial)
+        analyze(unixPatchResults, "git_apply_overview", AnalysisMode.Trivial)
 
         println()
         println("+++++++++++++++++++++++++++")
@@ -296,7 +296,7 @@ object SyncStudyResultAnalysis {
         println("RESULTS FOR NON-TRIVIAL - GIT APPLY")
         println("+++++++++++++++++++++++++++")
         println()
-        analyze(unixPatchResults, "cherry_pick_overview", AnalysisMode.NonTrivial)
+        analyze(unixPatchResults, "git_apply_overview", AnalysisMode.NonTrivial)
     }
 
     @Throws(IOException::class)
