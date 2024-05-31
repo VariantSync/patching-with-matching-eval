@@ -86,5 +86,4 @@ public class MPatchCommand extends ShellCommand {
     public String toString() {
         return "mpatch: " + Arrays.toString(parts());
     }
-
 }

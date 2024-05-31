@@ -58,14 +58,7 @@ public record OriginalDiff(List<FileDiff> fileDiffs) implements IDiffComponent {
     public List<Change> intoChanges(int strip) {
         final List<Change> changes = new ArrayList<>();
         for (FileDiff fd : this.fileDiffs()) {
-            // Filter the hunks of each patch to extract changed lines
-            for (Hunk hunk : fd.hunks()) {
-                Path filePath = fd.oldFile().subpath(strip, fd.oldFile().getNameCount());
-                for (Line changedLine : hunk.changedLines()) {
-                    changes.add(new Change(changedLine, hunk, filePath));
-                }
-            }
-
+            changes.addAll(fd.intoChanges(strip));
         }
         return changes;
     }

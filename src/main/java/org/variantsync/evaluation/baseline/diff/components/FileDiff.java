@@ -1,5 +1,8 @@
 package org.variantsync.evaluation.baseline.diff.components;
 
+import org.variantsync.evaluation.baseline.diff.lines.Line;
+import org.variantsync.evaluation.patching.Change;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +50,18 @@ public record FileDiff(List<String> header, List<Hunk> hunks, Path oldFile, Path
         }
 
         return PartiallyEquals.subsetPartiallyEquals(this.hunks, other.hunks, Hunk::partiallyEquals);
+    }
+
+    public List<Change> intoChanges(int strip) {
+        final List<Change> changes = new ArrayList<>();
+        // Filter the hunks of each patch to extract changed lines
+        for (Hunk hunk : this.hunks()) {
+            Path filePath = this.oldFile().subpath(strip, this.oldFile().getNameCount());
+            for (Line changedLine : hunk.changedLines()) {
+                changes.add(new Change(changedLine, hunk, filePath));
+            }
+        }
+        return changes;
     }
 
     private boolean strippedPathsAreEqual(final Path a, final Path b, int strip) {

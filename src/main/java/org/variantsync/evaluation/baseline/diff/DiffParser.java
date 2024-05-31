@@ -88,7 +88,7 @@ public class DiffParser {
     }
 
     // Parse and convert the lines belonging to the difference of a specific file
-    private static FileDiff parseFileDiff(final List<String> fileDiffContent) {
+    public static FileDiff parseFileDiff(final List<String> fileDiffContent) {
         int index = 0;
         final String HUNK_START = "@@ -";
         String nextLine = fileDiffContent.get(index);
@@ -135,7 +135,7 @@ public class DiffParser {
     }
 
     // Parse and convert the lines belonging to the difference of a specific hunk
-    private static Hunk parseHunk(final List<String> lines) {
+    public static Hunk parseHunk(final List<String> lines) {
         // Parse the header
         final HunkLocation location = parseHunkHeader(lines.get(0));
         final List<Line> content = new ArrayList<>();
@@ -155,7 +155,7 @@ public class DiffParser {
     }
 
     // Parse and convert the header of a hunk
-    private static HunkLocation parseHunkHeader(final String line) {
+    public static HunkLocation parseHunkHeader(final String line) {
         final String[] parts = line.split("\\s+");
         final String sourceLocationString = parts[1].substring(1);
         final String targetLocationString = parts[2].substring(1);

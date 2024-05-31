@@ -28,13 +28,11 @@ class CherryPickEvalTask(
     private val datasetName: String,
     private val cherryPick: CherryPick,
     private val availableOperations: BlockingQueue<CherryEvalOperations>,
-    private val repoManagers: Map<CherryEvalOperations, VariantRepoManager>,
     private val runID: ULong,
 ) : Callable<ULong> {
 
     override fun call(): ULong {
         val operations: CherryEvalOperations
-        val repoManager: VariantRepoManager
 
         synchronized(CherryPickEvalTask::class.java) {
             // Retrieve the operations and the repo manager for this task
@@ -42,11 +40,10 @@ class CherryPickEvalTask(
             operations = availableOperations.take()
             Logger.debug("There are now " + availableOperations.size + " operations available. Took $operations")
             Logger.debug("Remaining after take: " + opsToString())
-            repoManager = this.repoManagers[operations]!!
         }
 
         try {
-            callExecution(repoManager, operations)
+            callExecution(operations)
         } catch (e: Throwable) {
             Logger.error("Failed to finish task with runID $runID")
             Logger.error(e)
@@ -71,10 +68,10 @@ class CherryPickEvalTask(
         return sb.toString()
     }
 
-    fun callExecution(repoManager: VariantRepoManager, operations: CherryEvalOperations) {
+    fun callExecution(operations: CherryEvalOperations) {
         try {
             // repoManager.cleanRepoStates()
-            if (!repoManager.prepareCherryPick(cherryPick)) {
+            if (!operations.repoManager.prepareCherryPick(cherryPick)) {
                 Logger.info("Not all commits of the cherry pick could be found... skipping cherry pick ${cherryPick.id} of $datasetName")
                 return
             }
@@ -181,7 +178,7 @@ class CherryPickEvalTask(
 
                 val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")
                 saveResult(patchOutcome, cherryPick, resultFile, runID)
-                repoManager.resetTargetVariant()
+                operations.repoManager.resetTargetVariant()
             }
         } catch (e: Exception) {
             Logger.debug("Captured exception for cherry pick ${cherryPick.id}: ", e.message)

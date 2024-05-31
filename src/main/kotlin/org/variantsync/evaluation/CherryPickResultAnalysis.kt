@@ -63,11 +63,14 @@ object CherryPickResultAnalysis {
 
         val unixPatchResults = ArrayList<Path>()
         val mpatchResults = ArrayList<Path>()
+        val gitCPResults = ArrayList<Path>()
         for (path in resultFiles) {
             if (path.name.endsWith("unix_patch.results")) {
                 unixPatchResults.add(path)
             } else if (path.name.endsWith("mpatch.results")) {
                 mpatchResults.add(path)
+            } else if (path.name.endsWith("cherry_pick.results")) {
+                gitCPResults.add(path)
             }
         }
 
@@ -87,6 +90,14 @@ object CherryPickResultAnalysis {
         println()
         analyze(unixPatchResults, "unix_patch_overview", AnalysisMode.Trivial)
 
+        // Determine the overall results
+        println()
+        println("+++++++++++++++++++++++++++")
+        println("RESULTS FOR TRIVIAL - GIT CHERRY PICK")
+        println("+++++++++++++++++++++++++++")
+        println()
+        analyze(gitCPResults, "cherry_pick_overview", AnalysisMode.Trivial)
+
         println()
         println("+++++++++++++++++++++++++++")
         println("RESULTS FOR NON-TRIVIAL - MPATCH")
@@ -101,6 +112,13 @@ object CherryPickResultAnalysis {
         println("+++++++++++++++++++++++++++")
         println()
         analyze(unixPatchResults, "unix_patch_overview", AnalysisMode.NonTrivial)
+
+        println()
+        println("+++++++++++++++++++++++++++")
+        println("RESULTS FOR NON-TRIVIAL - GIT CHERRY PICK")
+        println("+++++++++++++++++++++++++++")
+        println()
+        analyze(gitCPResults, "cherry_pick_overview", AnalysisMode.NonTrivial)
     }
 
     fun processCherriesOutcome(
@@ -147,7 +165,8 @@ object CherryPickResultAnalysis {
     ): EvaluationScenario {
         Logger.debug("Calculating result table with TP, FP, TN, and FN.")
         val changesToClassify = CountingMap<Change>(patch.intoChanges(STRIP))
-        val changesInEvolution = CountingMap<ChangedLine>(OriginalDiff.determineChangedLines(targetEvolutionDiff, STRIP))
+        val changesInEvolution =
+            CountingMap<ChangedLine>(OriginalDiff.determineChangedLines(targetEvolutionDiff, STRIP))
 
         // Changes in the target variant's evolution that cannot be
         // synchronized, because they are not part of the source variant and therefore not of the

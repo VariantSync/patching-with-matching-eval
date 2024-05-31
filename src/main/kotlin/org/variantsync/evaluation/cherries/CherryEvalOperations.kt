@@ -5,15 +5,13 @@ import org.variantsync.evaluation.Operations
 import org.variantsync.evaluation.baseline.shell.AppliedPatchTracker
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
 import org.variantsync.evaluation.defaultPatchers
-import org.variantsync.evaluation.patching.MPatch
 import org.variantsync.evaluation.patching.Patcher
-import org.variantsync.evaluation.patching.UnixPatch
 import java.io.IOException
 import java.io.UncheckedIOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class CherryEvalOperations(mainDir: Path) : Operations() {
+class CherryEvalOperations(mainDir: Path, gitHubRepoPath: Path) : Operations() {
     // Working directory
     @JvmField
     var workDir: Path
@@ -45,6 +43,8 @@ class CherryEvalOperations(mainDir: Path) : Operations() {
 
     val patchers: List<Patcher>
 
+    val repoManager: VariantRepoManager
+
     val STRIP = 1
 
     init {
@@ -74,6 +74,7 @@ class CherryEvalOperations(mainDir: Path) : Operations() {
             )
 
         patchers = defaultPatchers(STRIP)
+        repoManager = VariantRepoManager(sourceVariantV0, sourceVariantV1, targetVariantV0, targetVariantV1, gitHubRepoPath)
     }
 
     fun debugDir(directory: String): Path {

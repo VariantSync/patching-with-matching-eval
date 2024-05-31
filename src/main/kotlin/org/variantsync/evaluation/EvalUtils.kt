@@ -2,6 +2,7 @@ package org.variantsync.evaluation
 
 import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
+import org.variantsync.evaluation.patching.GitApply
 import org.variantsync.evaluation.patching.MPatch
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.UnixPatch
@@ -30,5 +31,7 @@ fun defaultPatchers(strip: Int): List<Patcher> {
     val patchers = ArrayList<Patcher>()
     patchers.add(UnixPatch("unix_patch", strip))
     patchers.add(MPatch("mpatch", strip))
+    // patchers.add(GitCP("cherry_pick", strip))
+    patchers.add(GitApply("cherry_pick", strip))
     return patchers
 }

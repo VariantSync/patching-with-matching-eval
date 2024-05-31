@@ -36,7 +36,6 @@ class CherryPickStudy(
     private val evalTasks: MutableList<CherryPickEvalTask>
     private val numThreads: Int
     private val idProvider: IDProvider
-    private val repoManagers: Map<CherryEvalOperations, VariantRepoManager>
     private val availableOperations: BlockingQueue<CherryEvalOperations>
 
     /**
@@ -60,18 +59,16 @@ class CherryPickStudy(
 
         this.evalTasks = ArrayList()
         this.availableOperations = LinkedBlockingQueue(numThreads)
-        this.repoManagers = HashMap<CherryEvalOperations, VariantRepoManager>()
 
         for (i in 1..numThreads) {
             // Add one operations instance for each thread; each instance defines its own working directory
-            val operations = CherryEvalOperations(config.EXPERIMENT_DIR_MAIN())
+            val operations = CherryEvalOperations(config.EXPERIMENT_DIR_MAIN(), repoPath)
             // Clean old variant files
             cleanVariantDirectories(operations)
             // Copy the source and target variant to the respective variant directories
             prepareVariantDirectories(operations, repoPath)
+            operations.repoManager.open()
             availableOperations.add(operations)
-            val repoManager = VariantRepoManager(operations, repoPath)
-            repoManagers[operations] = repoManager
         }
 
         idProvider = IDProvider(config.EXPERIMENT_START_ID())
@@ -87,7 +84,6 @@ class CherryPickStudy(
                     dataset.datasetName,
                     cherryPick,
                     availableOperations,
-                    repoManagers,
                     runID
                 )
             )
@@ -122,8 +118,8 @@ class CherryPickStudy(
         waitForShutdown(threadPool, futures)
 
         // Finally, close all repo managers
-        for (repoManager in this.repoManagers.values) {
-            repoManager.close()
+        for (operation in this.availableOperations) {
+            operation.repoManager.close()
         }
 
         // And delete all workdirs
