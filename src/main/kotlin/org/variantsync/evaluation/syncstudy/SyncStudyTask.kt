@@ -7,15 +7,9 @@ import org.variantsync.evaluation.EvalConfig
 import org.variantsync.evaluation.SyncStudyResultAnalysis
 import org.variantsync.evaluation.analysis.CountingMap
 import org.variantsync.evaluation.baseline.diff.DiffParser
-import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.diff.filter.CachedPCBasedFilter
 import org.variantsync.evaluation.baseline.diff.filter.DiffFilter
-import org.variantsync.evaluation.baseline.diff.filter.IFileDiffFilter
-import org.variantsync.evaluation.baseline.diff.filter.ILineFilter
-import org.variantsync.evaluation.baseline.diff.splitting.DefaultContextProvider
-import org.variantsync.evaluation.baseline.diff.splitting.DiffSplitter
-import org.variantsync.evaluation.baseline.diff.splitting.IContextProvider
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.DiffCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
@@ -213,12 +207,6 @@ class SyncStudyTask(
         saveDiff(originalPatch, operations.patchFile)
         Logger.debug("Saved original diff.")
 
-        // Convert the original diff into a fine diff
-        Logger.debug("Converting diff...")
-        val splitPatch = getFineDiff(operations.workDir, originalPatch)
-        saveDiff(splitPatch, operations.splitPatchFile)
-        Logger.debug("Saved fine diff.")
-
         // For each target variant,
         Logger.debug("Starting patch application for source variant " + source.name)
         for (target in sample.variants()) {
@@ -228,9 +216,9 @@ class SyncStudyTask(
             Logger.debug(source.name + " --patch--> " + target.name)
             val pathToTarget = operations.variantsDirV0.path().resolve(target.name)
             val pathToExpectedResult = operations.variantsDirV1.path().resolve(target.name)
-            val originalEvolutionDiff = getOriginalDiff(operations, pathToTarget, pathToExpectedResult)
+            var evolutionDiff = getOriginalDiff(operations, pathToTarget, pathToExpectedResult)
 
-            val patchIsTrivial = originalPatch.partiallyEquals(originalEvolutionDiff, strip)
+            val patchIsTrivial = originalPatch.partiallyEquals(evolutionDiff, strip)
             if (patchIsTrivial) {
                 // We only focus on variability, which is expressed by differences in the patch and evolution
                 Logger.debug("Patch is trivial")
@@ -238,10 +226,6 @@ class SyncStudyTask(
                 Logger.debug("Patch is not trivial")
             }
 
-            var evolutionDiff = getFineDiff(
-                operations.workDir,
-                originalEvolutionDiff
-            )
             evolutionDiff = filterUnpatchedFiles(originalPatch, evolutionDiff, strip)
 
             /* Application of patches without knowledge about features */
@@ -272,20 +256,10 @@ class SyncStudyTask(
             )
             saveDiff(filteredPatch, operations.filteredPatchFile)
 
-            // Create target variant specific patch that respects PCs and is split into line-sized changes
-            val splitAndFilteredPatch = getSplitAndFilteredDiff(
-                operations,
-                originalPatch,
-                groundTruthV0[source]!!.variant(),
-                groundTruthV1[source]!!.variant(), target,
-                operations.variantsDirV0.path(), operations.variantsDirV1.path()
-            )
-            saveDiff(splitAndFilteredPatch, operations.splitAndFilteredPatchFile)
-
             // Apply the filtered patch to the target variant, if there are changes left
             resetPatchDirectory(operations, pathToTarget)
             val filteredStart = Instant.now()
-            val rejectsFiltered = if (splitAndFilteredPatch.content.isNotEmpty()) {
+            val rejectsFiltered = if (filteredPatch.fileDiffs.isNotEmpty()) {
                 patcher.applyPatch(operations, source, target, true)
             } else {
                 Rejects(ArrayList())
@@ -304,19 +278,16 @@ class SyncStudyTask(
                     operations,
                     patcher,
                     originalPatch,
-                    splitPatch,
                     source,
                     filteredPatch,
-                    splitAndFilteredPatch,
                     target,
                     rejectsNormal,
                     rejectsFiltered,
-                    evolutionDiff
+                    evolutionDiff,
                 )
             }
 
             val requiredChanges = getRequiredChanges(
-                operations,
                 originalPatch,
                 groundTruthV0[source]!!.variant(),
                 groundTruthV1[source]!!.variant(), target,
@@ -327,7 +298,9 @@ class SyncStudyTask(
             val patchOutcome = SyncStudyResultAnalysis.processOutcome(
                 operations,
                 datasetName, runID, source.name, target.name,
-                parentCommit, currentCommit, splitPatch, splitAndFilteredPatch,
+                parentCommit, currentCommit,
+                originalPatch,
+                filteredPatch,
                 requiredChanges,
                 actualVsExpectedNormal, actualVsExpectedFiltered, rejectsNormal,
                 rejectsFiltered, evolutionDiff,
@@ -361,24 +334,13 @@ class SyncStudyTask(
         operations: SyncStudyOperations,
         patcher: Patcher,
         originalPatch: OriginalDiff,
-        splitPatch: FineDiff,
         source: Variant,
         filteredPatch: OriginalDiff,
-        splitAndFilteredPatch: FineDiff,
         target: Variant,
         rejectsNormal: Rejects,
         rejectsFiltered: Rejects,
-        evolutionDiff: FineDiff
+        evolutionDiff: OriginalDiff
     ) {
-        saveDiff(
-            splitPatch,
-            operations.debugDir(commit).resolve(source.name + "_split.diff")
-        )
-        saveDiff(
-            splitAndFilteredPatch,
-            operations.debugDir(commit).resolve(target.name)
-                .resolve(source.name + "_to_" + target.name + "_split_filtered.diff")
-        )
         saveDiff(
             originalPatch,
             operations.debugDir(commit).resolve(source.name + ".diff")
@@ -446,7 +408,7 @@ class SyncStudyTask(
         pathToExpectedResult: Path,
         filePostfix: String,
         target: Variant
-    ): FineDiff {
+    ): OriginalDiff {
         val resultDiff = getOriginalDiff(operations, operations.patchDir, pathToExpectedResult, true)
         if (config.EXPERIMENT_DEBUG()) {
             try {
@@ -459,7 +421,7 @@ class SyncStudyTask(
                 Logger.error("Was not able to save resultDiffOriginal:\n{}", e)
             }
         }
-        return getFineDiff(operations.workDir, resultDiff)
+        return resultDiff
     }
 
     /**
@@ -647,16 +609,6 @@ class SyncStudyTask(
     }
 
     // Save the difference as a patch file
-    private fun saveDiff(fineDiff: FineDiff, file: Path) {
-        // Save the fine diff to a file
-        try {
-            Files.write(file, fineDiff.toLines())
-        } catch (e: IOException) {
-            panic("Was not able to save diff to file $file")
-        }
-    }
-
-    // Save the difference as a patch file
     private fun saveRejects(rejects: Rejects, file: Path) {
         // Save the fine diff to a file
         try {
@@ -677,20 +629,6 @@ class SyncStudyTask(
     }
 
     // Get the filtered line-level patches for a given difference
-    private fun getSplitAndFilteredDiff(
-        operations: SyncStudyOperations,
-        originalDiff: OriginalDiff,
-        tracesV0: Artefact,
-        tracesV1: Artefact,
-        target: Variant,
-        oldVersionRoot: Path,
-        newVersionRoot: Path
-    ): FineDiff {
-        val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, strip)
-        return getSplitAndFilteredDiff(operations, originalDiff, cachedPCBasedFilter, false)
-    }
-
-    // Get the filtered line-level patches for a given difference
     private fun getFilteredDiff(
         originalDiff: OriginalDiff,
         tracesV0: Artefact,
@@ -705,7 +643,6 @@ class SyncStudyTask(
 
     // Get the filtered line-level patches for a given difference
     private fun getRequiredChanges(
-        operations: SyncStudyOperations,
         originalDiff: OriginalDiff,
         tracesV0: Artefact,
         tracesV1: Artefact,
@@ -713,21 +650,8 @@ class SyncStudyTask(
         oldVersionRoot: Path,
         newVersionRoot: Path
     ): CountingMap<Change> {
-        val cachedPCBasedFilter = CachedPCBasedFilter(tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot, strip)
-        val fineDiff = getSplitAndFilteredDiff(operations, originalDiff, cachedPCBasedFilter, true)
+        val fineDiff = getFilteredDiff(originalDiff, tracesV0, tracesV1, target, oldVersionRoot, newVersionRoot)
         return CountingMap(fineDiff.intoChanges(strip))
-    }
-
-    // Get the filtered line-level patches for a given difference
-    private fun <T> getSplitAndFilteredDiff(
-        operations: SyncStudyOperations,
-        originalDiff: OriginalDiff,
-        filter: T,
-        filterDisabled: Boolean,
-    ): FineDiff where T : IFileDiffFilter?, T : ILineFilter? {
-        // Create target variant specific patch that respects PCs
-        val contextProvider: IContextProvider = DefaultContextProvider(operations.workDir, filterDisabled)
-        return DiffSplitter.split(originalDiff, filter, filter, contextProvider)
     }
 
     // Get the difference between two directories using UNIX diff
@@ -823,10 +747,4 @@ fun panic(message: String, e: Exception) {
 fun panic(message: String) {
     Logger.error(message)
     throw Panic(message)
-}
-
-
-fun getFineDiff(workDir: Path, originalDiff: OriginalDiff): FineDiff {
-    val contextProvider = DefaultContextProvider(workDir)
-    return DiffSplitter.split(originalDiff, contextProvider)
 }

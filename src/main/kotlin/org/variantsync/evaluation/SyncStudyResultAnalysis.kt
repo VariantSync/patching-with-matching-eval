@@ -7,7 +7,7 @@ import org.tinylog.kotlin.Logger.debug
 import org.variantsync.diffdetective.util.Assert
 import org.variantsync.evaluation.analysis.*
 import org.variantsync.evaluation.baseline.diff.components.FileDiff
-import org.variantsync.evaluation.baseline.diff.components.FineDiff
+import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
 import org.variantsync.evaluation.patching.Change
 import org.variantsync.evaluation.patching.Rejects
@@ -54,10 +54,10 @@ object SyncStudyResultAnalysis {
         workdir: Operations,
         dataset: String, runID: ULong, sourceVariant: String,
         targetVariant: String, commitV0: SPLCommit, commitV1: SPLCommit,
-        normalPatch: FineDiff, filteredPatch: FineDiff,
+        normalPatch: OriginalDiff, filteredPatch: OriginalDiff,
         requiredChanges: CountingMap<Change>,
-        resultDiffNormal: FineDiff, resultDiffFiltered: FineDiff,
-        rejectsNormal: Rejects, rejectsFiltered: Rejects, targetChanges: FineDiff,
+        resultDiffNormal: OriginalDiff, resultDiffFiltered: OriginalDiff,
+        rejectsNormal: Rejects, rejectsFiltered: Rejects, targetChanges: OriginalDiff,
         normalDuration: Duration,
         filteredDuration: Duration,
         patchIsTrivial: Boolean,
@@ -66,11 +66,11 @@ object SyncStudyResultAnalysis {
         // evaluate patch rejects
         // number of tried file-level patches
         val fileNormal = HashSet(
-            normalPatch.content.stream()
+            normalPatch.fileDiffs.stream()
                 .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
         ).size
         // number of tried line-level patches
-        val lineNormal = FineDiff.determineChangedLines(normalPatch, STRIP)
+        val lineNormal = OriginalDiff.determineChangedLines(normalPatch, STRIP)
         // number of failed patches
 
         // Determine the number of failed file-level patches (without filtering)
@@ -90,11 +90,11 @@ object SyncStudyResultAnalysis {
 
         // Number of tried file-level patches (with filtering)
         val fileFiltered = HashSet(
-            filteredPatch.content.stream()
+            filteredPatch.fileDiffs.stream()
                 .map { fd: FileDiff -> fd.oldFile.toString() }.collect(Collectors.toList())
         ).size
         // Number of tried line-level patches (with filtering)
-        val lineFiltered = FineDiff.determineChangedLines(filteredPatch, STRIP)
+        val lineFiltered = OriginalDiff.determineChangedLines(filteredPatch, STRIP)
         // Number of failed patches
 
         // Determine the number of failed file-level patches (with filtering)
@@ -117,12 +117,12 @@ object SyncStudyResultAnalysis {
         val normalResult: EvaluationResult = scenario.evaluate(
             CountingMap(normalPatch.intoChanges(STRIP)),
             CountingMap(rejectsNormal.intoChanges()),
-            CountingMap(FineDiff.determineChangedLines(resultDiffNormal, STRIP))
+            CountingMap(OriginalDiff.determineChangedLines(resultDiffNormal, STRIP))
         )
         val filteredResult: EvaluationResult = scenario.evaluate(
             CountingMap(filteredPatch.intoChanges(STRIP)),
             CountingMap(rejectsFiltered.intoChanges()),
-            CountingMap(FineDiff.determineChangedLines(resultDiffFiltered, STRIP))
+            CountingMap(OriginalDiff.determineChangedLines(resultDiffFiltered, STRIP))
         )
         Assert.assertEquals(normalResult.resultCount(), filteredResult.resultCount())
         Assert.assertEquals(normalResult.resultCount(), lineNormal.size.toLong())
@@ -131,8 +131,8 @@ object SyncStudyResultAnalysis {
 
         return SyncStudyPatchOutcome(
             dataset, runID, commitV0.id(), commitV1.id(), sourceVariant,
-            targetVariant, resultDiffNormal.content.size.toLong(),
-            resultDiffFiltered.content.size.toLong(), fileNormal.toLong(), lineNormal.size.toLong(),
+            targetVariant, resultDiffNormal.fileDiffs.size.toLong(),
+            resultDiffFiltered.fileDiffs.size.toLong(), fileNormal.toLong(), lineNormal.size.toLong(),
             (
                     fileNormal - fileNormalFailed),
             (lineNormal.size - lineNormalFailed.size).toLong(),
@@ -147,13 +147,13 @@ object SyncStudyResultAnalysis {
     }
 
     private fun initScenario(
-        unfilteredPatch: FineDiff,
+        unfilteredPatch: OriginalDiff,
         requiredChanges: CountingMap<Change>,
-        targetEvolutionDiff: FineDiff
+        targetEvolutionDiff: OriginalDiff
     ): EvaluationScenario {
         debug("Calculating result table with TP, FP, TN, and FN.")
         val changesToClassify = CountingMap<Change>(unfilteredPatch.intoChanges(STRIP))
-        val changesInEvolution = CountingMap<ChangedLine>(FineDiff.determineChangedLines(targetEvolutionDiff, STRIP))
+        val changesInEvolution = CountingMap<ChangedLine>(OriginalDiff.determineChangedLines(targetEvolutionDiff, STRIP))
 
         // Changes in the target variant's evolution that cannot be
         // synchronized, because they are not part of the source variant and therefore not of the
@@ -163,7 +163,7 @@ object SyncStudyResultAnalysis {
         // evolution that can be synchronized
         run {
             val tempChanges: CountingMap<ChangedLine> =
-                CountingMap(FineDiff.determineChangedLines(unfilteredPatch, STRIP))
+                CountingMap(OriginalDiff.determineChangedLines(unfilteredPatch, STRIP))
             for (evolutionChange in changesInEvolution) {
                 if (!tempChanges.contains(evolutionChange)) {
                     unpatchableChanges.addOne(evolutionChange)

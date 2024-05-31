@@ -4,7 +4,6 @@ import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.CherryPickResultAnalysis
 import org.variantsync.evaluation.EvalConfig
 import org.variantsync.evaluation.baseline.diff.DiffParser
-import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.DiffCommand
@@ -13,7 +12,6 @@ import org.variantsync.evaluation.filterUnpatchedFiles
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
 import org.variantsync.evaluation.saveResult
-import org.variantsync.evaluation.syncstudy.getFineDiff
 import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException
@@ -125,28 +123,17 @@ class CherryPickEvalTask(
         Logger.debug("Saved original diff.")
 
         try {
-            // Convert the original diff into a fine diff
-            Logger.debug("Converting diff...")
-            val splitPatch = getFineDiff(operations.workDir, originalPatch)
-            saveDiff(splitPatch, operations.splitPatchFile)
-            Logger.debug("Saved fine diff.")
-
             Logger.debug("Starting patch application for cherry-pick " + cherryPick.id)
-            val originalEvolutionDiff =
+            var evolutionDiff =
                 getOriginalDiff(operations, operations.targetVariantV0, operations.targetVariantV1)
 
-            val patchIsTrivial = originalPatch.partiallyEquals(originalEvolutionDiff, operations.strip)
+            val patchIsTrivial = originalPatch.partiallyEquals(evolutionDiff, operations.strip)
             if (patchIsTrivial) {
                 // We only focus on variability, which is expressed by differences in the patch and evolution
                 Logger.debug("Patch is trivial")
             } else {
                 Logger.debug("Patch is not trivial")
             }
-
-            var evolutionDiff = getFineDiff(
-                operations.workDir,
-                originalEvolutionDiff
-            )
 
             evolutionDiff = filterUnpatchedFiles(originalPatch, evolutionDiff, operations.strip)
 
@@ -170,7 +157,6 @@ class CherryPickEvalTask(
                         operations,
                         patcher,
                         originalPatch,
-                        splitPatch,
                         cherryPick,
                         source,
                         target,
@@ -185,7 +171,7 @@ class CherryPickEvalTask(
                     cherryPick,
                     datasetName,
                     runID,
-                    splitPatch,
+                    originalPatch,
                     actualVsExpectedNormal,
                     rejectsNormal,
                     evolutionDiff,
@@ -213,7 +199,7 @@ class CherryPickEvalTask(
         pathToExpectedResult: Path,
         target: Variant,
         currentPR: CherryPick
-    ): FineDiff {
+    ): OriginalDiff {
         val resultDiff = getOriginalDiff(operations, operations.patchDir(), pathToExpectedResult, true)
         if (config.EXPERIMENT_DEBUG() && !resultDiff.isEmpty) {
             try {
@@ -225,18 +211,7 @@ class CherryPickEvalTask(
                 Logger.error("Was not able to save resultDiffOriginal:\n{}", e)
             }
         }
-        return getFineDiff(operations.workDir, resultDiff)
-    }
-
-    // Save the difference as a patch file
-    private fun saveDiff(fineDiff: FineDiff, file: Path) {
-        // Save the fine diff to a file
-        try {
-            Files.createDirectories(file.parent)
-            Files.write(file, fineDiff.toLines())
-        } catch (e: IOException) {
-            panic("Was not able to save diff to file $file")
-        }
+        return resultDiff
     }
 
     // Save the difference as a patch file
@@ -295,17 +270,12 @@ class CherryPickEvalTask(
         operations: CherryEvalOperations,
         patcher: Patcher,
         originalPatch: OriginalDiff,
-        splitPatch: FineDiff,
         currentPR: CherryPick,
         source: Variant,
         target: Variant,
         rejectsNormal: Rejects,
-        evolutionDiff: FineDiff
+        evolutionDiff: OriginalDiff
     ) {
-        saveDiff(
-            splitPatch,
-            operations.debugDir(currentPR).resolve(source.name + "_split.diff")
-        )
         saveDiff(
             originalPatch,
             operations.debugDir(currentPR).resolve(source.name + ".diff")

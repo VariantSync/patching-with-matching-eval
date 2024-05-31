@@ -1,5 +1,12 @@
 package org.variantsync.evaluation.baseline.diff.components;
 
+import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
+import org.variantsync.evaluation.baseline.diff.lines.ChangedLine;
+import org.variantsync.evaluation.baseline.diff.lines.Line;
+import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
+import org.variantsync.evaluation.patching.Change;
+
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +18,31 @@ import java.util.List;
  * @param fileDiffs The differences of the changed files.
  */
 public record OriginalDiff(List<FileDiff> fileDiffs) implements IDiffComponent {
+    /**
+     * Parse all patches in the difference and extract the changes source code lines without the patches' context lines.
+     *
+     * @param diff The difference from which changed lines are to be extracted
+     * @return A list of all changed lines (i.e., added and removed source code)
+     */
+    public static List<ChangedLine> determineChangedLines(OriginalDiff diff, int strip) {
+        final List<ChangedLine> changedLines = new ArrayList<>();
+        for (FileDiff fd : diff.fileDiffs()) {
+            // Filter the hunks of each patch to extract changed lines
+            fd.hunks().stream().flatMap(hunk -> hunk.content().stream()).forEach(line -> {
+
+                        Path filePath = fd.oldFile().subpath(strip, fd.oldFile().getNameCount());
+                        if (line instanceof AddedLine addedLine) {
+                            changedLines.add(new ChangedLine(filePath, addedLine));
+                        } else if (line instanceof RemovedLine removedLine) {
+                            changedLines.add(new ChangedLine(filePath, removedLine));
+                        }
+
+                    }
+            );
+        }
+        return changedLines;
+    }
+
     @Override
     public List<String> toLines() {
         final List<String> lines = new ArrayList<>();
@@ -21,6 +53,21 @@ public record OriginalDiff(List<FileDiff> fileDiffs) implements IDiffComponent {
     @Override
     public int changeCount() {
         return this.fileDiffs.stream().mapToInt(FileDiff::changeCount).sum();
+    }
+
+    public List<Change> intoChanges(int strip) {
+        final List<Change> changes = new ArrayList<>();
+        for (FileDiff fd : this.fileDiffs()) {
+            // Filter the hunks of each patch to extract changed lines
+            for (Hunk hunk : fd.hunks()) {
+                Path filePath = fd.oldFile().subpath(strip, fd.oldFile().getNameCount());
+                for (Line changedLine : hunk.changedLines()) {
+                    changes.add(new Change(changedLine, hunk, filePath));
+                }
+            }
+
+        }
+        return changes;
     }
 
     public boolean isEmpty() {

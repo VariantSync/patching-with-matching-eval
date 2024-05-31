@@ -8,7 +8,7 @@ import org.variantsync.evaluation.SyncStudyResultAnalysis.percentage
 import org.variantsync.evaluation.SyncStudyResultAnalysis.printCorrectness
 import org.variantsync.evaluation.SyncStudyResultAnalysis.printPrecisionRecall
 import org.variantsync.evaluation.analysis.*
-import org.variantsync.evaluation.baseline.diff.components.FineDiff
+import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
 import org.variantsync.evaluation.cherries.CherryPick
 import org.variantsync.evaluation.patching.Change
@@ -107,15 +107,15 @@ object CherryPickResultAnalysis {
         workdir: Operations,
         cherryPick: CherryPick,
         dataset: String, runID: ULong,
-        normalPatch: FineDiff,
-        resultDiffNormal: FineDiff,
-        rejectsNormal: Rejects, evolutionChanges: FineDiff,
+        normalPatch: OriginalDiff,
+        resultDiffNormal: OriginalDiff,
+        rejectsNormal: Rejects, evolutionChanges: OriginalDiff,
         patchDuration: Duration,
         patchIsTrivial: Boolean,
     ): CherryPickPatchOutcome {
         Logger.debug("Processing outcome of $runID for patch process in " + workdir.workDir())
         // number of tried line-level patches
-        val lineNormal = FineDiff.determineChangedLines(normalPatch, STRIP)
+        val lineNormal = OriginalDiff.determineChangedLines(normalPatch, STRIP)
         // number of failed patches
 
         // Determine the number of failed line-level patches
@@ -128,12 +128,12 @@ object CherryPickResultAnalysis {
         val normalResult: EvaluationResult = scenario.evaluate(
             CountingMap(normalPatch.intoChanges(STRIP)),
             CountingMap(rejectsNormal.intoChanges()),
-            CountingMap(FineDiff.determineChangedLines(resultDiffNormal, STRIP))
+            CountingMap(OriginalDiff.determineChangedLines(resultDiffNormal, STRIP))
         )
 
         Assert.assertEquals(normalResult.resultCount(), lineNormal.size.toLong())
         return CherryPickPatchOutcome(
-            dataset, runID, cherryPick.cherryCommit, cherryPick.targetCommit, resultDiffNormal.content.size.toLong(),
+            dataset, runID, cherryPick.cherryCommit, cherryPick.targetCommit, resultDiffNormal.fileDiffs.size.toLong(),
             lineNormal.size.toLong(), lineNormal.size.toLong() - lineNormalFailed.size.toLong(),
             normalResult,
             patchDuration,
@@ -142,12 +142,12 @@ object CherryPickResultAnalysis {
     }
 
     private fun initCherryScenario(
-        patch: FineDiff,
-        targetEvolutionDiff: FineDiff
+        patch: OriginalDiff,
+        targetEvolutionDiff: OriginalDiff
     ): EvaluationScenario {
         Logger.debug("Calculating result table with TP, FP, TN, and FN.")
         val changesToClassify = CountingMap<Change>(patch.intoChanges(STRIP))
-        val changesInEvolution = CountingMap<ChangedLine>(FineDiff.determineChangedLines(targetEvolutionDiff, STRIP))
+        val changesInEvolution = CountingMap<ChangedLine>(OriginalDiff.determineChangedLines(targetEvolutionDiff, STRIP))
 
         // Changes in the target variant's evolution that cannot be
         // synchronized, because they are not part of the source variant and therefore not of the
@@ -156,7 +156,7 @@ object CherryPickResultAnalysis {
         // Expected changes, i.e., changes in the target variant's
         // evolution that can be synchronized
         run {
-            val tempChanges: CountingMap<ChangedLine> = CountingMap(FineDiff.determineChangedLines(patch, STRIP))
+            val tempChanges: CountingMap<ChangedLine> = CountingMap(OriginalDiff.determineChangedLines(patch, STRIP))
             for (evolutionChange in changesInEvolution) {
                 if (!tempChanges.contains(evolutionChange)) {
                     unpatchableChanges.addOne(evolutionChange)
@@ -224,7 +224,7 @@ object CherryPickResultAnalysis {
         sb.append(DIV).append(LINE_SEP)
         sb.append("Edit Distance: ").append(accumulatedOutcome.normalResult.editDistance.v).append(LINE_SEP)
         sb.append("Average Edit Distance: ")
-            .append(String.format("%.2f%%", accumulatedOutcome.normalResult.averageEditDistance()))
+            .append(String.format("%.2f", accumulatedOutcome.normalResult.averageEditDistance()))
             .append(
                 LINE_SEP
             )

@@ -1,11 +1,10 @@
 package org.variantsync.evaluation
 
 import org.variantsync.evaluation.baseline.diff.components.FileDiff
-import org.variantsync.evaluation.baseline.diff.components.FineDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import java.nio.file.Path
 
-fun filterUnpatchedFiles(originalPatch: OriginalDiff, diffToFilter: FineDiff, strip: Int): FineDiff {
+fun filterUnpatchedFiles(originalPatch: OriginalDiff, diffToFilter: OriginalDiff, strip: Int): OriginalDiff {
     val oldFiles = HashSet<Path>()
     val newFiles = HashSet<Path>()
     for (fd in originalPatch.fileDiffs) {
@@ -14,12 +13,12 @@ fun filterUnpatchedFiles(originalPatch: OriginalDiff, diffToFilter: FineDiff, st
     }
 
     val filteredDiffs = ArrayList<FileDiff>()
-    for (fileDiff in diffToFilter.content) {
+    for (fileDiff in diffToFilter.fileDiffs) {
         val oldPath = fileDiff.oldFile.subpath(strip, fileDiff.oldFile.nameCount)
         val newPath = fileDiff.newFile.subpath(strip, fileDiff.newFile.nameCount)
         if (oldFiles.contains(oldPath) && newFiles.contains(newPath)) {
             filteredDiffs.add(fileDiff)
         }
     }
-    return FineDiff(filteredDiffs)
+    return OriginalDiff(filteredDiffs)
 }

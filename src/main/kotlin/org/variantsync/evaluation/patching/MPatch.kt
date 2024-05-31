@@ -3,10 +3,9 @@ package org.variantsync.evaluation.patching
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.Operations
 import org.variantsync.evaluation.baseline.diff.DiffParser
-import org.variantsync.evaluation.baseline.diff.components.FineDiff
+import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.MPatchCommand
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
-import org.variantsync.evaluation.syncstudy.getFineDiff
 import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException
@@ -70,13 +69,12 @@ class MPatch(private val strip: Int) : Patcher {
 
     // Read a rejects file
     private fun readRejectsFromFile(operations: Operations, rejectFile: Path, withFiler: Boolean): Rejects {
-        val pathToSplitPatchFile = if (withFiler) {
-            operations.splitAndFilteredPatchFile()
+        val pathToPatchFile = if (withFiler) {
+            operations.filteredPatchFile()
         } else {
-            operations.splitPatchFile()
+            operations.patchFile()
         }
-        val patch =
-            getFineDiff(operations.workDir(), DiffParser.toOriginalDiff(Files.readAllLines(pathToSplitPatchFile)))
+        val patch = DiffParser.toOriginalDiff(Files.readAllLines(pathToPatchFile))
         if (Files.exists(rejectFile)) {
             try {
                 val rejects = Files.readAllLines(rejectFile)
@@ -126,7 +124,7 @@ class MPatch(private val strip: Int) : Patcher {
     }
 
 
-    private fun parseRejects(patch: FineDiff, lines: List<String>): Rejects {
+    private fun parseRejects(patch: OriginalDiff, lines: List<String>): Rejects {
         // The rejects are empty
         if (lines.isEmpty()) {
             return Rejects(ArrayList())
