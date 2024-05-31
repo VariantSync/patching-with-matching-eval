@@ -50,7 +50,7 @@ class GitApply(private val name: String, private val strip: Int) : Patcher {
         if (result.isSuccess) {
             result.success.forEach(Consumer { message: String? -> Logger.debug(message) })
         } else {
-            Logger.warn("git apply failed")
+            Logger.debug("git apply failed")
             result.failure.output.forEach(Consumer { message: String? -> Logger.debug(message) })
         }
 
@@ -65,12 +65,6 @@ class GitApply(private val name: String, private val strip: Int) : Patcher {
 
     // Read a rejects file
     private fun readRejectsFromFile(operations: Operations, withFiler: Boolean): Rejects {
-        val pathToPatchFile = if (withFiler) {
-            operations.filteredPatchFile()
-        } else {
-            operations.patchFile()
-        }
-        val patch = DiffParser.toOriginalDiff(Files.readAllLines(pathToPatchFile))
         val rejectFiles = findRejects(operations)
         val rejects = ArrayList<Change>()
         for (rejectFile in rejectFiles) {
