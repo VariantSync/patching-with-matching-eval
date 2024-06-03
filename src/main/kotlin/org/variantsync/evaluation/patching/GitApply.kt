@@ -143,4 +143,12 @@ class GitApply(private val name: String, private val strip: Int) : Patcher {
 
         return rejects
     }
+
+    override fun clean(operations: Operations) {
+        val rejectFiles = findRejects(operations)
+        for (rejectFile in rejectFiles) {
+            Logger.debug("Cleaning old rejects file $rejectFile")
+            Files.delete(rejectFile.toPath())
+        }
+    }
 }

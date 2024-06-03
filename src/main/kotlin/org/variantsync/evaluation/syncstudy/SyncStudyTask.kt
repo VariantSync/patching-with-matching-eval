@@ -245,6 +245,8 @@ class SyncStudyTask(
             var actualVsExpectedNormal = getActualVsExpected(operations, pathToExpectedResult, "normal", target)
             actualVsExpectedNormal = filterUnpatchedFiles(originalPatch, actualVsExpectedNormal, strip)
 
+            patcher.clean(operations)
+
             /* Application of patches with knowledge about PC of edit only */
             Logger.debug("Applying patch with knowledge about edits' PCs...")
             // Create target variant specific patch that respects PCs
