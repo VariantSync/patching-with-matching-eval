@@ -3,6 +3,8 @@ package org.variantsync.evaluation.cherries
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.CherryPickResultAnalysis
 import org.variantsync.evaluation.EvalConfig
+import org.variantsync.evaluation.analysis.ExperimentResult
+import org.variantsync.evaluation.analysis.TaskOutcome
 import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.CpCommand
@@ -11,7 +13,6 @@ import org.variantsync.evaluation.baseline.shell.RmCommand
 import org.variantsync.evaluation.filterUnpatchedFiles
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
-import org.variantsync.evaluation.saveResult
 import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException
@@ -19,6 +20,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
+import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Callable
 
@@ -29,9 +31,9 @@ class CherryPickEvalTask(
     private val cherryPick: CherryPick,
     private val availableOperations: BlockingQueue<CherryEvalOperations>,
     private val runID: ULong,
-) : Callable<ULong> {
+) : Callable<TaskOutcome> {
 
-    override fun call(): ULong {
+    override fun call(): TaskOutcome {
         val operations: CherryEvalOperations
 
         synchronized(CherryPickEvalTask::class.java) {
@@ -42,8 +44,9 @@ class CherryPickEvalTask(
             Logger.debug("Remaining after take: " + opsToString())
         }
 
+        var experimentResult = Optional.empty<List<ExperimentResult>>()
         try {
-            callExecution(operations)
+            experimentResult = Optional.of(callExecution(operations))
         } catch (e: Throwable) {
             Logger.error("Failed to finish task with runID $runID")
             Logger.error(e)
@@ -56,7 +59,7 @@ class CherryPickEvalTask(
             Logger.debug("There are now " + availableOperations.size + " operations available.")
         }
 
-        return runID
+        return TaskOutcome(runID, experimentResult)
     }
 
     private fun opsToString(): String {
@@ -68,17 +71,17 @@ class CherryPickEvalTask(
         return sb.toString()
     }
 
-    fun callExecution(operations: CherryEvalOperations) {
+    fun callExecution(operations: CherryEvalOperations): List<ExperimentResult> {
         try {
             // repoManager.cleanRepoStates()
             if (!operations.repoManager.prepareCherryPick(cherryPick)) {
                 Logger.info("Not all commits of the cherry pick could be found... skipping cherry pick ${cherryPick.id} of $datasetName")
-                return
+                return ArrayList()
             }
         } catch (e: Exception) {
             Logger.debug("Was not able to checkout cherry pick commits in variant directories")
             Logger.debug(e)
-            return
+            return ArrayList()
         }
 
         if (config.EXPERIMENT_DEBUG() && operations.debugDir(cherryPick).toFile().mkdirs()) {
@@ -106,7 +109,7 @@ class CherryPickEvalTask(
             Logger.info(
                 "Skipping cherry pick " + cherryPick.id + " because there are no changes to code. Diff of code files is empty."
             )
-            return
+            return ArrayList()
         }
 
         if (config.EXPERIMENT_DEBUG()) {
@@ -119,6 +122,7 @@ class CherryPickEvalTask(
         saveDiff(originalPatch, operations.patchFile)
         Logger.debug("Saved original diff.")
 
+        val results = ArrayList<ExperimentResult>()
         try {
             Logger.debug("Starting patch application for cherry-pick " + cherryPick.id)
             var evolutionDiff =
@@ -177,12 +181,19 @@ class CherryPickEvalTask(
                 )
 
                 val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")
-                saveResult(patchOutcome, cherryPick, resultFile, runID)
+                results.add(ExperimentResult(patchOutcome, resultFile))
+
+                Logger.debug(
+                    "Finished patching for cherry " + cherryPick.cherryCommit + " and target "
+                            + cherryPick.targetCommit
+                )
+
                 operations.repoManager.resetTargetVariant()
             }
         } catch (e: Exception) {
             Logger.debug("Captured exception for cherry pick ${cherryPick.id}: ", e.message)
         }
+        return results
     }
 
 

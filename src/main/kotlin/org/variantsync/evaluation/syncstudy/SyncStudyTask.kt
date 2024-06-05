@@ -6,6 +6,8 @@ import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.EvalConfig
 import org.variantsync.evaluation.SyncStudyResultAnalysis
 import org.variantsync.evaluation.analysis.CountingMap
+import org.variantsync.evaluation.analysis.ExperimentResult
+import org.variantsync.evaluation.analysis.TaskOutcome
 import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.diff.filter.CachedPCBasedFilter
@@ -19,7 +21,6 @@ import org.variantsync.evaluation.filterUnpatchedFiles
 import org.variantsync.evaluation.patching.Change
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
-import org.variantsync.evaluation.saveResult
 import org.variantsync.vevos.simulation.feature.Variant
 import org.variantsync.vevos.simulation.feature.config.FeatureIDEConfiguration
 import org.variantsync.vevos.simulation.feature.sampling.FeatureIDESampler
@@ -37,9 +38,13 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
+import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Callable
 import java.util.stream.Collectors
+import kotlin.NoSuchElementException
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class SyncStudyTask(
     private val config: EvalConfig,
@@ -49,13 +54,13 @@ class SyncStudyTask(
     private val parentRepos: Map<SyncStudyOperations, SPLRepository>,
     private val childRepos: Map<SyncStudyOperations, SPLRepository>,
     private val runID: ULong,
-) : Callable<ULong> {
+) : Callable<TaskOutcome> {
     private val strip = 2
 
     // The feature model for which variants are sampled
     private var currentModel: IFeatureModel? = null
 
-    override fun call(): ULong {
+    override fun call(): TaskOutcome {
         val operations: SyncStudyOperations
         val parentRepo: SPLRepository
         val childRepo: SPLRepository
@@ -69,8 +74,9 @@ class SyncStudyTask(
             childRepo = this.childRepos[operations]!!
         }
 
+        var experimentResult = Optional.empty<List<ExperimentResult>>()
         try {
-            callExecution(operations, parentRepo, childRepo)
+            experimentResult = Optional.of(callExecution(operations, parentRepo, childRepo))
         } catch (e: Throwable) {
             Logger.error("Failed to finish task with runID $runID")
             Logger.error(e)
@@ -82,17 +88,18 @@ class SyncStudyTask(
             Logger.debug("There are now " + availableOperations.size + " operations available.")
         }
 
-        return runID
+        return TaskOutcome(runID, experimentResult)
     }
 
-    private fun callExecution(operations: SyncStudyOperations, parentRepo: SPLRepository, childRepo: SPLRepository) {
+    private fun callExecution(operations: SyncStudyOperations, parentRepo: SPLRepository, childRepo: SPLRepository): List<ExperimentResult> {
+
         // We can only process the commit if it has at least one parent
         if (this.commit.parents().isEmpty) {
-            return
+            return ArrayList()
         }
         val parentCommit = this.commit.parents().get()[0]
         if (parentCommit.id().trim().isEmpty()) {
-            return
+            return ArrayList()
         }
 
         try {
@@ -101,9 +108,10 @@ class SyncStudyTask(
             Logger.error("Was not able to prepare SPL repositories for commit pair ${parentCommit.id()} -> ${this.commit.id()}")
             Logger.error(e)
             e.printStackTrace()
-            return
+            return ArrayList()
         }
 
+        val results = ArrayList<ExperimentResult>()
         // While more random configurations to consider
         for (i in 0 until config.EXPERIMENT_REPEATS()) {
             Logger.debug(
@@ -171,17 +179,19 @@ class SyncStudyTask(
             }
 
             for (patcher in operations.patchers) {
-                runPatchApplication(
-                    operations,
-                    patcher,
-                    source,
-                    sample,
-                    originalDiff,
-                    groundTruthV0,
-                    groundTruthV1,
-                    this.commit,
-                    runID,
-                    parentCommit
+                results.addAll(
+                    runPatchApplication(
+                        operations,
+                        patcher,
+                        source,
+                        sample,
+                        originalDiff,
+                        groundTruthV0,
+                        groundTruthV1,
+                        this.commit,
+                        runID,
+                        parentCommit
+                    )
                 )
             }
         }
@@ -190,6 +200,8 @@ class SyncStudyTask(
         parentCommit.forget()
         // Free memory of commit V1
         this.commit.forget()
+
+        return results;
     }
 
     private fun runPatchApplication(
@@ -203,12 +215,13 @@ class SyncStudyTask(
         currentCommit: SPLCommit,
         runID: ULong,
         parentCommit: SPLCommit,
-    ) {
+    ): List<ExperimentResult> {
         saveDiff(originalPatch, operations.patchFile)
         Logger.debug("Saved original diff.")
 
         // For each target variant,
         Logger.debug("Starting patch application for source variant " + source.name)
+        val results = ArrayList<ExperimentResult>()
         for (target in sample.variants()) {
             if (target === source) {
                 continue
@@ -311,8 +324,14 @@ class SyncStudyTask(
             )
 
             val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")
-            saveResult(patchOutcome, resultFile, runID, source, target)
+            results.add(ExperimentResult(patchOutcome, resultFile))
+
+            Logger.debug(
+                "Finished patching for source " + source.name + " and target "
+                        + target.name
+            )
         }
+        return results
     }
 
     private fun resetPatchDirectory(operations: SyncStudyOperations, pathToTarget: Path?) {

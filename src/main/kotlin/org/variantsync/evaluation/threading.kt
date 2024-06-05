@@ -1,6 +1,7 @@
 package org.variantsync.evaluation
 
 import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.analysis.TaskOutcome
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
@@ -8,14 +9,16 @@ import java.util.concurrent.TimeoutException
 
 fun waitForShutdown(
     threadPool: ExecutorService,
-    futures: MutableList<Future<ULong>>
+    futures: MutableList<Future<TaskOutcome>>
 ) {
     threadPool.shutdown()
     for (future in futures) {
         val runID: ULong
+        val taskOutCome: TaskOutcome
         try {
             // TODO: Make timeout configurable
-            runID = future.get(10, TimeUnit.MINUTES)
+            taskOutCome = future.get(10, TimeUnit.MINUTES)
+            runID = taskOutCome.runID
             if (runID % 25uL == 0uL) {
                 Logger.info(
                     String.format(
@@ -25,6 +28,13 @@ fun waitForShutdown(
                     )
                 )
             }
+
+            if (taskOutCome.result.isPresent) {
+                for (result in taskOutCome.result.get()) {
+                    saveResult(result, runID)
+                }
+            }
+
         } catch (e: TimeoutException) {
             Logger.warn("Timed out while running task. Skipping this task")
 
