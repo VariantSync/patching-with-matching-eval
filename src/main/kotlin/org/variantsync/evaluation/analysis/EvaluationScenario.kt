@@ -52,9 +52,14 @@ class EvaluationScenario(
                 continue
             }
 
-            // Was it applied to the wrong location?
             if (observedDifference.removeOne(required.asChangedLine())) {
-                wrongLocation++
+                if (observedDifference.removeOne(required.inverse().asChangedLine())) {
+                    // Was it applied to the wrong location?
+                    wrongLocation++
+                } else {
+                    // It is just missing
+                    missing++;
+                }
                 continue
             }
 
