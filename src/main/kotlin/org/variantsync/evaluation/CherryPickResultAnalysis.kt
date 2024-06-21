@@ -151,7 +151,7 @@ object CherryPickResultAnalysis {
 
         Assert.assertEquals(normalResult.resultCount(), lineNormal.size.toLong())
         return CherryPickPatchOutcome(
-            dataset, runID, cherryPick.cherryCommit, cherryPick.targetCommit, resultDiffNormal.fileDiffs.size.toLong(),
+            dataset, runID, cherryPick.cherryCommit, cherryPick.targetCommit, OriginalDiff.determineChangedLines(resultDiffNormal, STRIP).size.toLong(),
             lineNormal.size.toLong(), lineNormal.size.toLong() - lineNormalFailed.size.toLong(),
             normalResult,
             patchDuration,

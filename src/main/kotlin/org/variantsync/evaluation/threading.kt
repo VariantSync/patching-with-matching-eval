@@ -22,7 +22,7 @@ fun waitForShutdown(
             if (runID % 25uL == 0uL) {
                 Logger.info(
                     String.format(
-                        "Finished task %s of %s.",
+                        "Running task %s of %s.",
                         runID.toString(),
                         futures.size.toString()
                     )

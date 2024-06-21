@@ -30,7 +30,6 @@ public class DiffCommand extends ShellCommand {
     public static DiffCommand Recommended(final Path pathA, final Path pathB) {
         return new DiffCommand(pathA.toString(), pathB.toString())
                 .newFile()
-                .text()
                 .unified()
                 .recursive()
                 .ignoreTrailingSpace();
