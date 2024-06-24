@@ -132,7 +132,8 @@ public class DiffParser {
                 try {
                     nextLine = fileDiffContent.get(index);
                 } catch (Exception e) {
-                    Logger.error(e);
+                    Logger.warn(e);
+                    throw e;
                 }
                 if (nextLine.startsWith(HUNK_START)) {
                     atHeader = false;
