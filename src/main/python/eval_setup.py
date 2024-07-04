@@ -57,7 +57,22 @@ class PatchResult:
 
 
 class OutcomeClassification:
-    def __init__(self, json_object):
+
+    def initialize_empty(self):
+        self.applied_correctly = 0
+        self.applied_invalid = 0
+        self.applied_wrong_location = 0
+        self.missing = 0
+        self.filtered_correctly = 0
+        self.filtered_incorrectly = 0
+        self.mitigated_invalid = 0
+        self.mitigated_missing = 0
+        self.edit_distance = 0
+
+    def __init__(self, json_object=None):
+        if json_object is None:
+            return self.initialize_empty()
+
         self.applied_correctly = int(json_object.get("applied"))
         self.applied_invalid = int(json_object.get("invalid"))
         self.applied_wrong_location = int(json_object.get("wrongLocation"))
@@ -68,3 +83,49 @@ class OutcomeClassification:
         self.mitigated_invalid = int(json_object.get("mitigatedInvalid"))
         self.mitigated_missing = int(json_object.get("mitigatedMissing"))
         self.edit_distance = int(json_object.get("editDistance"))
+
+    def tp(self) -> int:
+        return self.applied_correctly + self.mitigated_missing
+
+    def fp(self) -> int:
+        return self.applied_invalid + self.applied_wrong_location
+
+    def tn(self) -> int:
+        return self.filtered_correctly + self.mitigated_invalid
+
+    def fn(self) -> int:
+        return self.missing + self.applied_wrong_location
+
+    def add_result(self, other):
+        self.applied_correctly += other.applied_correctly
+        self.applied_invalid += other.applied_invalid
+        self.applied_wrong_location += other.applied_wrong_location
+        self.missing += other.missing
+        self.filtered_correctly += other.filtered_correctly
+        self.filtered_incorrectly += other.filtered_incorrectly
+        self.mitigated_invalid += other.mitigated_invalid
+        self.mitigated_missing += other.mitigated_missing
+        self.edit_distance += other.edit_distance
+
+    def __str__(self):
+        return (f"applied_correctly \t= {self.applied_correctly},\n"
+                f"applied_invalid \t= {self.applied_invalid},\n"
+                f"applied_wrong_location \t= {self.applied_wrong_location},\n"
+                f"missing \t\t= {self.missing},\n"
+                f"filtered_correctly \t= {self.filtered_correctly},\n"
+                f"filtered_incorrectly \t= {self.filtered_incorrectly},\n"
+                f"mitigated_invalid \t= {self.mitigated_invalid},\n"
+                f"mitigated_missing \t= {self.mitigated_missing},\n"
+                f"edit_distance \t\t= {self.edit_distance}")
+
+    def __repr__(self):
+        return (f"OutcomeClassification("
+                f"applied_correctly={self.applied_correctly!r}, "
+                f"applied_invalid={self.applied_invalid!r}, "
+                f"applied_wrong_location={self.applied_wrong_location!r}, "
+                f"missing={self.missing!r}, "
+                f"filtered_correctly={self.filtered_correctly!r}, "
+                f"filtered_incorrectly={self.filtered_incorrectly!r}, "
+                f"mitigated_invalid={self.mitigated_invalid!r}, "
+                f"mitigated_missing={self.mitigated_missing!r}, "
+                f"edit_distance={self.edit_distance!r})")

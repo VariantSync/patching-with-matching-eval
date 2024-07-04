@@ -2,6 +2,7 @@ import json
 import os
 from eval_setup import Patcher
 from eval_setup import PatchResult
+from eval_setup import OutcomeClassification
 
 
 def read_results_from_file(file_path) -> []:
@@ -49,8 +50,11 @@ def find_results_for_patcher(directory_path, patcher: Patcher) -> []:
 if __name__ == "__main__":
     directory_path = '/home/alex/data/cherry-picks/results/'
     total_results = 0
+    summed_result = OutcomeClassification()
     for file_path in find_results_for_patcher(directory_path, Patcher.MPatch):
         result_objects = read_results_from_file(file_path)
         print("Read " + str(len(result_objects)) + " results.")
         total_results += len(result_objects)
+        summed_result.add_result(result_objects[0].outcome_classification)
     print("Total: " + str(total_results))
+    print("summed result: \n" + str(summed_result))
