@@ -1,10 +1,11 @@
 package org.variantsync.evaluation.baseline.diff;
 
-import org.variantsync.evaluation.baseline.diff.lines.*;
+import org.tinylog.Logger;
 import org.variantsync.evaluation.baseline.diff.components.FileDiff;
 import org.variantsync.evaluation.baseline.diff.components.Hunk;
 import org.variantsync.evaluation.baseline.diff.components.HunkLocation;
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff;
+import org.variantsync.evaluation.baseline.diff.lines.*;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -33,11 +34,26 @@ public class DiffParser {
         // Determine the substring which a FileDiff starts with
         String fileDiffStart = "";
         String fileDiffFollow = "";
-        if (lines.get(0).startsWith("diff")) {
+        String firstRelevantLine = null;
+        for (final String line : lines) {
+            if (!(line.startsWith("Binary files "))) {
+                // The first relevant line for determining the file diff start must not belong to a binary file
+                firstRelevantLine = line;
+                break;
+            }
+        }
+
+        if (firstRelevantLine == null) {
+            // In this case, there are only binary files in the diff, and we can return early
+            // We only consider non-binary files, because binary files crash our patchers, which makes a decent evaluation impossible
+            return new OriginalDiff(fileDiffs);
+        }
+
+        if (firstRelevantLine.startsWith("diff")) {
             // Several files were processed, the diff of each file starts with the 'diff' command that was used
             fileDiffStart = "diff";
             fileDiffFollow = "--- ";
-        } else if (lines.get(0).startsWith("--- ")) {
+        } else if (firstRelevantLine.startsWith("--- ")) {
             // Only one file was processed, the diff of the file starts with the hunk header
             fileDiffStart = "--- ";
             fileDiffFollow = "+++ ";
@@ -47,6 +63,12 @@ public class DiffParser {
         int indexNext = 0;
         for (final String line : lines) {
             indexNext++;
+
+            if (line.startsWith("Binary files ")) {
+                // We only consider non-binary files, because binary files crash our patchers, which makes a decent evaluation impossible
+                continue;
+            }
+
             if (line.startsWith(fileDiffStart)) {
                 if (indexNext < lines.size()) {
                     final String nextLine = lines.get(indexNext);
@@ -88,7 +110,7 @@ public class DiffParser {
     }
 
     // Parse and convert the lines belonging to the difference of a specific file
-    private static FileDiff parseFileDiff(final List<String> fileDiffContent) {
+    public static FileDiff parseFileDiff(final List<String> fileDiffContent) {
         int index = 0;
         final String HUNK_START = "@@ -";
         String nextLine = fileDiffContent.get(index);
@@ -107,7 +129,12 @@ public class DiffParser {
                 }
                 header.add(nextLine);
                 index++;
-                nextLine = fileDiffContent.get(index);
+                try {
+                    nextLine = fileDiffContent.get(index);
+                } catch (Exception e) {
+                    Logger.warn(e);
+                    throw e;
+                }
                 if (nextLine.startsWith(HUNK_START)) {
                     atHeader = false;
                 }
@@ -135,7 +162,7 @@ public class DiffParser {
     }
 
     // Parse and convert the lines belonging to the difference of a specific hunk
-    private static Hunk parseHunk(final List<String> lines) {
+    public static Hunk parseHunk(final List<String> lines) {
         // Parse the header
         final HunkLocation location = parseHunkHeader(lines.get(0));
         final List<Line> content = new ArrayList<>();
@@ -155,7 +182,7 @@ public class DiffParser {
     }
 
     // Parse and convert the header of a hunk
-    private static HunkLocation parseHunkHeader(final String line) {
+    public static HunkLocation parseHunkHeader(final String line) {
         final String[] parts = line.split("\\s+");
         final String sourceLocationString = parts[1].substring(1);
         final String targetLocationString = parts[2].substring(1);

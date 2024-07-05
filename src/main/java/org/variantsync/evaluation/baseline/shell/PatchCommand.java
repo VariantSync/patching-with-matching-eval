@@ -1,8 +1,8 @@
 package org.variantsync.evaluation.baseline.shell;
 
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Represents a shell 'patch' command that can be executed using a ShellExecutor
@@ -104,6 +104,21 @@ public class PatchCommand extends ShellCommand {
      */
     public PatchCommand force() {
         this.args.add("--force");
+        return this;
+    }
+
+    /**
+     * Match patterns loosely, in case tabs or spaces have been munged
+     * in your files. Any sequence of one or more blanks in the patch
+     * file  matches any  sequence in  the  original file, and sequences
+     * of blanks at the ends of lines are ignored. Normal characters
+     * must still match exactly. Each line of the context must still
+     * match a line in the original file.
+     *
+     * @return this command
+     */
+    public PatchCommand ignoreWhitespace() {
+        this.args.add("--ignore-whitespace");
         return this;
     }
 

@@ -1,4 +1,4 @@
 #! /bin/bash
 echo "Stopping Docker container. This will take a moment..."
-docker stop "$(docker ps -a -q --filter "ancestor=sync-study")"
+docker stop "$(docker ps -a -q --filter "ancestor=pwm-eval")"
 echo "...done."

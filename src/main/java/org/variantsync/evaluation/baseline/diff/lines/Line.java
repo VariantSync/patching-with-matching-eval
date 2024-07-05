@@ -33,4 +33,10 @@ public abstract class Line {
     public int hashCode() {
         return Objects.hash(line);
     }
+
+    public boolean isEmpty() {
+        // A diff line also has a meta character at the start (i.e., '+', '-', ' '). If it only contains this meta character
+        // it should be considered empty
+        return this.line.length() == 1;
+    }
 }

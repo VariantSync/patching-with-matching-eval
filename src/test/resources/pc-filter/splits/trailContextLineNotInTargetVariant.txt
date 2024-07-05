@@ -31,7 +31,6 @@ diff -Naur version-A/DiffParser.txt version-B/DiffParser.txt
      }
  
  }
-\ No newline at end of file
 diff -N -a -u -r version-A/first-file.txt version-B/first-file.txt
 --- version-A/first-file.txt    2021-07-26 12:54:11.414422539 +0000
 +++ version-B/first-file.txt    2021-07-26 12:56:29.534417548 +0000
@@ -55,4 +54,3 @@ diff -N -a -u -r version-A/first-file.txt version-B/first-file.txt
      System.out.println(cars);
    }
  }
-\ No newline at end of file

@@ -1,2 +1,2 @@
-rootProject.name = "variability-aware-patching"
+rootProject.name = "patching-with-matching-eval"
 

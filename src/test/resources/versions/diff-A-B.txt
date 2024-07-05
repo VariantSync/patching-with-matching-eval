@@ -1,4 +1,4 @@
-diff -N -a -u -r version-A/first-file.txt version-B/first-file.txt
+diff -N -u -r -Z version-A/first-file.txt version-B/first-file.txt
 --- version-A/first-file.txt    2021-07-26 12:54:11.414422539 +0000
 +++ version-B/first-file.txt    2021-07-26 12:56:29.534417548 +0000
 @@ -9,6 +9,8 @@
@@ -11,7 +11,7 @@ diff -N -a -u -r version-A/first-file.txt version-B/first-file.txt
    }
  }
 \ No newline at end of file
-diff -N -a -u -r version-A/second-file.txt version-B/second-file.txt
+diff -N -u -r -Z version-A/second-file.txt version-B/second-file.txt
 --- version-A/second-file.txt   2021-07-26 12:54:22.274422140 +0000
 +++ version-B/second-file.txt   2021-07-26 12:56:29.514417547 +0000
 @@ -9,13 +9,13 @@
@@ -31,7 +31,7 @@ diff -N -a -u -r version-A/second-file.txt version-B/second-file.txt
    }
  }
 \ No newline at end of file
-diff -N -a -u -r version-A/third-file.txt version-B/third-file.txt
+diff -N -u -r -Z version-A/third-file.txt version-B/third-file.txt
 --- version-A/third-file.txt    2021-07-26 12:54:44.457754653 +0000
 +++ version-B/third-file.txt    2021-07-26 12:56:29.524417548 +0000
 @@ -1,11 +1,4 @@

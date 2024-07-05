@@ -1,11 +1,13 @@
 package org.variantsync.evaluation.baseline.diff.components;
 
-import org.variantsync.evaluation.baseline.diff.lines.*;
+import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
+import org.variantsync.evaluation.baseline.diff.lines.Line;
+import org.variantsync.evaluation.baseline.diff.lines.MetaLine;
+import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * A Hunk represents a changed text block in the difference between two versions of a file.
@@ -15,16 +17,31 @@ public final class Hunk implements IDiffComponent {
     private final HunkLocation rawLocation;
     private final List<Line> allLines;
     private final List<Line> changedLines;
+    private final List<Line> trailingContext;
+    private final boolean hasMetaLine;
 
     /**
      * @param location The location of the hunk in the file
-     * @param allLines  The content of the hunk (i.e., context and changed lines)
+     * @param allLines The content of the hunk (i.e., context and changed lines)
      */
     public Hunk(HunkLocation location, HunkLocation rawLocation, List<Line> allLines) {
         this.location = location;
         this.rawLocation = rawLocation;
         this.allLines = allLines;
-        this.changedLines = allLines.stream().filter(l -> (l instanceof AddedLine || l instanceof RemovedLine)).collect(Collectors.toList());
+        this.trailingContext = new ArrayList<>();
+        this.changedLines = new ArrayList<>();
+
+
+        for (Line line : allLines) {
+            if (line instanceof AddedLine || line instanceof RemovedLine) {
+                this.changedLines.add(line);
+                // there was another changed line, so we were not at the trailing context yet
+                this.trailingContext.clear();
+            } else {
+                this.trailingContext.add(line);
+            }
+        }
+        this.hasMetaLine = allLines.get(allLines.size()-1) instanceof MetaLine;
     }
 
     public List<Line> changedLines() {
@@ -82,6 +99,10 @@ public final class Hunk implements IDiffComponent {
         return allLines;
     }
 
+    public boolean hasMetaLine() {
+        return hasMetaLine;
+    }
+
     public Hunk inverse() {
         List<Line> lines = new ArrayList<>(this.allLines.size());
 
@@ -102,4 +123,19 @@ public final class Hunk implements IDiffComponent {
         return new Hunk(this.location, this.rawLocation, lines);
     }
 
+    public boolean partiallyEquals(Hunk other) {
+        return this.location.equals(other.location) && this.allLines.equals(other.allLines);
+    }
+
+    public boolean endsWithEmptyLine() {
+        return allLines.get(allLines.size()-1).line().isEmpty();
+    }
+
+    public int size() {
+        return this.allLines.size();
+    }
+
+    public List<Line> trailingContext() {
+        return this.trailingContext;
+    }
 }

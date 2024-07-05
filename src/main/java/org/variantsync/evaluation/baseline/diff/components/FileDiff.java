@@ -1,5 +1,8 @@
 package org.variantsync.evaluation.baseline.diff.components;
 
+import org.variantsync.evaluation.baseline.diff.lines.Line;
+import org.variantsync.evaluation.patching.Change;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,5 +26,45 @@ public record FileDiff(List<String> header, List<Hunk> hunks, Path oldFile, Path
     @Override
     public int changeCount() {
         return this.hunks.stream().mapToInt(Hunk::changeCount).sum();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (String line : toLines()) {
+            sb.append(line);
+            sb.append(System.lineSeparator());
+        }
+        return sb.toString();
+    }
+
+    public boolean partiallyEquals(FileDiff other, int strip) {
+        if (other == null) {
+            return false;
+        }
+        if (!strippedPathsAreEqual(this.oldFile, other.oldFile, strip)) {
+            return false;
+        }
+        if (!strippedPathsAreEqual(this.newFile, other.newFile, strip)) {
+            return false;
+        }
+
+        return PartiallyEquals.subsetPartiallyEquals(this.hunks, other.hunks, Hunk::partiallyEquals);
+    }
+
+    public List<Change> intoChanges(int strip) {
+        final List<Change> changes = new ArrayList<>();
+        // Filter the hunks of each patch to extract changed lines
+        for (Hunk hunk : this.hunks()) {
+            Path filePath = this.oldFile().subpath(strip, this.oldFile().getNameCount());
+            for (Line changedLine : hunk.changedLines()) {
+                changes.add(new Change(changedLine, hunk, filePath));
+            }
+        }
+        return changes;
+    }
+
+    private boolean strippedPathsAreEqual(final Path a, final Path b, int strip) {
+        return a.subpath(strip, a.getNameCount()).equals(b.subpath(strip, b.getNameCount()));
     }
 }

@@ -1,11 +1,14 @@
 package org.variantsync.evaluation.baseline.diff.filter;
 
-import org.variantsync.evaluation.baseline.diff.components.*;
+import org.tinylog.Logger;
+import org.variantsync.evaluation.baseline.diff.components.FileDiff;
+import org.variantsync.evaluation.baseline.diff.components.Hunk;
+import org.variantsync.evaluation.baseline.diff.components.HunkLocation;
+import org.variantsync.evaluation.baseline.diff.components.OriginalDiff;
 import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
+import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
 import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
-import org.tinylog.Logger;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +18,12 @@ public class DiffFilter {
     /**
      * Filter the hunks in the given difference depending on the decision of the provided filters.
      *
-     * @param originalDiff    The difference that is to be filtered
-     * @param fileFilter      A file filter that determines whether the difference of specific files is to be kept
-     * @param lineFilter      A line filter that determines whether changes to certain lines are to be kept
+     * @param originalDiff The difference that is to be filtered
+     * @param fileFilter   A file filter that determines whether the difference of specific files is to be kept
+     * @param lineFilter   A line filter that determines whether changes to certain lines are to be kept
      * @return The filtered diff
      */
-    public static FineDiff filter(final OriginalDiff originalDiff, IFileDiffFilter fileFilter, ILineFilter lineFilter) {
+    public static OriginalDiff filter(final OriginalDiff originalDiff, IFileDiffFilter fileFilter, ILineFilter lineFilter) {
         fileFilter = fileFilter == null ? new DefaultFileDiffFilter() : fileFilter;
         lineFilter = lineFilter == null ? new DefaultLineFilter() : lineFilter;
 
@@ -42,7 +45,7 @@ public class DiffFilter {
             }
         }
 
-        return new FineDiff(filteredFileDiffs);
+        return new OriginalDiff(filteredFileDiffs);
     }
 
     // Filter the hunks in the given FileDiff depending on the
@@ -61,6 +64,9 @@ public class DiffFilter {
                     if (lineFilter.keepLineChange(fileDiff.oldFile(), hunk.location().startLineSource() + oldIndex)) {
                         filteredLines.add(line);
                         atLeastOneChange = true;
+                    } else {
+                        // Instead of removing the line completely, add it as context line so that the patch alignment does not break
+                        filteredLines.add(new ContextLine(" " + line.line().substring(1)));
                     }
                     oldIndex++;
                 } else if (line instanceof AddedLine) {

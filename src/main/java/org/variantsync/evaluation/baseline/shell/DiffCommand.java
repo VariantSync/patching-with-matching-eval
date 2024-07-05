@@ -1,11 +1,11 @@
 package org.variantsync.evaluation.baseline.shell;
 
-import org.variantsync.functjonal.Result;
 import org.variantsync.evaluation.error.ShellException;
+import org.variantsync.functjonal.Result;
 
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,9 +30,9 @@ public class DiffCommand extends ShellCommand {
     public static DiffCommand Recommended(final Path pathA, final Path pathB) {
         return new DiffCommand(pathA.toString(), pathB.toString())
                 .newFile()
-                .text()
                 .unified()
-                .recursive();
+                .recursive()
+                .ignoreTrailingSpace();
     }
 
     @Override
@@ -87,6 +87,31 @@ public class DiffCommand extends ShellCommand {
      */
     public DiffCommand recursive() {
         args.add("-r");
+        return this;
+    }
+
+    /**
+     * Ignore white space at line end
+     *
+     * @return this command
+     */
+    public DiffCommand ignoreTrailingSpace() {
+        args.add("-Z");
+        return this;
+    }
+
+    /**
+     * Ignore changes where lines are all blank
+     *
+     * @return this command
+     */
+    public DiffCommand ignoreBlankLines() {
+        args.add("-B");
+        return this;
+    }
+
+    public DiffCommand exclude(final String pattern) {
+        args.add("--exclude=" + pattern);
         return this;
     }
 

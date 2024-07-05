@@ -1,11 +1,11 @@
 package org.variantsync.evaluation.baseline.diff.filter;
 
 import org.prop4j.Node;
+import org.tinylog.Logger;
 import org.variantsync.evaluation.baseline.diff.components.FileDiff;
 import org.variantsync.evaluation.error.Panic;
 import org.variantsync.functjonal.Result;
 import org.variantsync.vevos.simulation.feature.Variant;
-import org.tinylog.Logger;
 import org.variantsync.vevos.simulation.util.io.CaseSensitivePath;
 import org.variantsync.vevos.simulation.variability.pc.Artefact;
 

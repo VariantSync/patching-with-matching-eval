@@ -43,4 +43,3 @@ diff -N -a -u -r version-A/first-file.txt version-B/first-file.txt
      System.out.println(cars);
    }
  }
-\ No newline at end of file

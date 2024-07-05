@@ -30,4 +30,3 @@ diff -Naur version-A/DiffParser.txt version-B/DiffParser.txt
 +        return new Hunk(location, content);
      }
  }
-\ No newline at end of file

@@ -1,12 +1,10 @@
 package org.variantsync.evaluation.baseline.diff.splitting;
 
+import org.tinylog.Logger;
 import org.variantsync.evaluation.baseline.diff.components.FileDiff;
+import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
 import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
 import org.variantsync.evaluation.baseline.diff.lines.Line;
-import org.variantsync.evaluation.baseline.diff.lines.MetaLine;
-import org.variantsync.evaluation.baseline.diff.filter.ILineFilter;
-import org.tinylog.Logger;
-
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -81,34 +79,27 @@ public class DefaultContextProvider implements IContextProvider {
             }
             return context;
         } catch (final IOException e) {
-            Logger.error("Was not able to load file:" + rootDir.resolve(fileDiff.newFile()), e);
+            Logger.debug("Was not able to load file:" + rootDir.resolve(fileDiff.newFile()), e);
             throw new UncheckedIOException(e);
         }
     }
 
     @Override
-    public List<Line> trailingContext(final ILineFilter lineFilter, final FileDiff fileDiff, final int index) {
+    public List<Line> trailingContext(final ILineFilter lineFilter, final FileDiff fileDiff, final int index, Line change, boolean isLastChange) {
         final LinkedList<Line> context = new LinkedList<>();
         final List<String> lines;
         try {
             // Read the file's content
             if (Files.exists(rootDir.resolve(fileDiff.oldFile()))) {
                 lines = Files.readAllLines(rootDir.resolve(fileDiff.oldFile()));
-                if (lines.isEmpty()) {
-                    return new ArrayList<>();
-                }
             } else {
-                return new ArrayList<>();
+                lines = new ArrayList<>();
             }
 
             // Consider the lines coming after the considered change, until the end of the file has been reached, or
             // until all required context lines have been determined
-            for (int i = index - 1; i <= lines.size(); i++) {
-                if (i == lines.size()) {
-                    // Add a meta-line stating EOF and break the loop
-                    context.addLast(new MetaLine());
-                    break;
-                }
+            int i = index - 1;
+            for (; !lines.isEmpty() && i < lines.size(); i++) {
                 final String currentLine = " " + lines.get(i);
                 // Apply the line filter to ignore certain lines
                 if (filterDisabled || lineFilter.keepContextLine(fileDiff.oldFile(), i + 1)) {
@@ -123,5 +114,10 @@ public class DefaultContextProvider implements IContextProvider {
             Logger.error("Was not able to load file:" + rootDir.resolve(fileDiff.newFile()), e);
             throw new UncheckedIOException(e);
         }
+    }
+
+    @Override
+    public int contextSize() {
+        return contextSize;
     }
 }

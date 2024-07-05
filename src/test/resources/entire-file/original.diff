@@ -1,0 +1,40 @@
+diff -Naur version-A/add-long.txt version-B/add-long.txt
+--- version-A/add-long.txt	1970-01-01 01:00:00.000000000 +0100
++++ version-B/add-long.txt	2023-11-05 14:53:05.745323540 +0100
+@@ -0,0 +1,8 @@
++A
++B
++C
++D
++E
++F
++G
++H
+\ No newline at end of file
+diff -Naur version-A/add.txt version-B/add.txt
+--- version-A/add.txt	1970-01-01 01:00:00.000000000 +0100
++++ version-B/add.txt	2023-11-05 14:04:56.822745986 +0100
+@@ -0,0 +1,2 @@
++another file
++which is added
+\ No newline at end of file
+diff -Naur version-A/remove-long.txt version-B/remove-long.txt
+--- version-A/remove-long.txt	2023-11-05 14:53:14.978716674 +0100
++++ version-B/remove-long.txt	1970-01-01 01:00:00.000000000 +0100
+@@ -1,8 +0,0 @@
+-1
+-2
+-3
+-4
+-5
+-6
+-7
+-8
+\ No newline at end of file
+diff -Naur version-A/remove.txt version-B/remove.txt
+--- version-A/remove.txt	2023-11-05 14:04:38.407982175 +0100
++++ version-B/remove.txt	1970-01-01 01:00:00.000000000 +0100
+@@ -1,2 +0,0 @@
+-This is a file
+-that will be removed!
+\ No newline at end of file
