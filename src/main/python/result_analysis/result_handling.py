@@ -3,6 +3,7 @@ from typing import List
 from typing import Dict
 from result_analysis.eval_setup import Repository
 from result_analysis.eval_setup import PatchResult
+from result_analysis.eval_setup import OutcomeClassification
 from collections import defaultdict
 
 
@@ -27,7 +28,12 @@ def results_per_language(
             # We only consider repos with a minimum number of cherry picks
             continue
 
-        language_cp_dict[repo.language].extend(results)
+        # Sum up the results per repo
+        classification = OutcomeClassification()
+        for result in results:
+            classification.add_result(result.outcome_classification)
+
+        language_cp_dict[repo.language].append(classification)
 
     return language_cp_dict
 

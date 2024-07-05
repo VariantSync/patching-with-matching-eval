@@ -6,6 +6,7 @@ from result_analysis.io import load_repositories_from_yaml
 from result_analysis.result_handling import results_per_repo
 from result_analysis.result_handling import results_per_language
 from result_analysis.result_handling import non_trivial_results
+from result_analysis.plots import boxplot_results_per_language
 
 
 def print_result_data():
@@ -58,3 +59,5 @@ def print_results_per_language(min=0):
 
     for (lang, results) in language_results.items():
         print(lang + ": " + str(len(results)))
+
+    boxplot_results_per_language(language_results)
