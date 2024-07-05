@@ -1,22 +1,22 @@
 import json
 import os
 import yaml
-from typing import List
+from typing import Dict
 from result_analysis.eval_setup import Patcher
 from result_analysis.eval_setup import PatchResult
 from result_analysis.eval_setup import Repository
 
 
-def load_repositories_from_yaml(path_to_yaml: str) -> List[Repository]:
+def load_repositories_from_yaml(path_to_yaml: str) -> Dict[str, Repository]:
     with open(path_to_yaml, 'r') as file:
         yaml_content = yaml.safe_load(file)
 
-    repos = []
+    repos = {}
     for repo_data in yaml_content:
-        repos.append(Repository(
+        repos[repo_data["name"]] = Repository(
             id=repo_data["id"],
             name=repo_data["name"],
-            language=repo_data["language"]))
+            language=repo_data["language"])
     return repos
 
 

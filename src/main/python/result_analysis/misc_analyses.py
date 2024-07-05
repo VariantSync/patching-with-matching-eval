@@ -3,6 +3,9 @@ from result_analysis.eval_setup import Patcher
 from result_analysis.io import find_results_for_patcher
 from result_analysis.io import read_results_from_file
 from result_analysis.io import load_repositories_from_yaml
+from result_analysis.result_handling import results_per_repo
+from result_analysis.result_handling import results_per_language
+from result_analysis.result_handling import non_trivial_results
 
 
 def print_result_data():
@@ -22,3 +25,36 @@ def load_repos():
     repo_sample = '../../../simulation-files/data/repo-sample.yaml'
     repos = load_repositories_from_yaml(repo_sample)
     print("num repos: " + str(len(repos)))
+    return repos
+
+
+def print_results_per_repo():
+    repos = load_repos()
+
+    directory_path = '/home/alex/data/cherry-picks/results/'
+    results = []
+    for file_path in find_results_for_patcher(directory_path, Patcher.MPatch):
+        results.extend(read_results_from_file(file_path))
+
+    # type: Dict[Repository, PatchResult]
+    repo_results = results_per_repo(results, repos)
+    for (repo, results) in repo_results.items():
+        print(repo.name + ": " + str(len(results)))
+
+
+def print_results_per_language(min=0):
+    repos = load_repos()
+
+    directory_path = '/home/alex/data/cherry-picks/results/'
+    results = []
+    for file_path in find_results_for_patcher(directory_path, Patcher.MPatch):
+        results.extend(read_results_from_file(file_path))
+
+    results = non_trivial_results(results)
+
+    # type: Dict[Repository, PatchResult]
+    repo_results = results_per_repo(results, repos)
+    language_results = results_per_language(repo_results, min)
+
+    for (lang, results) in language_results.items():
+        print(lang + ": " + str(len(results)))

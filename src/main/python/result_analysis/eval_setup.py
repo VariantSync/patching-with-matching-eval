@@ -26,7 +26,7 @@ class Repository:
 
 class PatchResult:
     def __init__(self, json_object):
-        self.dataset = json_object.get("dataset")
+        self.dataset = json_object.get("dataset").rsplit(".", 1)[0]
         self.run_id = json_object.get("runID")
         self.cherry_id = json_object.get("cherry")
         self.target_id = json_object.get("target")
