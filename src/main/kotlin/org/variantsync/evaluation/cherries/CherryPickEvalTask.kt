@@ -1,5 +1,7 @@
 package org.variantsync.evaluation.cherries
 
+import de.ovgu.featureide.fm.core.base.IFeature
+import org.prop4j.Node
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.CherryPickResultAnalysis
 import org.variantsync.evaluation.EvalConfig
@@ -15,6 +17,7 @@ import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
 import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
+import org.variantsync.vevos.simulation.feature.config.IConfiguration
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -23,6 +26,7 @@ import java.time.Instant
 import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Callable
+import kotlin.collections.ArrayList
 
 
 class CherryPickEvalTask(
@@ -88,8 +92,9 @@ class CherryPickEvalTask(
             Logger.debug("Created Debug directory.")
         }
 
-        val source = Variant("source") { true /* we have no knowledge about features, so everything is true */ }
-        val target = Variant("target") { true /* we have no knowledge about features, so everything is true */ }
+        /* we have no knowledge about features, so the configuration agrees with everything*/
+        val source = Variant("source", AllTrueConfiguration())
+        val target = Variant("target", AllTrueConfiguration())
 
         if (Files.exists(operations.splitPatchFile)) {
             Logger.debug("Cleaning old patch file " + operations.splitPatchFile)
@@ -308,4 +313,14 @@ class CherryPickEvalTask(
             .expect("Was not able to copy variant $target.name")
     }
 
+}
+
+class AllTrueConfiguration : IConfiguration {
+    override fun satisfies(p0: Node?): Boolean {
+        return true
+    }
+
+    override fun getFeatures(): MutableList<IFeature> {
+        return ArrayList()
+    }
 }
