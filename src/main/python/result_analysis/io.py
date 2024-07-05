@@ -10,7 +10,14 @@ from result_analysis.eval_setup import Repository
 def load_repositories_from_yaml(path_to_yaml: str) -> List[Repository]:
     with open(path_to_yaml, 'r') as file:
         yaml_content = yaml.safe_load(file)
-    return [Repository(**repo_data) for repo_data in yaml_content]
+
+    repos = []
+    for repo_data in yaml_content:
+        repos.append(Repository(
+            id=repo_data["id"],
+            name=repo_data["name"],
+            language=repo_data["language"]))
+    return repos
 
 
 def read_results_from_file(file_path) -> []:
