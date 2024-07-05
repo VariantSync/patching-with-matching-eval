@@ -13,6 +13,17 @@ class Patcher(Enum):
         return f"{self.__class__.__name__}.{self.name}"
 
 
+class Repository:
+    def __init__(self, id: int, name: str, language: str):
+        self.id = id
+        self.name = name
+        self.language = language
+
+    def __str__(self):
+        return f"Repository(id={self.id}, "
+        "name='{self.name}', language='{self.language}')"
+
+
 class PatchResult:
     def __init__(self, json_object):
         self.dataset = json_object.get("dataset")

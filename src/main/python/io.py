@@ -1,8 +1,16 @@
 import json
 import os
+import yaml
+from typing import List
 from eval_setup import Patcher
 from eval_setup import PatchResult
-from eval_setup import OutcomeClassification
+from eval_setup import Repository
+
+
+def load_repositories_from_yaml(path_to_yaml: str) -> List[Repository]:
+    with open(path_to_yaml, 'r') as file:
+        yaml_content = yaml.safe_load(file)
+    return [Repository(**repo_data) for repo_data in yaml_content]
 
 
 def read_results_from_file(file_path) -> []:
@@ -45,16 +53,3 @@ def find_results_for_patcher(directory_path, patcher: Patcher) -> []:
     """Find all result files in the given directory for the given patcher"""
     postfix = str(patcher) + ".results"
     return find_files_by_postfix(directory_path, postfix)
-
-
-if __name__ == "__main__":
-    directory_path = '/home/alex/data/cherry-picks/results/'
-    total_results = 0
-    summed_result = OutcomeClassification()
-    for file_path in find_results_for_patcher(directory_path, Patcher.MPatch):
-        result_objects = read_results_from_file(file_path)
-        print("Read " + str(len(result_objects)) + " results.")
-        total_results += len(result_objects)
-        summed_result.add_result(result_objects[0].outcome_classification)
-    print("Total: " + str(total_results))
-    print("summed result: \n" + str(summed_result))
