@@ -7,7 +7,7 @@ from result_analysis.eval_setup import PatchResult
 from result_analysis.eval_setup import Repository
 
 
-def load_repositories_from_yaml(path_to_yaml: str) -> Dict[str, Repository]:
+def load_repositories(path_to_yaml: str) -> Dict[str, Repository]:
     with open(path_to_yaml, 'r') as file:
         yaml_content = yaml.safe_load(file)
 
@@ -18,6 +18,13 @@ def load_repositories_from_yaml(path_to_yaml: str) -> Dict[str, Repository]:
             name=repo_data["name"],
             language=repo_data["language"])
     return repos
+
+
+def load_all_results(directory_path, patcher: Patcher):
+    results = []
+    for file_path in find_results_for_patcher(directory_path, patcher):
+        results.extend(read_results_from_file(file_path))
+    return results
 
 
 def read_results_from_file(file_path) -> []:

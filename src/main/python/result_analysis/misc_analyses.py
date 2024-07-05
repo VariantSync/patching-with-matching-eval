@@ -2,7 +2,7 @@ from result_analysis.eval_setup import OutcomeClassification
 from result_analysis.eval_setup import Patcher
 from result_analysis.io import find_results_for_patcher
 from result_analysis.io import read_results_from_file
-from result_analysis.io import load_repositories_from_yaml
+from result_analysis.io import load_repositories
 from result_analysis.result_handling import results_per_repo
 from result_analysis.result_handling import results_per_language
 from result_analysis.result_handling import non_trivial_results
@@ -24,7 +24,7 @@ def print_result_data():
 
 def load_repos():
     repo_sample = '../../../simulation-files/data/repo-sample.yaml'
-    repos = load_repositories_from_yaml(repo_sample)
+    repos = load_repositories(repo_sample)
     print("num repos: " + str(len(repos)))
     return repos
 
