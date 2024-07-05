@@ -8,14 +8,6 @@ COPY *gradle.kts ./
 COPY gradlew ./
 COPY gradle gradle
 
-# Install VEVOS_Simulation
-RUN apk update
-RUN apk add --no-cache --upgrade bash git maven
-RUN git clone https://github.com/VariantSync/VEVOS_Simulation.git
-WORKDIR /home/user/VEVOS_Simulation
-RUN git checkout determine-variability
-RUN mvn install
-
 # Build the evaluation
 WORKDIR /home/user
 RUN ./gradlew Cherries || exit

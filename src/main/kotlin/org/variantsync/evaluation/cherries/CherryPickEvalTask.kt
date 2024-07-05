@@ -319,8 +319,4 @@ class AllTrueConfiguration : IConfiguration {
     override fun satisfies(p0: Node?): Boolean {
         return true
     }
-
-    override fun getFeatures(): MutableList<IFeature> {
-        return ArrayList()
-    }
 }
