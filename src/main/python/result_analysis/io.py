@@ -2,9 +2,9 @@ import json
 import os
 import yaml
 from typing import List
-from eval_setup import Patcher
-from eval_setup import PatchResult
-from eval_setup import Repository
+from result_analysis.eval_setup import Patcher
+from result_analysis.eval_setup import PatchResult
+from result_analysis.eval_setup import Repository
 
 
 def load_repositories_from_yaml(path_to_yaml: str) -> List[Repository]:

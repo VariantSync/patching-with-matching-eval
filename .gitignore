@@ -21,3 +21,5 @@ simulation-files/ground-truth.zip
 /.gradle/
 /build/
 /logs/
+src/main/python/data_analysis/.env
+src/main/python/.env

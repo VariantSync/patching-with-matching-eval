@@ -1,11 +1,11 @@
-from .eval_setup import OutcomeClassification
-from .eval_setup import Patcher
-from .io import find_results_for_patcher
-from .io import read_results_from_file
-from .io import load_repositories_from_yaml
+from result_analysis.eval_setup import OutcomeClassification
+from result_analysis.eval_setup import Patcher
+from result_analysis.io import find_results_for_patcher
+from result_analysis.io import read_results_from_file
+from result_analysis.io import load_repositories_from_yaml
 
 
-if __name__ == "__main__":
+def print_result_data():
     directory_path = '/home/alex/data/cherry-picks/results/'
     total_results = 0
     summed_result = OutcomeClassification()
@@ -17,5 +17,7 @@ if __name__ == "__main__":
     print("Total: " + str(total_results))
     print("summed result: \n" + str(summed_result))
 
+
+def load_repos():
     repo_sample = '../../../simulation-files/data/repo-sample.yaml'
     load_repositories_from_yaml(repo_sample)
