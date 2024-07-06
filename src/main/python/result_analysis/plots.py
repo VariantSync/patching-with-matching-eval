@@ -97,7 +97,7 @@ def create_boxplot_per_patcher_per_language(
     plt.legend([plt.Line2D([0], [0], color='C{}'.format(i), lw=4)
                 for i in range(len(patchers))], patchers)
     plt.show()
-    plt.savefig("../../../../simulation-files/plots/" + value_name + ".pdf")
+    plt.savefig("/home/alex/papers/self/patching-with-matching/paper/figs/" + value_name + ".pdf")
 
 
 def boxplot_results_per_patcher(path_to_results, path_to_repo_list, min_results_per_repo):
