@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 
 # Just a comment
-def boxplot_results_per_language(path_to_results, path_to_repo_list, min_results_per_repo):  # dd d
+def boxplot_results_per_language(path_to_results, path_to_repo_list, min_results_per_repo, only_non_trivial):
     repos = load_repositories(path_to_repo_list)
     precisions_per_patcher = []
     recalls_per_patcher = []
@@ -24,7 +24,8 @@ def boxplot_results_per_language(path_to_results, path_to_repo_list, min_results
         print("Loading results for " + str(patcher))
         results = load_all_results(path_to_results, patcher)
         # Filter trivial results
-        results = non_trivial_results(results)
+        if only_non_trivial:
+            results = non_trivial_results(results)
         # Group results by repo
         results = results_per_repo(results, repos)
         # Accumulate repo results per language
@@ -96,8 +97,8 @@ def create_boxplot_per_patcher_per_language(
     # plt.title(value_name + ' per Language for each Patcher')
     plt.legend([plt.Line2D([0], [0], color='C{}'.format(i), lw=4)
                 for i in range(len(patchers))], patchers)
-    plt.show()
-    plt.savefig("/home/alex/papers/self/patching-with-matching/paper/figs/" + value_name + ".pdf")
+    #plt.show()
+    plt.savefig("/home/alex/papers/self/patching-with-matching/paper/figures/" + value_name + ".pdf")
 
 
 def boxplot_results_per_patcher(path_to_results, path_to_repo_list, min_results_per_repo):
