@@ -82,7 +82,8 @@ class OutcomeClassification:
 
     def __init__(self, json_object=None):
         if json_object is None:
-            return self.initialize_empty()
+            self.initialize_empty()
+            return
 
         self.applied_correctly = int(json_object.get("applied"))
         self.applied_invalid = int(json_object.get("invalid"))
@@ -105,7 +106,7 @@ class OutcomeClassification:
         return self.filtered_correctly + self.mitigated_invalid
 
     def fn(self) -> int:
-        return self.missing + self.applied_wrong_location
+        return self.missing + self.applied_wrong_location + self.filtered_incorrectly
 
     def add_result(self, other):
         self.applied_correctly += other.applied_correctly

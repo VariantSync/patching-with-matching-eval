@@ -88,7 +88,7 @@ def create_boxplot_per_patcher_per_language(
         # for each language
         ax.boxplot(language_precisions, positions=[
             (x + offset) for x in range(0, 10)], widths=0.1, patch_artist=True,
-            boxprops=dict(facecolor='C{}'.format(i)))
+            boxprops=dict(facecolor='C{}'.format(i)), showfliers=True)
         multiplier += 1
 
     plt.xticks(range(len(languages)), languages)
@@ -97,8 +97,9 @@ def create_boxplot_per_patcher_per_language(
     # plt.title(value_name + ' per Language for each Patcher')
     plt.legend([plt.Line2D([0], [0], color='C{}'.format(i), lw=4)
                 for i in range(len(patchers))], patchers)
-    #plt.show()
-    plt.savefig("/home/alex/papers/self/patching-with-matching/paper/figures/" + value_name + ".pdf")
+    # plt.show()
+    plt.savefig(
+        "/home/alex/papers/self/patching-with-matching/paper/figures/" + value_name + ".pdf")
 
 
 def boxplot_results_per_patcher(path_to_results, path_to_repo_list, min_results_per_repo):
