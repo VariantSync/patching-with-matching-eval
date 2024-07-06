@@ -17,7 +17,22 @@ def results_per_repo(
     return repo_results
 
 
-def results_per_language(
+def all_results_per_language(
+        repo_results: Dict[Repository, List[PatchResult]]) -> Dict[str, List[OutcomeClassification]]:
+    language_cp_dict = defaultdict(list)
+
+    for repo in repo_results.keys():  # type: Repository
+        results = repo_results[repo]
+
+        # Sum up the results per repo
+        for result in results:
+            language_cp_dict[repo.language].append(
+                result.outcome_classification)
+
+    return language_cp_dict
+
+
+def project_results_per_language(
         repo_results: Dict[Repository, List[PatchResult]],
         min_num_results_per_repo: int) -> Dict[str, List[OutcomeClassification]]:
     language_cp_dict = defaultdict(list)
