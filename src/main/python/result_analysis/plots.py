@@ -15,6 +15,86 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 
 
+# Just a comment
+def boxplot_results_per_language(path_to_results, path_to_repo_list, min_results_per_repo):
+    repos = load_repositories(path_to_repo_list)
+    precisions_per_patcher = []
+    recalls_per_patcher = []
+    patchers = []
+    languages = None
+    for patcher in Patcher:  # Patcher is an enum
+        print("Loading results for " + str(patcher))
+        results = load_all_results(path_to_results, patcher)
+        # Filter trivial results
+        results = non_trivial_results(results)
+        # Group results by repo
+        results = results_per_repo(results, repos)
+        # Accumulate repo results per language
+        lang_results = results_per_language(results, min_results_per_repo)
+        precision_per_language = []
+        recall_per_language = []
+        if languages is None:
+            languages = list(lang_results.keys())
+        for language in languages:
+            print("processing " + language)
+            results = lang_results[language]
+            precisions = []
+            recalls = []
+            for res in results:
+                precision, recall = calculate_precision_recall(
+                    res.tp(), res.fp(), res.fn())
+                precisions.append(precision)
+                recalls.append(recall)
+            precision_per_language.append(precisions)
+            recall_per_language.append(recalls)
+
+        patchers.append(patcher)
+        precisions_per_patcher.append(precision_per_language)
+        recalls_per_patcher.append(recall_per_language)
+
+    create_boxplot(patchers, languages, precisions_per_patcher, "Precision")
+    create_boxplot(patchers, languages, recalls_per_patcher, "Recall")
+
+
+def create_boxplot(patchers: List[Patcher], languages: List[str], values_per_patcher, value_name: str):
+    # Initialize figure for boxplots
+    plt.figure(figsize=(10, 6))
+    width = 0.25  # the width of the bars
+    multiplier = 0
+
+    fig, ax = plt.subplots(layout='constrained')
+
+    # Create a boxplot for each language for each patcher
+    # There are ten languages that we considered, and for each language we have a different number of repos
+    for i, patcher in enumerate(patchers):
+        print(patcher)
+        for j, lang in enumerate(languages):
+            print(lang + ": " + str(values_per_patcher[i][j]))
+
+        offset = width * multiplier
+        # We evaluated the precision of three patchers for each language and repo
+        # precisions_per_patcher is a list of three lists (one for each patcher); each patcher list contains ten lists
+        # (one for each language), and each of those ten lists contains x lists (one for each repository with that
+        # language)
+        language_precisions = values_per_patcher[i]
+
+        # This command should plot 10 boxplots for each considered patcher
+        # The x-axis lists the ten languages, and the results of the different patchers are placed next to each other
+        # for each language
+        ax.boxplot(language_precisions, positions=[
+            (x + offset) for x in range(0, 10)], widths=0.1, patch_artist=True,
+                   boxprops=dict(facecolor='C{}'.format(i)))
+        multiplier += 1
+
+    plt.xticks(range(len(languages)), languages)
+    plt.xlabel('Programming Language')
+    plt.ylabel(value_name)
+    # plt.title(value_name + ' per Language for each Patcher')
+    plt.legend([plt.Line2D([0], [0], color='C{}'.format(i), lw=4)
+                for i in range(len(patchers))], patchers)
+    plt.show()
+
+
 def boxplot_results_per_patcher(path_to_results, path_to_repo_list, min_results_per_repo):
     repos = load_repositories(path_to_repo_list)
     precisions_per_patcher = []
@@ -65,38 +145,6 @@ def boxplot_results_per_patcher(path_to_results, path_to_repo_list, min_results_
     plt.xlabel('Patcher')
     plt.ylabel('Recall')
     plt.title('Recall per Patcher')
-
-    # Show the final figure
-    plt.show()
-
-
-def boxplot_results_per_language(
-        results_per_language: Dict[str, List[PatchResult]]):
-    # Initialize figure for boxplots
-    plt.figure(figsize=(10, 6))
-
-    # Calculate the precisions for each repository associated with a language
-    # and create a boxplot for that language
-    language_names = []
-    all_precisions = []
-    for language, results in results_per_language.items():
-        precision_per_repo = []
-        for result in results:
-            tp = result.tp()
-            fp = result.fp()
-            if tp + fp > 0:
-                precision = tp / (tp + fp)
-            else:
-                precision = 0
-            precision_per_repo.append(precision)
-        all_precisions.append(precision_per_repo)
-        language_names.append(language)
-
-    # Add a boxplot for the precision on repos of that language to the figure
-    plt.boxplot(all_precisions, labels=language_names)
-    plt.xlabel('Programming Language')
-    plt.ylabel('Precision')
-    plt.title('Precision per Language for Patch Outcomes')
 
     # Show the final figure
     plt.show()

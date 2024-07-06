@@ -10,20 +10,20 @@ from collections import defaultdict
 def results_per_repo(
         results: List[PatchResult],
         repos_by_name: Dict[str, Repository]) -> Dict[Repository, List[PatchResult]]:
-    results_per_repo = defaultdict(list)
+    repo_results = defaultdict(list)
     for result in results:  # type: PatchResult
         repo = repos_by_name[result.dataset]
-        results_per_repo[repo].append(result)
-    return results_per_repo
+        repo_results[repo].append(result)
+    return repo_results
 
 
 def results_per_language(
-        results_per_repo: Dict[Repository, PatchResult],
-        min_num_results_per_repo: int) -> Dict[str, List[PatchResult]]:
+        repo_results: Dict[Repository, List[PatchResult]],
+        min_num_results_per_repo: int) -> Dict[str, List[OutcomeClassification]]:
     language_cp_dict = defaultdict(list)
 
-    for repo in results_per_repo.keys():  # type: Repository
-        results = results_per_repo[repo]
+    for repo in repo_results.keys():  # type: Repository
+        results = repo_results[repo]
         if len(results) < min_num_results_per_repo:
             # We only consider repos with a minimum number of cherry picks
             continue
