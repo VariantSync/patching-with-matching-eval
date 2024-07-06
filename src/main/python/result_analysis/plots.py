@@ -146,7 +146,7 @@ def create_boxplot_per_patcher_per_language(
     # plt.title(value_name + ' per Language for each Patcher')
     plt.legend([plt.Line2D([0], [0], color='C{}'.format(i), lw=4)
                 for i in range(len(patchers))], patchers)
-    plt.show()
+    #plt.show()
     plt.savefig(
         "/home/alex/papers/self/patching-with-matching/paper/figures/" + value_name + ".pdf")
 
