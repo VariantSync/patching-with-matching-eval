@@ -18,7 +18,7 @@ def results_per_repo(
 
 
 def all_results_per_language(
-        repo_results: Dict[Repository, List[PatchResult]]) -> Dict[str, List[OutcomeClassification]]:
+        repo_results: Dict[Repository, List[PatchResult]]) -> Dict[str, List[PatchResult]]:
     language_cp_dict = defaultdict(list)
 
     for repo in repo_results.keys():  # type: Repository
@@ -26,8 +26,7 @@ def all_results_per_language(
 
         # Sum up the results per repo
         for result in results:
-            language_cp_dict[repo.language].append(
-                result.outcome_classification)
+            language_cp_dict[repo.language].append(result)
 
     return language_cp_dict
 
@@ -61,3 +60,42 @@ def filter_results(
 
 def non_trivial_results(results: List[PatchResult]) -> List[PatchResult]:
     return filter_results(results, lambda r: not r.patch_is_trivial)
+
+
+def overall_automation(results: List[PatchResult]) -> float:
+    """
+    Calculate the overall automation percentage
+    """
+    num_perfect = 0
+    for result in results:  # type: PatchResult
+        oc = result.outcome_classification
+
+        if oc.fp() == 0 and oc.fn() == 0:
+            num_perfect += 1
+
+    return num_perfect / len(results)
+
+
+def edit_distance(results: List[PatchResult]) -> (float, int):
+    """
+    Calculate the average edit distance and median edit distance from a list of results.
+    """
+
+    edit_distances = []
+    for result in results:  # type: PatchResult
+        edit_distances.append(result.outcome_classification.edit_distance)
+
+    return (sum(edit_distances) / len(edit_distances),
+            sorted(edit_distances)[len(edit_distances) // 2])
+
+
+def runtime(results: List[PatchResult]) -> (float, int):
+    """
+    Calculate the average runtime and median runtime from a list of results.
+    """
+    runtimes = []
+    for result in results:  # type: PatchResult
+        runtimes.append(result.patch_duration)
+
+    return (sum(runtimes) / len(runtimes),
+            sorted(runtimes)[len(runtimes) // 2])

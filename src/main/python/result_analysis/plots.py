@@ -44,7 +44,7 @@ def boxplot_results_lang_overall(path_to_results, path_to_repo_list, only_non_tr
             recalls = []
             for res in results:
                 precision, recall = calculate_precision_recall(
-                    res.tp(), res.fp(), res.fn())
+                    res.outcome_classification.tp(), res.outcome_classification.fp(), res.outcome_classification.fn())
                 precisions.append(precision)
                 recalls.append(recall)
             precision_per_language.append(precisions)
