@@ -20,8 +20,7 @@ class Repository:
         self.language = language
 
     def __str__(self):
-        return f"Repository(id={self.id}, "
-        "name='{self.name}', language='{self.language}')"
+        return f"Repository(id={self.id}, name='{self.name}', language='{self.language}')"
 
 
 class PatchResult:

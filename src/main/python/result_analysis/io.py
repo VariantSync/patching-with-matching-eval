@@ -1,7 +1,8 @@
 import json
 import os
 import yaml
-from typing import Dict
+from typing import Dict, LiteralString
+from typing import List
 from result_analysis.eval_setup import Patcher
 from result_analysis.eval_setup import PatchResult
 from result_analysis.eval_setup import Repository
@@ -27,7 +28,7 @@ def load_all_results(directory_path, patcher: Patcher):
     return results
 
 
-def read_results_from_file(file_path) -> []:
+def read_results_from_file(file_path) -> List[PatchResult]:
     """Out result files contain lists of JSON objects that are separated by
     blank lines, e.g.,:
     ```json
@@ -52,7 +53,7 @@ def read_results_from_file(file_path) -> []:
     return results
 
 
-def find_files_by_postfix(directory_path, postfix: str) -> []:
+def find_files_by_postfix(directory_path, postfix: str) -> List[LiteralString]:
     """Find all files in the given directory that end
     with the given postfix."""
     files = []
@@ -63,7 +64,7 @@ def find_files_by_postfix(directory_path, postfix: str) -> []:
     return files
 
 
-def find_results_for_patcher(directory_path, patcher: Patcher) -> []:
+def find_results_for_patcher(directory_path, patcher: Patcher) -> List[LiteralString]:
     """Find all result files in the given directory for the given patcher"""
     postfix = str(patcher) + ".results"
     return find_files_by_postfix(directory_path, postfix)

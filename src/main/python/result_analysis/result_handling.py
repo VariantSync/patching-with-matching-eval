@@ -8,20 +8,21 @@ from collections import defaultdict
 
 
 def results_per_repo(
-        results: List[PatchResult],
-        repos_by_name: Dict[str, Repository]) -> Dict[Repository, List[PatchResult]]:
+    results: List[PatchResult], repos_by_name: Dict[str, Repository]
+) -> Dict[Repository, List[PatchResult]]:
     repo_results = defaultdict(list)
-    for result in results:  # type: PatchResult
+    for result in results:
         repo = repos_by_name[result.dataset]
         repo_results[repo].append(result)
     return repo_results
 
 
 def all_results_per_language(
-        repo_results: Dict[Repository, List[PatchResult]]) -> Dict[str, List[PatchResult]]:
+    repo_results: Dict[Repository, List[PatchResult]],
+) -> Dict[str, List[PatchResult]]:
     language_cp_dict = defaultdict(list)
 
-    for repo in repo_results.keys():  # type: Repository
+    for repo in repo_results.keys():
         results = repo_results[repo]
 
         # Sum up the results per repo
@@ -32,11 +33,11 @@ def all_results_per_language(
 
 
 def project_results_per_language(
-        repo_results: Dict[Repository, List[PatchResult]],
-        min_num_results_per_repo: int) -> Dict[str, List[OutcomeClassification]]:
+    repo_results: Dict[Repository, List[PatchResult]], min_num_results_per_repo: int
+) -> Dict[str, List[OutcomeClassification]]:
     language_cp_dict = defaultdict(list)
 
-    for repo in repo_results.keys():  # type: Repository
+    for repo in repo_results.keys():
         results = repo_results[repo]
         if len(results) < min_num_results_per_repo:
             # We only consider repos with a minimum number of cherry picks
@@ -53,8 +54,8 @@ def project_results_per_language(
 
 
 def filter_results(
-        results: List[PatchResult],
-        filter_func: Callable[[PatchResult], bool]) -> List[PatchResult]:
+    results: List[PatchResult], filter_func: Callable[[PatchResult], bool]
+) -> List[PatchResult]:
     return [result for result in results if filter_func(result)]
 
 
@@ -67,7 +68,7 @@ def overall_automation(results: List[PatchResult]) -> float:
     Calculate the overall automation percentage
     """
     num_perfect = 0
-    for result in results:  # type: PatchResult
+    for result in results:
         oc = result.outcome_classification
 
         if oc.fp() == 0 and oc.fn() == 0:
@@ -76,26 +77,27 @@ def overall_automation(results: List[PatchResult]) -> float:
     return num_perfect / len(results)
 
 
-def edit_distance(results: List[PatchResult]) -> (float, int):
+def edit_distance(results: List[PatchResult]) -> tuple[float, int]:
     """
     Calculate the average edit distance and median edit distance from a list of results.
     """
 
     edit_distances = []
-    for result in results:  # type: PatchResult
+    for result in results:
         edit_distances.append(result.outcome_classification.edit_distance)
 
-    return (sum(edit_distances) / len(edit_distances),
-            sorted(edit_distances)[len(edit_distances) // 2])
+    return (
+        sum(edit_distances) / len(edit_distances),
+        sorted(edit_distances)[len(edit_distances) // 2],
+    )
 
 
-def runtime(results: List[PatchResult]) -> (float, int):
+def runtime(results: List[PatchResult]) -> tuple[float, int]:
     """
     Calculate the average runtime and median runtime from a list of results.
     """
     runtimes = []
-    for result in results:  # type: PatchResult
+    for result in results:
         runtimes.append(result.patch_duration)
 
-    return (sum(runtimes) / len(runtimes),
-            sorted(runtimes)[len(runtimes) // 2])
+    return (sum(runtimes) / len(runtimes), sorted(runtimes)[len(runtimes) // 2])

@@ -10,6 +10,7 @@ from result_analysis.result_handling import results_per_repo
 from result_analysis.metrics import calculate_precision_recall
 
 
+from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 
 languages = [("Python", "py"), ("JavaScript", "js"), ("Go", "go"),
@@ -144,7 +145,7 @@ def create_boxplot_per_patcher_per_language(
     plt.xlabel('Project Language on GitHub')
     plt.ylabel("Patching " + value_name)
     # plt.title(value_name + ' per Language for each Patcher')
-    plt.legend([plt.Line2D([0], [0], color='C{}'.format(i), lw=4)
+    plt.legend([Line2D([0], [0], color='C{}'.format(i), lw=4)
                 for i in range(len(patchers))], patchers)
     # plt.show()
     plt.savefig(
@@ -186,7 +187,7 @@ def boxplot_results_per_patcher(path_to_results, path_to_repo_list, min_results_
     # Initialize figure for boxplots
     plt.figure(figsize=(10, 6))
     # Add a boxplot for the precision on repos of that language to the figure
-    plt.boxplot(precisions_per_patcher, labels=patchers)
+    plt.boxplot(precisions_per_patcher, label=patchers)
     plt.xlabel('Patcher')
     plt.ylabel('Precision')
     plt.title('Precision per Patcher')
@@ -197,7 +198,7 @@ def boxplot_results_per_patcher(path_to_results, path_to_repo_list, min_results_
     # Initialize figure for boxplots
     plt.figure(figsize=(10, 6))
     # Add a boxplot for the precision on repos of that language to the figure
-    plt.boxplot(recalls_per_patcher, labels=patchers)
+    plt.boxplot(recalls_per_patcher, label=patchers)
     plt.xlabel('Patcher')
     plt.ylabel('Recall')
     plt.title('Recall per Patcher')
