@@ -20,7 +20,9 @@ class Repository:
         self.language = language
 
     def __str__(self):
-        return f"Repository(id={self.id}, name='{self.name}', language='{self.language}')"
+        return (
+            f"Repository(id={self.id}, name='{self.name}', language='{self.language}')"
+        )
 
 
 class PatchResult:
@@ -29,13 +31,12 @@ class PatchResult:
         self.run_id = json_object.get("runID")
         self.cherry_id = json_object.get("cherry")
         self.target_id = json_object.get("target")
-        self.num_actual_vs_expected = int(json_object.get(
-            "normalActualVsExpected"))
+        self.num_actual_vs_expected = int(json_object.get("normalActualVsExpected"))
         self.num_changes_total = int(json_object.get("lineNormal"))
-        self.num_changes_applied = int(
-            json_object.get("lineSuccessNormal"))
+        self.num_changes_applied = int(json_object.get("lineSuccessNormal"))
         self.outcome_classification = OutcomeClassification(
-            json_object.get("normalResult"))
+            json_object.get("normalResult")
+        )
         self.patch_duration = float(json_object.get("patchDuration"))
         self.patch_is_trivial = bool(json_object.get("patchIsTrivial"))
 
@@ -67,7 +68,6 @@ class PatchResult:
 
 
 class OutcomeClassification:
-
     def initialize_empty(self):
         self.applied_correctly = 0
         self.applied_invalid = 0
@@ -89,8 +89,7 @@ class OutcomeClassification:
         self.applied_wrong_location = int(json_object.get("wrongLocation"))
         self.missing = int(json_object.get("missing"))
         self.filtered_correctly = int(json_object.get("filteredCorrectly"))
-        self.filtered_incorrectly = int(
-            json_object.get("filteredIncorrectly"))
+        self.filtered_incorrectly = int(json_object.get("filteredIncorrectly"))
         self.mitigated_invalid = int(json_object.get("mitigatedInvalid"))
         self.mitigated_missing = int(json_object.get("mitigatedMissing"))
         self.edit_distance = int(json_object.get("editDistance"))
@@ -107,6 +106,12 @@ class OutcomeClassification:
     def fn(self) -> int:
         return self.missing + self.applied_wrong_location + self.filtered_incorrectly
 
+    def num_correct(self) -> int:
+        return self.tp() + self.tn()
+
+    def num_incorrect(self) -> int:
+        return self.fp() + self.fn()
+
     def add_result(self, other):
         self.applied_correctly += other.applied_correctly
         self.applied_invalid += other.applied_invalid
@@ -119,24 +124,28 @@ class OutcomeClassification:
         self.edit_distance += other.edit_distance
 
     def __str__(self):
-        return (f"applied_correctly \t= {self.applied_correctly},\n"
-                f"applied_invalid \t= {self.applied_invalid},\n"
-                f"applied_wrong_location \t= {self.applied_wrong_location},\n"
-                f"missing \t\t= {self.missing},\n"
-                f"filtered_correctly \t= {self.filtered_correctly},\n"
-                f"filtered_incorrectly \t= {self.filtered_incorrectly},\n"
-                f"mitigated_invalid \t= {self.mitigated_invalid},\n"
-                f"mitigated_missing \t= {self.mitigated_missing},\n"
-                f"edit_distance \t\t= {self.edit_distance}")
+        return (
+            f"applied_correctly \t= {self.applied_correctly},\n"
+            f"applied_invalid \t= {self.applied_invalid},\n"
+            f"applied_wrong_location \t= {self.applied_wrong_location},\n"
+            f"missing \t\t= {self.missing},\n"
+            f"filtered_correctly \t= {self.filtered_correctly},\n"
+            f"filtered_incorrectly \t= {self.filtered_incorrectly},\n"
+            f"mitigated_invalid \t= {self.mitigated_invalid},\n"
+            f"mitigated_missing \t= {self.mitigated_missing},\n"
+            f"edit_distance \t\t= {self.edit_distance}"
+        )
 
     def __repr__(self):
-        return (f"OutcomeClassification("
-                f"applied_correctly={self.applied_correctly!r}, "
-                f"applied_invalid={self.applied_invalid!r}, "
-                f"applied_wrong_location={self.applied_wrong_location!r}, "
-                f"missing={self.missing!r}, "
-                f"filtered_correctly={self.filtered_correctly!r}, "
-                f"filtered_incorrectly={self.filtered_incorrectly!r}, "
-                f"mitigated_invalid={self.mitigated_invalid!r}, "
-                f"mitigated_missing={self.mitigated_missing!r}, "
-                f"edit_distance={self.edit_distance!r})")
+        return (
+            f"OutcomeClassification("
+            f"applied_correctly={self.applied_correctly!r}, "
+            f"applied_invalid={self.applied_invalid!r}, "
+            f"applied_wrong_location={self.applied_wrong_location!r}, "
+            f"missing={self.missing!r}, "
+            f"filtered_correctly={self.filtered_correctly!r}, "
+            f"filtered_incorrectly={self.filtered_incorrectly!r}, "
+            f"mitigated_invalid={self.mitigated_invalid!r}, "
+            f"mitigated_missing={self.mitigated_missing!r}, "
+            f"edit_distance={self.edit_distance!r})"
+        )

@@ -5,6 +5,7 @@ from result_analysis.eval_setup import Repository
 from result_analysis.eval_setup import PatchResult
 from result_analysis.eval_setup import OutcomeClassification
 from collections import defaultdict
+import numpy as np
 
 
 def results_per_repo(
@@ -77,7 +78,41 @@ def overall_automation(results: List[PatchResult]) -> float:
     return num_perfect / len(results)
 
 
+def edit_distance_percentiles(
+    results: List[PatchResult],
+) -> tuple[int, int, int, int, int]:
+    """
+    Determine the 25, 50, 75, 99, and 100 percentiles of edit distances
+    """
+
+    edit_distances = []
+    for result in results:
+        edit_distances.append(result.outcome_classification.num_incorrect())
+
+    edit_distances = sorted(edit_distances)
+
+    # Determine percentiles
+    percentiles = np.percentile(edit_distances, [25, 50, 75, 99, 100])
+
+    return tuple(percentiles)
+
+
 def edit_distance(results: List[PatchResult]) -> tuple[float, int]:
+    """
+    Calculate the average edit distance and median edit distance from a list of results.
+    """
+
+    edit_distances = []
+    for result in results:
+        edit_distances.append(result.outcome_classification.num_incorrect())
+
+    return (
+        sum(edit_distances) / len(edit_distances),
+        sorted(edit_distances)[len(edit_distances) // 2],
+    )
+
+
+def edit_distance_alt(results: List[PatchResult]) -> tuple[float, int]:
     """
     Calculate the average edit distance and median edit distance from a list of results.
     """
