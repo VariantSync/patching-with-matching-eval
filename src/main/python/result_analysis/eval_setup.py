@@ -78,6 +78,8 @@ class OutcomeClassification:
         self.mitigated_invalid = 0
         self.mitigated_missing = 0
         self.edit_distance = 0
+        self.fully_correct = 0
+        self.num_results = 0
 
     def __init__(self, json_object=None):
         if json_object is None:
@@ -93,6 +95,11 @@ class OutcomeClassification:
         self.mitigated_invalid = int(json_object.get("mitigatedInvalid"))
         self.mitigated_missing = int(json_object.get("mitigatedMissing"))
         self.edit_distance = int(json_object.get("editDistance"))
+        self.num_results = 1
+        if self.num_incorrect() == 0:
+            self.fully_correct = 1
+        else:
+            self.fully_correct = 0
 
     def tp(self) -> int:
         return self.applied_correctly + self.mitigated_missing
@@ -122,6 +129,8 @@ class OutcomeClassification:
         self.mitigated_invalid += other.mitigated_invalid
         self.mitigated_missing += other.mitigated_missing
         self.edit_distance += other.edit_distance
+        self.fully_correct += other.fully_correct
+        self.num_results += other.num_results
 
     def __str__(self):
         return (
