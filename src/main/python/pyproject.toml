@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "pwm_eval"
+version = "0.1.0"
+description = "Result analysis scripts for patching with matching"
+authors = ["Alexander Schultheiß <AlexanderSchultheiss@pm.me>"]
+packages = [
+    { include = "result_analysis", from = "." }
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pyyaml = "*"
+matplotlib = "*"
+setuptools = "*"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
