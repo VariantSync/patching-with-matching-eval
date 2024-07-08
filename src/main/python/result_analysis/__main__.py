@@ -6,7 +6,7 @@ from result_analysis.plots import (
 from result_analysis.plots import boxplot_results_lang_overall
 from sys import argv
 
-from result_analysis.tables import rq3_table, rq3_table_alt
+from result_analysis.tables import better_or_worse, rq3_table, rq3_table_alt
 
 
 def main():
@@ -21,12 +21,14 @@ def main():
     #     results_dir, repo_sample, only_non_trivial=True)
     # boxplot_results_per_patcher(results_dir, repo_sample, min)
     # rq3_table(results_dir, only_non_trivial=True)
-    ed_runtime_boxplot_results_lang_overall(
-        results_dir, repo_sample, only_non_trivial=True
-    )
-    automation_boxplot_results_lang_per_proj(
-        results_dir, repo_sample, minimum, only_non_trivial=True
-    )
+    # ed_runtime_boxplot_results_lang_overall(
+    #    results_dir, repo_sample, only_non_trivial=True
+    # )
+    # automation_boxplot_results_lang_per_proj(
+    #    results_dir, repo_sample, minimum, only_non_trivial=True
+    # )
+
+    better_or_worse(results_dir, repo_sample, only_non_trivial=True)
 
 
 #    rq3_table_alt(results_dir, repo_sample, only_non_trivial=True)
