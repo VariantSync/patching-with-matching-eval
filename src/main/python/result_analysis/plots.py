@@ -54,7 +54,8 @@ def ed_runtime_boxplot_results_lang_overall(
             eds = []
             runtimes = []
             for res in results:
-                eds.append(res.outcome_classification.num_incorrect())
+                if res.outcome_classification.num_incorrect() > 0:
+                    eds.append(res.outcome_classification.num_incorrect())
                 runtimes.append(res.patch_duration)
             edit_distance_per_language.append(eds)
             runtime_per_language.append(runtimes)
@@ -204,7 +205,7 @@ def automation_boxplot_results_lang_per_proj(
             results = lang_results[language]
             automation = []
             for res in results:
-                automation.append(res.fully_correct / res.num_results)
+                automation.append(100 * (res.fully_correct / res.num_results))
             automation_per_language.append(automation)
 
         patchers.append(patcher)
