@@ -8,4 +8,4 @@ Setup the environment and download dependencies with `poetry install`.
 
 Then, activate the environment with `poetry shell`.
 
-After `poetry install`, you can execute the evaluation with `run-eval`. 
+After `poetry install`, you can execute the evaluation with `run-eval` in the `poetry shell`
