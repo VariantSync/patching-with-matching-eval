@@ -57,6 +57,7 @@ def ed_runtime_boxplot_results_lang_overall(
                 if res.outcome_classification.num_incorrect() > 0:
                     eds.append(res.outcome_classification.num_incorrect())
                 runtimes.append(res.patch_duration)
+            print("worst edit distance: " + str(max(eds)))
             edit_distance_per_language.append(eds)
             runtime_per_language.append(runtimes)
 
@@ -140,7 +141,11 @@ def boxplot_results_lang_overall(
 
 
 def boxplot_results_lang_per_proj(
-    path_to_results, path_to_repo_list, min_results_per_repo, only_non_trivial
+    path_to_results,
+    path_to_repo_list,
+    min_results_per_repo,
+    only_non_trivial,
+    showfliers,
 ):
     global languages
     repos = load_repositories(path_to_repo_list)
@@ -180,10 +185,14 @@ def boxplot_results_lang_per_proj(
 
     language_names = [lang[1] for lang in languages]
     create_boxplot_per_patcher_per_language(
-        patchers, language_names, precisions_per_patcher, "Precision"
+        patchers,
+        language_names,
+        precisions_per_patcher,
+        "Precision",
+        showfliers=showfliers,
     )
     create_boxplot_per_patcher_per_language(
-        patchers, language_names, recalls_per_patcher, "Recall"
+        patchers, language_names, recalls_per_patcher, "Recall", showfliers=showfliers
     )
 
 
@@ -249,9 +258,6 @@ def create_boxplot_per_patcher_per_language(
     # There are ten languages that we considered, and for each language we have a different number of repos
     for i, patcher in enumerate(patchers):
         print(patcher)
-        for j, lang in enumerate(language_names):
-            print(lang + ": " + str(values_per_patcher[i][j]))
-
         offset = width * multiplier
         # We evaluated the precision of three patchers for each language and repo
         # precisions_per_patcher is a list of three lists (one for each patcher); each patcher list contains ten lists
