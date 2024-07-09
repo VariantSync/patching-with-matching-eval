@@ -28,7 +28,7 @@ languages = [
 
 
 def ed_runtime_boxplot_results_lang_overall(
-    path_to_results, path_to_repo_list, only_non_trivial
+    path_to_results, path_to_repo_list, only_non_trivial, showfliers: bool
 ):
     global languages
     repos = load_repositories(path_to_repo_list)
@@ -70,18 +70,20 @@ def ed_runtime_boxplot_results_lang_overall(
         language_names,
         edit_distance_per_patcher,
         "EditDistance",
-        showfliers=False,
+        showfliers=showfliers,
     )
     create_boxplot_per_patcher_per_language(
         patchers,
         language_names,
         runtime_per_patcher,
         "Runtime",
-        showfliers=False,
+        showfliers=showfliers,
     )
 
 
-def boxplot_results_lang_overall(path_to_results, path_to_repo_list, only_non_trivial):
+def boxplot_results_lang_overall(
+    path_to_results, path_to_repo_list, only_non_trivial, showfliers: bool
+):
     global languages
     repos = load_repositories(path_to_repo_list)
     precisions_per_patcher = []
@@ -126,10 +128,14 @@ def boxplot_results_lang_overall(path_to_results, path_to_repo_list, only_non_tr
         language_names,
         precisions_per_patcher,
         "PrecisionAll",
-        showfliers=False,
+        showfliers=showfliers,
     )
     create_boxplot_per_patcher_per_language(
-        patchers, language_names, recalls_per_patcher, "RecallAll", showfliers=False
+        patchers,
+        language_names,
+        recalls_per_patcher,
+        "RecallAll",
+        showfliers=showfliers,
     )
 
 
@@ -182,7 +188,11 @@ def boxplot_results_lang_per_proj(
 
 
 def automation_boxplot_results_lang_per_proj(
-    path_to_results, path_to_repo_list, min_results_per_repo, only_non_trivial
+    path_to_results,
+    path_to_repo_list,
+    min_results_per_repo,
+    only_non_trivial,
+    showfliers,
 ):
     global languages
     repos = load_repositories(path_to_repo_list)
@@ -213,7 +223,11 @@ def automation_boxplot_results_lang_per_proj(
 
     language_names = [lang[1] for lang in languages]
     create_boxplot_per_patcher_per_language(
-        patchers, language_names, automation_per_patcher, "Automation"
+        patchers,
+        language_names,
+        automation_per_patcher,
+        "Automation",
+        showfliers=showfliers,
     )
 
 
@@ -248,7 +262,7 @@ def create_boxplot_per_patcher_per_language(
         # This command should plot 10 boxplots for each considered patcher
         # The x-axis lists the ten languages, and the results of the different patchers are placed next to each other
         # for each language
-        ax.boxplot(
+        bp = ax.boxplot(
             language_precisions,
             positions=[(x + offset) for x in range(0, 10)],
             widths=0.1,
@@ -256,6 +270,8 @@ def create_boxplot_per_patcher_per_language(
             boxprops=dict(facecolor="C{}".format(i)),
             showfliers=showfliers,
         )
+        plt.setp(bp["fliers"], color="red", marker="+")
+        plt.setp(bp["fliers"], markersize=1.0)
         multiplier += 1
 
     plt.xticks(range(len(languages)), language_names)

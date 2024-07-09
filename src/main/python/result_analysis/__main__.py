@@ -1,7 +1,6 @@
 from result_analysis.plots import (
     automation_boxplot_results_lang_per_proj,
     ed_runtime_boxplot_results_lang_overall,
-    boxplot_results_lang_per_proj,
 )
 from result_analysis.plots import boxplot_results_lang_overall
 from sys import argv
@@ -15,18 +14,17 @@ def main():
     # print_results_per_language(min)
     results_dir = "/home/alex/data/cherry-picks/results/"
     repo_sample = "/home/alex/programming/patching-with-matching-eval/simulation-files/data/repo-sample.yaml"
-    # boxplot_results_lang_per_proj(
-    #     results_dir, repo_sample, minimum, only_non_trivial=True)
-    # boxplot_results_lang_overall(
-    #     results_dir, repo_sample, only_non_trivial=True)
-    # boxplot_results_per_patcher(results_dir, repo_sample, min)
+    showfliers = False
+    boxplot_results_lang_overall(
+        results_dir, repo_sample, only_non_trivial=True, showfliers=showfliers
+    )
     # rq3_table(results_dir, only_non_trivial=True)
-    # ed_runtime_boxplot_results_lang_overall(
-    #    results_dir, repo_sample, only_non_trivial=True
-    # )
-    # automation_boxplot_results_lang_per_proj(
-    #    results_dir, repo_sample, minimum, only_non_trivial=True
-    # )
+    ed_runtime_boxplot_results_lang_overall(
+        results_dir, repo_sample, only_non_trivial=True, showfliers=showfliers
+    )
+    automation_boxplot_results_lang_per_proj(
+        results_dir, repo_sample, minimum, only_non_trivial=True, showfliers=showfliers
+    )
 
     better_or_worse(results_dir, repo_sample, only_non_trivial=True)
 
