@@ -64,39 +64,18 @@ object CherryPickResultAnalysis {
         val unixPatchResults = ArrayList<Path>()
         val mpatchResults = ArrayList<Path>()
         val gitCPResults = ArrayList<Path>()
+        val gitApplyResults = ArrayList<Path>()
         for (path in resultFiles) {
             if (path.name.endsWith("unix_patch.results")) {
                 unixPatchResults.add(path)
             } else if (path.name.endsWith("mpatch.results")) {
                 mpatchResults.add(path)
-            } else if (path.name.endsWith("git_apply.results")) {
+            } else if (path.name.endsWith("git_cherry.results")) {
                 gitCPResults.add(path)
+            } else if (path.name.endsWith("git_apply.results")) {
+                gitApplyResults.add(path)
             }
         }
-
-        // Determine the overall results
-        println()
-        println("+++++++++++++++++++++++++++")
-        println("RESULTS FOR TRIVIAL - MPATCH")
-        println("+++++++++++++++++++++++++++")
-        println()
-        analyze(mpatchResults, "mpatch_overview", AnalysisMode.Trivial)
-
-        // Determine the overall results
-        println()
-        println("+++++++++++++++++++++++++++")
-        println("RESULTS FOR TRIVIAL - UNIX PATCH")
-        println("+++++++++++++++++++++++++++")
-        println()
-        analyze(unixPatchResults, "unix_patch_overview", AnalysisMode.Trivial)
-
-        // Determine the overall results
-        println()
-        println("+++++++++++++++++++++++++++")
-        println("RESULTS FOR TRIVIAL - GIT APPLY")
-        println("+++++++++++++++++++++++++++")
-        println()
-        analyze(gitCPResults, "git_apply_overview", AnalysisMode.Trivial)
 
         println()
         println("+++++++++++++++++++++++++++")
@@ -115,10 +94,18 @@ object CherryPickResultAnalysis {
 
         println()
         println("+++++++++++++++++++++++++++")
-        println("RESULTS FOR NON-TRIVIAL - GIT APPLY")
+        println("RESULTS FOR NON-TRIVIAL - GIT CP")
         println("+++++++++++++++++++++++++++")
         println()
-        analyze(gitCPResults, "git_apply_overview", AnalysisMode.NonTrivial)
+        analyze(gitCPResults, "git_cp_overview", AnalysisMode.NonTrivial)
+
+        // Determine the overall results
+        println()
+        println("+++++++++++++++++++++++++++")
+        println("RESULTS FOR TRIVIAL - GIT APPLY")
+        println("+++++++++++++++++++++++++++")
+        println()
+        analyze(gitApplyResults, "git_apply_overview", AnalysisMode.NonTrivial)
     }
 
     fun processCherriesOutcome(

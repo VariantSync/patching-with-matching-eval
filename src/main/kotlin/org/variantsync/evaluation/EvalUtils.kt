@@ -2,10 +2,7 @@ package org.variantsync.evaluation
 
 import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
-import org.variantsync.evaluation.patching.GitApply
-import org.variantsync.evaluation.patching.MPatch
-import org.variantsync.evaluation.patching.Patcher
-import org.variantsync.evaluation.patching.UnixPatch
+import org.variantsync.evaluation.patching.*
 import java.nio.file.Path
 
 fun filterUnpatchedFiles(originalPatch: OriginalDiff, diffToFilter: OriginalDiff, strip: Int): OriginalDiff {
@@ -32,5 +29,6 @@ fun defaultPatchers(strip: Int): List<Patcher> {
     patchers.add(UnixPatch("unix_patch", strip))
     patchers.add(MPatch("mpatch", strip))
     patchers.add(GitApply("git_apply", strip))
+    patchers.add(GitCP("git_cherry", strip))
     return patchers
 }
