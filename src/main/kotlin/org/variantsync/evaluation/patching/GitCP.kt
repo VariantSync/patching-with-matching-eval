@@ -12,7 +12,6 @@ import org.variantsync.vevos.simulation.feature.Variant
 import java.nio.file.Files
 import java.util.function.Consumer
 
-// TODO: Find a valid evaluation method; Currently, we cannot really detect errors made by cherry pick
 class GitCP(private val name: String, private val strip: Int) : Patcher {
     private var lastResult: org.variantsync.functjonal.Result<List<String>, ShellException>? = null
     override fun applyPatch(
