@@ -1,17 +1,20 @@
 package org.variantsync.evaluation.patching
 
-import org.tinylog.Logger
+import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.Operations
 import org.variantsync.evaluation.baseline.diff.DiffParser
+import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.GitCherryPickCommand
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
 import org.variantsync.evaluation.cherries.CherryEvalOperations
+import org.variantsync.evaluation.error.ShellException
 import org.variantsync.vevos.simulation.feature.Variant
 import java.nio.file.Files
 import java.util.function.Consumer
 
 // TODO: Find a valid evaluation method; Currently, we cannot really detect errors made by cherry pick
 class GitCP(private val name: String, private val strip: Int) : Patcher {
+    private var lastResult: org.variantsync.functjonal.Result<List<String>, ShellException>? = null
     override fun applyPatch(
         operations: Operations,
         sourceVariant: Variant,
@@ -46,14 +49,9 @@ class GitCP(private val name: String, private val strip: Int) : Patcher {
         } else {
             org.tinylog.kotlin.Logger.debug("git cherry-pick failed")
             result.failure.output.forEach(Consumer { message: String? -> org.tinylog.kotlin.Logger.warn(message) })
-            if (result.toString().contains("You are currently cherry-picking")) {
-                val continueCommand = GitCherryPickCommand().cont()
-                val continueResult = customShell.execute(continueCommand, operations.patchDir())
-                if (continueResult.isFailure) {
-                    Logger.warn(continueResult)
-                }
-            }
+            lastResult = result
         }
+        applyOursStrategy(operations, cherry, patch)
         return rejects
     }
 
@@ -63,6 +61,60 @@ class GitCP(private val name: String, private val strip: Int) : Patcher {
 
     override fun clean(operations: Operations) {
         super.clean(operations)
-        // TODO("Proper cleaning")
+        if (lastResult.toString().contains("You are currently cherry-picking")) {
+            val continueCommand = GitCherryPickCommand().cont()
+            val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir())
+            val continueResult = customShell.execute(continueCommand, operations.patchDir())
+            if (continueResult.isFailure) {
+                Logger.warn(continueResult)
+            }
+        }
+    }
+
+    private fun applyOursStrategy(operations: Operations,
+                                  cherry: String,
+                                  patch: OriginalDiff) {
+        val headMarker = "<<<<<<< HEAD"
+        val divideMarker = "======="
+        val endMarker = ">>>>>>> " + cherry.substring(0, 8)
+
+        // Get the patched files
+        var state = TentativeState.Outside
+        for (fd in patch.fileDiffs) {
+            var pathToFile = fd.oldFile.subpath(strip, fd.oldFile.nameCount)
+            pathToFile = operations.patchDir().resolve(pathToFile)
+            val lines = Files.readAllLines(pathToFile)
+
+            val updatedLines = ArrayList<String>()
+            for (line in lines) {
+                if (state == TentativeState.Outside) {
+                    if (line.startsWith(headMarker)) {
+                        Logger.info("Found Head Marker")
+                        state = TentativeState.Head
+                    } else {
+                        updatedLines.add(line)
+                    }
+                } else if (state == TentativeState.Head) {
+                    if (line.startsWith(divideMarker)) {
+                        Logger.info("Found Divide Marker")
+                        state = TentativeState.Cherry
+                    } else {
+                        updatedLines.add(line)
+                    }
+                } else {
+                    if (line.startsWith(endMarker)) {
+                        Logger.info("Found End Marker")
+                        state = TentativeState.Outside
+                    }
+                }
+            }
+            Files.write(pathToFile, updatedLines)
+        }
+    }
+
+    enum class TentativeState {
+        Head,
+        Cherry,
+        Outside,
     }
 }

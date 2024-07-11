@@ -18,7 +18,7 @@ public class GitCherryPickCommand extends ShellCommand{
     }
 
     public static GitCherryPickCommand Recommended(final String cherry) {
-        return new GitCherryPickCommand(cherry).allowEmpty().allowEmptyMessage().ours();
+        return new GitCherryPickCommand(cherry).allowEmpty().allowEmptyMessage();
     }
 
     @Override
@@ -43,11 +43,6 @@ public class GitCherryPickCommand extends ShellCommand{
 
     public GitCherryPickCommand allowEmptyMessage() {
         this.args.add("--allow-empty-message");
-        return this;
-    }
-
-    public GitCherryPickCommand ours() {
-        this.args.add("--strategy=ours");
         return this;
     }
 
