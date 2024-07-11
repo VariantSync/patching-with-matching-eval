@@ -14,6 +14,8 @@ import java.util.function.Consumer
 
 class GitCP(private val name: String, private val strip: Int) : Patcher {
     private var lastResult: org.variantsync.functjonal.Result<List<String>, ShellException>? = null
+    private val conflictDetectionText = "CONFLICT (content): Merge conflict in "
+
     override fun applyPatch(
         operations: Operations,
         sourceVariant: Variant,
@@ -43,14 +45,20 @@ class GitCP(private val name: String, private val strip: Int) : Patcher {
             operations.patchDir()
         )
         val rejects = Rejects(ArrayList())
+        val conflictingFiles = ArrayList<String>()
         if (result.isSuccess) {
-            result.success.forEach(Consumer { message: String? -> org.tinylog.kotlin.Logger.debug(message) })
+            result.success.forEach(Consumer { message: String? -> Logger.debug(message) })
         } else {
             Logger.debug("git cherry-pick failed")
-            result.failure.output.forEach(Consumer { message: String? -> org.tinylog.kotlin.Logger.warn(message) })
+            result.failure.output.forEach(Consumer { message: String? -> Logger.debug(message) })
+            for (errorMessage in result.failure.output) {
+                if (errorMessage.startsWith(conflictDetectionText)) {
+                    conflictingFiles.add(errorMessage.substring(conflictDetectionText.length))
+                }
+            }
             lastResult = result
         }
-        applyOursMerge(operations, cherry, patch)
+        applyOursMerge(operations, cherry, conflictingFiles)
         return rejects
     }
 
@@ -72,37 +80,36 @@ class GitCP(private val name: String, private val strip: Int) : Patcher {
 
     private fun applyOursMerge(operations: Operations,
                                cherry: String,
-                               patch: OriginalDiff) {
+                               conflictingFiles: List<String>) {
         val headMarker = "<<<<<<< HEAD"
         val divideMarker = "======="
         val endMarker = ">>>>>>> " + cherry.substring(0, 8)
 
         // Get the patched files
         var state = TentativeState.Outside
-        for (fd in patch.fileDiffs) {
-            var pathToFile = fd.oldFile.subpath(strip, fd.oldFile.nameCount)
-            pathToFile = operations.patchDir().resolve(pathToFile)
+        for (conflictingFile in conflictingFiles) {
+            val pathToFile = operations.patchDir().resolve(conflictingFile)
             val lines = Files.readAllLines(pathToFile)
 
             val updatedLines = ArrayList<String>()
             for (line in lines) {
                 if (state == TentativeState.Outside) {
                     if (line.startsWith(headMarker)) {
-                        Logger.info("Found Head Marker")
+                        Logger.debug("Found Head Marker")
                         state = TentativeState.Head
                     } else {
                         updatedLines.add(line)
                     }
                 } else if (state == TentativeState.Head) {
                     if (line.startsWith(divideMarker)) {
-                        Logger.info("Found Divide Marker")
+                        Logger.debug("Found Divide Marker")
                         state = TentativeState.Cherry
                     } else {
                         updatedLines.add(line)
                     }
                 } else {
                     if (line.startsWith(endMarker)) {
-                        Logger.info("Found End Marker")
+                        Logger.debug("Found End Marker")
                         state = TentativeState.Outside
                     }
                 }
