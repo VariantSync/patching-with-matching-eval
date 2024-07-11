@@ -46,11 +46,11 @@ class GitCP(private val name: String, private val strip: Int) : Patcher {
         if (result.isSuccess) {
             result.success.forEach(Consumer { message: String? -> org.tinylog.kotlin.Logger.debug(message) })
         } else {
-            org.tinylog.kotlin.Logger.debug("git cherry-pick failed")
+            Logger.debug("git cherry-pick failed")
             result.failure.output.forEach(Consumer { message: String? -> org.tinylog.kotlin.Logger.warn(message) })
             lastResult = result
         }
-        applyOursStrategy(operations, cherry, patch)
+        applyOursMerge(operations, cherry, patch)
         return rejects
     }
 
@@ -70,9 +70,9 @@ class GitCP(private val name: String, private val strip: Int) : Patcher {
         }
     }
 
-    private fun applyOursStrategy(operations: Operations,
-                                  cherry: String,
-                                  patch: OriginalDiff) {
+    private fun applyOursMerge(operations: Operations,
+                               cherry: String,
+                               patch: OriginalDiff) {
         val headMarker = "<<<<<<< HEAD"
         val divideMarker = "======="
         val endMarker = ">>>>>>> " + cherry.substring(0, 8)
