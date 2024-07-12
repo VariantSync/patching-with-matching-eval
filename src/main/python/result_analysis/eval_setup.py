@@ -5,6 +5,7 @@ class Patcher(Enum):
     MPatch = "mpatch"
     UnixPatch = "unix_patch"
     GitApply = "git_apply"
+    GitCherry = "git_cherry"
 
     def __str__(self):
         return self.value
