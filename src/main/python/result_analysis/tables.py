@@ -15,6 +15,7 @@ from result_analysis.result_handling import (
 from result_analysis.result_handling import overall_automation
 from result_analysis.result_handling import edit_distance
 from result_analysis.result_handling import runtime
+from result_analysis.metrics import calculate_precision_recall
 
 languages = [
     ("Python", "py"),
@@ -34,27 +35,27 @@ class RQ3PatcherData:
     def __init__(
         self,
         patcher: Patcher,
+        precision: float,
+        recall: float,
         patch_automation: float,
         avg_edit_distance: float,
-        median_edit_distance: int,
         avg_runtime: float,
-        median_runtime: int,
     ):
+        self.precision = precision
+        self.recall = recall
         self.patcher = patcher
         self.patch_automation = patch_automation
         self.avg_edit_distance = avg_edit_distance
-        self.median_edit_distance = median_edit_distance
         self.avg_runtime = avg_runtime
-        self.median_runtime = median_runtime
 
     def __str__(self):
         return (
-            f"Patcher: {self.patcher}, "
-            f"Patch Automation: {self.patch_automation}, "
-            f"Avg Edit Distance: {self.avg_edit_distance}, "
-            f"Median Edit Distance: {self.median_edit_distance}, "
-            f"Avg Runtime: {self.avg_runtime}, "
-            f"Median Runtime: {self.median_runtime}"
+            f"Patcher: {self.patcher:<12} "
+            f"Precision: {self.precision:1.2f}, "
+            f"Recall: {self.recall:1.2f}, "
+            f"Patch Automation: {100*self.patch_automation:2.2f}%, "
+            f"Avg Edit Distance: {self.avg_edit_distance:2.2f}, "
+            f"Avg Runtime: {self.avg_runtime:1.2f}s"
         )
 
 
@@ -74,7 +75,12 @@ def rq3_table(path_to_results, only_non_trivial):
         (average_ed, median_ed) = edit_distance(results)
         (average_run, median_run) = runtime(results)
         patcher_data = RQ3PatcherData(
-            patcher, oa, average_ed, median_ed, average_run, median_run
+            patcher=patcher,
+            precision=0,
+            recall=0,
+            patch_automation=oa,
+            avg_edit_distance=average_ed,
+            avg_runtime=average_run,
         )
         print(patcher_data)
 
@@ -85,8 +91,8 @@ def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
 
     for language in languages:
         language = language[0]
+        print(language)
         for patcher in Patcher:  # Patcher is an enum
-            print("Loading results for " + str(patcher))
             results = load_all_results(path_to_results, patcher)
             # Filter trivial results
             if only_non_trivial:
@@ -96,16 +102,34 @@ def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
             # Accumulate repo results per language
             lang_results = all_results_per_language(results)
             results = lang_results[language]
-            print(language)
+
+            tp = 0.0
+            fp = 0.0
+            fn = 0.0
+            for res in results:
+                tp += res.outcome_classification.tp()
+                fp += res.outcome_classification.fp()
+                fn += res.outcome_classification.fn()
+            precision, recall = calculate_precision_recall(
+                tp=tp,
+                fp=fp,
+                fn=fn,
+            )
             oa = overall_automation(results)
             (average_ed, median_ed) = edit_distance(results)
             (average_run, median_run) = runtime(results)
             ed_percentiles = edit_distance_percentiles(results)
             patcher_data = RQ3PatcherData(
-                patcher, oa, average_ed, median_ed, average_run, median_run
+                patcher=patcher,
+                precision=precision,
+                recall=recall,
+                patch_automation=oa,
+                avg_edit_distance=average_ed,
+                avg_runtime=average_run,
             )
             print(patcher_data)
-            print(ed_percentiles)
+            # print(ed_percentiles)
+        print()
 
 
 def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
