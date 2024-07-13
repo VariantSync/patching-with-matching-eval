@@ -31,22 +31,56 @@ def generate_latex_table(patcher_names, languages, results_per_patcher):
                 line = " & " + patcher
                 for language in languages:
                     value = 0
+                    best_type = ""
                     results = results_per_patcher[patcher][language]
                     if metric == "Precision":
                         value = results.precision
+                        best_type = "max"
                     elif metric == "Recall":
                         value = results.recall
+                        best_type = "max"
                     elif metric == "Automation":
                         value = results.patch_automation
+                        best_type = "max"
                     elif metric == "Edit Distance":
                         value = results.avg_edit_distance
+                        best_type = "min"
                     elif metric == "Runtime":
                         value = results.avg_runtime
+                        best_type = "min"
                     else:
                         value = -1
-                    line += " & " + f"{value:.2f}"
+
+                    max_value = determine_best(
+                        results_per_patcher, patcher_names, metric, best_type, language
+                    )
+                    if value == max_value:
+                        line += " & \\textbf{" + f"{value:.2f}" + "}"
+                    else:
+                        line += " & " + f"{value:.2f}"
                 file.write(line + " \\\\\n")
             file.write("\\hline\n")
 
         # End the tabular environment
         file.write("\\end{tabular}")
+
+
+def determine_best(results_per_patcher, patcher_names, metric, best_type, language):
+    values = []
+    for patcher in patcher_names:
+        results = results_per_patcher[patcher][language]
+        if metric == "Precision":
+            values.append(results.precision)
+        elif metric == "Recall":
+            values.append(results.recall)
+        elif metric == "Automation":
+            values.append(results.patch_automation)
+        elif metric == "Edit Distance":
+            values.append(results.avg_edit_distance)
+        elif metric == "Runtime":
+            values.append(results.avg_runtime)
+
+    if best_type == "max":
+        return max(values)
+    elif best_type == "min":
+        return min(values)
