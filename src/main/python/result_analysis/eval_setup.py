@@ -5,7 +5,9 @@ class Patcher(Enum):
     MPatch = "mpatch"
     UnixPatch = "unix_patch"
     GitApply = "git_apply"
-    GitCherry = "git_cherry"
+    GitCherryDefault = "git_cherry_default"
+    GitCherryOurs = "git_cherry_ours"
+    GitCherryTheirs = "git_cherry_theirs"
 
     def __str__(self):
         return self.value
@@ -18,7 +20,9 @@ class Patcher(Enum):
             Patcher.MPatch: "PwM",
             Patcher.UnixPatch: "Unix Patch",
             Patcher.GitApply: "Git Apply",
-            Patcher.GitCherry: "Git Cherry-Pick",
+            Patcher.GitCherryDefault: "Git Cherry-Pick (default)",
+            Patcher.GitCherryOurs: "Git Cherry-Pick (ours)",
+            Patcher.GitCherryTheirs: "Git Cherry-Pick (theirs)",
         }[self]
 
 

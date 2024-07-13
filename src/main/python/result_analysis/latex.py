@@ -40,7 +40,7 @@ def generate_latex_table(patcher_names, languages, results_per_patcher):
                         value = results.recall
                         best_type = "max"
                     elif metric == "Automation":
-                        value = results.patch_automation
+                        value = 100 * results.patch_automation
                         best_type = "max"
                     elif metric == "Edit Distance":
                         value = results.avg_edit_distance
@@ -74,7 +74,7 @@ def determine_best(results_per_patcher, patcher_names, metric, best_type, langua
         elif metric == "Recall":
             values.append(results.recall)
         elif metric == "Automation":
-            values.append(results.patch_automation)
+            values.append(100 * results.patch_automation)
         elif metric == "Edit Distance":
             values.append(results.avg_edit_distance)
         elif metric == "Runtime":

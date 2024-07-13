@@ -68,6 +68,8 @@ def overall_automation(results: List[PatchResult]) -> float:
     """
     Calculate the overall automation percentage
     """
+    if not results:
+        return -1.0
     num_perfect = 0
     for result in results:
         oc = result.outcome_classification
@@ -84,6 +86,8 @@ def edit_distance_percentiles(
     """
     Determine the 25, 50, 75, 99, and 100 percentiles of edit distances
     """
+    if not results:
+        return (-1, -1, -1, -1, -1)
 
     edit_distances = []
     for result in results:
@@ -101,7 +105,8 @@ def edit_distance(results: List[PatchResult]) -> tuple[float, int]:
     """
     Calculate the average edit distance and median edit distance from a list of results.
     """
-
+    if not results:
+        return (-1.0, -1)
     edit_distances = []
     for result in results:
         edit_distances.append(result.outcome_classification.num_incorrect())
@@ -116,7 +121,8 @@ def edit_distance_alt(results: List[PatchResult]) -> tuple[float, int]:
     """
     Calculate the average edit distance and median edit distance from a list of results.
     """
-
+    if not results:
+        return (-1.0, -1)
     edit_distances = []
     for result in results:
         edit_distances.append(result.outcome_classification.edit_distance)
@@ -131,6 +137,8 @@ def runtime(results: List[PatchResult]) -> tuple[float, int]:
     """
     Calculate the average runtime and median runtime from a list of results.
     """
+    if not results:
+        return (-1.0, -1)
     runtimes = []
     for result in results:
         runtimes.append(result.patch_duration)

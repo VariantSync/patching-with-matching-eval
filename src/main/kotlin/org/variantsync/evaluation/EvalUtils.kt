@@ -29,6 +29,8 @@ fun defaultPatchers(strip: Int): List<Patcher> {
     patchers.add(UnixPatch("unix_patch", strip))
     patchers.add(MPatch("mpatch", strip))
     patchers.add(GitApply("git_apply", strip))
-    patchers.add(GitCP("git_cherry", strip))
+    patchers.add(GitCP("git_cherry_default", strip, MergeStrategy.Default))
+    patchers.add(GitCP("git_cherry_ours", strip, MergeStrategy.Ours))
+    patchers.add(GitCP("git_cherry_theirs", strip, MergeStrategy.Theirs))
     return patchers
 }

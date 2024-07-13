@@ -3,7 +3,6 @@ package org.variantsync.evaluation.patching
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.Operations
 import org.variantsync.evaluation.baseline.diff.DiffParser
-import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.GitCherryPickCommand
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
 import org.variantsync.evaluation.cherries.CherryEvalOperations
@@ -12,7 +11,7 @@ import org.variantsync.vevos.simulation.feature.Variant
 import java.nio.file.Files
 import java.util.function.Consumer
 
-class GitCP(private val name: String, private val strip: Int) : Patcher {
+class GitCP(private val name: String, private val strip: Int, private val strategy: MergeStrategy) : Patcher {
     private var lastResult: org.variantsync.functjonal.Result<List<String>, ShellException>? = null
     private val conflictDetectionText = "CONFLICT (content): Merge conflict in "
 
@@ -37,7 +36,6 @@ class GitCP(private val name: String, private val strip: Int) : Patcher {
 
         val patchCommand = GitCherryPickCommand.Recommended(cherry)
 
-
         // apply patch to target variant
         val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir())
         val result = customShell.execute(
@@ -58,7 +56,7 @@ class GitCP(private val name: String, private val strip: Int) : Patcher {
             }
             lastResult = result
         }
-        applyOursMerge(operations, cherry, conflictingFiles)
+        applyMergeStrategy(operations, cherry, conflictingFiles)
         return rejects
     }
 
@@ -72,18 +70,23 @@ class GitCP(private val name: String, private val strip: Int) : Patcher {
             val continueCommand = GitCherryPickCommand().cont()
             val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir())
             val continueResult = customShell.execute(continueCommand, operations.patchDir())
-            if (continueResult.isFailure) {
+            if (continueResult.isFailure && continueResult.failure.output.isNotEmpty()) {
                 Logger.warn(continueResult)
             }
         }
     }
 
-    private fun applyOursMerge(operations: Operations,
-                               cherry: String,
-                               conflictingFiles: List<String>) {
+    private fun applyMergeStrategy(operations: Operations,
+                                   cherry: String,
+                                   conflictingFiles: List<String>) {
         val headMarker = "<<<<<<< HEAD"
         val divideMarker = "======="
         val endMarker = ">>>>>>> " + cherry.substring(0, 8)
+
+        if (this.strategy == MergeStrategy.Default) {
+            // The default strategy is to keep the tentative merge
+            return
+        }
 
         // Get the patched files
         var state = TentativeState.Outside
@@ -94,6 +97,7 @@ class GitCP(private val name: String, private val strip: Int) : Patcher {
             val updatedLines = ArrayList<String>()
             for (line in lines) {
                 if (state == TentativeState.Outside) {
+                    // Outside
                     if (line.startsWith(headMarker)) {
                         Logger.debug("Found Head Marker")
                         state = TentativeState.Head
@@ -101,16 +105,20 @@ class GitCP(private val name: String, private val strip: Int) : Patcher {
                         updatedLines.add(line)
                     }
                 } else if (state == TentativeState.Head) {
+                    // Inside ours
                     if (line.startsWith(divideMarker)) {
                         Logger.debug("Found Divide Marker")
                         state = TentativeState.Cherry
-                    } else {
+                    } else if (this.strategy == MergeStrategy.Ours){
                         updatedLines.add(line)
                     }
                 } else {
+                    // Inside theirs
                     if (line.startsWith(endMarker)) {
                         Logger.debug("Found End Marker")
                         state = TentativeState.Outside
+                    } else if (this.strategy == MergeStrategy.Theirs){
+                        updatedLines.add(line)
                     }
                 }
             }
@@ -123,4 +131,10 @@ class GitCP(private val name: String, private val strip: Int) : Patcher {
         Cherry,
         Outside,
     }
+}
+
+enum class MergeStrategy {
+    Default,
+    Ours,
+    Theirs,
 }
