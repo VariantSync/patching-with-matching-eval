@@ -13,6 +13,14 @@ class Patcher(Enum):
     def __repr__(self):
         return f"{self.__class__.__name__}.{self.name}"
 
+    def nice_name(self):
+        return {
+            Patcher.MPatch: "PwM",
+            Patcher.UnixPatch: "Unix Patch",
+            Patcher.GitApply: "Git Apply",
+            Patcher.GitCherry: "Git Cherry-Pick",
+        }[self]
+
 
 class Repository:
     def __init__(self, id: int, name: str, language: str):

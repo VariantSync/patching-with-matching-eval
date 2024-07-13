@@ -24,3 +24,8 @@ simulation-files/ground-truth.zip
 src/main/python/data_analysis/.env
 src/main/python/.env
 src/main/python/poetry.lock
+src/main/python/test.aux
+src/main/python/test.fdb_latexmk
+src/main/python/test.fls
+src/main/python/test.log
+src/main/python/test.synctex.gz

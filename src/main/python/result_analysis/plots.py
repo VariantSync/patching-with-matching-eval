@@ -65,7 +65,7 @@ def ed_runtime_boxplot_results_lang_overall(
         edit_distance_per_patcher.append(edit_distance_per_language)
         runtime_per_patcher.append(runtime_per_language)
 
-    language_names = [lang[1] for lang in languages]
+    language_names = [lang[0] for lang in languages]
     create_boxplot_per_patcher_per_language(
         patchers,
         language_names,

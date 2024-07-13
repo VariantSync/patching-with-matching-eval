@@ -1,3 +1,4 @@
+from result_analysis.latex import generate_latex_table
 from result_analysis.plots import (
     automation_boxplot_results_lang_per_proj,
     boxplot_results_lang_per_proj,

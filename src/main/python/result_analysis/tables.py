@@ -6,6 +6,7 @@ from result_analysis.eval_setup import PatchResult
 from result_analysis.eval_setup import Repository
 from result_analysis.io import load_repositories
 from result_analysis.io import load_all_results
+from result_analysis.latex import generate_latex_table
 from result_analysis.result_handling import (
     edit_distance_percentiles,
     non_trivial_results,
@@ -16,6 +17,7 @@ from result_analysis.result_handling import overall_automation
 from result_analysis.result_handling import edit_distance
 from result_analysis.result_handling import runtime
 from result_analysis.metrics import calculate_precision_recall
+from collections import defaultdict
 
 languages = [
     ("Python", "py"),
@@ -89,6 +91,7 @@ def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
     global languages
     repos = load_repositories(path_to_repo_list)
 
+    results_per_patcher = defaultdict(dict)
     for language in languages:
         language = language[0]
         print(language)
@@ -116,9 +119,9 @@ def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
                 fn=fn,
             )
             oa = overall_automation(results)
-            (average_ed, median_ed) = edit_distance(results)
-            (average_run, median_run) = runtime(results)
-            ed_percentiles = edit_distance_percentiles(results)
+            (average_ed, _) = edit_distance(results)
+            (average_run, _) = runtime(results)
+            # ed_percentiles = edit_distance_percentiles(results)
             patcher_data = RQ3PatcherData(
                 patcher=patcher,
                 precision=precision,
@@ -128,8 +131,13 @@ def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
                 avg_runtime=average_run,
             )
             print(patcher_data)
+            results_per_patcher[patcher.nice_name()][language] = patcher_data
             # print(ed_percentiles)
         print()
+
+    language_names = [lang[0] for lang in languages]
+    patcher_names = [patcher.nice_name() for patcher in Patcher]
+    generate_latex_table(patcher_names, language_names, results_per_patcher)
 
 
 def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
