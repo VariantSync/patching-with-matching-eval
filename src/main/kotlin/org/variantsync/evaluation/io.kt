@@ -39,6 +39,7 @@ fun writeAsJSON(obj: Any, pathToFile: Path, append: Boolean) {
 
     synchronized(lock) {
         try {
+            Files.createDirectories(pathToFile.parent)
             Files.createFile(pathToFile)
         } catch (e: java.nio.file.FileAlreadyExistsException) {
             // Ignore if the file already exists

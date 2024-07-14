@@ -30,6 +30,7 @@ import kotlin.collections.ArrayList
 
 
 class CherryPickEvalTask(
+    private val repetition: Int,
     private val config: EvalConfig,
     private val datasetName: String,
     private val cherryPick: CherryPick,
@@ -191,7 +192,7 @@ class CherryPickEvalTask(
                     patchIsTrivial,
                 )
 
-                val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("${datasetName}_${patcher.name()}.results")
+                val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("rep-${repetition}").resolve("${datasetName}_${patcher.name()}.results")
                 results.add(ExperimentResult(patchOutcome, resultFile))
 
                 Logger.debug(

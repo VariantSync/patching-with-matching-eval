@@ -45,19 +45,8 @@ class CherryPickStudy(
         if (!Files.exists(config.EXPERIMENT_DIR_RESULTS())) {
             Files.createDirectories(config.EXPERIMENT_DIR_RESULTS())
         }
-        this.numThreads = config.EXPERIMENT_THREAD_COUNT()
-
         val repoPath: Path = cloneGitHubRepo(config, dataset.repositoryId)
-
-        if (config.EXPERIMENT_ENABLE_SAMPLING()) {
-            val sampleSize = determineSampleSize(config, dataset.cherryPicks.size)
-            Logger.info("Considering a representative sample of $sampleSize cherry picks.")
-            val seed: ByteArray = ByteBuffer.allocate(java.lang.Long.BYTES).putLong(config.SEED()).array()
-            dataset.cherryPicks =
-                dataset.cherryPicks.shuffled(SecureRandom(seed)).subList(0, sampleSize)
-        }
-
-        this.evalTasks = ArrayList()
+        this.numThreads = config.EXPERIMENT_THREAD_COUNT()
         this.availableOperations = LinkedBlockingQueue(numThreads)
 
         for (i in 1..numThreads) {
@@ -72,21 +61,38 @@ class CherryPickStudy(
         }
 
         idProvider = IDProvider(config.EXPERIMENT_START_ID())
-        for (cherryPick in dataset.cherryPicks) {
-            val runID = idProvider.next()
-            if (runID < idProvider.start) {
-                Logger.info("Skipped commit $runID")
-                continue
+        val seed: ByteArray = ByteBuffer.allocate(java.lang.Long.BYTES).putLong(config.SEED()).array()
+        this.evalTasks = ArrayList()
+
+        for (repetition in 1..config.EXPERIMENT_REPEATS()) {
+            var sample: List<CherryPick>
+            if (config.EXPERIMENT_ENABLE_SAMPLING()) {
+                val sampleSize = determineSampleSize(config, dataset.cherryPicks.size)
+                Logger.info("Considering a representative sample of $sampleSize cherry picks for repetition $repetition of ${dataset.datasetName}.")
+
+                sample =
+                    dataset.cherryPicks.shuffled(SecureRandom(seed)).subList(0, sampleSize)
+            } else {
+                sample = dataset.cherryPicks
             }
-            evalTasks.add(
-                CherryPickEvalTask(
-                    config,
-                    dataset.datasetName,
-                    cherryPick,
-                    availableOperations,
-                    runID
+
+            for (cherryPick in sample) {
+                val runID = idProvider.next()
+                if (runID < idProvider.start) {
+                    Logger.info("Skipped commit $runID")
+                    continue
+                }
+                evalTasks.add(
+                    CherryPickEvalTask(
+                        repetition,
+                        config,
+                        dataset.datasetName,
+                        cherryPick,
+                        availableOperations,
+                        runID
+                    )
                 )
-            )
+            }
         }
     }
 
