@@ -45,7 +45,15 @@ fun defaultPatchers(strip: Int): List<Patcher> {
 @Throws(IOException::class)
 fun readContentSafely(filePath: Path): List<String> {
     val content = Files.readString(filePath)
-    return content.split("\n").filter { it.isNotEmpty() }
+    if (content.isEmpty()) {
+        return emptyList()
+    }
+    val lines = content.split("\n")
+    return if (lines.last().isEmpty()) {
+        lines.subList(0, lines.lastIndex)
+    } else {
+        lines
+    }
 }
 
 

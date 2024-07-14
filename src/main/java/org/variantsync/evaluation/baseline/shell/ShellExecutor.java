@@ -121,6 +121,9 @@ private Runnable collectOutput(final InputStream inputStream, final Consumer<Str
             while ((character = reader.read()) != -1) {
                 output.append((char) character);
             }
+            if (output.isEmpty()) {
+                return;
+            }
             String[] lines = output.toString().split("\n");
             for (String line : lines) {
                 consumer.accept(line);

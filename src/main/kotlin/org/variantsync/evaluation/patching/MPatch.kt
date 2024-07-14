@@ -112,12 +112,16 @@ class MPatch(private val name: String, private val strip: Int, private val maxMa
         // Parse the rejects
         val rejects: HashSet<RejectId> = HashSet()
         run {
-            while (index < fileDiffContent.size) {
-                nextLine = fileDiffContent[index]
-                val id = nextLine.split(":")[0].toInt()
-                val path = Path.of(oldFile!!)
-                rejects.add(RejectId(path.subpath(strip, path.nameCount), id))
-                index++
+            try {
+                while (index < fileDiffContent.size) {
+                    nextLine = fileDiffContent[index]
+                    val id = nextLine.split(":")[0].toInt()
+                    val path = Path.of(oldFile!!)
+                    rejects.add(RejectId(path.subpath(strip, path.nameCount), id))
+                    index++
+                }
+            } catch (e: Exception) {
+                Logger.error(e)
             }
         }
 

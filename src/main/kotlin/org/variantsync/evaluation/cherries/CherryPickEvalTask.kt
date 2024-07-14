@@ -147,7 +147,13 @@ class CherryPickEvalTask(
                 /* Application of patches without knowledge about features */
                 Logger.debug("Applying patch from cherry-pick...")
                 val start = Instant.now()
-                val rejectsNormal = patcher.applyPatch(operations, source, target, false)
+                var rejectsNormal: Rejects
+                try {
+                     rejectsNormal = patcher.applyPatch(operations, source, target, false)
+                } catch (e: Exception) {
+                    Logger.warn(e)
+                    rejectsNormal = Rejects(ArrayList())
+                }
                 val end = Instant.now()
                 val patchDuration = Duration.between(start, end)
 
