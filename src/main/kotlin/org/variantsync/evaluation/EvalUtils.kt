@@ -36,7 +36,7 @@ fun defaultPatchers(strip: Int): List<Patcher> {
     patchers.add(MPatch("mpatch-2", strip,2))
     patchers.add(MPatch("mpatch-3", strip,3))
     patchers.add(GitApply("git_apply", strip))
-    patchers.add(GitCP("git_cherry_default", strip, MergeStrategy.Default))
+    patchers.add(GitCP("git_cherry", strip, MergeStrategy.Default))
     patchers.add(GitCP("git_cherry_ours", strip, MergeStrategy.Ours))
     patchers.add(GitCP("git_cherry_theirs", strip, MergeStrategy.Theirs))
     return patchers
