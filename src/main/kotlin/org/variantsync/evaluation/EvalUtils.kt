@@ -1,9 +1,13 @@
 package org.variantsync.evaluation
 
+import org.tinylog.Logger
 import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.patching.*
+import java.io.IOException
+import java.nio.file.Files
 import java.nio.file.Path
+import java.util.*
 
 fun filterUnpatchedFiles(originalPatch: OriginalDiff, diffToFilter: OriginalDiff, strip: Int): OriginalDiff {
     val oldFiles = HashSet<Path>()
@@ -27,10 +31,21 @@ fun filterUnpatchedFiles(originalPatch: OriginalDiff, diffToFilter: OriginalDiff
 fun defaultPatchers(strip: Int): List<Patcher> {
     val patchers = ArrayList<Patcher>()
     patchers.add(UnixPatch("unix_patch", strip))
-    patchers.add(MPatch("mpatch", strip))
+    patchers.add(MPatch("mpatch-0", strip,0))
+    patchers.add(MPatch("mpatch-1", strip,1))
+    patchers.add(MPatch("mpatch-2", strip,2))
+    patchers.add(MPatch("mpatch-3", strip,3))
     patchers.add(GitApply("git_apply", strip))
     patchers.add(GitCP("git_cherry_default", strip, MergeStrategy.Default))
     patchers.add(GitCP("git_cherry_ours", strip, MergeStrategy.Ours))
     patchers.add(GitCP("git_cherry_theirs", strip, MergeStrategy.Theirs))
     return patchers
 }
+
+@Throws(IOException::class)
+fun readContentSafely(filePath: Path): List<String> {
+    val content = Files.readString(filePath)
+    return content.split("\n").filter { it.isNotEmpty() }
+}
+
+

@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.variantsync.evaluation.EvalUtilsKt.readContentSafely;
+
 /**
  * A context provider is responsible for providing the correct context whenever lines in a patch are filtered.
  * This becomes necessary, because filtering changes from a patch results in a new context for adjacent changes that have
@@ -57,7 +59,7 @@ public class DefaultContextProvider implements IContextProvider {
         try {
             // Read the file's content
             if (Files.exists(rootDir.resolve(fileDiff.newFile()))) {
-                lines = Files.readAllLines(rootDir.resolve(fileDiff.newFile()));
+                lines = readContentSafely(rootDir.resolve(fileDiff.newFile()));
                 if (lines.isEmpty()) {
                     return new ArrayList<>();
                 }
@@ -91,7 +93,7 @@ public class DefaultContextProvider implements IContextProvider {
         try {
             // Read the file's content
             if (Files.exists(rootDir.resolve(fileDiff.oldFile()))) {
-                lines = Files.readAllLines(rootDir.resolve(fileDiff.oldFile()));
+                lines = readContentSafely(rootDir.resolve(fileDiff.oldFile()));
             } else {
                 lines = new ArrayList<>();
             }

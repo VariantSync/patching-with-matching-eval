@@ -6,6 +6,7 @@ import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.PatchCommand
 import org.variantsync.evaluation.error.ShellException
+import org.variantsync.evaluation.readContentSafely
 import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException
@@ -32,7 +33,7 @@ class UnixPatch(private val name: String, private val strip: Int) : Patcher {
             operations.patchFile()
         }
 
-        val patch = DiffParser.toOriginalDiff(Files.readAllLines(pathToPatchFile))
+        val patch = DiffParser.toOriginalDiff(readContentSafely(pathToPatchFile))
 
         if (!Files.exists(pathToPatchFile)) {
             // If there is nothing to patch, there is nothing to reject
@@ -109,7 +110,7 @@ class UnixPatch(private val name: String, private val strip: Int) : Patcher {
         var rejectsDiff: OriginalDiff? = null
         if (Files.exists(rejectFile)) {
             try {
-                val rejects = Files.readAllLines(rejectFile)
+                val rejects = readContentSafely(rejectFile)
                 rejectsDiff = DiffParser.toOriginalDiff(rejects)
             } catch (e: IOException) {
                 panic("Was not able to read rejects file.", e)

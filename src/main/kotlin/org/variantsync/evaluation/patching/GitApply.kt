@@ -9,6 +9,7 @@ import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.Hunk
 import org.variantsync.evaluation.baseline.shell.GitApplyCommand
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
+import org.variantsync.evaluation.readContentSafely
 import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import java.io.File
@@ -97,7 +98,7 @@ class GitApply(private val name: String, private val strip: Int) : Patcher {
 
     private fun parseRejects(operations: Operations, rejectFile: Path): List<Change> {
         try {
-            val rejectContent = Files.readAllLines(rejectFile)
+            val rejectContent = readContentSafely(rejectFile)
             var rejectedFileDir = rejectFile.parent
             var rejectedFileName = rejectFile.fileName.toString()
             rejectedFileName = rejectedFileName.substring(0, rejectedFileName.length - 4)

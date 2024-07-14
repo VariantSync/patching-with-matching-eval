@@ -7,6 +7,7 @@ import org.variantsync.evaluation.baseline.shell.GitCherryPickCommand
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
 import org.variantsync.evaluation.cherries.CherryEvalOperations
 import org.variantsync.evaluation.error.ShellException
+import org.variantsync.evaluation.readContentSafely
 import org.variantsync.vevos.simulation.feature.Variant
 import java.nio.file.Files
 import java.util.function.Consumer
@@ -26,7 +27,7 @@ class GitCP(private val name: String, private val strip: Int, private val strate
         } else {
             operations.patchFile()
         }
-        val patch = DiffParser.toOriginalDiff(Files.readAllLines(pathToPatchFile))
+        val patch = DiffParser.toOriginalDiff(readContentSafely(pathToPatchFile))
 
         if (operations !is CherryEvalOperations) {
             // If this is not an evaluation of cherry picks, we cannot apply git cherry pick as patcher
@@ -92,7 +93,7 @@ class GitCP(private val name: String, private val strip: Int, private val strate
         var state = TentativeState.Outside
         for (conflictingFile in conflictingFiles) {
             val pathToFile = operations.patchDir().resolve(conflictingFile)
-            val lines = Files.readAllLines(pathToFile)
+            val lines = readContentSafely(pathToFile)
 
             val updatedLines = ArrayList<String>()
             for (line in lines) {

@@ -8,10 +8,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static org.variantsync.evaluation.EvalUtilsKt.readContentSafely;
 
 public class DiffParserTest {
 
@@ -108,4 +113,14 @@ public class DiffParserTest {
         OriginalDiff originalDiff = DiffParser.toOriginalDiff(lines);
         assert !originalDiff.isEmpty();
     }
+
+
+@Test
+public void parseCRLF() throws Exception {
+    Path diff = Path.of("src/test/resources/troublesome-diffs/crlf.txt");
+    List<String> lines = readContentSafely(diff);
+    OriginalDiff originalDiff = DiffParser.toOriginalDiff(lines);
+    assert !originalDiff.isEmpty();
+    Assertions.assertEquals(21, originalDiff.toLines().size());
+}
 }

@@ -1,5 +1,6 @@
 package org.variantsync.evaluation.baseline.shell;
 
+import kotlin.text.Charsets;
 import org.tinylog.Logger;
 import org.variantsync.evaluation.error.SetupError;
 import org.variantsync.evaluation.error.ShellException;
@@ -11,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -111,13 +113,21 @@ public class ShellExecutor {
         return command.interpretResult(exitCode, output);
     }
 
-    private Runnable collectOutput(final InputStream inputStream, final Consumer<String> consumer) {
-        return () -> {
-            try (inputStream; final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                reader.lines().forEach(consumer);
-            } catch (final IOException e) {
-                Logger.error("Exception thrown while reading stream of Shell command.", e);
+private Runnable collectOutput(final InputStream inputStream, final Consumer<String> consumer) {
+    return () -> {
+        try (inputStream; final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, Charsets.UTF_8))) {
+            StringBuilder output = new StringBuilder();
+            int character;
+            while ((character = reader.read()) != -1) {
+                output.append((char) character);
             }
-        };
-    }
+            String[] lines = output.toString().split("\n");
+            for (String line : lines) {
+                consumer.accept(line);
+            }
+        } catch (final IOException e) {
+            Logger.error("Exception thrown while reading stream of Shell command.", e);
+        }
+    };
+}
 }

@@ -6,6 +6,7 @@ import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.MPatchCommand
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
+import org.variantsync.evaluation.readContentSafely
 import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException
@@ -13,7 +14,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
 
-class MPatch(private val name: String, private val strip: Int) : Patcher {
+class MPatch(private val name: String, private val strip: Int, private val maxMatchDistance: Int) : Patcher {
 
     override fun applyPatch(
         operations: Operations,
@@ -42,7 +43,7 @@ class MPatch(private val name: String, private val strip: Int) : Patcher {
         }
 
         val patchCommand = MPatchCommand.Recommended(pathToSourceVariant, pathToPatchFile).strip(strip)
-            .rejectsFile(rejectFile)
+            .rejectsFile(rejectFile).maxMatchDistance(this.maxMatchDistance)
 
         // apply patch to target variant
         val customShell = ShellExecutor(Logger::debug, Logger::warn, operations.workDir())
@@ -74,10 +75,10 @@ class MPatch(private val name: String, private val strip: Int) : Patcher {
         } else {
             operations.patchFile()
         }
-        val patch = DiffParser.toOriginalDiff(Files.readAllLines(pathToPatchFile))
+        val patch = DiffParser.toOriginalDiff(readContentSafely(pathToPatchFile))
         if (Files.exists(rejectFile)) {
             try {
-                val rejects = Files.readAllLines(rejectFile)
+                val rejects = readContentSafely(rejectFile)
                 return parseRejects(patch, rejects)
             } catch (e: IOException) {
                 panic("Was not able to read rejects file.", e)
