@@ -17,28 +17,28 @@ def main():
     results_dir = "/home/alex/data/cherry-picks/results/"
     repo_sample = "/home/alex/programming/patching-with-matching-eval/simulation-files/data/repo-sample.yaml"
     showfliers = True
-    #    boxplot_results_lang_overall(
-    #        results_dir, repo_sample, only_non_trivial=True, showfliers=showfliers
-    #    )
-    #    boxplot_results_lang_per_proj(
-    #        results_dir,
-    #        repo_sample,
-    #        min_results_per_repo=minimum,
-    #        only_non_trivial=True,
-    #        showfliers=showfliers,
-    #    )
-    #
-    #    # rq3_table(results_dir, only_non_trivial=True)
-    #    ed_runtime_boxplot_results_lang_overall(
-    #        results_dir, repo_sample, only_non_trivial=True, showfliers=showfliers
-    #    )
-    #    automation_boxplot_results_lang_per_proj(
-    #        results_dir, repo_sample, minimum, only_non_trivial=True, showfliers=showfliers
-    #    )
+    # boxplot_results_lang_overall(
+    #     results_dir, repo_sample, only_non_trivial=True, showfliers=showfliers
+    # )
+    # boxplot_results_lang_per_proj(
+    #     results_dir,
+    #     repo_sample,
+    #     min_results_per_repo=minimum,
+    #     only_non_trivial=True,
+    #     showfliers=showfliers,
+    # )
 
-    better_or_worse(results_dir, repo_sample, only_non_trivial=True)
+    # # rq3_table(results_dir, only_non_trivial=True)
+    # ed_runtime_boxplot_results_lang_overall(
+    #     results_dir, repo_sample, only_non_trivial=True, showfliers=showfliers
+    # )
+    # automation_boxplot_results_lang_per_proj(
+    #     results_dir, repo_sample, minimum, only_non_trivial=True, showfliers=showfliers
+    # )
 
-    # rq3_table_alt(results_dir, repo_sample, only_non_trivial=True)
+    # better_or_worse(results_dir, repo_sample, only_non_trivial=True)
+
+    rq3_table_alt(results_dir, repo_sample, only_non_trivial=True)
 
 
 if __name__ == "__main__":
