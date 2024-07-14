@@ -159,19 +159,22 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
         # Group results by repo
         results_per_patcher[patcher] = results_per_repo(results, repos)
 
-    results = results_per_patcher[Patcher.MPatch]
+    results = results_per_patcher[Patcher.MPatch2]
     for repo in results.keys():
         repo_results_mpatch = results[repo]
         repo_results_upatch = results_per_patcher[Patcher.UnixPatch][repo]
         repo_results_apply = results_per_patcher[Patcher.GitApply][repo]
+        repo_results_cherry = results_per_patcher[Patcher.GitCherryDefault][repo]
 
         sorted(repo_results_mpatch, key=lambda x: x.run_id)
         sorted(repo_results_upatch, key=lambda x: x.run_id)
         sorted(repo_results_apply, key=lambda x: x.run_id)
+        sorted(repo_results_cherry, key=lambda x: x.run_id)
 
         repo_results_mpatch = {r.run_id: r for r in repo_results_mpatch}
         repo_results_upatch = {r.run_id: r for r in repo_results_upatch}
         repo_results_apply = {r.run_id: r for r in repo_results_apply}
+        repo_results_cherry = {r.run_id: r for r in repo_results_cherry}
 
         for i in repo_results_mpatch.keys():
             res_mpatch = repo_results_mpatch.get(i, None)  # type: Optional[PatchResult]
@@ -180,6 +183,7 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
 
             res_upatch = repo_results_upatch.get(i, None)  # type: Optional[PatchResult]
             res_apply = repo_results_apply.get(i, None)  # type: Optional[PatchResult]
+            res_cherry = repo_results_cherry.get(i, None)  # type: Optional[PatchResult]
 
             rm = res_mpatch.outcome_classification.num_incorrect()
             ru = (
@@ -192,6 +196,25 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
                 if res_apply is not None
                 else float("inf")
             )
+            rc = (
+                res_cherry.outcome_classification.fn()
+                if res_cherry is not None
+                else float("inf")
+            )
+
+            fn = res_mpatch.outcome_classification.fn()
+            if fn > rc:
+                if fn > 100:
+                    print(
+                        "Worse for patch "
+                        + str(i)
+                        + " in "
+                        + str(repo)
+                        + " with "
+                        + str(rm)
+                        + " vs. "
+                        + str(rc)
+                    )
 
             if rm < ru and rm < ra:
                 mpatch_better += 1

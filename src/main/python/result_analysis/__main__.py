@@ -36,9 +36,9 @@ def main():
     #        results_dir, repo_sample, minimum, only_non_trivial=True, showfliers=showfliers
     #    )
 
-    #    better_or_worse(results_dir, repo_sample, only_non_trivial=True)
+    better_or_worse(results_dir, repo_sample, only_non_trivial=True)
 
-    rq3_table_alt(results_dir, repo_sample, only_non_trivial=True)
+    # rq3_table_alt(results_dir, repo_sample, only_non_trivial=True)
 
 
 if __name__ == "__main__":

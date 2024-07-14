@@ -2,10 +2,13 @@ from enum import Enum
 
 
 class Patcher(Enum):
-    MPatch = "mpatch"
+    MPatch0 = "mpatch-0"
+    MPatch1 = "mpatch-1"
+    MPatch2 = "mpatch-2"
+    MPatch3 = "mpatch-3"
     UnixPatch = "unix_patch"
     GitApply = "git_apply"
-    GitCherryDefault = "git_cherry_default"
+    GitCherryDefault = "git_cherry"
     GitCherryOurs = "git_cherry_ours"
     GitCherryTheirs = "git_cherry_theirs"
 
@@ -17,7 +20,10 @@ class Patcher(Enum):
 
     def nice_name(self):
         return {
-            Patcher.MPatch: "PwM",
+            Patcher.MPatch0: "PwM-0",
+            Patcher.MPatch1: "PwM-1",
+            Patcher.MPatch2: "PwM-2",
+            Patcher.MPatch3: "PwM-3",
             Patcher.UnixPatch: "Unix Patch",
             Patcher.GitApply: "Git Apply",
             Patcher.GitCherryDefault: "Git Cherry-Pick (default)",
