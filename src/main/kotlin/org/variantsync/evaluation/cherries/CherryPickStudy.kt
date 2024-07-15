@@ -161,6 +161,7 @@ fun main(args: Array<String>) {
             val numCherryPicks = countCherryPicks(sample[repetition - 1])
             var completed = 0
             for (dataset in sample[repetition - 1]) {
+                Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
                 val study = CherryPickStudy(config, dataset, repetition)
                 try {
                     study.run()
@@ -169,7 +170,7 @@ fun main(args: Array<String>) {
                     Logger.error(e)
                 }
                 completed += dataset.cherryPicks.size
-                Logger.info("Lang. $language, Rep. $repetition: Finished $completed of $numCherryPicks cherry picks")
+                Logger.info("(Lang.: $language; Rep.: $repetition) Finished $completed of $numCherryPicks cherry picks\n")
             }
         }
     }

@@ -13,7 +13,6 @@ fun main(args: Array<String>) {
         )
     }
     val config = EvalConfig(File(args[0]))
-    Logger.info("Loading datasets")
     val datasets: Map<String, MutableList<CherryDataset>> = try {
         loadPRDatasets(config)
     } catch (e: IOException) {
@@ -31,5 +30,5 @@ fun main(args: Array<String>) {
         }
     }
 
-    Logger.info("There are $totalNumberOfCherryPicks cherry picks to work on.")
+    Logger.info("There are $totalNumberOfCherryPicks cherry picks to consider for all languages.")
 }

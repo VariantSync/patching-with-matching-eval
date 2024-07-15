@@ -31,7 +31,6 @@ fun filterUnpatchedFiles(originalPatch: OriginalDiff, diffToFilter: OriginalDiff
 fun defaultPatchers(strip: Int): List<Patcher> {
     val patchers = ArrayList<Patcher>()
     patchers.add(UnixPatch("unix_patch", strip))
-    patchers.add(MPatch("mpatch-0", strip,0))
     patchers.add(MPatch("mpatch-1", strip,1))
     patchers.add(MPatch("mpatch-2", strip,2))
     patchers.add(MPatch("mpatch-3", strip,3))

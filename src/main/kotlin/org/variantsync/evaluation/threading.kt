@@ -61,10 +61,8 @@ fun waitForShutdown(
 
     Logger.info(
         String.format(
-            "Finished all %s tasks.%n",
+            "Finished %s tasks.",
             futures.size.toString()
         )
     )
-
-    Logger.info("All done.")
 }
