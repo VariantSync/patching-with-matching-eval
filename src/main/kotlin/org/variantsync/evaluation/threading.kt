@@ -11,14 +11,17 @@ fun waitForShutdown(
     threadPool: ExecutorService,
     futures: MutableList<Future<TaskOutcome>>
 ) {
-    threadPool.shutdown()
+    val timeoutLength = 5L
+    val timeoutUnit = TimeUnit.MINUTES
+    val allowedTimeouts = 3
     var timouts = 0
+    threadPool.shutdown()
     for (future in futures) {
         val runID: ULong
         val taskOutCome: TaskOutcome
         try {
             // TODO: Make timeout configurable
-            taskOutCome = future.get(10, TimeUnit.MINUTES)
+            taskOutCome = future.get(timeoutLength, timeoutUnit)
             runID = taskOutCome.runID
             if (runID % 25uL == 0uL) {
                 Logger.info(
@@ -41,7 +44,7 @@ fun waitForShutdown(
             Logger.warn("Timed out while running task. Skipping this task")
             future.cancel(true)
             timouts++
-            if (timouts > 10) {
+            if (timouts > allowedTimeouts) {
                 // if there are too many timeouts for a repository in a row, we cancel the evaluation for this repository
                 Logger.warn("Stopping all tasks for subject repository - too many timeouts!")
                 break
@@ -54,8 +57,7 @@ fun waitForShutdown(
     }
     Logger.info("Waiting for thread pool shutdown")
     threadPool.shutdownNow()
-    // TODO: Configure timeout
-    if (!threadPool.awaitTermination(10, TimeUnit.MINUTES)) {
+    if (!threadPool.awaitTermination(timeoutLength, timeoutUnit)) {
         Logger.error("Thread pool timeout.")
     }
 
