@@ -79,17 +79,10 @@ class VariantRepoManager(
 
             if (failure) {
                 Logger.warn("First cleanup phase failed.")
-                try {
-                    val tempExecutor = ShellExecutor(Logger::warn, Logger::warn, targetVariantV0)
-                    tempExecutor.execute(GitCherryPickCommand().abort())
-                    tempExecutor.execute(RmCommand(targetVariantV0).recursive())
-                        .expect("Was not able to remove target variant V0.")
-                    tempExecutor.execute(CpCommand(githubRepoPath, targetVariantV0).recursive())
-                        .expect("Was not able to copy target variant V0.")
-                } catch (e2: Exception) {
-                    Logger.error(e2)
-                    panic("Was not able to clean target.", e2)
-                }
+                val tempExecutor = ShellExecutor(Logger::warn, Logger::warn, targetVariantV0)
+                tempExecutor.execute(GitCherryPickCommand().abort())
+                tempExecutor.execute(RmCommand(targetVariantV0).recursive())
+                tempExecutor.execute(CpCommand(githubRepoPath, targetVariantV0).recursive())
             }
         } catch (e: Exception) {
             Logger.error(e)
