@@ -233,6 +233,12 @@ fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
         throw parseException
     }
 
+    var language = repoId["language"]
+    if (language !is String) {
+        throw parseException
+    }
+    language = language.substring(1, language.length - 1)
+
     val cherryPicks = ArrayList<CherryPick>()
     val prEntries = entries[1]
     if (prEntries !is List<*>) {
@@ -282,7 +288,7 @@ fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
         id++
     }
 
-    return Optional.of(CherryDataset(pathToYaml.fileName.toString(), repoName, cherryPicks))
+    return Optional.of(CherryDataset(pathToYaml.fileName.toString(), repoName, language, cherryPicks))
 }
 
 private fun prepareVariantDirectories(operations: CherryEvalOperations, gitHubRepoPath: Path) {
