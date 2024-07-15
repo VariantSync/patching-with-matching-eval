@@ -247,13 +247,14 @@ fun loadPRDatasets(config: EvalConfig): Map<String, MutableList<CherryDataset>> 
         val dataset = loadDataset(yamlFile)
         if (dataset.isPresent) {
             val datasetSize = dataset.get().cherryPicks.size
-            if (datasetSize > config.EXPERIMENT_DATASET_MAX_SIZE()) {
+            if (datasetSize < config.EXPERIMENT_DATASET_MIN_SIZE() || datasetSize > config.EXPERIMENT_DATASET_MAX_SIZE()) {
                 Logger.info(
-                    ("Skipping %s with %s cherry picks because it exceeds the maximum number of cherry picks (%d) set in " +
+                    ("Skipping %s with %s cherry picks because its size is outside the range (%d, %d) set in " +
                             "the configuration.").format(
                         dataset.get().datasetName,
                         datasetSize,
-                        config.EXPERIMENT_DATASET_MAX_SIZE()
+                        config.EXPERIMENT_DATASET_MIN_SIZE(),
+                        config.EXPERIMENT_DATASET_MAX_SIZE(),
                     )
                 )
                 continue

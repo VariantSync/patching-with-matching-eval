@@ -106,8 +106,22 @@ class EvalConfig(propertiesFile: File) {
 
     /**
      *
-     * @return Maximum number of commits in a repository for a dataset to be considered for the
-     * study. If a repository has more commits, it is simply ignored. Values of 0 or less
+     * @return Minimum number of cherries in a repository for a dataset to be considered for the
+     * study. If a repository has fewer cherries, it is simply ignored. Values of 0 or less
+     * are automatically converted to 0.
+     */
+    fun EXPERIMENT_DATASET_MIN_SIZE(): Int {
+        var value = config!!.getInt(EXPERIMENT_DATASET_MIN_SIZE)
+        if (value < 0) {
+            value = 0
+        }
+        return value
+    }
+
+    /**
+     *
+     * @return Maximum number of cherries in a repository for a dataset to be considered for the
+     * study. If a repository has more cherries, it is simply ignored. Values of 0 or less
      * are automatically converted to Integer.MAX_VALUE.
      */
     fun EXPERIMENT_DATASET_MAX_SIZE(): Int {
@@ -187,7 +201,10 @@ class EvalConfig(propertiesFile: File) {
         // The directory for saving the results
         private const val EXPERIMENT_DIR_RESULTS = "experiment.dir.results"
 
-        // The maximum number of commits in a dataset for it to be considered
+        // The minimum number of cherries in a dataset for it to be considered
+        private const val EXPERIMENT_DATASET_MIN_SIZE = "experiment.dataset.min-size"
+
+        // The maximum number of cherries in a dataset for it to be considered
         private const val EXPERIMENT_DATASET_MAX_SIZE = "experiment.dataset.max-size"
 
         // The number of threads for parallel execution
