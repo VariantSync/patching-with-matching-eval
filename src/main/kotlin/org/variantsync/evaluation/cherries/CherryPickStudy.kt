@@ -203,11 +203,15 @@ fun sampleCherries(config: EvalConfig, datasets: List<CherryDataset>, rand: Secu
 
         val datasetSubset: MutableList<CherryDataset> = ArrayList()
         for (dataset in remainingDatasets.keys) {
-            dataset.cherryPicks.addAll(remainingDatasets[dataset]!!)
+            dataset.cherryPicks = remainingDatasets[dataset]!!
             datasetSubset.add(dataset)
         }
 
-        Logger.info("Created sample of ${countCherryPicks(datasetSubset)} cherry picks for repetition $repetition.")
+        val sampledCherries = countCherryPicks(datasetSubset)
+        Logger.info("Created sample of $sampledCherries cherry picks for repetition $repetition.")
+        if (sampledCherries != sampleSize) {
+            Logger.error("Mismatch of expected to actual sample size")
+        }
 
         sample.add(datasetSubset)
     }
