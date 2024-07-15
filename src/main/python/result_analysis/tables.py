@@ -164,7 +164,7 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
         repo_results_mpatch = results[repo]
         repo_results_upatch = results_per_patcher[Patcher.UnixPatch][repo]
         repo_results_apply = results_per_patcher[Patcher.GitApply][repo]
-        repo_results_cherry = results_per_patcher[Patcher.GitCherryDefault][repo]
+        repo_results_cherry = results_per_patcher[Patcher.GitCherryOurs][repo]
 
         sorted(repo_results_mpatch, key=lambda x: x.run_id)
         sorted(repo_results_upatch, key=lambda x: x.run_id)
