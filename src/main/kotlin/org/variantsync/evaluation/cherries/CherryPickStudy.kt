@@ -28,6 +28,7 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.math.min
 import kotlin.system.exitProcess
 
 class CherryPickStudy(
@@ -49,9 +50,10 @@ class CherryPickStudy(
             Files.createDirectories(config.EXPERIMENT_DIR_RESULTS())
         }
         val repoPath: Path = cloneGitHubRepo(config, dataset.repositoryId)
-        this.numThreads = config.EXPERIMENT_THREAD_COUNT()
+        this.numThreads = min(config.EXPERIMENT_THREAD_COUNT(), dataset.cherryPicks.size)
         this.availableOperations = LinkedBlockingQueue(numThreads)
 
+        Logger.info("Preparing working directories for $numThreads threads.")
         for (i in 1..numThreads) {
             // Add one operations instance for each thread; each instance defines its own working directory
             val operations = CherryEvalOperations(config.EXPERIMENT_DIR_MAIN(), repoPath)
@@ -104,14 +106,17 @@ class CherryPickStudy(
      */
     fun run() {
         val threadPool = Executors.newFixedThreadPool(numThreads)
-        Logger.info("Starting diffing and patching for cherry picks...")
+        Logger.info("Scheduling ${evalTasks.size} tasks...")
 
         val futures = evalTasks.stream()
             .map { runnable: CherryPickEvalTask -> threadPool.submit(runnable) }
             .collect(Collectors.toList())
 
+        Logger.info("Scheduled all tasks.")
+
         waitForShutdown(threadPool, futures)
 
+        Logger.info("Running clean up.")
         // Finally, close all repo managers
         for (operation in this.availableOperations) {
             operation.repoManager.close()
@@ -121,6 +126,7 @@ class CherryPickStudy(
         for (operations in this.availableOperations) {
             FileUtils.deleteDirectory(operations.workDir.toFile())
         }
+        Logger.info("Cleaned all working directories.")
     }
 }
 
