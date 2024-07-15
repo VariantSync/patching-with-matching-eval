@@ -14,8 +14,8 @@ fun main(args: Array<String>) {
     }
     val config = EvalConfig(File(args[0]))
     Logger.info("Loading datasets")
-    val datasets: List<CherryDataset> = try {
-        loadPRDatasets(config.EXPERIMENT_DATASETS())
+    val datasets: Map<String, MutableList<CherryDataset>> = try {
+        loadPRDatasets(config)
     } catch (e: IOException) {
         Logger.error(
             "Was not able to load the yaml datasets from '"
@@ -25,8 +25,10 @@ fun main(args: Array<String>) {
     }
 
     var totalNumberOfCherryPicks = 0
-    for (dataset in datasets) {
-        totalNumberOfCherryPicks += dataset.cherryPicks.size
+    for (datasetList in datasets.values) {
+        for (dataset in datasetList) {
+            totalNumberOfCherryPicks += dataset.cherryPicks.size
+        }
     }
 
     Logger.info("There are $totalNumberOfCherryPicks cherry picks to work on.")

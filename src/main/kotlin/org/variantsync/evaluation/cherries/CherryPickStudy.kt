@@ -26,11 +26,14 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.stream.Collectors
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.system.exitProcess
 
 class CherryPickStudy(
     config: EvalConfig,
     dataset: CherryDataset,
+    repetition: Int,
 ) {
     // The study tasks that are to be executed in parallel
     private val evalTasks: MutableList<CherryPickEvalTask>
@@ -61,38 +64,24 @@ class CherryPickStudy(
         }
 
         idProvider = IDProvider(config.EXPERIMENT_START_ID())
-        val seed: ByteArray = ByteBuffer.allocate(java.lang.Long.BYTES).putLong(config.SEED()).array()
         this.evalTasks = ArrayList()
 
-        for (repetition in 1..config.EXPERIMENT_REPEATS()) {
-            var sample: List<CherryPick>
-            if (config.EXPERIMENT_ENABLE_SAMPLING()) {
-                val sampleSize = determineSampleSize(config, dataset.cherryPicks.size)
-                Logger.info("Considering a representative sample of $sampleSize cherry picks for repetition $repetition of ${dataset.datasetName}.")
-
-                sample =
-                    dataset.cherryPicks.shuffled(SecureRandom(seed)).subList(0, sampleSize)
-            } else {
-                sample = dataset.cherryPicks
+        for (cherryPick in dataset.cherryPicks) {
+            val runID = idProvider.next()
+            if (runID < idProvider.start) {
+                Logger.info("Skipped commit $runID")
+                continue
             }
-
-            for (cherryPick in sample) {
-                val runID = idProvider.next()
-                if (runID < idProvider.start) {
-                    Logger.info("Skipped commit $runID")
-                    continue
-                }
-                evalTasks.add(
-                    CherryPickEvalTask(
-                        repetition,
-                        config,
-                        dataset.datasetName,
-                        cherryPick,
-                        availableOperations,
-                        runID
-                    )
+            evalTasks.add(
+                CherryPickEvalTask(
+                    repetition,
+                    config,
+                    dataset.datasetName,
+                    cherryPick,
+                    availableOperations,
+                    runID
                 )
-            }
+            )
         }
     }
 
@@ -143,8 +132,8 @@ fun main(args: Array<String>) {
     }
     val config = EvalConfig(File(args[0]))
     Logger.info("Starting experiment initialization.")
-    val datasets: List<CherryDataset> = try {
-        loadPRDatasets(config.EXPERIMENT_DATASETS())
+    val datasetsPerLanguage: Map<String, MutableList<CherryDataset>> = try {
+        loadPRDatasets(config)
     } catch (e: IOException) {
         Logger.error(
             "Was not able to load the yaml datasets from '"
@@ -153,29 +142,83 @@ fun main(args: Array<String>) {
         throw UncheckedIOException(e)
     }
 
-    for (dataset in datasets) {
-        val datasetSize = dataset.cherryPicks.size
-        Logger.info("using next dataset ${dataset.datasetName} with $datasetSize cherry picks")
-        if (datasetSize > config.EXPERIMENT_DATASET_MAX_SIZE()) {
-            Logger.info(
-                "Skipping %s with %s cherry picks because it exceeds the maximum number of cherry picks (%d) set in the configuration.".format(
-                    dataset.datasetName,
-                    datasetSize,
-                    config.EXPERIMENT_DATASET_MAX_SIZE()
-                )
-            )
-            continue
+    val seed: ByteArray = ByteBuffer.allocate(java.lang.Long.BYTES).putLong(config.SEED()).array()
+    val rand = SecureRandom(seed)
+    for (language in datasetsPerLanguage.keys) {
+        val datasets = datasetsPerLanguage[language]!!
+        Logger.info("considering next language $language with ${datasets.size} usable repositories")
+        val sample: List<List<CherryDataset>> = if (config.EXPERIMENT_ENABLE_SAMPLING()) {
+            sampleCherries(config, datasets, rand)
+        } else {
+            val temp = ArrayList<List<CherryDataset>>()
+            for (i in 1..config.EXPERIMENT_REPEATS()) {
+                temp.add(datasets)
+            }
+            temp
         }
-        val study = CherryPickStudy(config, dataset)
-        try {
-            study.run()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Logger.error(e)
-            exitProcess(1)
+
+        for (repetition in 1..config.EXPERIMENT_REPEATS()) {
+            val numCherryPicks = countCherryPicks(sample[repetition - 1])
+            var completed = 0
+            for (dataset in sample[repetition - 1]) {
+                val study = CherryPickStudy(config, dataset, repetition)
+                try {
+                    study.run()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Logger.error(e)
+                }
+                completed += dataset.cherryPicks.size
+                Logger.info("Lang. $language, Rep. $repetition: Finished $completed of $numCherryPicks cherry picks")
+            }
         }
     }
     exitProcess(0)
+}
+
+fun sampleCherries(config: EvalConfig, datasets: List<CherryDataset>, rand: SecureRandom): List<List<CherryDataset>> {
+    val allCherryPicks = HashMap<CherryPick, CherryDataset>()
+    // Collect all cherry picks and associate them with the dataset from which they came
+    for (dataset in datasets) {
+        for (cherryPick in dataset.cherryPicks) {
+            val datasetCopy = CherryDataset(dataset.datasetName, dataset.repositoryId, dataset.language, ArrayList())
+            allCherryPicks[cherryPick] = datasetCopy
+        }
+    }
+
+    val sampleSize = determineSampleSize(config, allCherryPicks.keys.size)
+    Logger.info("Considering ${config.EXPERIMENT_REPEATS()} representative samples of $sampleSize cherry picks " +
+            "for ${allCherryPicks.keys.size} cherry picks in total.")
+
+    val sample: MutableList<List<CherryDataset>> = ArrayList()
+    val cherries: List<CherryPick> = ArrayList(allCherryPicks.keys)
+    for (repetition in 1..config.EXPERIMENT_REPEATS()) {
+        val cherrySubset = cherries.shuffled(rand).subList(0, sampleSize)
+        val remainingDatasets = HashMap<CherryDataset, MutableList<CherryPick>>()
+        for (cherry in cherrySubset) {
+            val cherryPickList = remainingDatasets.getOrPut(allCherryPicks[cherry]!!){ ArrayList()}
+            cherryPickList.add(cherry)
+        }
+
+        val datasetSubset: MutableList<CherryDataset> = ArrayList()
+        for (dataset in remainingDatasets.keys) {
+            dataset.cherryPicks.addAll(remainingDatasets[dataset]!!)
+            datasetSubset.add(dataset)
+        }
+
+        Logger.info("Created sample of ${countCherryPicks(datasetSubset)} cherry picks for repetition $repetition.")
+
+        sample.add(datasetSubset)
+    }
+    return sample
+}
+
+fun countCherryPicks(datasets: List<CherryDataset>): Int {
+    var totalNumberOfCherryPicks = 0
+    for (dataset in datasets) {
+        totalNumberOfCherryPicks += dataset.cherryPicks.size
+    }
+    return totalNumberOfCherryPicks
 }
 
 class YamlFileVisitor : SimpleFileVisitor<Path>() {
@@ -193,15 +236,28 @@ class YamlFileVisitor : SimpleFileVisitor<Path>() {
     }
 }
 
-fun loadPRDatasets(datasetsDir: Path): List<CherryDataset> {
-    val datasets = ArrayList<CherryDataset>()
-    for (yamlFile in getYamlFiles(datasetsDir)) {
+fun loadPRDatasets(config: EvalConfig): Map<String, MutableList<CherryDataset>> {
+    val datasetsPerLanguage = HashMap<String, MutableList<CherryDataset>>()
+    for (yamlFile in getYamlFiles(config.EXPERIMENT_DATASETS())) {
         val dataset = loadDataset(yamlFile)
         if (dataset.isPresent) {
-            datasets.add(dataset.get())
+            val datasetSize = dataset.get().cherryPicks.size
+            if (datasetSize > config.EXPERIMENT_DATASET_MAX_SIZE()) {
+                Logger.info(
+                    ("Skipping %s with %s cherry picks because it exceeds the maximum number of cherry picks (%d) set in " +
+                            "the configuration.").format(
+                        dataset.get().datasetName,
+                        datasetSize,
+                        config.EXPERIMENT_DATASET_MAX_SIZE()
+                    )
+                )
+                continue
+            }
+            val list = datasetsPerLanguage.getOrPut(dataset.get().language) { ArrayList() }
+            list.add(dataset.get())
         }
     }
-    return datasets
+    return datasetsPerLanguage
 }
 
 fun getYamlFiles(directoryPath: Path): List<Path> {
