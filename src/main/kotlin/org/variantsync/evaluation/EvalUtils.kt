@@ -37,18 +37,22 @@ fun defaultPatchers(strip: Int): List<Patcher> {
     return patchers
 }
 
+//@Throws(IOException::class)
+//fun readContentSafely(filePath: Path): List<String> {
+//    val content = Files.readString(filePath)
+//    if (content.isEmpty()) {
+//        return emptyList()
+//    }
+//    val lines = content.split("\n")
+//    return if (lines.last().isEmpty()) {
+//        lines.subList(0, lines.lastIndex)
+//    } else {
+//        lines
+//    }
+//}
 @Throws(IOException::class)
 fun readContentSafely(filePath: Path): List<String> {
-    val content = Files.readString(filePath)
-    if (content.isEmpty()) {
-        return emptyList()
-    }
-    val lines = content.split("\n")
-    return if (lines.last().isEmpty()) {
-        lines.subList(0, lines.lastIndex)
-    } else {
-        lines
-    }
+    return Files.readAllLines(filePath)
 }
 
 

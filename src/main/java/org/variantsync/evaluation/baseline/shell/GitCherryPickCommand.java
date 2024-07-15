@@ -51,8 +51,13 @@ public class GitCherryPickCommand extends ShellCommand{
         return this;
     }
 
+    public GitCherryPickCommand abort() {
+        this.args.add("--abort");
+        return this;
+    }
+
     @Override
     public String toString() {
-        return "git apply: " + Arrays.toString(parts());
+        return "git cherry-pick: " + Arrays.toString(parts());
     }
 }

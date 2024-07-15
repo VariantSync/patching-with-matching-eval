@@ -163,8 +163,6 @@ class CherryPickEvalTask(
                     getActualVsExpected(operations, operations.targetVariantV1, target, cherryPick)
                 actualVsExpectedNormal = filterUnpatchedFiles(originalPatch, actualVsExpectedNormal, operations.STRIP)
 
-                patcher.clean(operations)
-
                 if (config.EXPERIMENT_DEBUG()) {
                     patchFilesDebug(
                         operations,
@@ -200,6 +198,7 @@ class CherryPickEvalTask(
                             + cherryPick.targetCommit
                 )
 
+                patcher.clean(operations)
                 operations.repoManager.resetTargetVariant()
             }
         } catch (e: Exception) {

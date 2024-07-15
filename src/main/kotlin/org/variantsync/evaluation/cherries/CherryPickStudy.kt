@@ -61,7 +61,6 @@ class CherryPickStudy(
             cleanVariantDirectories(operations)
             // Copy the source and target variant to the respective variant directories
             prepareVariantDirectories(operations, repoPath)
-            operations.repoManager.open()
             availableOperations.add(operations)
         }
 
@@ -117,12 +116,7 @@ class CherryPickStudy(
         waitForShutdown(threadPool, futures)
 
         Logger.info("Running clean up.")
-        // Finally, close all repo managers
-        for (operation in this.availableOperations) {
-            operation.repoManager.close()
-        }
-
-        // And delete all workdirs
+        // Delete all workdirs
         for (operations in this.availableOperations) {
             FileUtils.deleteDirectory(operations.workDir.toFile())
         }
