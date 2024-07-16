@@ -1,4 +1,5 @@
 from enum import Enum
+import numpy as np
 
 
 class Patcher(Enum):
@@ -168,4 +169,41 @@ class OutcomeClassification:
             f"mitigated_invalid={self.mitigated_invalid!r}, "
             f"mitigated_missing={self.mitigated_missing!r}, "
             f"edit_distance={self.edit_distance!r})"
+        )
+
+
+class RQ3PatcherData:
+    def __init__(
+        self,
+        patcher: Patcher,
+        precision: float,
+        recall: float,
+        patch_automation: float,
+        avg_edit_distance: float,
+        avg_runtime: float,
+    ):
+        self.precision = np.array([precision])
+        self.recall = np.array([recall])
+        self.patcher = patcher
+        self.patch_automation = np.array([patch_automation])
+        self.avg_edit_distance = np.array([avg_edit_distance])
+        self.avg_runtime = np.array([avg_runtime])
+
+    def add_data(
+        self, precision, recall, patch_automation, avg_edit_distance, avg_runtime
+    ):
+        self.precision = np.append(self.precision, precision)
+        self.recall = np.append(self.recall, recall)
+        self.patch_automation = np.append(self.patch_automation, patch_automation)
+        self.avg_edit_distance = np.append(self.avg_edit_distance, avg_edit_distance)
+        self.avg_runtime = np.append(self.avg_runtime, avg_runtime)
+
+    def __str__(self):
+        return (
+            f"Patcher: {self.patcher:<12} "
+            f"Precision: {np.mean(self.precision):1.2f}, "
+            f"Recall: {np.mean(self.recall):1.2f}, "
+            f"Patch Automation: {100*np.mean(self.patch_automation):2.2f}%, "
+            f"Avg Edit Distance: {np.mean(self.avg_edit_distance):2.2f}, "
+            f"Avg Runtime: {np.mean(self.avg_runtime):1.2f}s"
         )
