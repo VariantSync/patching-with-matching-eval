@@ -31,7 +31,8 @@ fun filterUnpatchedFiles(originalPatch: OriginalDiff, diffToFilter: OriginalDiff
 fun defaultPatchers(strip: Int): List<Patcher> {
     val patchers = ArrayList<Patcher>()
     patchers.add(UnixPatch("unix_patch", strip))
-    patchers.add(MPatch("pwm", strip, 2))
+    patchers.add(MPatch("pwm_f1", strip, 1))
+    patchers.add(MPatch("pwm_f2", strip, 2))
     patchers.add(GitApply("git_apply", strip))
     patchers.add(GitCP("git_cherry", strip, MergeStrategy.Ours))
     return patchers
