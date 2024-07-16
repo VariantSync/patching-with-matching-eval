@@ -123,25 +123,40 @@ def significance(results):
         if other_patcher == pwm:
             continue
         for dataset in results[pwm]:
-            pwm_values = np.array(
-                results[pwm][dataset].recall
-            )
-            other_values = np.array(
-                results[other_patcher][dataset].recall
-            )
+            pwm_values = np.array(results[pwm][dataset].recall)
+            other_values = np.array(results[other_patcher][dataset].recall)
 
             # Perform the Wilcoxon signed-rank test
             if not (sum(pwm_values) == 0 or sum(other_values) == 0):
                 stat, p = wilcoxon(pwm_values, other_values)
-                comparisons.append((dataset, pwm, numpy.average(pwm_values), other_patcher, numpy.average(other_values)))
+                comparisons.append(
+                    (
+                        dataset,
+                        pwm,
+                        numpy.average(pwm_values),
+                        other_patcher,
+                        numpy.average(other_values),
+                    )
+                )
                 p_values.append(p)
             else:
-                stat, p = wilcoxon([x for x in range(0,20)], [x for x in range(30,50)])
+                stat, p = wilcoxon(
+                    [x for x in range(0, 15)], [x for x in range(30, 45)]
+                )
                 comparisons.append(
-                    (dataset, pwm, numpy.average(pwm_values), other_patcher, numpy.average(other_values)))
+                    (
+                        dataset,
+                        pwm,
+                        numpy.average(pwm_values),
+                        other_patcher,
+                        numpy.average(other_values),
+                    )
+                )
                 p_values.append(p)
 
-    _, corrected_p_values, _, corrected_alpha = multipletests(p_values, alpha=0.05, method='bonferroni')
+    _, corrected_p_values, _, corrected_alpha = multipletests(
+        p_values, alpha=0.05, method="bonferroni"
+    )
     # Output the results
     for (dataset, classifier1, value1, classifier2, value2), p, corrected_p in zip(
         comparisons, p_values, corrected_p_values
@@ -149,9 +164,7 @@ def significance(results):
         print(
             f"{dataset}: Comparison between {classifier1} and {classifier2}: p-value = {p}, corrected p-value = {corrected_p}"
         )
-        print(
-            f"{dataset}: {value1} vs. {value2}"
-        )
+        print(f"{dataset}: {value1} vs. {value2}")
         print("corrected alpha: " + str(corrected_alpha))
         print()
 
