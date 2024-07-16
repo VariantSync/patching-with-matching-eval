@@ -1,3 +1,4 @@
+import os
 from typing import List
 from typing import Dict
 from typing import Optional
@@ -18,6 +19,7 @@ from result_analysis.result_handling import edit_distance
 from result_analysis.result_handling import runtime
 from result_analysis.metrics import calculate_precision_recall
 from collections import defaultdict
+import numpy as np
 
 languages = [
     ("Python", "py"),
@@ -43,21 +45,30 @@ class RQ3PatcherData:
         avg_edit_distance: float,
         avg_runtime: float,
     ):
-        self.precision = precision
-        self.recall = recall
+        self.precision = np.array([precision])
+        self.recall = np.array([recall])
         self.patcher = patcher
-        self.patch_automation = patch_automation
-        self.avg_edit_distance = avg_edit_distance
-        self.avg_runtime = avg_runtime
+        self.patch_automation = np.array([patch_automation])
+        self.avg_edit_distance = np.array([avg_edit_distance])
+        self.avg_runtime = np.array([avg_runtime])
+
+    def add_data(
+        self, precision, recall, patch_automation, avg_edit_distance, avg_runtime
+    ):
+        self.precision = np.append(self.precision, precision)
+        self.recall = np.append(self.recall, recall)
+        self.patch_automation = np.append(self.patch_automation, patch_automation)
+        self.avg_edit_distance = np.append(self.avg_edit_distance, avg_edit_distance)
+        self.avg_runtime = np.append(self.avg_runtime, avg_runtime)
 
     def __str__(self):
         return (
             f"Patcher: {self.patcher:<12} "
-            f"Precision: {self.precision:1.2f}, "
-            f"Recall: {self.recall:1.2f}, "
-            f"Patch Automation: {100*self.patch_automation:2.2f}%, "
-            f"Avg Edit Distance: {self.avg_edit_distance:2.2f}, "
-            f"Avg Runtime: {self.avg_runtime:1.2f}s"
+            f"Precision: {np.mean(self.precision):1.2f}, "
+            f"Recall: {np.mean(self.recall):1.2f}, "
+            f"Patch Automation: {100*np.mean(self.patch_automation):2.2f}%, "
+            f"Avg Edit Distance: {np.mean(self.avg_edit_distance):2.2f}, "
+            f"Avg Runtime: {np.mean(self.avg_runtime):1.2f}s"
         )
 
 
@@ -87,54 +98,83 @@ def rq3_table(path_to_results, only_non_trivial):
         print(patcher_data)
 
 
+def list_all_dirs(path):
+    return [
+        os.path.join(path, d)
+        for d in os.listdir(path)
+        if os.path.isdir(os.path.join(path, d))
+    ]
+
+
 def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
     global languages
     repos = load_repositories(path_to_repo_list)
 
+    result_dirs = list_all_dirs(path_to_results)
+
+    print("Result dirs: " + str(result_dirs))
+
     results_per_patcher = defaultdict(dict)
+    for result_dir in sorted(result_dirs):
+        for language in languages:
+            language = language[0]
+            print(language)
+            for patcher in Patcher:  # Patcher is an enum
+                results = load_all_results(result_dir, patcher)
+                # Filter trivial results
+                if only_non_trivial:
+                    results = non_trivial_results(results)
+                # Group results by repo
+                results = results_per_repo(results, repos)
+                # Accumulate repo results per language
+                lang_results = all_results_per_language(results)
+                results = lang_results[language]
+
+                tp = 0.0
+                fp = 0.0
+                fn = 0.0
+                for res in results:
+                    tp += res.outcome_classification.tp()
+                    fp += res.outcome_classification.fp()
+                    fn += res.outcome_classification.fn()
+                precision, recall = calculate_precision_recall(
+                    tp=tp,
+                    fp=fp,
+                    fn=fn,
+                )
+
+                oa = overall_automation(results)
+                (average_ed, _) = edit_distance(results)
+                (average_run, _) = runtime(results)
+
+                if language in results_per_patcher[patcher.nice_name()]:
+                    patcher_data = results_per_patcher[patcher.nice_name()][language]
+                    patcher_data.add_data(
+                        precision=precision,
+                        recall=recall,
+                        patch_automation=oa,
+                        avg_edit_distance=average_ed,
+                        avg_runtime=average_run,
+                    )
+                else:
+                    patcher_data = RQ3PatcherData(
+                        patcher=patcher,
+                        precision=precision,
+                        recall=recall,
+                        patch_automation=oa,
+                        avg_edit_distance=average_ed,
+                        avg_runtime=average_run,
+                    )
+                    results_per_patcher[patcher.nice_name()][language] = patcher_data
+                # print(ed_percentiles)
+            print()
+
     for language in languages:
         language = language[0]
         print(language)
         for patcher in Patcher:  # Patcher is an enum
-            results = load_all_results(path_to_results, patcher)
-            # Filter trivial results
-            if only_non_trivial:
-                results = non_trivial_results(results)
-            # Group results by repo
-            results = results_per_repo(results, repos)
-            # Accumulate repo results per language
-            lang_results = all_results_per_language(results)
-            results = lang_results[language]
-
-            tp = 0.0
-            fp = 0.0
-            fn = 0.0
-            for res in results:
-                tp += res.outcome_classification.tp()
-                fp += res.outcome_classification.fp()
-                fn += res.outcome_classification.fn()
-            precision, recall = calculate_precision_recall(
-                tp=tp,
-                fp=fp,
-                fn=fn,
-            )
-            oa = overall_automation(results)
-            (average_ed, _) = edit_distance(results)
-            (average_run, _) = runtime(results)
-            # ed_percentiles = edit_distance_percentiles(results)
-            patcher_data = RQ3PatcherData(
-                patcher=patcher,
-                precision=precision,
-                recall=recall,
-                patch_automation=oa,
-                avg_edit_distance=average_ed,
-                avg_runtime=average_run,
-            )
+            patcher_data = results_per_patcher[patcher.nice_name()][language]
             print(patcher_data)
-            results_per_patcher[patcher.nice_name()][language] = patcher_data
-            # print(ed_percentiles)
-        print()
-
     language_names = [lang[0] for lang in languages]
     patcher_names = [patcher.nice_name() for patcher in Patcher]
     generate_latex_table(patcher_names, language_names, results_per_patcher)
@@ -164,7 +204,7 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
         repo_results_mpatch = results[repo]
         repo_results_upatch = results_per_patcher[Patcher.UnixPatch][repo]
         repo_results_apply = results_per_patcher[Patcher.GitApply][repo]
-        repo_results_cherry = results_per_patcher[Patcher.GitCherryDefault][repo]
+        repo_results_cherry = results_per_patcher[Patcher.GitCherry][repo]
 
         sorted(repo_results_mpatch, key=lambda x: x.run_id)
         sorted(repo_results_upatch, key=lambda x: x.run_id)

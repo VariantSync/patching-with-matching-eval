@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def generate_latex_table(patcher_names, languages, results_per_patcher):
     with open("experiment_table.tex", "w") as file:
         # Begin the tabular environment
@@ -34,19 +37,19 @@ def generate_latex_table(patcher_names, languages, results_per_patcher):
                     best_type = ""
                     results = results_per_patcher[patcher][language]
                     if metric == "Precision":
-                        value = results.precision
+                        value = np.mean(results.precision)
                         best_type = "max"
                     elif metric == "Recall":
-                        value = results.recall
+                        value = np.mean(results.recall)
                         best_type = "max"
                     elif metric == "Automation":
-                        value = 100 * results.patch_automation
+                        value = 100 * np.mean(results.patch_automation)
                         best_type = "max"
                     elif metric == "Edit Distance":
-                        value = results.avg_edit_distance
+                        value = np.mean(results.avg_edit_distance)
                         best_type = "min"
                     elif metric == "Runtime":
-                        value = results.avg_runtime
+                        value = np.mean(results.avg_runtime)
                         best_type = "min"
                     else:
                         value = -1
@@ -70,15 +73,15 @@ def determine_best(results_per_patcher, patcher_names, metric, best_type, langua
     for patcher in patcher_names:
         results = results_per_patcher[patcher][language]
         if metric == "Precision":
-            values.append(results.precision)
+            values.append(np.mean(results.precision))
         elif metric == "Recall":
-            values.append(results.recall)
+            values.append(np.mean(results.recall))
         elif metric == "Automation":
-            values.append(100 * results.patch_automation)
+            values.append(100 * np.mean(results.patch_automation))
         elif metric == "Edit Distance":
-            values.append(results.avg_edit_distance)
+            values.append(np.mean(results.avg_edit_distance))
         elif metric == "Runtime":
-            values.append(results.avg_runtime)
+            values.append(np.mean(results.avg_runtime))
 
     if best_type == "max":
         return max(values)
