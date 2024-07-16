@@ -259,6 +259,9 @@ fun loadPRDatasets(config: EvalConfig): Map<String, MutableList<CherryDataset>> 
                 )
                 continue
             }
+            if (datasetSize == 0) {
+                continue
+            }
             val list = datasetsPerLanguage.getOrPut(dataset.get().language) { ArrayList() }
             list.add(dataset.get())
         }
@@ -295,11 +298,10 @@ fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
         throw parseException
     }
 
-    var language = repoId["language"]
+    val language = repoId["language"]
     if (language !is String) {
         throw parseException
     }
-    language = language.substring(1, language.length - 1)
 
     val cherryPicks = ArrayList<CherryPick>()
     val prEntries = entries[1]

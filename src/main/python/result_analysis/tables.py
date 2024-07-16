@@ -118,7 +118,6 @@ def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
     for result_dir in sorted(result_dirs):
         for language in languages:
             language = language[0]
-            print(language)
             for patcher in Patcher:  # Patcher is an enum
                 results = load_all_results(result_dir, patcher)
                 # Filter trivial results
@@ -167,7 +166,6 @@ def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
                     )
                     results_per_patcher[patcher.nice_name()][language] = patcher_data
                 # print(ed_percentiles)
-            print()
 
     for language in languages:
         language = language[0]
