@@ -1,6 +1,5 @@
 package org.variantsync.evaluation
 
-import org.tinylog.Logger
 import org.variantsync.evaluation.baseline.diff.components.FileDiff
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.patching.*
