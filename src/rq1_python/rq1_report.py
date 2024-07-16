@@ -14,10 +14,18 @@ yaml_folder = "../../simulation-files/data/cherries/"
 language_count = 10
 sample_per_language = 250
 
+green, blue, orange = '#2ca02c', '#1f77b4', '#ff7f0e'
+colors = [green, blue, orange]
+
+text_width = 7.1413
+column_width = 3.48761
+
 c_commits = "total_number_of_commits"
 c_language = "language"
 c_cherries = "total_number_of_results"
 c_cherry_ratio = "cherry_to_commit_ratio"
+
+plot_labels = {c_commits:"\#Commits", c_language:"Language", c_cherries:"\#Cherrypicks", c_cherry_ratio:"$\frac{\#Cherrypicks}{\#Commits}$"}
 
 #returns header(main info about project), cherries of yaml
 def read_cherry(f):
@@ -67,9 +75,9 @@ def report_projects(pr_df):
         print(f"\n\nNow Reporting for language {lang}:")
 
 
-    print(f"{lang}, number of repositories with cherries: {len(pr_df)}, and without cherries: {num_languages*sample_per_language-len(pr_df)}.")
+    print(f"{lang}, number of repositories with cherries: {len(pr_df)}, and without cherries: {num_languages*sample_per_language-len(pr_df)}, ratio: {custom_format(len(pr_df)/(num_languages*sample_per_language))}.")
     print(f"{lang}, total number of commits, within all projects {'' if num_languages > 1 else 'of '+lang}: {sum(pr_df[c_commits])}")
-    print(f"{lang}, total number of cherries, within all projects {'' if num_languages > 1 else 'of '+lang}: {sum(pr_df[c_cherries])}")
+    print(f"{lang}, total number of cherries, within all projects {'' if num_languages > 1 else 'of '+lang}: {sum(pr_df[c_cherries])}, mean cherry to commit ratio: {custom_format(sum(pr_df[c_cherries])/sum(pr_df[c_commits]))}")
     column_report(lang, c_cherries, c_commits, pr_df)
     column_report(lang, c_commits, c_cherries, pr_df)
     column_report(lang, c_cherry_ratio, c_cherry_ratio, pr_df)
@@ -97,10 +105,15 @@ def setup_plt():
     fig, ax = plt.subplots(figsize=(3.3374, 2.5))
     return fig, ax
 
+def plot_projects(df):
+    setup_plt()
+    plt.scatter(df[c_commits], df[c_cherries], s=1, color=colors[0])
+
+
 if __name__ == '__main__':
     yml_files = [f for f in glob.glob(os.path.join(yaml_folder, '**', '*.yaml'), recursive=True)]
     pr_df, ch_df = read_yamls(yml_files)
     report_projects(pr_df)
-    setup_plt()
+    plot_projects(pr_df)
     for language in pr_df[c_language].unique():
         report_projects(pr_df[pr_df[c_language] == language])
