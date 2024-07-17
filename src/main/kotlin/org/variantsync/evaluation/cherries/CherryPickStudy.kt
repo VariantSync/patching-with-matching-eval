@@ -151,13 +151,13 @@ fun main(args: Array<String>) {
             sampleCherries(config, datasets, rand)
         } else {
             val temp = ArrayList<List<CherryDataset>>()
-            for (i in 1..config.EXPERIMENT_REPEATS()) {
+            for (i in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
                 temp.add(datasets)
             }
             temp
         }
 
-        for (repetition in 1..config.EXPERIMENT_REPEATS()) {
+        for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
             val numCherryPicks = countCherryPicks(sample[repetition - 1])
             var completed = 0
             for (dataset in sample[repetition - 1]) {
@@ -188,12 +188,12 @@ fun sampleCherries(config: EvalConfig, datasets: List<CherryDataset>, rand: Secu
     }
 
     val sampleSize = determineSampleSize(config, allCherryPicks.keys.size)
-    Logger.info("Considering ${config.EXPERIMENT_REPEATS()} representative samples of $sampleSize cherry picks " +
+    Logger.info("Considering ${config.EXPERIMENT_REPEATS_COUNT()} representative samples of $sampleSize cherry picks " +
             "for ${allCherryPicks.keys.size} cherry picks in total.")
 
     val sample: MutableList<List<CherryDataset>> = ArrayList()
     val cherries: List<CherryPick> = ArrayList(allCherryPicks.keys)
-    for (repetition in 1..config.EXPERIMENT_REPEATS()) {
+    for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
         val cherrySubset = cherries.shuffled(rand).subList(0, sampleSize)
         val remainingDatasets = HashMap<CherryDataset, MutableList<CherryPick>>()
         for (cherry in cherrySubset) {

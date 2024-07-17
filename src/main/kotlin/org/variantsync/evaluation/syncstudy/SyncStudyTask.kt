@@ -113,9 +113,9 @@ class SyncStudyTask(
 
         val results = ArrayList<ExperimentResult>()
         // While more random configurations to consider
-        for (i in 0 until config.EXPERIMENT_REPEATS()) {
+        for (i in 0 until config.EXPERIMENT_REPEATS_END()) {
             Logger.debug(
-                "Starting repetition " + (i + 1) + " of " + config.EXPERIMENT_REPEATS() + " with "
+                "Starting repetition " + (i + 1) + " of " + config.EXPERIMENT_REPEATS_END() + " with "
                         + config.EXPERIMENT_VARIANT_COUNT() + " variants."
             )
             if (config.EXPERIMENT_DEBUG() && operations.debugDir(this.commit).toFile().mkdirs()) {
