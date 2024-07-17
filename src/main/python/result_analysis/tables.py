@@ -5,7 +5,7 @@ from typing import Optional
 
 import numpy
 
-from result_analysis.eval_setup import Patcher
+from result_analysis.eval_setup import Metric, Patcher
 from result_analysis.eval_setup import RQ3PatcherData
 from result_analysis.eval_setup import PatchResult
 from result_analysis.eval_setup import Repository
@@ -96,25 +96,17 @@ def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
             print(patcher_data)
     language_names = [lang[0] for lang in languages]
     patcher_names = [patcher.nice_name() for patcher in Patcher]
-    significance(results_per_patcher)
-    generate_latex_table(patcher_names, language_names, results_per_patcher)
+    corrected_significance = significance(results_per_patcher)
+    generate_latex_table(
+        patcher_names, language_names, results_per_patcher, corrected_significance
+    )
 
 
 def significance(results):
     import numpy as np
     from scipy.stats import wilcoxon
 
-    # Let's say you have the following structure for your results
-    # results = {
-    #     'classifier1': {'dataset1': {'precision': [list of values], 'recall': [list of values]}, ...},
-    #     'classifier2': {'dataset1': {'precision': [list of values], 'recall': [list of values]}, ...},
-    #     ...
-    # }
-    # Define the metric you want to compare, e.g., 'precision'
-    metric = "precision"
-
     pwm = Patcher.MPatch2.nice_name()
-    # Perform pairwise comparisons
 
     comparisons = []
     p_values = []
@@ -123,50 +115,56 @@ def significance(results):
         if other_patcher == pwm:
             continue
         for dataset in results[pwm]:
-            pwm_values = np.array(results[pwm][dataset].recall)
-            other_values = np.array(results[other_patcher][dataset].recall)
-
-            # Perform the Wilcoxon signed-rank test
-            if not (sum(pwm_values) == 0 or sum(other_values) == 0):
-                stat, p = wilcoxon(pwm_values, other_values)
-                comparisons.append(
-                    (
-                        dataset,
-                        pwm,
-                        numpy.average(pwm_values),
-                        other_patcher,
-                        numpy.average(other_values),
+            for metric in Metric:
+                pwm_values = np.array(results[pwm][dataset].get(metric))
+                other_values = np.array(results[other_patcher][dataset].get(metric))
+                # Perform the Wilcoxon signed-rank test
+                if not (sum(pwm_values) <= 0 or sum(other_values) <= 0):
+                    _, p = wilcoxon(pwm_values, other_values)
+                    comparisons.append(
+                        (
+                            dataset,
+                            metric,
+                            numpy.average(pwm_values),
+                            other_patcher,
+                            numpy.average(other_values),
+                        )
                     )
-                )
-                p_values.append(p)
-            else:
-                stat, p = wilcoxon(
-                    [x for x in range(0, 15)], [x for x in range(30, 45)]
-                )
-                comparisons.append(
-                    (
-                        dataset,
-                        pwm,
-                        numpy.average(pwm_values),
-                        other_patcher,
-                        numpy.average(other_values),
+                    p_values.append(p)
+                else:
+                    _, p = wilcoxon(
+                        [x for x in range(0, 15)], [x for x in range(30, 45)]
                     )
-                )
-                p_values.append(p)
+                    comparisons.append(
+                        (
+                            dataset,
+                            metric,
+                            numpy.average(pwm_values),
+                            other_patcher,
+                            numpy.average(other_values),
+                        )
+                    )
+                    p_values.append(p)
 
-    _, corrected_p_values, _, corrected_alpha = multipletests(
-        p_values, alpha=0.05, method="bonferroni"
-    )
-    # Output the results
-    for (dataset, classifier1, value1, classifier2, value2), p, corrected_p in zip(
+    # Correct for multiple tests
+    corrected_p_values = multipletests(p_values, alpha=0.05, method="bonferroni")[1]
+
+    # Print the results
+    results = defaultdict(dict)
+    for (dataset, metric, value1, classifier2, value2), p, corrected_p in zip(
         comparisons, p_values, corrected_p_values
     ):
         print(
-            f"{dataset}: Comparison between {classifier1} and {classifier2}: p-value = {p}, corrected p-value = {corrected_p}"
+            f"{dataset}: Comparison of {metric} for {classifier2}: p-value = {p}, corrected p-value = {corrected_p}"
         )
         print(f"{dataset}: {value1} vs. {value2}")
-        print("corrected alpha: " + str(corrected_alpha))
         print()
+        if dataset not in results[classifier2]:
+            results[classifier2][dataset] = {}
+
+        results[classifier2][dataset][metric] = corrected_p
+
+    return results
 
 
 def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):

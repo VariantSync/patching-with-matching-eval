@@ -172,6 +172,29 @@ class OutcomeClassification:
         )
 
 
+class Metric(Enum):
+    Precision = "precision"
+    Recall = "recall"
+    Automation = "patch_automation"
+    EditDistance = "avg_edit_distance"
+    Runtime = "avg_runtime"
+
+    def __str__(self):
+        return self.value
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}.{self.name}"
+
+    def nice_name(self):
+        return {
+            Metric.Precision: "Precision",
+            Metric.Recall: "Recall",
+            Metric.Automation: "Automation",
+            Metric.EditDistance: "Edit Distance",
+            Metric.Runtime: "Runtime (s)",
+        }[self]
+
+
 class RQ3PatcherData:
     def __init__(
         self,
@@ -207,3 +230,6 @@ class RQ3PatcherData:
             f"Avg Edit Distance: {np.mean(self.avg_edit_distance):2.2f}, "
             f"Avg Runtime: {np.mean(self.avg_runtime):1.2f}s"
         )
+
+    def get(self, metric: Metric) -> float:
+        return getattr(self, metric.value)

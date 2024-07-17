@@ -1,7 +1,11 @@
 import numpy as np
 
+from result_analysis.eval_setup import Metric
 
-def generate_latex_table(patcher_names, languages, results_per_patcher):
+
+def generate_latex_table(
+    patcher_names, languages, results_per_patcher, corrected_significance
+):
     with open("experiment_table.tex", "w") as file:
         # Begin the tabular environment
         file.write("\\begin{tabular}{|l|l|" + "r|" * len(languages) + "}\n")
@@ -25,10 +29,13 @@ def generate_latex_table(patcher_names, languages, results_per_patcher):
         file.write("\\hline\n")
 
         # Write the multi-rows and their corresponding rows
-        metrics = ["Precision", "Recall", "Automation", "Edit Distance", "Runtime"]
-        for metric in metrics:
+        for metric in Metric:
             file.write(
-                "\\multirow{" + str(len(results_per_patcher)) + "}{*}{" + metric + "}\n"
+                "\\multirow{"
+                + str(len(results_per_patcher))
+                + "}{*}{"
+                + metric.nice_name()
+                + "}\n"
             )
             for patcher in patcher_names:
                 line = " & " + patcher
@@ -36,20 +43,17 @@ def generate_latex_table(patcher_names, languages, results_per_patcher):
                     value = 0
                     best_type = ""
                     results = results_per_patcher[patcher][language]
-                    if metric == "Precision":
-                        value = np.mean(results.precision)
+                    value = np.mean(results.get(metric))
+                    if metric == Metric.Precision:
                         best_type = "max"
-                    elif metric == "Recall":
-                        value = np.mean(results.recall)
+                    elif metric == Metric.Recall:
                         best_type = "max"
-                    elif metric == "Automation":
-                        value = 100 * np.mean(results.patch_automation)
+                    elif metric == Metric.Automation:
+                        value = 100 * value
                         best_type = "max"
-                    elif metric == "Edit Distance":
-                        value = np.mean(results.avg_edit_distance)
+                    elif metric == Metric.EditDistance:
                         best_type = "min"
-                    elif metric == "Runtime":
-                        value = np.mean(results.avg_runtime)
+                    elif metric == Metric.Runtime:
                         best_type = "min"
                     else:
                         value = -1
@@ -57,10 +61,28 @@ def generate_latex_table(patcher_names, languages, results_per_patcher):
                     max_value = determine_best(
                         results_per_patcher, patcher_names, metric, best_type, language
                     )
-                    if value == max_value:
-                        line += " & \\textbf{" + f"{value:.2f}" + "}"
+
+                    p_value = 1.0
+                    if patcher in corrected_significance:
+                        if language in corrected_significance[patcher]:
+                            if (
+                                metric
+                                in corrected_significance[patcher][language]
+                            ):
+                                p_value = corrected_significance[patcher][language][
+                                    metric
+                                ]
+                    if p_value < 0.05:
+                        if value == max_value:
+                            line += " & \\cellcolor{yellow}\\textbf{" + f"{value:.2f}" + "}"
+                        else:
+                            line += " & \\cellcolor{yellow}" + f"{value:.2f}"
                     else:
-                        line += " & " + f"{value:.2f}"
+                        if value == max_value:
+                            line += " & \\textbf{" + f"{value:.2f}" + "}"
+                        else:
+                            line += " & " + f"{value:.2f}"
+
                 file.write(line + " \\\\\n")
             file.write("\\hline\n")
 
@@ -72,16 +94,10 @@ def determine_best(results_per_patcher, patcher_names, metric, best_type, langua
     values = []
     for patcher in patcher_names:
         results = results_per_patcher[patcher][language]
-        if metric == "Precision":
-            values.append(np.mean(results.precision))
-        elif metric == "Recall":
-            values.append(np.mean(results.recall))
-        elif metric == "Automation":
-            values.append(100 * np.mean(results.patch_automation))
-        elif metric == "Edit Distance":
-            values.append(np.mean(results.avg_edit_distance))
-        elif metric == "Runtime":
-            values.append(np.mean(results.avg_runtime))
+        if metric == Metric.Automation:
+            values.append(100 * np.mean(results.get(metric)))
+        else:
+            values.append(np.mean(results.get(metric)))
 
     if best_type == "max":
         return max(values)
