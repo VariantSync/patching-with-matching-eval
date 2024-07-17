@@ -158,9 +158,10 @@ fun main(args: Array<String>) {
         }
 
         for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
-            val numCherryPicks = countCherryPicks(sample[repetition - 1])
+            val repetitionIndex = repetition - config.EXPERIMENT_REPEATS_START()
+            val numCherryPicks = countCherryPicks(sample[repetitionIndex])
             var completed = 0
-            for (dataset in sample[repetition - 1]) {
+            for (dataset in sample[repetitionIndex]) {
                 Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
                 val study = CherryPickStudy(config, dataset, repetition)
                 try {
