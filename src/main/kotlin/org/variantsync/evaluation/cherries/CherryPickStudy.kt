@@ -35,11 +35,11 @@ class CherryPickStudy(
     config: EvalConfig,
     dataset: CherryDataset,
     repetition: Int,
+    idProvider: IDProvider,
 ) {
     // The study tasks that are to be executed in parallel
     private val evalTasks: MutableList<CherryPickEvalTask>
     private val numThreads: Int
-    private val idProvider: IDProvider
     private val availableOperations: BlockingQueue<CherryEvalOperations>
 
     /**
@@ -64,7 +64,6 @@ class CherryPickStudy(
             availableOperations.add(operations)
         }
 
-        idProvider = IDProvider(config.EXPERIMENT_START_ID())
         this.evalTasks = ArrayList()
 
         for (cherryPick in dataset.cherryPicks) {
@@ -142,7 +141,9 @@ fun main(args: Array<String>) {
         throw UncheckedIOException(e)
     }
 
-    val seed: ByteArray = ByteBuffer.allocate(java.lang.Long.BYTES).putLong(config.SEED()).array()
+    val seed: ByteArray = ByteBuffer.allocate(java.lang.Long.BYTES).putLong(config.EXPERIMENT_REPEATS_START()
+            + config.SEED()).array()
+    val idProvider = IDProvider(config.EXPERIMENT_START_ID())
     val rand = SecureRandom(seed)
     for (language in datasetsPerLanguage.keys) {
         val datasets = datasetsPerLanguage[language]!!
@@ -163,7 +164,7 @@ fun main(args: Array<String>) {
             var completed = 0
             for (dataset in sample[repetitionIndex]) {
                 Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
-                val study = CherryPickStudy(config, dataset, repetition)
+                val study = CherryPickStudy(config, dataset, repetition, idProvider)
                 try {
                     study.run()
                 } catch (e: Exception) {
