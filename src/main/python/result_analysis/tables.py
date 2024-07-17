@@ -73,7 +73,7 @@ def list_all_dirs(path):
     ]
 
 
-def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
+def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial, file):
     global languages
     repos = load_repositories(path_to_repo_list)
 
@@ -98,7 +98,7 @@ def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
     patcher_names = [patcher.nice_name() for patcher in Patcher]
     corrected_significance = significance(results_per_patcher)
     generate_latex_table(
-        patcher_names, language_names, results_per_patcher, corrected_significance
+        patcher_names, language_names, results_per_patcher, corrected_significance, file
     )
 
 

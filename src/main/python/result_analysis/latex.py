@@ -4,9 +4,9 @@ from result_analysis.eval_setup import Metric
 
 
 def generate_latex_table(
-    patcher_names, languages, results_per_patcher, corrected_significance
+    patcher_names, languages, results_per_patcher, corrected_significance, file
 ):
-    with open("experiment_table.tex", "w") as file:
+    with open(file, "w") as file:
         # Begin the tabular environment
         file.write("\\begin{tabular}{|l|l|" + "r|" * len(languages) + "}\n")
         file.write("\\hline\n")

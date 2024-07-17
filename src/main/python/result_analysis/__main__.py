@@ -38,7 +38,11 @@ def main():
 
     # better_or_worse(results_dir, repo_sample, only_non_trivial=True)
 
-    rq3_table_alt(results_dir, repo_sample, only_non_trivial=True)
+    local_file = "experiment_table.tex"
+    paper_file = "/home/alex/papers/self/patching-with-matching/paper/tables/experiment_table.tex"
+
+    rq3_table_alt(results_dir, repo_sample, only_non_trivial=True, file=local_file)
+    rq3_table_alt(results_dir, repo_sample, only_non_trivial=True, file=paper_file)
 
 
 if __name__ == "__main__":
