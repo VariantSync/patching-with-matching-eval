@@ -144,6 +144,7 @@ fun main(args: Array<String>) {
     val seed: ByteArray = ByteBuffer.allocate(java.lang.Long.BYTES).putLong(config.EXPERIMENT_REPEATS_START()
             + config.SEED()).array()
     val idProvider = IDProvider(config.EXPERIMENT_START_ID())
+    var id = 0uL
     val rand = SecureRandom(seed)
     for (language in datasetsPerLanguage.keys) {
         val datasets = datasetsPerLanguage[language]!!
@@ -163,6 +164,13 @@ fun main(args: Array<String>) {
             val numCherryPicks = countCherryPicks(sample[repetitionIndex])
             var completed = 0
             for (dataset in sample[repetitionIndex]) {
+                while (idProvider.next() < id) {}
+                id += dataset.cherryPicks.size.toUInt()
+                if (id < config.EXPERIMENT_START_ID()) {
+                    // Skip this dataset
+                    Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName} (rep.: $repetition)")
+                    continue
+                }
                 Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
                 val study = CherryPickStudy(config, dataset, repetition, idProvider)
                 try {
