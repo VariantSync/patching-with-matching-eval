@@ -28,6 +28,7 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.math.min
 import kotlin.system.exitProcess
 
 class CherryPickStudy(
@@ -49,9 +50,10 @@ class CherryPickStudy(
             Files.createDirectories(config.EXPERIMENT_DIR_RESULTS())
         }
         val repoPath: Path = cloneGitHubRepo(config, dataset.repositoryId)
-        this.numThreads = config.EXPERIMENT_THREAD_COUNT()
+        this.numThreads = min(config.EXPERIMENT_THREAD_COUNT(), dataset.cherryPicks.size)
         this.availableOperations = LinkedBlockingQueue(numThreads)
 
+        Logger.info("Preparing working directories for $numThreads threads.")
         for (i in 1..numThreads) {
             // Add one operations instance for each thread; each instance defines its own working directory
             val operations = CherryEvalOperations(config.EXPERIMENT_DIR_MAIN(), repoPath)
@@ -59,7 +61,6 @@ class CherryPickStudy(
             cleanVariantDirectories(operations)
             // Copy the source and target variant to the respective variant directories
             prepareVariantDirectories(operations, repoPath)
-            operations.repoManager.open()
             availableOperations.add(operations)
         }
 
@@ -104,23 +105,22 @@ class CherryPickStudy(
      */
     fun run() {
         val threadPool = Executors.newFixedThreadPool(numThreads)
-        Logger.info("Starting diffing and patching for cherry picks...")
+        Logger.info("Scheduling ${evalTasks.size} tasks...")
 
         val futures = evalTasks.stream()
             .map { runnable: CherryPickEvalTask -> threadPool.submit(runnable) }
             .collect(Collectors.toList())
 
+        Logger.info("Scheduled all tasks.")
+
         waitForShutdown(threadPool, futures)
 
-        // Finally, close all repo managers
-        for (operation in this.availableOperations) {
-            operation.repoManager.close()
-        }
-
-        // And delete all workdirs
+        Logger.info("Running clean up.")
+        // Delete all workdirs
         for (operations in this.availableOperations) {
             FileUtils.deleteDirectory(operations.workDir.toFile())
         }
+        Logger.info("Cleaned all working directories.")
     }
 }
 
@@ -151,13 +151,13 @@ fun main(args: Array<String>) {
             sampleCherries(config, datasets, rand)
         } else {
             val temp = ArrayList<List<CherryDataset>>()
-            for (i in 1..config.EXPERIMENT_REPEATS()) {
+            for (i in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
                 temp.add(datasets)
             }
             temp
         }
 
-        for (repetition in 1..config.EXPERIMENT_REPEATS()) {
+        for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
             val numCherryPicks = countCherryPicks(sample[repetition - 1])
             var completed = 0
             for (dataset in sample[repetition - 1]) {
@@ -188,12 +188,12 @@ fun sampleCherries(config: EvalConfig, datasets: List<CherryDataset>, rand: Secu
     }
 
     val sampleSize = determineSampleSize(config, allCherryPicks.keys.size)
-    Logger.info("Considering ${config.EXPERIMENT_REPEATS()} representative samples of $sampleSize cherry picks " +
+    Logger.info("Considering ${config.EXPERIMENT_REPEATS_COUNT()} representative samples of $sampleSize cherry picks " +
             "for ${allCherryPicks.keys.size} cherry picks in total.")
 
     val sample: MutableList<List<CherryDataset>> = ArrayList()
     val cherries: List<CherryPick> = ArrayList(allCherryPicks.keys)
-    for (repetition in 1..config.EXPERIMENT_REPEATS()) {
+    for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
         val cherrySubset = cherries.shuffled(rand).subList(0, sampleSize)
         val remainingDatasets = HashMap<CherryDataset, MutableList<CherryPick>>()
         for (cherry in cherrySubset) {
@@ -259,6 +259,9 @@ fun loadPRDatasets(config: EvalConfig): Map<String, MutableList<CherryDataset>> 
                 )
                 continue
             }
+            if (datasetSize == 0) {
+                continue
+            }
             val list = datasetsPerLanguage.getOrPut(dataset.get().language) { ArrayList() }
             list.add(dataset.get())
         }
@@ -295,11 +298,10 @@ fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
         throw parseException
     }
 
-    var language = repoId["language"]
+    val language = repoId["language"]
     if (language !is String) {
         throw parseException
     }
-    language = language.substring(1, language.length - 1)
 
     val cherryPicks = ArrayList<CherryPick>()
     val prEntries = entries[1]

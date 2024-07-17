@@ -40,10 +40,24 @@ class EvalConfig(propertiesFile: File) {
     }
 
     /**
+     * @return The start of repetitions for each commit pair and source-target combination
+     */
+    fun EXPERIMENT_REPEATS_START(): Int {
+        return config!!.getInt(EXPERIMENT_REPEATS_START, 1)
+    }
+
+    /**
+     * @return The end of repetitions for each commit pair and source-target combination
+     */
+    fun EXPERIMENT_REPEATS_END(): Int {
+        return config!!.getInt(EXPERIMENT_REPEATS_END)
+    }
+
+    /**
      * @return The number of repetitions for each commit pair and source-target combination
      */
-    fun EXPERIMENT_REPEATS(): Int {
-        return config!!.getInt(EXPERIMENT_REPEATS)
+    fun EXPERIMENT_REPEATS_COUNT(): Int {
+        return EXPERIMENT_REPEATS_END() - EXPERIMENT_REPEATS_START() + 1
     }
 
     /**
@@ -171,8 +185,11 @@ class EvalConfig(propertiesFile: File) {
     }
 
     companion object {
-        // The number of repetitions for each commit and source target combination
-        private const val EXPERIMENT_REPEATS = "experiment.repeats"
+        // The first id of repetitions for each commit and source target combination
+        private const val EXPERIMENT_REPEATS_START = "experiment.repeats.start"
+
+        // The last id of repetitions for each commit and source target combination
+        private const val EXPERIMENT_REPEATS_END = "experiment.repeats.end"
 
         // The number of generated variants
         private const val EXPERIMENT_VARIANT_COUNT = "experiment.variant.count"

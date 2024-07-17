@@ -23,7 +23,13 @@ public class GitCherryPickCommand extends ShellCommand{
 
     @Override
     public String[] parts() {
-        final String[] parts = new String[args.size() + 3];
+        final String[] parts;
+        if (cherry.isEmpty()) {
+            parts = new String[args.size() + 2];
+        } else
+        {
+            parts = new String[args.size() + 3];
+        }
 
         parts[0] = COMMAND;
         parts[1] = SUB_COMMAND;
@@ -32,7 +38,9 @@ public class GitCherryPickCommand extends ShellCommand{
             parts[index + 2] = args.get(index);
         }
 
-        parts[index + 2] = this.cherry;
+        if (!cherry.isEmpty()) {
+            parts[index + 2] = this.cherry;
+        }
         return parts;
     }
 
@@ -51,8 +59,13 @@ public class GitCherryPickCommand extends ShellCommand{
         return this;
     }
 
+    public GitCherryPickCommand abort() {
+        this.args.add("--abort");
+        return this;
+    }
+
     @Override
     public String toString() {
-        return "git apply: " + Arrays.toString(parts());
+        return "git cherry-pick: " + Arrays.toString(parts());
     }
 }

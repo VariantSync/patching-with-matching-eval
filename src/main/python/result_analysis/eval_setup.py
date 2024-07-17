@@ -1,8 +1,10 @@
 from enum import Enum
+import numpy as np
 
 
 class Patcher(Enum):
-    MPatch2 = "pwm"
+    MPatch1 = "pwm_f1"
+    MPatch2 = "pwm_f2"
     UnixPatch = "unix_patch"
     GitApply = "git_apply"
     GitCherry = "git_cherry"
@@ -15,7 +17,8 @@ class Patcher(Enum):
 
     def nice_name(self):
         return {
-            Patcher.MPatch2: "PwM",
+            Patcher.MPatch1: "PwM-f1",
+            Patcher.MPatch2: "PwM-f2",
             Patcher.UnixPatch: "Unix Patch",
             Patcher.GitApply: "Git Apply",
             Patcher.GitCherry: "Git Cherry-Pick",
@@ -167,3 +170,66 @@ class OutcomeClassification:
             f"mitigated_missing={self.mitigated_missing!r}, "
             f"edit_distance={self.edit_distance!r})"
         )
+
+
+class Metric(Enum):
+    Precision = "precision"
+    Recall = "recall"
+    Automation = "patch_automation"
+    EditDistance = "avg_edit_distance"
+    Runtime = "avg_runtime"
+
+    def __str__(self):
+        return self.value
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}.{self.name}"
+
+    def nice_name(self):
+        return {
+            Metric.Precision: "Precision",
+            Metric.Recall: "Recall",
+            Metric.Automation: "Automation",
+            Metric.EditDistance: "Edit Distance",
+            Metric.Runtime: "Runtime (s)",
+        }[self]
+
+
+class RQ3PatcherData:
+    def __init__(
+        self,
+        patcher: Patcher,
+        precision: float,
+        recall: float,
+        patch_automation: float,
+        avg_edit_distance: float,
+        avg_runtime: float,
+    ):
+        self.precision = np.array([precision])
+        self.recall = np.array([recall])
+        self.patcher = patcher
+        self.patch_automation = np.array([patch_automation])
+        self.avg_edit_distance = np.array([avg_edit_distance])
+        self.avg_runtime = np.array([avg_runtime])
+
+    def add_data(
+        self, precision, recall, patch_automation, avg_edit_distance, avg_runtime
+    ):
+        self.precision = np.append(self.precision, precision)
+        self.recall = np.append(self.recall, recall)
+        self.patch_automation = np.append(self.patch_automation, patch_automation)
+        self.avg_edit_distance = np.append(self.avg_edit_distance, avg_edit_distance)
+        self.avg_runtime = np.append(self.avg_runtime, avg_runtime)
+
+    def __str__(self):
+        return (
+            f"Patcher: {self.patcher:<12} "
+            f"Precision: {np.mean(self.precision):1.2f}, "
+            f"Recall: {np.mean(self.recall):1.2f}, "
+            f"Patch Automation: {100*np.mean(self.patch_automation):2.2f}%, "
+            f"Avg Edit Distance: {np.mean(self.avg_edit_distance):2.2f}, "
+            f"Avg Runtime: {np.mean(self.avg_runtime):1.2f}s"
+        )
+
+    def get(self, metric: Metric) -> float:
+        return getattr(self, metric.value)

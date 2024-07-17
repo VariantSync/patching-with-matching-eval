@@ -67,13 +67,11 @@ class GitCP(private val name: String, private val strip: Int, private val strate
 
     override fun clean(operations: Operations) {
         super.clean(operations)
-        if (lastResult.toString().contains("You are currently cherry-picking")) {
-            val continueCommand = GitCherryPickCommand().cont()
-            val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir())
-            val continueResult = customShell.execute(continueCommand, operations.patchDir())
-            if (continueResult.isFailure && continueResult.failure.output.isNotEmpty()) {
-                Logger.warn(continueResult)
-            }
+        val command = GitCherryPickCommand().abort()
+        val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.patchDir())
+        val continueResult = customShell.execute(command, operations.patchDir())
+        if (continueResult.isFailure && continueResult.failure.output.isNotEmpty()) {
+            Logger.warn(continueResult)
         }
     }
 

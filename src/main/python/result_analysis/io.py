@@ -9,15 +9,22 @@ from result_analysis.eval_setup import Repository
 
 
 def load_repositories(path_to_yaml: str) -> Dict[str, Repository]:
-    with open(path_to_yaml, 'r') as file:
+    with open(path_to_yaml, "r") as file:
         yaml_content = yaml.safe_load(file)
 
     repos = {}
     for repo_data in yaml_content:
-        repos[repo_data["name"]] = Repository(
-            id=repo_data["id"],
-            name=repo_data["name"],
-            language=repo_data["language"])
+        full_name = (
+            repo_data["language"]
+            + "_"
+            + repo_data["owner"]["login"]
+            + "_"
+            + repo_data["name"]
+        )
+        print(full_name)
+        repos[full_name] = Repository(
+            id=repo_data["id"], name=full_name, language=repo_data["language"]
+        )
     return repos
 
 
@@ -39,10 +46,10 @@ def read_results_from_file(file_path) -> List[PatchResult]:
     ```
     """
     results = []
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         file_content = file.read().strip()
         # Split the content by blank lines to get the JSON objects
-        json_strings = file_content.split('\n\n')
+        json_strings = file_content.split("\n\n")
         for json_str in json_strings:
             try:
                 obj = json.loads(json_str)
