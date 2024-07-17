@@ -65,23 +65,27 @@ def generate_latex_table(
                     p_value = 1.0
                     if patcher in corrected_significance:
                         if language in corrected_significance[patcher]:
-                            if (
-                                metric
-                                in corrected_significance[patcher][language]
-                            ):
+                            if metric in corrected_significance[patcher][language]:
                                 p_value = corrected_significance[patcher][language][
                                     metric
                                 ]
-                    if p_value < 0.05:
-                        if value == max_value:
-                            line += " & \\cellcolor{yellow}\\textbf{" + f"{value:.2f}" + "}"
-                        else:
-                            line += " & \\cellcolor{yellow}" + f"{value:.2f}"
+                    if p_value < 0.01:
+                        color = "blue!90"
+                    elif p_value < 0.02:
+                        color = "blue!70"
+                    elif p_value < 0.03:
+                        color = "blue!50"
+                    elif p_value < 0.04:
+                        color = "blue!30"
+                    elif p_value < 0.05:
+                        color = "blue!10"
                     else:
-                        if value == max_value:
-                            line += " & \\textbf{" + f"{value:.2f}" + "}"
-                        else:
-                            line += " & " + f"{value:.2f}"
+                        color = "white"
+
+                    if value == max_value:
+                        line += f" & \\cellcolor{{{color}}}\\textbf{{{value:.2f}}}"
+                    else:
+                        line += f" & \\cellcolor{{{color}}}{value:.2f}"
 
                 file.write(line + " \\\\\n")
             file.write("\\hline\n")

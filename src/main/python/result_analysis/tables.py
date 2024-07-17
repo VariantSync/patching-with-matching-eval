@@ -131,20 +131,6 @@ def significance(results):
                         )
                     )
                     p_values.append(p)
-                else:
-                    _, p = wilcoxon(
-                        [x for x in range(0, 15)], [x for x in range(30, 45)]
-                    )
-                    comparisons.append(
-                        (
-                            dataset,
-                            metric,
-                            numpy.average(pwm_values),
-                            other_patcher,
-                            numpy.average(other_values),
-                        )
-                    )
-                    p_values.append(p)
 
     # Correct for multiple tests
     corrected_p_values = multipletests(p_values, alpha=0.05, method="bonferroni")[1]
