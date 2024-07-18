@@ -11,7 +11,7 @@ from result_analysis.eval_setup import PatchResult
 from result_analysis.eval_setup import Repository
 from result_analysis.io import load_repositories
 from result_analysis.io import load_all_results
-from result_analysis.latex import generate_latex_table
+from result_analysis.latex import generate_metrics_result_table
 from result_analysis.result_handling import (
     edit_distance_percentiles,
     non_trivial_results,
@@ -71,7 +71,7 @@ def rq3_table_generation(path_to_results, path_to_repo_list, only_non_trivial, f
     language_names = [lang[0] for lang in languages]
     patcher_names = [patcher.nice_name() for patcher in Patcher]
     corrected_significance = significance(results_per_patcher)
-    generate_latex_table(
+    generate_metrics_result_table(
         patcher_names, language_names, results_per_patcher, corrected_significance, file
     )
 

@@ -3,7 +3,7 @@ import numpy as np
 from result_analysis.eval_setup import Metric
 
 
-def generate_latex_table(
+def generate_metrics_result_table(
     patcher_names, languages, results_per_patcher, corrected_significance, file
 ):
     with open(file, "w") as file:

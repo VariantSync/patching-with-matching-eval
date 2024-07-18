@@ -5,7 +5,7 @@ from result_analysis.io import read_results_from_file
 from result_analysis.io import load_repositories
 from result_analysis.result_handling import results_per_repo
 from result_analysis.io import load_all_results
-from result_analysis.latex import generate_latex_table
+from result_analysis.latex import generate_metrics_result_table
 from result_analysis.result_handling import (
     non_trivial_results,
     all_results_per_language,
