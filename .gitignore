@@ -2,10 +2,6 @@ push.sh
 .idea
 *.iml
 target
-/reported-results-part1.txt
-/reported-results-part2.txt
-/reported-results.txt
-/reported-results.txt.cache
 /plots/out/
 plots/__pycache__/
 simulation-files/busybox/
@@ -32,3 +28,4 @@ src/main/python/test.synctex.gz
 src/main/python/test.pdf
 src/main/python/experiment_table.tex
 src/main/python/result_analysis/experiment_table.tex
+cherry-sample.ser

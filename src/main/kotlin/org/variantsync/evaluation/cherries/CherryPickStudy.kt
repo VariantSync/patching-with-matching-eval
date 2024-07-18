@@ -3,17 +3,15 @@ package org.variantsync.evaluation.cherries
 import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.EvalConfig
-import org.variantsync.evaluation.IDProvider
+import org.variantsync.evaluation.*
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
-import org.variantsync.evaluation.determineSampleSize
-import org.variantsync.evaluation.waitForShutdown
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.io.IOException
 import java.io.UncheckedIOException
+import java.math.RoundingMode
 import java.nio.ByteBuffer
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
@@ -21,6 +19,7 @@ import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.security.SecureRandom
+import java.text.DecimalFormat
 import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Executors
@@ -28,6 +27,7 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.system.exitProcess
 
@@ -50,7 +50,8 @@ class CherryPickStudy(
             Files.createDirectories(config.EXPERIMENT_DIR_RESULTS())
         }
         val repoPath: Path = cloneGitHubRepo(config, dataset.repositoryId)
-        this.numThreads = min(config.EXPERIMENT_THREAD_COUNT(), dataset.cherryPicks.size)
+        val t = min(config.EXPERIMENT_THREAD_COUNT(), dataset.cherryPicks.size / config.EXPERIMENT_THREAD_COUNT())
+        this.numThreads = max(1, t)
         this.availableOperations = LinkedBlockingQueue(numThreads)
 
         Logger.info("Preparing working directories for $numThreads threads.")
@@ -146,9 +147,59 @@ fun main(args: Array<String>) {
     val idProvider = IDProvider(config.EXPERIMENT_START_ID())
     var id = 0uL
     val rand = SecureRandom(seed)
-    for (language in datasetsPerLanguage.keys) {
+    val allSamples = createOrLoadSamples(config, datasetsPerLanguage, rand)
+
+    for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
+        val repetitionIndex = repetition - config.EXPERIMENT_REPEATS_START()
+        val numCherryPicks = countCherryPicks(allSamples[repetitionIndex])
+        Logger.info("Considering a total of $numCherryPicks cherry-picks for repetition $repetition")
+        var completed = 0
+        for (dataset in allSamples[repetitionIndex]) {
+            while (idProvider.next() < id) {}
+            id += dataset.cherryPicks.size.toUInt()
+            if (id < config.EXPERIMENT_START_ID()) {
+                // Skip this dataset
+                Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName} (rep.: $repetition)")
+                continue
+            }
+            Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
+            val study = CherryPickStudy(config, dataset, repetition, idProvider)
+            try {
+                study.run()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Logger.error(e)
+            }
+            completed += dataset.cherryPicks.size
+            val completionPercentage = 100 * (completed.toDouble() / numCherryPicks.toDouble())
+            val df = DecimalFormat("#.##")
+            df.roundingMode = RoundingMode.DOWN
+            Logger.info("(Rep.: $repetition, ID: $id) Finished $completed of $numCherryPicks cherry picks (${df.format(completionPercentage)}%)\n")
+        }
+    }
+
+    exitProcess(0)
+}
+
+private fun createOrLoadSamples(
+    config: EvalConfig,
+    datasetsPerLanguage: Map<String, MutableList<CherryDataset>>,
+    rand: SecureRandom
+): ArrayList<ArrayList<CherryDataset>> {
+    if (Files.exists(config.EXPERIMENT_SAMPLE_FILE())) {
+        Logger.info("Found existing sample file...loading it\n")
+        return loadSample(config.EXPERIMENT_SAMPLE_FILE())
+    }
+
+    val allSamples = ArrayList<ArrayList<CherryDataset>>()
+    for (i in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
+        allSamples.add(ArrayList())
+    }
+    val langs = ArrayList<String>(datasetsPerLanguage.keys)
+    langs.sort()
+    for (language in langs) {
         val datasets = datasetsPerLanguage[language]!!
-        Logger.info("considering next language $language with ${datasets.size} usable repositories")
+        Logger.info("Sampling for next language $language with ${datasets.size} usable repositories")
         val sample: List<List<CherryDataset>> = if (config.EXPERIMENT_ENABLE_SAMPLING()) {
             sampleCherries(config, datasets, rand)
         } else {
@@ -158,33 +209,18 @@ fun main(args: Array<String>) {
             }
             temp
         }
-
-        for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
-            val repetitionIndex = repetition - config.EXPERIMENT_REPEATS_START()
-            val numCherryPicks = countCherryPicks(sample[repetitionIndex])
-            var completed = 0
-            for (dataset in sample[repetitionIndex]) {
-                while (idProvider.next() < id) {}
-                id += dataset.cherryPicks.size.toUInt()
-                if (id < config.EXPERIMENT_START_ID()) {
-                    // Skip this dataset
-                    Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName} (rep.: $repetition)")
-                    continue
-                }
-                Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
-                val study = CherryPickStudy(config, dataset, repetition, idProvider)
-                try {
-                    study.run()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Logger.error(e)
-                }
-                completed += dataset.cherryPicks.size
-                Logger.info("(Lang.: $language; Rep.: $repetition) Finished $completed of $numCherryPicks cherry picks\n")
-            }
+        for (sampleList in sample.withIndex()) {
+            allSamples[sampleList.index].addAll(sampleList.value)
         }
     }
-    exitProcess(0)
+    // Shuffle the datasets to consider repos in random order
+    for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
+        val repetitionIndex = repetition - config.EXPERIMENT_REPEATS_START()
+        allSamples[repetitionIndex].shuffle(rand)
+    }
+    Logger.info("Done.\n")
+    saveSample(config.EXPERIMENT_SAMPLE_FILE(), allSamples)
+    return allSamples
 }
 
 fun sampleCherries(config: EvalConfig, datasets: List<CherryDataset>, rand: SecureRandom): List<List<CherryDataset>> {

@@ -165,6 +165,10 @@ class EvalConfig(propertiesFile: File) {
         return config!!.getBoolean(EXPERIMENT_ENABLE_SAMPLING)
     }
 
+    fun EXPERIMENT_SAMPLE_FILE(): Path {
+        return Path.of(config!!.getString(EXPERIMENT_SAMPLE_FILE, "cherry-sample.ser"))
+    }
+
     fun sampleZ(): Double {
         // 1.96 is the z score for 95% confidence
         return config!!.getDouble(SAMPLING_Z, 1.96)
@@ -229,6 +233,9 @@ class EvalConfig(propertiesFile: File) {
 
         // Should sampling be enabled to reduce the amount of data to process?
         private const val EXPERIMENT_ENABLE_SAMPLING = "experiment.enable-sampling"
+
+        // Should sampling be enabled to reduce the amount of data to process?
+        private const val EXPERIMENT_SAMPLE_FILE = "experiment.sample-file"
 
         // The z score for sample size computation
         private const val SAMPLING_Z = "sampling.z"

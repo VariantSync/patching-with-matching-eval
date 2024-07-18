@@ -3,8 +3,9 @@ package org.variantsync.evaluation
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.variantsync.evaluation.analysis.ExperimentResult
+import org.variantsync.evaluation.cherries.CherryDataset
 import org.variantsync.evaluation.syncstudy.panic
-import java.io.IOException
+import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
@@ -51,4 +52,15 @@ fun writeAsJSON(obj: Any, pathToFile: Path, append: Boolean) {
             Files.writeString(pathToFile, jsonBuilder.toString(), StandardOpenOption.TRUNCATE_EXISTING)
         }
     }
+}
+
+fun saveSample(path: Path, sample: ArrayList<ArrayList<CherryDataset>>) {
+    if (path.nameCount > 1) {
+        Files.createDirectories(path.parent)
+    }
+    ObjectOutputStream(FileOutputStream(path.toFile())).use { it.writeObject(sample) }
+}
+
+fun loadSample(path: Path): ArrayList<ArrayList<CherryDataset>> {
+    ObjectInputStream(FileInputStream(path.toFile())).use { return it.readObject() as ArrayList<ArrayList<CherryDataset>> }
 }
