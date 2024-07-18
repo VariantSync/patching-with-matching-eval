@@ -47,7 +47,7 @@ def list_all_dirs(path):
     ]
 
 
-def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial, file):
+def rq3_table_generation(path_to_results, path_to_repo_list, only_non_trivial, file):
     global languages
     repos = load_repositories(path_to_repo_list)
 

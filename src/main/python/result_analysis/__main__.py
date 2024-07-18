@@ -7,7 +7,7 @@ from result_analysis.plots import (
 from result_analysis.plots import boxplot_results_lang_overall
 from sys import argv
 
-from result_analysis.tables import better_or_worse, rq3_table, rq3_table_alt
+from result_analysis.tables import better_or_worse, rq3_table_generation
 
 
 def main():
@@ -41,8 +41,12 @@ def main():
     local_file = "experiment_table.tex"
     paper_file = "/home/alex/papers/self/patching-with-matching/paper/tables/experiment_table.tex"
 
-    rq3_table_alt(results_dir, repo_sample, only_non_trivial=True, file=local_file)
-    rq3_table_alt(results_dir, repo_sample, only_non_trivial=True, file=paper_file)
+    rq3_table_generation(
+        results_dir, repo_sample, only_non_trivial=True, file=local_file
+    )
+    rq3_table_generation(
+        results_dir, repo_sample, only_non_trivial=True, file=paper_file
+    )
 
 
 if __name__ == "__main__":
