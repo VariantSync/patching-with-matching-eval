@@ -39,32 +39,6 @@ languages = [
 ]
 
 
-def rq3_table(path_to_results, only_non_trivial):
-    global languages
-    patchers = []
-    for patcher in Patcher:  # Patcher is an enum
-        print("Loading results for " + str(patcher))
-        # type: List[PatchResult]
-        results = load_all_results(path_to_results, patcher)
-        # Filter trivial results
-        if only_non_trivial:
-            results = non_trivial_results(results)
-
-        patchers.append(patcher)
-        oa = overall_automation(results)
-        (average_ed, median_ed) = edit_distance(results)
-        (average_run, median_run) = runtime(results)
-        patcher_data = RQ3PatcherData(
-            patcher=patcher,
-            precision=0,
-            recall=0,
-            patch_automation=oa,
-            avg_edit_distance=average_ed,
-            avg_runtime=average_run,
-        )
-        print(patcher_data)
-
-
 def list_all_dirs(path):
     return [
         os.path.join(path, d)
