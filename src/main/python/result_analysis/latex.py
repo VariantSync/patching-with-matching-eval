@@ -1,6 +1,8 @@
 import numpy as np
 
 from result_analysis.eval_setup import Metric
+from result_analysis.eval_setup import Patcher
+from result_analysis.simulation import power_analysis_simulation
 
 
 def generate_metrics_result_table(
@@ -107,3 +109,86 @@ def determine_best(results_per_patcher, patcher_names, metric, best_type, langua
         return max(values)
     elif best_type == "min":
         return min(values)
+
+
+def generate_power_estimate_table(
+    patcher_names, languages, results_per_patcher, corrected_alpha, file
+):
+    with open(file, "w") as file:
+        # Begin the tabular environment
+        file.write("\\begin{tabular}{|l|" + "r|" * len(languages) + "r|}\n")
+        file.write("\\hline\n")
+
+        # Write the multi-column header for languages
+        language_header = (
+            "Metric & \\multicolumn{"
+            + str(len(languages))
+            + "}{c|}{Project Languages} & Average Power\\\\\n"
+        )
+        file.write(language_header)
+        file.write("\\cline{2-" + str(len(languages) + 1) + "}\n")
+
+        # Write the language names
+        language_names = [language for language in languages]
+        for i in range(0, len(language_names)):
+            if language_names[i] == "C#":
+                language_names[i] = "C\\#"
+        file.write(" & " + " & ".join(language_names) + " & \\\\\n")
+        file.write("\\hline\n")
+
+        # Parameters for the power analysis
+        num_simulations = 1000
+        num_datasets = len(languages)
+        num_patchers = len(patcher_names)
+        our_patcher = Patcher.MPatch2.nice_name()
+        # Write the multi-rows and their corresponding rows
+        for metric in Metric:
+            line = metric.nice_name()
+            n = 0
+            effect_sizes = []
+            deviations = []
+            for language in results_per_patcher[our_patcher]:
+                results_ours = results_per_patcher[our_patcher][language]
+                values_ours = results_ours.get(metric)
+                mean_ours = np.mean(values_ours)
+                n = len(values_ours)
+
+                e = []
+                d = [np.std(values_ours)]
+                for patcher in patcher_names:
+                    if patcher == our_patcher:
+                        continue
+
+                    results_other = results_per_patcher[patcher][language]
+                    values_other = results_other.get(metric)
+                    mean_other = np.mean(values_other)
+                    e.append(np.abs(mean_ours - mean_other))
+                    d.append(np.std(values_other))
+                effect_sizes.append(e)
+                deviations.append(d)
+
+            # Perform the power analysis using the corrected significance level
+            deviations = np.array(deviations)
+            effect_sizes = np.array(effect_sizes)
+            print("\nStarting power estimation for " + str(metric))
+            estimated_power = power_analysis_simulation(
+                num_simulations,
+                num_datasets,
+                num_patchers,
+                n,
+                effect_sizes,
+                deviations,
+                corrected_alpha,
+                distribution="normal",
+            )
+            for language, power in zip(languages, estimated_power):
+                line += " & " + str(100*np.min(power))
+            average_power = 100 * np.mean(estimated_power)
+            line += " & " + str(average_power)
+
+            file.write(line + " \\\\\n")
+        file.write("\\hline\n")
+
+        # End the tabular environment
+        file.write("\\end{tabular}")
+        print("Saved power table")

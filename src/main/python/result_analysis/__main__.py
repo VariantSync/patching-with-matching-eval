@@ -36,16 +36,14 @@ def main():
     #     results_dir, repo_sample, minimum, only_non_trivial=True, showfliers=showfliers
     # )
 
-    # better_or_worse(results_dir, repo_sample, only_non_trivial=True)
-
-    local_file = "experiment_table.tex"
-    paper_file = "/home/alex/papers/self/patching-with-matching/paper/tables/experiment_table.tex"
-
+    # local_file = "experiment_table.tex"
+    # rq3_table_generation(
+    #     results_dir, repo_sample, only_non_trivial=True, file=local_file
+    # )
+    metrics_file = "/home/alex/papers/self/patching-with-matching/paper/tables/metrics.tex"
+    power_file = "/home/alex/papers/self/patching-with-matching/paper/tables/power.tex"
     rq3_table_generation(
-        results_dir, repo_sample, only_non_trivial=True, file=local_file
-    )
-    rq3_table_generation(
-        results_dir, repo_sample, only_non_trivial=True, file=paper_file
+        results_dir, repo_sample, only_non_trivial=True, file_metrics=metrics_file, file_power=power_file
     )
 
 

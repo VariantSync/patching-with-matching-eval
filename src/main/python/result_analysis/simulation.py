@@ -6,13 +6,25 @@ from statsmodels.stats.multitest import multipletests
 
 # Function to simulate data with a given effect size for multiple datasets and patchers
 def simulate_data(
-    num_datasets, num_patchers, n, effect_size, deviation, distribution="normal"
+    num_datasets, num_patchers, n, effect_sizes, deviations, distribution="normal"
 ):
     # Simulate metrics for your patcher (patcher 0) and other patchers (1 to num_patchers-1)
-    data_your_patcher = np.random.normal(loc=0.5, scale=0.02, size=(num_datasets, 1, n))
-    data_other_patchers = data_your_patcher + np.random.normal(
-        loc=effect_size, scale=0.02, size=(num_datasets, num_patchers - 1, n)
+    dev_ours = deviations[:, 0]
+    dev_ours = dev_ours[:, np.newaxis, np.newaxis]
+    data_your_patcher = np.random.normal(
+        loc=0.5, scale=dev_ours, size=(num_datasets, 1, n)
     )
+    loc = effect_sizes[:, :, np.newaxis]
+
+    scale = deviations[:, 1:]  # Replace with your actual values
+    scale = scale[:, :, np.newaxis]
+
+    data_other_patchers = np.random.normal(
+        loc=loc,
+        scale=scale,
+        size=(num_datasets, num_patchers - 1, n),
+    )
+    data_other_patchers = data_your_patcher + data_other_patchers
     return data_your_patcher, data_other_patchers
 
 
@@ -22,8 +34,8 @@ def power_analysis_simulation(
     num_datasets,
     num_patchers,
     n,
-    effect_size,
-    deviation,
+    effect_sizes,
+    deviations,
     alpha=0.05,
     distribution="normal",
 ):
@@ -33,7 +45,7 @@ def power_analysis_simulation(
     for _ in tqdm(range(num_simulations)):
         # Simulate data for this iteration
         data_your_patcher, data_other_patchers = simulate_data(
-            num_datasets, num_patchers, n, effect_size, deviation, distribution
+            num_datasets, num_patchers, n, effect_sizes, deviations, distribution
         )
 
         # Perform comparisons for each dataset
@@ -42,10 +54,13 @@ def power_analysis_simulation(
                 yours = data_your_patcher[dataset_idx, 0]
                 others = data_other_patchers[dataset_idx, patcher_idx]
                 # Compare your patcher against each of the other patchers
-                stat, p_value = wilcoxon(
-                    yours,
-                    others,
-                )
+                if np.sum(yours - others) == 0:
+                    p_value = 1
+                else:
+                    stat, p_value = wilcoxon(
+                        yours,
+                        others,
+                    )
 
                 # Check if the result is significant
                 if p_value < alpha:
@@ -61,11 +76,11 @@ def main():
     num_datasets = 10  # Number of datasets
     num_patchers = 5  # Total number of patchers, including your patcher
     n = 20  # Sample size (number of repetitions per dataset)
-    effect_size = (
-        0.02  # Assumed effect size (difference between your patcher and others)
-    )
     alpha = 0.05  # Significance level
-    deviation = 0.01
+    effect_sizes = np.array([0.001, 0.04, 0.02, 0.01])
+    effect_sizes = np.tile(effect_sizes, (10, 1))
+    deviations = np.array([0.01, 0.02, 0.01, 0.02, 0.01])
+    deviations = np.tile(deviations, (10, 1))
 
     # Adjusted significance level after multiple testing correction
     corrected_alpha = multipletests(
@@ -77,8 +92,8 @@ def main():
         num_datasets,
         num_patchers,
         n,
-        effect_size,
-        deviation,
+        effect_sizes,
+        deviations,
         corrected_alpha,
         distribution="normal",
     )
@@ -93,3 +108,7 @@ def main():
     print(
         f"Average estimated power across all datasets and comparisons: {average_power:.3f}"
     )
+
+
+if __name__ == "__main__":
+    main()

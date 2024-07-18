@@ -12,6 +12,7 @@ from result_analysis.eval_setup import Repository
 from result_analysis.io import load_repositories
 from result_analysis.io import load_all_results
 from result_analysis.latex import generate_metrics_result_table
+from result_analysis.latex import generate_power_estimate_table
 from result_analysis.result_handling import (
     edit_distance_percentiles,
     non_trivial_results,
@@ -47,7 +48,7 @@ def list_all_dirs(path):
     ]
 
 
-def rq3_table_generation(path_to_results, path_to_repo_list, only_non_trivial, file):
+def rq3_table_generation(path_to_results, path_to_repo_list, only_non_trivial, file_metrics, file_power):
     global languages
     repos = load_repositories(path_to_repo_list)
 
@@ -70,9 +71,12 @@ def rq3_table_generation(path_to_results, path_to_repo_list, only_non_trivial, f
             print(patcher_data)
     language_names = [lang[0] for lang in languages]
     patcher_names = [patcher.nice_name() for patcher in Patcher]
-    corrected_significance = significance(results_per_patcher)
+    corrected_significance, corrected_alpha = significance(results_per_patcher)
     generate_metrics_result_table(
-        patcher_names, language_names, results_per_patcher, corrected_significance, file
+        patcher_names, language_names, results_per_patcher, corrected_significance, file_metrics
+    )
+    generate_power_estimate_table(
+        patcher_names, language_names, results_per_patcher, corrected_alpha, file_power
     )
 
 
@@ -107,7 +111,9 @@ def significance(results):
                     p_values.append(p)
 
     # Correct for multiple tests
-    corrected_p_values = multipletests(p_values, alpha=0.05, method="bonferroni")[1]
+    _, corrected_p_values, _, corrected_alpha = multipletests(
+        p_values, alpha=0.05, method="bonferroni"
+    )
 
     # Print the results
     results = defaultdict(dict)
@@ -124,7 +130,7 @@ def significance(results):
 
         results[classifier2][dataset][metric] = corrected_p
 
-    return results
+    return (results, corrected_alpha)
 
 
 def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
