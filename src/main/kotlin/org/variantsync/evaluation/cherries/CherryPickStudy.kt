@@ -211,7 +211,7 @@ private fun cloneDatasets(
         }
     }
     threadPool.shutdown()
-    if (!threadPool.awaitTermination(1, TimeUnit.HOURS)) {
+    if (!threadPool.awaitTermination(1, TimeUnit.DAYS)) {
         Logger.error("Thread pool timeout.")
     }
     Logger.info("Cloned all datasets\n")
