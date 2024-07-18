@@ -20,13 +20,16 @@ import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.security.SecureRandom
 import java.text.DecimalFormat
+import java.time.Duration
 import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.system.exitProcess
@@ -50,7 +53,7 @@ class CherryPickStudy(
             Files.createDirectories(config.EXPERIMENT_DIR_RESULTS())
         }
         val repoPath: Path = cloneGitHubRepo(config, dataset.repositoryId)
-        val t = min(config.EXPERIMENT_THREAD_COUNT(), dataset.cherryPicks.size / config.EXPERIMENT_THREAD_COUNT())
+        val t = min(config.EXPERIMENT_THREAD_COUNT(), dataset.cherryPicks.size / 5)
         this.numThreads = max(1, t)
         this.availableOperations = LinkedBlockingQueue(numThreads)
 
@@ -86,20 +89,6 @@ class CherryPickStudy(
         }
     }
 
-    private fun cloneGitHubRepo(config: EvalConfig, repoId: String): Path {
-        val repoUri = "https://github.com/$repoId.git"
-        val cloneDir = config.EXPERIMENT_DIR_REPOS().resolve(repoId.replace("/", "_"))
-
-        if (Files.exists(cloneDir)) {
-            return cloneDir
-        }
-
-        Logger.info("cloning $repoUri into $cloneDir")
-        Git.cloneRepository().setURI(repoUri).setDirectory(cloneDir.toFile()).call().close()
-        Logger.info("done")
-        return cloneDir
-    }
-
     /**
      * Execute the study.
      */
@@ -122,6 +111,20 @@ class CherryPickStudy(
         }
         Logger.info("Cleaned all working directories.")
     }
+}
+
+private fun cloneGitHubRepo(config: EvalConfig, repoId: String): Path {
+    val repoUri = "https://github.com/$repoId.git"
+    val cloneDir = config.EXPERIMENT_DIR_REPOS().resolve(repoId.replace("/", "_"))
+
+    if (Files.exists(cloneDir)) {
+        return cloneDir
+    }
+
+    Logger.info("cloning $repoUri into $cloneDir")
+    Git.cloneRepository().setURI(repoUri).setDirectory(cloneDir.toFile()).call().close()
+    Logger.info("done")
+    return cloneDir
 }
 
 fun main(args: Array<String>) {
@@ -148,6 +151,8 @@ fun main(args: Array<String>) {
     var id = 0uL
     val rand = SecureRandom(seed)
     val allSamples = createOrLoadSamples(config, datasetsPerLanguage, rand)
+
+    cloneDatasets(allSamples, config)
 
     for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
         val repetitionIndex = repetition - config.EXPERIMENT_REPEATS_START()
@@ -179,6 +184,37 @@ fun main(args: Array<String>) {
     }
 
     exitProcess(0)
+}
+
+private fun cloneDatasets(
+    allSamples: ArrayList<ArrayList<CherryDataset>>,
+    config: EvalConfig
+) {
+    Logger.info("Looking for datasets that still should be cloned.")
+    val datasetsToClone = HashSet<CherryDataset>()
+    for (s in allSamples) {
+        for (dataset in allSamples[0]) {
+            datasetsToClone.add(dataset)
+        }
+    }
+
+    Logger.info("There are ${datasetsToClone.size} to check.")
+    val threadPool = Executors.newFixedThreadPool(config.EXPERIMENT_THREAD_COUNT())
+    for (dataset in datasetsToClone) {
+        threadPool.submit {
+            try {
+                cloneGitHubRepo(config, dataset.repositoryId)
+            } catch (e: Exception) {
+                Thread.sleep(Duration.ofSeconds(60))
+                cloneGitHubRepo(config, dataset.repositoryId)
+            }
+        }
+    }
+    threadPool.shutdown()
+    if (!threadPool.awaitTermination(1, TimeUnit.HOURS)) {
+        Logger.error("Thread pool timeout.")
+    }
+    Logger.info("Cloned all datasets\n")
 }
 
 private fun createOrLoadSamples(
