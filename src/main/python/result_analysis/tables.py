@@ -48,7 +48,9 @@ def list_all_dirs(path):
     ]
 
 
-def rq3_table_generation(path_to_results, path_to_repo_list, only_non_trivial, file_metrics, file_power):
+def rq3_table_generation(
+    path_to_results, path_to_repo_list, only_non_trivial, file_metrics, file_power
+):
     global languages
     repos = load_repositories(path_to_repo_list)
 
@@ -71,13 +73,13 @@ def rq3_table_generation(path_to_results, path_to_repo_list, only_non_trivial, f
             print(patcher_data)
     language_names = [lang[0] for lang in languages]
     patcher_names = [patcher.nice_name() for patcher in Patcher]
-    corrected_significance, corrected_alpha = significance(results_per_patcher)
+    # corrected_significance, corrected_alpha = significance(results_per_patcher)
     generate_metrics_result_table(
-        patcher_names, language_names, results_per_patcher, corrected_significance, file_metrics
+        patcher_names, language_names, results_per_patcher, file_metrics
     )
-    generate_power_estimate_table(
-        patcher_names, language_names, results_per_patcher, corrected_alpha, file_power
-    )
+    # generate_power_estimate_table(
+    #     patcher_names, language_names, results_per_patcher, corrected_alpha, file_power
+    # )
 
 
 def significance(results):

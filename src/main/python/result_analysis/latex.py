@@ -5,9 +5,7 @@ from result_analysis.eval_setup import Patcher
 from result_analysis.simulation import power_analysis_simulation
 
 
-def generate_metrics_result_table(
-    patcher_names, languages, results_per_patcher, corrected_significance, file
-):
+def generate_metrics_result_table(patcher_names, languages, results_per_patcher, file):
     with open(file, "w") as file:
         # Begin the tabular environment
         file.write("\\begin{tabular}{|l|l|" + "r|" * len(languages) + "}\n")
@@ -65,12 +63,12 @@ def generate_metrics_result_table(
                     )
 
                     p_value = 1.0
-                    if patcher in corrected_significance:
-                        if language in corrected_significance[patcher]:
-                            if metric in corrected_significance[patcher][language]:
-                                p_value = corrected_significance[patcher][language][
-                                    metric
-                                ]
+                    # if patcher in corrected_significance:
+                    #    if language in corrected_significance[patcher]:
+                    #        if metric in corrected_significance[patcher][language]:
+                    #            p_value = corrected_significance[patcher][language][
+                    #                metric
+                    #            ]
                     if p_value < 0.01:
                         color = "blue!90"
                     elif p_value < 0.02:
@@ -182,7 +180,7 @@ def generate_power_estimate_table(
                 distribution="normal",
             )
             for language, power in zip(languages, estimated_power):
-                line += " & " + str(100*np.min(power))
+                line += " & " + str(100 * np.min(power))
             average_power = 100 * np.mean(estimated_power)
             line += " & " + str(average_power)
 
