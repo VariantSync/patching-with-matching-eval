@@ -396,6 +396,12 @@ fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
         if (cp !is HashMap<*, *>) {
             throw parseException
         }
+        val isTrivial = cp["is_trivial"] as? Boolean ?: true
+
+        if (isTrivial) {
+            continue
+        }
+
         val cherryAndTarget = cp["cherry_and_target"]
         if (cherryAndTarget !is HashMap<*, *>) {
             throw parseException
@@ -430,7 +436,7 @@ fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
             return Optional.empty()
         }
 
-        cherryPicks.add(CherryPick(id, cherryId, cherryParentId, targetId, expectedResultId))
+        cherryPicks.add(CherryPick(id, cherryId, cherryParentId, targetId, expectedResultId, isTrivial))
         id++
     }
 
