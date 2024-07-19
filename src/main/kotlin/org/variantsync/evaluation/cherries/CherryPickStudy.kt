@@ -205,7 +205,7 @@ private fun cloneDatasets(
             try {
                 cloneGitHubRepo(config, dataset.repositoryId)
             } catch (e: Exception) {
-                Thread.sleep(Duration.ofSeconds(60))
+                Thread.sleep(60_000)
                 cloneGitHubRepo(config, dataset.repositoryId)
             }
         }
