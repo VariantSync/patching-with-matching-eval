@@ -154,6 +154,9 @@ fun main(args: Array<String>) {
 
     cloneDatasets(allSamples, config)
 
+    val n = max(Runtime.getRuntime().availableProcessors() / config.EXPERIMENT_THREAD_COUNT(), 1)
+    Logger.info("Processing $n repos in parallel")
+    val threadPool = Executors.newFixedThreadPool(n)
     for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
         val repetitionIndex = repetition - config.EXPERIMENT_REPEATS_START()
         val numCherryPicks = countCherryPicks(allSamples[repetitionIndex])
@@ -167,21 +170,31 @@ fun main(args: Array<String>) {
                 Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName} (rep.: $repetition)")
                 continue
             }
-            Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
-            val study = CherryPickStudy(config, dataset, repetition, idProvider)
-            try {
-                study.run()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Logger.error(e)
+            threadPool.submit {
+                Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
+                val study = CherryPickStudy(config, dataset, repetition, idProvider)
+                try {
+                    study.run()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Logger.error(e)
+                }
+                completed += dataset.cherryPicks.size
+                val completionPercentage = 100 * (completed.toDouble() / numCherryPicks.toDouble())
+                val df = DecimalFormat("#.##")
+                df.roundingMode = RoundingMode.DOWN
+                Logger.info(
+                    "(Rep.: $repetition, ID: $id) Finished $completed of $numCherryPicks cherry picks (${
+                        df.format(
+                            completionPercentage
+                        )
+                    }%)\n"
+                )
             }
-            completed += dataset.cherryPicks.size
-            val completionPercentage = 100 * (completed.toDouble() / numCherryPicks.toDouble())
-            val df = DecimalFormat("#.##")
-            df.roundingMode = RoundingMode.DOWN
-            Logger.info("(Rep.: $repetition, ID: $id) Finished $completed of $numCherryPicks cherry picks (${df.format(completionPercentage)}%)\n")
         }
+        threadPool.awaitTermination(10, TimeUnit.DAYS)
     }
+    threadPool.shutdown()
 
     exitProcess(0)
 }
