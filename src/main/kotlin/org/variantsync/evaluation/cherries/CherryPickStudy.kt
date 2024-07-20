@@ -171,6 +171,7 @@ fun main(args: Array<String>) {
                 continue
             }
             threadPool.submit {
+                val i = id
                 Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
                 val study = CherryPickStudy(config, dataset, repetition, idProvider)
                 try {
@@ -184,7 +185,7 @@ fun main(args: Array<String>) {
                 val df = DecimalFormat("#.##")
                 df.roundingMode = RoundingMode.DOWN
                 Logger.info(
-                    "(Rep.: $repetition, ID: $id) Finished $completed of $numCherryPicks cherry picks (${
+                    "(Rep.: $repetition, ID: $i) Finished $completed of $numCherryPicks cherry picks (${
                         df.format(
                             completionPercentage
                         )
