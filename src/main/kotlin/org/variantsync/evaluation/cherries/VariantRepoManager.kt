@@ -81,7 +81,7 @@ class VariantRepoManager(
                 Logger.warn("First cleanup phase failed.")
                 val tempExecutor = ShellExecutor(Logger::warn, Logger::warn, targetVariantV0)
                 tempExecutor.execute(GitCherryPickCommand().abort())
-                tempExecutor.execute(RmCommand(targetVariantV0).recursive())
+                tempExecutor.execute(RmCommand(targetVariantV0).recursive().force())
                 tempExecutor.execute(CpCommand(githubRepoPath, targetVariantV0).recursive())
             }
         } catch (e: Exception) {

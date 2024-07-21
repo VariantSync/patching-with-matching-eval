@@ -37,4 +37,9 @@ public class RmCommand extends ShellCommand {
         this.args.add("-r");
         return this;
     }
+
+    public RmCommand force() {
+        this.args.add("-f");
+        return this;
+    }
 }
