@@ -111,6 +111,13 @@ def relative_difference(base_patcher: Patcher, results):
 
             _, p = wilcoxon(base_values, other_values)
             average_difference = np.average(other_values - base_values)
+            average_difference /= np.average(base_values)
+            b = np.average(base_values)
+            o = np.average(other_values)
+            print(f"{metric}-{other_patcher}-base: {b}")
+            print(f"{metric}-{other_patcher}-other: {o}")
+            print(f"average diff: {average_difference}")
+            print()
             differences.append(average_difference)
             p_values.append(p)
 
