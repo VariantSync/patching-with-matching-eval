@@ -34,7 +34,7 @@ def print_result_data():
     directory_path = "/home/alex/data/cherry-picks/results/"
     total_results = 0
     summed_result = OutcomeClassification()
-    for file_path in find_results_for_patcher(directory_path, Patcher.MPatch2):
+    for file_path in find_results_for_patcher(directory_path, Patcher.MPatch):
         result_objects = read_results_from_file(file_path)
         print("Read " + str(len(result_objects)) + " results.")
         total_results += len(result_objects)
@@ -55,7 +55,7 @@ def print_results_per_repo():
 
     directory_path = "/home/alex/data/cherry-picks/results/"
     results = []
-    for file_path in find_results_for_patcher(directory_path, Patcher.MPatch2):
+    for file_path in find_results_for_patcher(directory_path, Patcher.MPatch):
         results.extend(read_results_from_file(file_path))
 
     # type: Dict[Repository, PatchResult]

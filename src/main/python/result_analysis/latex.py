@@ -5,17 +5,19 @@ from result_analysis.eval_setup import Patcher
 from result_analysis.simulation import power_analysis_simulation
 
 
-def generate_metrics_result_table(patcher_names, languages, results_per_patcher, file):
+def generate_metrics_result_table(
+    patcher_names, languages, results_per_patcher, differences, file
+):
     with open(file, "w") as file:
         # Begin the tabular environment
-        file.write("\\begin{tabular}{|l|l|" + "r|" * len(languages) + "}\n")
+        file.write("\\begin{tabular}{|l|l|" + "r|" * len(languages) + "r|r|}\n")
         file.write("\\hline\n")
 
         # Write the multi-column header for languages
         language_header = (
             "Metric & Patcher & \\multicolumn{"
             + str(len(languages))
-            + "}{c|}{Project Languages} \\\\\n"
+            + "}{c|}{Project Languages} & \\multirow{2}{*}{$\\stackrel{+}{\\scriptstyle{-}}\\%$} & \\multirow{2}{*}{p} \\\\\n"
         )
         file.write(language_header)
         file.write("\\cline{3-" + str(len(languages) + 2) + "}\n")
@@ -25,7 +27,7 @@ def generate_metrics_result_table(patcher_names, languages, results_per_patcher,
         for i in range(0, len(language_names)):
             if language_names[i] == "C#":
                 language_names[i] = "C\\#"
-        file.write(" & & " + " & ".join(language_names) + " \\\\\n")
+        file.write(" & & " + " & ".join(language_names) + "& & \\\\\n")
         file.write("\\hline\n")
 
         # Write the multi-rows and their corresponding rows
@@ -44,6 +46,7 @@ def generate_metrics_result_table(patcher_names, languages, results_per_patcher,
                     best_type = ""
                     results = results_per_patcher[patcher][language]
                     value = np.mean(results.get(metric))
+                    postfix = ""
                     if metric == Metric.Precision:
                         best_type = "max"
                     elif metric == Metric.Recall:
@@ -51,10 +54,12 @@ def generate_metrics_result_table(patcher_names, languages, results_per_patcher,
                     elif metric == Metric.Automation:
                         value = 100 * value
                         best_type = "max"
+                        # postfix = "\\%"
                     elif metric == Metric.EditDistance:
                         best_type = "min"
                     elif metric == Metric.Runtime:
                         best_type = "min"
+                        # postfix = "s"
                     else:
                         value = -1
 
@@ -62,31 +67,38 @@ def generate_metrics_result_table(patcher_names, languages, results_per_patcher,
                         results_per_patcher, patcher_names, metric, best_type, language
                     )
 
-                    p_value = 1.0
+                    # p_value = 1.0
                     # if patcher in corrected_significance:
                     #    if language in corrected_significance[patcher]:
                     #        if metric in corrected_significance[patcher][language]:
                     #            p_value = corrected_significance[patcher][language][
                     #                metric
                     #            ]
-                    if p_value < 0.01:
-                        color = "blue!90"
-                    elif p_value < 0.02:
-                        color = "blue!70"
-                    elif p_value < 0.03:
-                        color = "blue!50"
-                    elif p_value < 0.04:
-                        color = "blue!30"
-                    elif p_value < 0.05:
-                        color = "blue!10"
-                    else:
-                        color = "white"
 
                     if value == max_value:
-                        line += f" & \\cellcolor{{{color}}}\\textbf{{{value:.2f}}}"
+                        line += f" & \\textbf{{{value:.2f}}}{postfix}"
                     else:
-                        line += f" & \\cellcolor{{{color}}}{value:.2f}"
+                        line += f" & {value:.2f}{postfix}"
 
+                (diff, p_value) = differences[patcher][metric]
+                if p_value < 0.01:
+                    color = "blue!50"
+                elif p_value < 0.02:
+                    color = "blue!40"
+                elif p_value < 0.03:
+                    color = "blue!30"
+                elif p_value < 0.04:
+                    color = "blue!20"
+                elif p_value < 0.05:
+                    color = "blue!10"
+                else:
+                    color = "white"
+                diff *= 100
+                if p_value == np.inf:
+                    line += " & -- & --"
+                else:
+                    line += f" & \\cellcolor{{{color}}}{diff:.2f}\\%"
+                    line += f" & \\cellcolor{{{color}}}{p_value:.2f}"
                 file.write(line + " \\\\\n")
             file.write("\\hline\n")
 
@@ -138,7 +150,7 @@ def generate_power_estimate_table(
         num_simulations = 1000
         num_datasets = len(languages)
         num_patchers = len(patcher_names)
-        our_patcher = Patcher.MPatch2.nice_name()
+        our_patcher = Patcher.MPatch.nice_name()
         # Write the multi-rows and their corresponding rows
         for metric in Metric:
             line = metric.nice_name()

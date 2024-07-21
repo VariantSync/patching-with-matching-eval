@@ -3,7 +3,7 @@ from typing import List
 from typing import Dict
 from typing import Optional
 
-import numpy
+import numpy as np
 
 from result_analysis.eval_setup import Metric, Patcher
 from result_analysis.eval_setup import RQ3PatcherData
@@ -25,6 +25,7 @@ from result_analysis.result_handling import runtime
 from result_analysis.result_handling import cluster_results_per_patcher
 from collections import defaultdict
 from statsmodels.stats.multitest import multipletests
+from scipy.stats import wilcoxon
 
 languages = [
     ("Python", "py"),
@@ -74,19 +75,70 @@ def rq3_table_generation(
     language_names = [lang[0] for lang in languages]
     patcher_names = [patcher.nice_name() for patcher in Patcher]
     # corrected_significance, corrected_alpha = significance(results_per_patcher)
+    differences = relative_difference(Patcher.MPatch, results_per_patcher)
     generate_metrics_result_table(
-        patcher_names, language_names, results_per_patcher, file_metrics
+        patcher_names, language_names, results_per_patcher, differences, file_metrics
     )
     # generate_power_estimate_table(
     #     patcher_names, language_names, results_per_patcher, corrected_alpha, file_power
     # )
 
 
-def significance(results):
-    import numpy as np
-    from scipy.stats import wilcoxon
+def relative_difference(base_patcher: Patcher, results):
+    base = base_patcher.nice_name()
 
-    pwm = Patcher.MPatch2.nice_name()
+    differences_per_patcher = defaultdict(dict)
+    differences = []
+    p_values = []
+    for other_patcher in Patcher:
+        other_patcher = other_patcher.nice_name()
+        for metric in Metric:
+            if other_patcher == base:
+                differences_per_patcher[other_patcher][metric] = (
+                    0.0,
+                    np.inf,
+                )
+                continue
+            base_values = []
+            other_values = []
+            for dataset in results[base]:
+                base_values.extend(np.array(results[base][dataset].get(metric)))
+                other_values.extend(
+                    np.array(results[other_patcher][dataset].get(metric))
+                )
+            base_values = np.array(base_values)
+            other_values = np.array(other_values)
+
+            _, p = wilcoxon(base_values, other_values)
+            average_difference = np.average(other_values - base_values)
+            differences.append(average_difference)
+            p_values.append(p)
+
+    _, corrected_p_values, _, _ = multipletests(
+        p_values, alpha=0.05, method="bonferroni"
+    )
+
+    i = 0
+    for patcher in Patcher:
+        patcher = patcher.nice_name()
+        for metric in Metric:
+            if patcher == base:
+                differences_per_patcher[patcher][metric] = (
+                    0.0,
+                    np.inf,
+                )
+                continue
+            differences_per_patcher[patcher][metric] = (
+                differences[i],
+                corrected_p_values[i],
+            )
+            i += 1
+
+    return differences_per_patcher
+
+
+def significance(results):
+    pwm = Patcher.MPatch.nice_name()
 
     comparisons = []
     p_values = []
@@ -105,9 +157,9 @@ def significance(results):
                         (
                             dataset,
                             metric,
-                            numpy.average(pwm_values),
+                            np.average(pwm_values),
                             other_patcher,
-                            numpy.average(other_values),
+                            np.average(other_values),
                         )
                     )
                     p_values.append(p)
@@ -154,7 +206,7 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
         # Group results by repo
         results_per_patcher[patcher] = results_per_repo(results, repos)
 
-    results = results_per_patcher[Patcher.MPatch2]
+    results = results_per_patcher[Patcher.MPatch]
     for repo in results.keys():
         repo_results_mpatch = results[repo]
         repo_results_upatch = results_per_patcher[Patcher.UnixPatch][repo]
