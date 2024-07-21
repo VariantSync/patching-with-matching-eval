@@ -40,10 +40,16 @@ def main():
     # rq3_table_generation(
     #     results_dir, repo_sample, only_non_trivial=True, file=local_file
     # )
-    metrics_file = "/home/alex/papers/self/patching-with-matching/paper/tables/metrics.tex"
+    metrics_file = (
+        "/home/alex/papers/self/patching-with-matching/paper/tables/metrics.tex"
+    )
     power_file = "/home/alex/papers/self/patching-with-matching/paper/tables/power.tex"
     rq3_table_generation(
-        results_dir, repo_sample, only_non_trivial=True, file_metrics=metrics_file, file_power=power_file
+        results_dir,
+        repo_sample,
+        only_non_trivial=False,
+        file_metrics=metrics_file,
+        file_power=power_file,
     )
 
 
