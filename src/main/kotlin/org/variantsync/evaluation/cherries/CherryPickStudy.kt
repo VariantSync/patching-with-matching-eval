@@ -3,17 +3,15 @@ package org.variantsync.evaluation.cherries
 import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.EvalConfig
-import org.variantsync.evaluation.IDProvider
+import org.variantsync.evaluation.*
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
-import org.variantsync.evaluation.determineSampleSize
-import org.variantsync.evaluation.waitForShutdown
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.io.IOException
 import java.io.UncheckedIOException
+import java.math.RoundingMode
 import java.nio.ByteBuffer
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
@@ -21,13 +19,18 @@ import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.security.SecureRandom
+import java.text.DecimalFormat
+import java.time.Duration
 import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.collections.HashSet
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.system.exitProcess
 
@@ -35,11 +38,11 @@ class CherryPickStudy(
     config: EvalConfig,
     dataset: CherryDataset,
     repetition: Int,
+    idProvider: IDProvider,
 ) {
     // The study tasks that are to be executed in parallel
     private val evalTasks: MutableList<CherryPickEvalTask>
     private val numThreads: Int
-    private val idProvider: IDProvider
     private val availableOperations: BlockingQueue<CherryEvalOperations>
 
     /**
@@ -50,7 +53,8 @@ class CherryPickStudy(
             Files.createDirectories(config.EXPERIMENT_DIR_RESULTS())
         }
         val repoPath: Path = cloneGitHubRepo(config, dataset.repositoryId)
-        this.numThreads = min(config.EXPERIMENT_THREAD_COUNT(), dataset.cherryPicks.size)
+        val t = min(config.EXPERIMENT_THREAD_COUNT(), dataset.cherryPicks.size / 5)
+        this.numThreads = max(1, t)
         this.availableOperations = LinkedBlockingQueue(numThreads)
 
         Logger.info("Preparing working directories for $numThreads threads.")
@@ -64,7 +68,6 @@ class CherryPickStudy(
             availableOperations.add(operations)
         }
 
-        idProvider = IDProvider(config.EXPERIMENT_START_ID())
         this.evalTasks = ArrayList()
 
         for (cherryPick in dataset.cherryPicks) {
@@ -84,20 +87,6 @@ class CherryPickStudy(
                 )
             )
         }
-    }
-
-    private fun cloneGitHubRepo(config: EvalConfig, repoId: String): Path {
-        val repoUri = "https://github.com/$repoId.git"
-        val cloneDir = config.EXPERIMENT_DIR_REPOS().resolve(repoId.replace("/", "_"))
-
-        if (Files.exists(cloneDir)) {
-            return cloneDir
-        }
-
-        Logger.info("cloning $repoUri into $cloneDir")
-        Git.cloneRepository().setURI(repoUri).setDirectory(cloneDir.toFile()).call().close()
-        Logger.info("done")
-        return cloneDir
     }
 
     /**
@@ -124,6 +113,20 @@ class CherryPickStudy(
     }
 }
 
+private fun cloneGitHubRepo(config: EvalConfig, repoId: String): Path {
+    val repoUri = "https://github.com/$repoId.git"
+    val cloneDir = config.EXPERIMENT_DIR_REPOS().resolve(repoId.replace("/", "_"))
+
+    if (Files.exists(cloneDir)) {
+        return cloneDir
+    }
+
+    Logger.info("cloning $repoUri into $cloneDir")
+    Git.cloneRepository().setURI(repoUri).setDirectory(cloneDir.toFile()).call().close()
+    Logger.info("done")
+    return cloneDir
+}
+
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
         System.err.println(
@@ -142,11 +145,111 @@ fun main(args: Array<String>) {
         throw UncheckedIOException(e)
     }
 
-    val seed: ByteArray = ByteBuffer.allocate(java.lang.Long.BYTES).putLong(config.SEED()).array()
+    val seed: ByteArray = ByteBuffer.allocate(java.lang.Long.BYTES).putLong(config.EXPERIMENT_REPEATS_START()
+            + config.SEED()).array()
+    val idProvider = IDProvider(config.EXPERIMENT_START_ID())
+    var id = 0uL
     val rand = SecureRandom(seed)
-    for (language in datasetsPerLanguage.keys) {
+    val allSamples = createOrLoadSamples(config, datasetsPerLanguage, rand)
+
+    cloneDatasets(allSamples, config)
+
+    val n = max(Runtime.getRuntime().availableProcessors() / config.EXPERIMENT_THREAD_COUNT(), 1)
+    Logger.info("Processing $n repos in parallel")
+    val threadPool = Executors.newFixedThreadPool(n)
+    for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
+        val repetitionIndex = repetition - config.EXPERIMENT_REPEATS_START()
+        val numCherryPicks = countCherryPicks(allSamples[repetitionIndex])
+        Logger.info("Considering a total of $numCherryPicks cherry-picks for repetition $repetition")
+        var completed = 0
+        for (dataset in allSamples[repetitionIndex]) {
+            while (idProvider.next() < id) {}
+            id += dataset.cherryPicks.size.toUInt()
+            if (id < config.EXPERIMENT_START_ID()) {
+                // Skip this dataset
+                Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName} (rep.: $repetition)")
+                continue
+            }
+            threadPool.submit {
+                val i = id
+                Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
+                val study = CherryPickStudy(config, dataset, repetition, idProvider)
+                try {
+                    study.run()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Logger.error(e)
+                }
+                completed += dataset.cherryPicks.size
+                val completionPercentage = 100 * (completed.toDouble() / numCherryPicks.toDouble())
+                val df = DecimalFormat("#.##")
+                df.roundingMode = RoundingMode.DOWN
+                Logger.info(
+                    "(Rep.: $repetition, ID: $i) Finished $completed of $numCherryPicks cherry picks (${
+                        df.format(
+                            completionPercentage
+                        )
+                    }%)\n"
+                )
+            }
+        }
+        threadPool.awaitTermination(10, TimeUnit.DAYS)
+    }
+    threadPool.shutdown()
+
+    exitProcess(0)
+}
+
+private fun cloneDatasets(
+    allSamples: ArrayList<ArrayList<CherryDataset>>,
+    config: EvalConfig
+) {
+    Logger.info("Looking for datasets that still should be cloned.")
+    val datasetsToClone = HashSet<CherryDataset>()
+    for (s in allSamples) {
+        for (dataset in allSamples[0]) {
+            datasetsToClone.add(dataset)
+        }
+    }
+
+    Logger.info("There are ${datasetsToClone.size} to check.")
+    val threadPool = Executors.newFixedThreadPool(config.EXPERIMENT_THREAD_COUNT())
+    for (dataset in datasetsToClone) {
+        threadPool.submit {
+            try {
+                cloneGitHubRepo(config, dataset.repositoryId)
+            } catch (e: Exception) {
+                Thread.sleep(60_000)
+                cloneGitHubRepo(config, dataset.repositoryId)
+            }
+        }
+    }
+    threadPool.shutdown()
+    if (!threadPool.awaitTermination(1, TimeUnit.DAYS)) {
+        Logger.error("Thread pool timeout.")
+    }
+    Logger.info("Cloned all datasets\n")
+}
+
+private fun createOrLoadSamples(
+    config: EvalConfig,
+    datasetsPerLanguage: Map<String, MutableList<CherryDataset>>,
+    rand: SecureRandom
+): ArrayList<ArrayList<CherryDataset>> {
+    if (Files.exists(config.EXPERIMENT_SAMPLE_FILE())) {
+        Logger.info("Found existing sample file...loading it\n")
+        return loadSample(config.EXPERIMENT_SAMPLE_FILE())
+    }
+
+    val allSamples = ArrayList<ArrayList<CherryDataset>>()
+    for (i in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
+        allSamples.add(ArrayList())
+    }
+    val langs = ArrayList<String>(datasetsPerLanguage.keys)
+    langs.sort()
+    for (language in langs) {
         val datasets = datasetsPerLanguage[language]!!
-        Logger.info("considering next language $language with ${datasets.size} usable repositories")
+        Logger.info("Sampling for next language $language with ${datasets.size} usable repositories")
         val sample: List<List<CherryDataset>> = if (config.EXPERIMENT_ENABLE_SAMPLING()) {
             sampleCherries(config, datasets, rand)
         } else {
@@ -156,25 +259,18 @@ fun main(args: Array<String>) {
             }
             temp
         }
-
-        for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
-            val numCherryPicks = countCherryPicks(sample[repetition - 1])
-            var completed = 0
-            for (dataset in sample[repetition - 1]) {
-                Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
-                val study = CherryPickStudy(config, dataset, repetition)
-                try {
-                    study.run()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Logger.error(e)
-                }
-                completed += dataset.cherryPicks.size
-                Logger.info("(Lang.: $language; Rep.: $repetition) Finished $completed of $numCherryPicks cherry picks\n")
-            }
+        for (sampleList in sample.withIndex()) {
+            allSamples[sampleList.index].addAll(sampleList.value)
         }
     }
-    exitProcess(0)
+    // Shuffle the datasets to consider repos in random order
+    for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
+        val repetitionIndex = repetition - config.EXPERIMENT_REPEATS_START()
+        allSamples[repetitionIndex].shuffle(rand)
+    }
+    Logger.info("Done.\n")
+    saveSample(config.EXPERIMENT_SAMPLE_FILE(), allSamples)
+    return allSamples
 }
 
 fun sampleCherries(config: EvalConfig, datasets: List<CherryDataset>, rand: SecureRandom): List<List<CherryDataset>> {
@@ -314,6 +410,12 @@ fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
         if (cp !is HashMap<*, *>) {
             throw parseException
         }
+        val isTrivial = cp["is_trivial"] as? Boolean ?: true
+
+        if (isTrivial) {
+            continue
+        }
+
         val cherryAndTarget = cp["cherry_and_target"]
         if (cherryAndTarget !is HashMap<*, *>) {
             throw parseException
@@ -348,7 +450,7 @@ fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
             return Optional.empty()
         }
 
-        cherryPicks.add(CherryPick(id, cherryId, cherryParentId, targetId, expectedResultId))
+        cherryPicks.add(CherryPick(id, cherryId, cherryParentId, targetId, expectedResultId, isTrivial))
         id++
     }
 
@@ -370,19 +472,19 @@ private fun prepareVariantDirectories(operations: CherryEvalOperations, gitHubRe
 private fun cleanVariantDirectories(operations: CherryEvalOperations) {
     Logger.debug("Cleaning old variant files.")
     if (Files.exists(operations.sourceVariantV0)) {
-        operations.shell.execute(RmCommand(operations.sourceVariantV0).recursive())
+        operations.shell.execute(RmCommand(operations.sourceVariantV0).recursive().force())
             .expect("Was not able to remove source variant V0.")
     }
     if (Files.exists(operations.sourceVariantV1)) {
-        operations.shell.execute(RmCommand(operations.sourceVariantV1).recursive())
+        operations.shell.execute(RmCommand(operations.sourceVariantV1).recursive().force())
             .expect("Was not able to remove source variant V1.")
     }
     if (Files.exists(operations.targetVariantV0)) {
-        operations.shell.execute(RmCommand(operations.targetVariantV0).recursive())
+        operations.shell.execute(RmCommand(operations.targetVariantV0).recursive().force())
             .expect("Was not able to remove target variant V0.")
     }
     if (Files.exists(operations.targetVariantV1)) {
-        operations.shell.execute(RmCommand(operations.sourceVariantV1).recursive())
+        operations.shell.execute(RmCommand(operations.sourceVariantV1).recursive().force())
             .expect("Was not able to remove target variant V1.")
     }
 }

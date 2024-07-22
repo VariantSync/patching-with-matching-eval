@@ -3,8 +3,8 @@ import numpy as np
 
 
 class Patcher(Enum):
-    MPatch1 = "pwm_f1"
-    MPatch2 = "pwm_f2"
+    # MPatch1 = "pwm_f1"
+    MPatch = "pwm_f2"
     UnixPatch = "unix_patch"
     GitApply = "git_apply"
     GitCherry = "git_cherry"
@@ -17,11 +17,11 @@ class Patcher(Enum):
 
     def nice_name(self):
         return {
-            Patcher.MPatch1: "PwM-f1",
-            Patcher.MPatch2: "PwM-f2",
-            Patcher.UnixPatch: "Unix Patch",
-            Patcher.GitApply: "Git Apply",
-            Patcher.GitCherry: "Git Cherry-Pick",
+            # Patcher.MPatch1: "PwM-f1",
+            Patcher.MPatch: "\\texttt{PwM}",
+            Patcher.UnixPatch: "\\texttt{patch}",
+            Patcher.GitApply: "\\texttt{apply}",
+            Patcher.GitCherry: "\\texttt{cherry-pick}",
         }[self]
 
 
@@ -189,8 +189,8 @@ class Metric(Enum):
         return {
             Metric.Precision: "Precision",
             Metric.Recall: "Recall",
-            Metric.Automation: "Automation",
-            Metric.EditDistance: "Edit Distance",
+            Metric.Automation: "Automation (\\%)",
+            Metric.EditDistance: "Req. Fixes",
             Metric.Runtime: "Runtime (s)",
         }[self]
 

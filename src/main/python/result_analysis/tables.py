@@ -3,7 +3,7 @@ from typing import List
 from typing import Dict
 from typing import Optional
 
-import numpy
+import numpy as np
 
 from result_analysis.eval_setup import Metric, Patcher
 from result_analysis.eval_setup import RQ3PatcherData
@@ -11,7 +11,8 @@ from result_analysis.eval_setup import PatchResult
 from result_analysis.eval_setup import Repository
 from result_analysis.io import load_repositories
 from result_analysis.io import load_all_results
-from result_analysis.latex import generate_latex_table
+from result_analysis.latex import generate_metrics_result_table
+from result_analysis.latex import generate_power_estimate_table
 from result_analysis.result_handling import (
     edit_distance_percentiles,
     non_trivial_results,
@@ -24,6 +25,7 @@ from result_analysis.result_handling import runtime
 from result_analysis.result_handling import cluster_results_per_patcher
 from collections import defaultdict
 from statsmodels.stats.multitest import multipletests
+from scipy.stats import wilcoxon
 
 languages = [
     ("Python", "py"),
@@ -39,32 +41,6 @@ languages = [
 ]
 
 
-def rq3_table(path_to_results, only_non_trivial):
-    global languages
-    patchers = []
-    for patcher in Patcher:  # Patcher is an enum
-        print("Loading results for " + str(patcher))
-        # type: List[PatchResult]
-        results = load_all_results(path_to_results, patcher)
-        # Filter trivial results
-        if only_non_trivial:
-            results = non_trivial_results(results)
-
-        patchers.append(patcher)
-        oa = overall_automation(results)
-        (average_ed, median_ed) = edit_distance(results)
-        (average_run, median_run) = runtime(results)
-        patcher_data = RQ3PatcherData(
-            patcher=patcher,
-            precision=0,
-            recall=0,
-            patch_automation=oa,
-            avg_edit_distance=average_ed,
-            avg_runtime=average_run,
-        )
-        print(patcher_data)
-
-
 def list_all_dirs(path):
     return [
         os.path.join(path, d)
@@ -73,7 +49,9 @@ def list_all_dirs(path):
     ]
 
 
-def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
+def rq3_table_generation(
+    path_to_results, path_to_repo_list, only_non_trivial, file_metrics, file_power
+):
     global languages
     repos = load_repositories(path_to_repo_list)
 
@@ -96,17 +74,78 @@ def rq3_table_alt(path_to_results, path_to_repo_list, only_non_trivial):
             print(patcher_data)
     language_names = [lang[0] for lang in languages]
     patcher_names = [patcher.nice_name() for patcher in Patcher]
-    corrected_significance = significance(results_per_patcher)
-    generate_latex_table(
-        patcher_names, language_names, results_per_patcher, corrected_significance
+    # corrected_significance, corrected_alpha = significance(results_per_patcher)
+    differences = relative_difference(Patcher.MPatch, results_per_patcher)
+    generate_metrics_result_table(
+        patcher_names, language_names, results_per_patcher, differences, file_metrics
     )
+    # generate_power_estimate_table(
+    #     patcher_names, language_names, results_per_patcher, corrected_alpha, file_power
+    # )
+
+
+def relative_difference(base_patcher: Patcher, results):
+    base = base_patcher.nice_name()
+
+    differences_per_patcher = defaultdict(dict)
+    differences = []
+    p_values = []
+    for other_patcher in Patcher:
+        other_patcher = other_patcher.nice_name()
+        for metric in Metric:
+            if other_patcher == base:
+                differences_per_patcher[other_patcher][metric] = (
+                    0.0,
+                    np.inf,
+                )
+                continue
+            base_values = []
+            other_values = []
+            for dataset in results[base]:
+                base_values.extend(np.array(results[base][dataset].get(metric)))
+                other_values.extend(
+                    np.array(results[other_patcher][dataset].get(metric))
+                )
+            base_values = np.array(base_values)
+            other_values = np.array(other_values)
+
+            _, p = wilcoxon(base_values, other_values)
+            average_difference = np.average(other_values - base_values)
+            average_difference /= np.average(base_values)
+            b = np.average(base_values)
+            o = np.average(other_values)
+            print(f"{metric}-{other_patcher}-base: {b}")
+            print(f"{metric}-{other_patcher}-other: {o}")
+            print(f"average diff: {average_difference}")
+            print()
+            differences.append(average_difference)
+            p_values.append(p)
+
+    _, corrected_p_values, _, _ = multipletests(
+        p_values, alpha=0.05, method="bonferroni"
+    )
+
+    i = 0
+    for patcher in Patcher:
+        patcher = patcher.nice_name()
+        for metric in Metric:
+            if patcher == base:
+                differences_per_patcher[patcher][metric] = (
+                    0.0,
+                    np.inf,
+                )
+                continue
+            differences_per_patcher[patcher][metric] = (
+                differences[i],
+                corrected_p_values[i],
+            )
+            i += 1
+
+    return differences_per_patcher
 
 
 def significance(results):
-    import numpy as np
-    from scipy.stats import wilcoxon
-
-    pwm = Patcher.MPatch2.nice_name()
+    pwm = Patcher.MPatch.nice_name()
 
     comparisons = []
     p_values = []
@@ -125,15 +164,17 @@ def significance(results):
                         (
                             dataset,
                             metric,
-                            numpy.average(pwm_values),
+                            np.average(pwm_values),
                             other_patcher,
-                            numpy.average(other_values),
+                            np.average(other_values),
                         )
                     )
                     p_values.append(p)
 
     # Correct for multiple tests
-    corrected_p_values = multipletests(p_values, alpha=0.05, method="bonferroni")[1]
+    _, corrected_p_values, _, corrected_alpha = multipletests(
+        p_values, alpha=0.05, method="bonferroni"
+    )
 
     # Print the results
     results = defaultdict(dict)
@@ -150,7 +191,7 @@ def significance(results):
 
         results[classifier2][dataset][metric] = corrected_p
 
-    return results
+    return (results, corrected_alpha)
 
 
 def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
@@ -172,7 +213,7 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
         # Group results by repo
         results_per_patcher[patcher] = results_per_repo(results, repos)
 
-    results = results_per_patcher[Patcher.MPatch2]
+    results = results_per_patcher[Patcher.MPatch]
     for repo in results.keys():
         repo_results_mpatch = results[repo]
         repo_results_upatch = results_per_patcher[Patcher.UnixPatch][repo]

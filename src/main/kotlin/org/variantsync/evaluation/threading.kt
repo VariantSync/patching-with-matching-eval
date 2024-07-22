@@ -15,20 +15,23 @@ fun waitForShutdown(
     val timeoutUnit = TimeUnit.MINUTES
     val allowedTimeouts = 3
     var timouts = 0
+    var processed = 0uL
     threadPool.shutdown()
     for (future in futures) {
+        processed++
         val runID: ULong
         val taskOutCome: TaskOutcome
         try {
             // TODO: Make timeout configurable
             taskOutCome = future.get(timeoutLength, timeoutUnit)
             runID = taskOutCome.runID
-            if (runID % 25uL == 0uL) {
+            if (processed == 1uL || processed % 25uL == 0uL) {
                 Logger.info(
                     String.format(
-                        "Running task %s of %s.",
-                        runID.toString(),
-                        futures.size.toString()
+                        "Running task %s of %s with ID %s.",
+                        processed.toString(),
+                        futures.size.toString(),
+                        runID,
                     )
                 )
             }
