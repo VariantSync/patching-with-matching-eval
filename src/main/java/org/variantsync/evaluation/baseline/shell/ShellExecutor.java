@@ -98,6 +98,7 @@ public class ShellExecutor {
             errorFuture = errorCollection.submit(collectOutput(process.getErrorStream(), errorReader));
         } catch (final IOException e) {
             Logger.error("Was not able to execute " + command, e);
+            e.printStackTrace();
             return Result.Failure(new ShellException(e));
         }
 

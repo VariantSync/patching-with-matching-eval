@@ -15,6 +15,7 @@ import org.variantsync.evaluation.baseline.diff.filter.DiffFilter
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.DiffCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
+import org.variantsync.evaluation.cherries.EvaluationRun
 import org.variantsync.evaluation.error.Panic
 import org.variantsync.evaluation.error.VariantGenerationException
 import org.variantsync.evaluation.filterUnpatchedFiles
@@ -88,7 +89,7 @@ class SyncStudyTask(
             Logger.debug("There are now " + availableOperations.size + " operations available.")
         }
 
-        return TaskOutcome(runID, experimentResult)
+        return TaskOutcome(runID, experimentResult, EvaluationRun(0,"", "", ""))
     }
 
     private fun callExecution(operations: SyncStudyOperations, parentRepo: SPLRepository, childRepo: SPLRepository): List<ExperimentResult> {

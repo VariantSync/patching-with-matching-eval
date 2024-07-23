@@ -6,6 +6,7 @@ import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.*
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
+import org.variantsync.evaluation.baseline.shell.ShellExecutor
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.File
@@ -20,7 +21,6 @@ import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.security.SecureRandom
 import java.text.DecimalFormat
-import java.time.Duration
 import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Executors
@@ -35,7 +35,7 @@ import kotlin.math.min
 import kotlin.system.exitProcess
 
 class CherryPickStudy(
-    config: EvalConfig,
+    val config: EvalConfig,
     dataset: CherryDataset,
     repetition: Int,
     idProvider: IDProvider,
@@ -73,7 +73,7 @@ class CherryPickStudy(
 
         for (cherryPick in dataset.cherryPicks) {
             val runID = idProvider.next()
-            val run = EvaluationRun(dataset.datasetName, cherryPick.cherryCommit, cherryPick.targetCommit)
+            val run = EvaluationRun(repetition, dataset.datasetName, cherryPick.cherryCommit, cherryPick.targetCommit)
             if (completedRuns.contains(run)) {
                 Logger.info("Skipped cherry pick of run $runID (already processed)")
                 continue
@@ -85,7 +85,8 @@ class CherryPickStudy(
                     dataset.datasetName,
                     cherryPick,
                     availableOperations,
-                    runID
+                    runID,
+                    run,
                 )
             )
         }
@@ -99,17 +100,35 @@ class CherryPickStudy(
         Logger.info("Scheduling ${evalTasks.size} tasks...")
 
         val futures = evalTasks.stream()
-            .map { runnable: CherryPickEvalTask -> threadPool.submit(runnable) }
+            .map { runnable: CherryPickEvalTask -> FutureAndEvalRun(threadPool.submit(runnable), runnable.evalRun) }
             .collect(Collectors.toList())
 
         Logger.info("Scheduled all tasks.")
 
-        waitForShutdown(threadPool, futures)
+        val hadTimeout = waitForShutdown(threadPool, futures, config)
+
+        if (hadTimeout) {
+            Logger.info("Timeout detected. Marking task of ${evalTasks.first().evalRun.datasetName} as completed.")
+            for (evalTask in evalTasks) {
+                markEvalRun(evalTask.evalRun, config.EXPERIMENT_PROCESSED_FILE())
+            }
+        }
 
         Logger.info("Running clean up.")
         // Delete all workdirs
         for (operations in this.availableOperations) {
-            FileUtils.deleteDirectory(operations.workDir.toFile())
+            try {
+                FileUtils.deleteDirectory(operations.workDir.toFile())
+            } catch (e: Exception) {
+                Logger.warn(e)
+                if (Files.exists(operations.workDir)) {
+                    Logger.warn("Trying to remove directory with 'rm -rf'")
+                    if (ShellExecutor(Logger::warn, Logger::warn, operations.workDir)
+                        .execute(RmCommand(operations.workDir).recursive().force()).isSuccess) {
+                        Logger.warn("Success!")
+                    }
+                }
+            }
         }
         Logger.info("Cleaned all working directories.")
     }
@@ -160,18 +179,21 @@ fun main(args: Array<String>) {
     Logger.info("Processing $n repos in parallel")
     val threadPool = Executors.newFixedThreadPool(n)
 
-    val completedRuns = loadCompletedRuns(config)
-    Logger.info("Already considered ${completedRuns.size} repos.")
-    var totalRuns = 0
-    completedRuns.forEach { s -> totalRuns += s.value.size}
-    Logger.info("Processed a total of $totalRuns evaluation runs.\n")
-    Thread.sleep(2000)
+    val completedRunsAll = loadCompletedRuns(config)
 
     for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
         val repetitionIndex = repetition - config.EXPERIMENT_REPEATS_START()
         val numCherryPicks = countCherryPicks(allSamples[repetitionIndex])
-        Logger.info("Considering a total of $numCherryPicks cherry-picks for repetition $repetition")
+
+        val completedRuns = completedRunsAll.getOrDefault(repetition, HashMap())
         var completed = 0
+        Logger.info("Already considered ${completedRuns.size} repos.")
+        completedRuns.forEach { s -> completed += s.value.size}
+        Logger.info("Processed a total of $completed evaluation runs.\n")
+        Thread.sleep(5000)
+
+
+        Logger.info("Considering a total of $numCherryPicks cherry-picks for repetition $repetition")
         for (dataset in allSamples[repetitionIndex]) {
             while (idProvider.next() < id) {}
             id += dataset.cherryPicks.size.toUInt()
@@ -179,7 +201,7 @@ fun main(args: Array<String>) {
             if (completedRuns.contains(dataset.datasetName) && completedRuns[dataset.datasetName]!!.size == dataset.cherryPicks.size) {
                 // Skip this dataset, it was already processed
                 Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName} (rep.: $repetition)")
-                completed += dataset.cherryPicks.size
+                printProgress(completed, numCherryPicks, repetition, 0uL)
                 continue
             }
             threadPool.submit {
@@ -193,16 +215,7 @@ fun main(args: Array<String>) {
                     Logger.error(e)
                 }
                 completed += dataset.cherryPicks.size
-                val completionPercentage = 100 * (completed.toDouble() / numCherryPicks.toDouble())
-                val df = DecimalFormat("#.##")
-                df.roundingMode = RoundingMode.DOWN
-                Logger.info(
-                    "(Rep.: $repetition, ID: $i) Finished $completed of $numCherryPicks cherry picks (${
-                        df.format(
-                            completionPercentage
-                        )
-                    }%)\n"
-                )
+                printProgress(completed, numCherryPicks, repetition, i)
             }
         }
         threadPool.awaitTermination(10, TimeUnit.DAYS)
@@ -210,6 +223,19 @@ fun main(args: Array<String>) {
     threadPool.shutdown()
 
     exitProcess(0)
+}
+
+private fun printProgress(completed: Int, numCherryPicks: Int, repetition: Int, i: ULong) {
+    val completionPercentage = 100 * (completed.toDouble() / numCherryPicks.toDouble())
+    val df = DecimalFormat("#.##")
+    df.roundingMode = RoundingMode.DOWN
+    Logger.info(
+        "(Rep.: $repetition, ID: $i) Finished $completed of $numCherryPicks cherry picks (${
+            df.format(
+                completionPercentage
+            )
+        }%)\n"
+    )
 }
 
 private fun cloneDatasets(
@@ -501,19 +527,17 @@ private fun cleanVariantDirectories(operations: CherryEvalOperations) {
     }
 }
 
-private fun loadCompletedRuns(config: EvalConfig): HashMap<String, MutableSet<EvaluationRun>> {
+private fun loadCompletedRuns(config: EvalConfig): HashMap<Int, MutableMap<String, MutableSet<EvaluationRun>>> {
     if (!Files.exists(config.EXPERIMENT_DIR_RESULTS())) {
         return HashMap()
     }
+    val completedRuns = loadProcessedRuns(config)
 
-    val resultFiles = listResultFiles(config.EXPERIMENT_DIR_RESULTS())
-    val resultObjects = loadResultObjects(resultFiles)
-    val completedRuns = outcomesToRuns(resultObjects)
-
-    val map = HashMap<String, MutableSet<EvaluationRun>>()
+    val map = HashMap<Int, MutableMap<String, MutableSet<EvaluationRun>>>()
     for (run in completedRuns) {
         val datasetName = run.datasetName
-        val set = map.getOrPut(datasetName) { HashSet() }
+        val innerMap = map.getOrPut(run.repetition) { HashMap() }
+        val set = innerMap.getOrPut(datasetName) { HashSet() }
         set.add(run)
     }
     return map
