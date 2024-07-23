@@ -179,6 +179,7 @@ fun main(args: Array<String>) {
             if (completedRuns.contains(dataset.datasetName) && completedRuns[dataset.datasetName]!!.size == dataset.cherryPicks.size) {
                 // Skip this dataset, it was already processed
                 Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName} (rep.: $repetition)")
+                completed += dataset.cherryPicks.size
                 continue
             }
             threadPool.submit {
