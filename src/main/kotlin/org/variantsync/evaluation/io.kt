@@ -2,6 +2,9 @@ package org.variantsync.evaluation
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.variantsync.evaluation.CherryPickResultAnalysis.AccumulatedOutcome
+import org.variantsync.evaluation.analysis.AccumulatedResult
+import org.variantsync.evaluation.analysis.CherryPickPatchOutcome
 import org.variantsync.evaluation.analysis.ExperimentResult
 import org.variantsync.evaluation.cherries.CherryDataset
 import org.variantsync.evaluation.syncstudy.panic
@@ -9,6 +12,8 @@ import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
+import java.util.function.Consumer
+import kotlin.io.path.name
 
 fun saveResult(
     result: ExperimentResult,
@@ -63,4 +68,62 @@ fun saveSample(path: Path, sample: ArrayList<ArrayList<CherryDataset>>) {
 
 fun loadSample(path: Path): ArrayList<ArrayList<CherryDataset>> {
     ObjectInputStream(FileInputStream(path.toFile())).use { return it.readObject() as ArrayList<ArrayList<CherryDataset>> }
+}
+
+
+@Throws(IOException::class)
+fun loadResultObjects(paths: List<Path>): List<CherryPickPatchOutcome> {
+    val outcomes = ArrayList<CherryPickPatchOutcome>()
+    for (path in paths) {
+        Files.newBufferedReader(path).use { reader ->
+            val outcomeLines: MutableList<String> = ArrayList()
+            var line = reader.readLine()
+            while (line != null) {
+                if (line.isEmpty()) {
+                    val outcome = parseResult(outcomeLines)
+                    outcomes.add(outcome)
+                    outcomeLines.clear()
+                } else {
+                    outcomeLines.add(line)
+                }
+                line = reader.readLine()
+            }
+        }
+    }
+    return outcomes
+}
+
+private fun parseResult(lines: List<String>): CherryPickPatchOutcome {
+    val sb = StringBuilder()
+    lines.forEach(Consumer { l: String? -> sb.append(l).append("\n") })
+    val mapper = jacksonObjectMapper()
+    mapper.registerModule(JavaTimeModule())
+    return mapper.readValue(sb.toString(), CherryPickPatchOutcome::class.java)
+}
+
+fun listResultFiles(resultsDir: Path) : List<Path> {
+    val runDirs = ArrayList<Path>()
+    Files.list(resultsDir).use { files ->
+        files.filter { f: Path ->
+            val fileName = f.getName(f.nameCount-1).toString()
+            fileName.startsWith("rep")
+        }.forEach { f: Path ->
+            runDirs.add(f)
+        }
+    }
+    val resultFiles = ArrayList<Path>()
+
+    for (runDir in runDirs) {
+        Files.list(runDir).use { files ->
+            files.filter { f: Path ->
+                val fileName = f.fileName.toString()
+                fileName.endsWith(".results")
+            }.forEach { f: Path ->
+                resultFiles.add(f)
+            }
+        }
+    }
+
+    resultFiles.sort()
+    return resultFiles
 }

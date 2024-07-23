@@ -39,6 +39,7 @@ class CherryPickStudy(
     dataset: CherryDataset,
     repetition: Int,
     idProvider: IDProvider,
+    completedRuns: Set<EvaluationRun>,
 ) {
     // The study tasks that are to be executed in parallel
     private val evalTasks: MutableList<CherryPickEvalTask>
@@ -72,8 +73,9 @@ class CherryPickStudy(
 
         for (cherryPick in dataset.cherryPicks) {
             val runID = idProvider.next()
-            if (runID < idProvider.start) {
-                Logger.info("Skipped commit $runID")
+            val run = EvaluationRun(dataset.datasetName, cherryPick.cherryCommit, cherryPick.targetCommit)
+            if (completedRuns.contains(run)) {
+                Logger.info("Skipped cherry pick of run $runID (already processed)")
                 continue
             }
             evalTasks.add(
@@ -152,11 +154,19 @@ fun main(args: Array<String>) {
     val rand = SecureRandom(seed)
     val allSamples = createOrLoadSamples(config, datasetsPerLanguage, rand)
 
-    cloneDatasets(allSamples, config)
+    // cloneDatasets(allSamples, config)
 
     val n = max(Runtime.getRuntime().availableProcessors() / config.EXPERIMENT_THREAD_COUNT(), 1)
     Logger.info("Processing $n repos in parallel")
     val threadPool = Executors.newFixedThreadPool(n)
+
+    val completedRuns = loadCompletedRuns(config)
+    Logger.info("Already considered ${completedRuns.size} repos.")
+    var totalRuns = 0
+    completedRuns.forEach { s -> totalRuns += s.value.size}
+    Logger.info("Processed a total of $totalRuns evaluation runs.\n")
+    Thread.sleep(2000)
+
     for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
         val repetitionIndex = repetition - config.EXPERIMENT_REPEATS_START()
         val numCherryPicks = countCherryPicks(allSamples[repetitionIndex])
@@ -165,15 +175,16 @@ fun main(args: Array<String>) {
         for (dataset in allSamples[repetitionIndex]) {
             while (idProvider.next() < id) {}
             id += dataset.cherryPicks.size.toUInt()
-            if (id < config.EXPERIMENT_START_ID()) {
-                // Skip this dataset
+
+            if (completedRuns.contains(dataset.datasetName) && completedRuns[dataset.datasetName]!!.size == dataset.cherryPicks.size) {
+                // Skip this dataset, it was already processed
                 Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName} (rep.: $repetition)")
                 continue
             }
             threadPool.submit {
                 val i = id
                 Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
-                val study = CherryPickStudy(config, dataset, repetition, idProvider)
+                val study = CherryPickStudy(config, dataset, repetition, idProvider, completedRuns.getOrDefault(dataset.datasetName, HashSet()))
                 try {
                     study.run()
                 } catch (e: Exception) {
@@ -487,4 +498,22 @@ private fun cleanVariantDirectories(operations: CherryEvalOperations) {
         operations.shell.execute(RmCommand(operations.sourceVariantV1).recursive().force())
             .expect("Was not able to remove target variant V1.")
     }
+}
+
+private fun loadCompletedRuns(config: EvalConfig): HashMap<String, MutableSet<EvaluationRun>> {
+    if (!Files.exists(config.EXPERIMENT_DIR_RESULTS())) {
+        return HashMap()
+    }
+
+    val resultFiles = listResultFiles(config.EXPERIMENT_DIR_RESULTS())
+    val resultObjects = loadResultObjects(resultFiles)
+    val completedRuns = outcomesToRuns(resultObjects)
+
+    val map = HashMap<String, MutableSet<EvaluationRun>>()
+    for (run in completedRuns) {
+        val datasetName = run.datasetName
+        val set = map.getOrPut(datasetName) { HashSet() }
+        set.add(run)
+    }
+    return map
 }
