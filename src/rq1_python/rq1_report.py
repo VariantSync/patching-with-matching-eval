@@ -174,14 +174,13 @@ def df_to_latex(pr_df):
     df[c_projects_with_cherries] = pr_df[pr_df[c_cherries] > 0].groupby(c_language)[c_cherries].count().values
 
     c_pick_list = [c_language, c_sampled_projects_per_language, c_projects_with_cherries, c_cherries, c_cherry_ratio, c_trivial_cherries, c_sampled_cherries]
-    mean_list = [c_cherry_ratio, c_trivial_cherries]
     df = df[c_pick_list]
 
-
+    
 
     df.loc[c_total] = [c_total] + [df[p].sum() for p in c_pick_list if pd.api.types.is_numeric_dtype(df[p])]
-    for m in mean_list:
-        df.loc[c_total, m] /= 10
+    df.loc[c_total, c_cherry_ratio] = pr_df[c_cherries].sum() / pr_df[c_commits].sum() * 100
+    df.loc[c_total, c_trivial_cherries] = (1 - pr_df[c_trivial_cherries].sum() / pr_df[c_cherries].sum()) *100
 
     df[c_language].replace('C#', 'C\#', inplace=True)
     df = df.rename(columns=table_names)
