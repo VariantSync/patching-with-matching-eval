@@ -42,12 +42,15 @@ c_stars = 'stars'
 c_trivial_cherries = 'trivial_cherries'
 c_sampled_cherries = 'sampled_cherries'
 c_sampled_projects_per_language = "projects"
+c_projects_with_cherries = "projects_with_cherries"
 
+#directly from AlexS, no automatism, yet
+sampled_cherry_list = [9227,1405,11215,5522,8375,698,2533,5840,1979,3530]
 
-table_names = {c_language:"{language}", c_sampled_projects_per_language:"{projects}", c_commits:"{commits}", c_cherry_ratio:"{\makecell{cherry \\\\ pick \%}}", c_trivial_cherries:"{\makecell{trivial \\\\ cherry \\\\ pick \%}}", c_sampled_cherries:'{\makecell{sampled \\\\ cherry \\\\ picks}}'}
+table_names = {c_projects_with_cherries:"{\makecell{projects \\\\ with \\\\ cherry \\\\ picks}}", c_language:"{language}", c_sampled_projects_per_language:"{projects}", c_cherries:"{\makecell{cherry \\\\ picks}}", c_cherry_ratio:"{\makecell{cherry \\\\ pick \%}}", c_trivial_cherries:"{\makecell{complex \\\\ cherry \\\\ pick \%}}", c_sampled_cherries:'{\makecell{sampled \\\\ cherry \\\\ picks}}'}
+
 c_total = "total"
 table_pos = "!tb"
-percentage_fformat = "%.1f"
 
 plot_labels = {c_commits:"\#Commits", c_language:"Language", c_cherries:"\#Cherrypicks", c_cherry_ratio:"$\frac{\#Cherrypicks}{\#Commits}$"}
 
@@ -75,7 +78,7 @@ def to_latex(df, float_format=None, label="tab:???", caption="???", position=tab
     df.to_csv(path_or_buf="." + csv_name, index_label=True)
 
 
-    latex_str = df.to_latex(label=label, caption=caption, index=index, position=position, column_format=column_format, escape = False)  # .replace('NaN', '')
+    latex_str = df.to_latex(label=label, caption=caption, index=False, position=position, column_format=column_format, escape = False)  # .replace('NaN', '')
 
     latex_str = add_midrule(latex_str)
     if two_column:
@@ -139,30 +142,52 @@ def column_report(lang, column_description, column, df):
     formatted_list = [custom_format(x) for x in quantile_list]
     print(f"{lang}, for column \"{column_description}\" the quantiles ({quantiles} chosen) are: {formatted_list}")
 
+#this function does not handle extreme numbers like 0.0000000000000123
+def get_siunit_column_format(df):
+    column_header = ""
+    for c in df:
+        if pd.api.types.is_numeric_dtype(df[c]):
+            before_dot = 0
+            after_dot = 0
+            for num in df[c]:
+                f_num = f"{num:.3g}" if abs(num) < 1e3 else f"{num:.0f}"
+                if f_num.__contains__("e"):
+                    raise Exception("An error occurred: number too small or too big!")
+                before_dot = max(before_dot, len(str(int(num))))
+                if f_num.__contains__("."):
+                    after_dot = max(after_dot, len(f_num.split(".")[1]))
+            column_header += f'S[table-format={before_dot}.{after_dot}, round-precision={after_dot}]'
+        else:
+            column_header += 'l'
+    return column_header
 
 
 ##projects,  #projects with cherry picks, #cherry picks, cherry pick %, complex cherry pick %, #sampled cherry picks
 def df_to_latex(pr_df):
-df = pr_df.copy()
-df.iloc[:, 2:] = pr_df.iloc[:, 2:].astype(int, errors='ignore')
-df = df.groupby(c_language).sum().reset_index()
-df[c_trivial_cherries] = df[c_trivial_cherries] / df[c_cherries] *100
-df[c_cherry_ratio] = df[c_cherries] / df[c_commits] *100
-df[c_sampled_cherries] = 0
-df[c_sampled_projects_per_language] = sample_per_language
+    df = pr_df.copy()
+    df.iloc[:, 2:] = pr_df.iloc[:, 2:].astype(int, errors='ignore')
+    df = df.groupby(c_language).sum().reset_index()
+    df[c_trivial_cherries] = (1 - df[c_trivial_cherries] / df[c_cherries]) *100
+    df[c_cherry_ratio] = df[c_cherries] / df[c_commits] *100
+    df[c_sampled_cherries] = sampled_cherry_list
+    df[c_sampled_projects_per_language] = sample_per_language
+    df[c_projects_with_cherries] = pr_df[pr_df[c_cherries] > 0].groupby(c_language)[c_cherries].count().values
 
-df = df.rename(index=df[c_language])
-df = df[[c_sampled_projects_per_language, c_commits, c_cherry_ratio, c_trivial_cherries, c_sampled_cherries]]
-df.loc["total"] = [df[c_sampled_projects_per_language].sum(), df[c_commits].sum(), df[c_cherry_ratio].sum()/len(df), df[c_trivial_cherries].sum()/len(df), df[c_sampled_cherries].sum()]
-for c in [c_sampled_projects_per_language, c_commits, c_sampled_cherries]:
-    df[c] = df[c].astype(int)
-
-df = df.rename(columns=table_names)
-df = df.rename(index={'C#':'C\#'})
+    c_pick_list = [c_language, c_sampled_projects_per_language, c_projects_with_cherries, c_cherries, c_cherry_ratio, c_trivial_cherries, c_sampled_cherries]
+    mean_list = [c_cherry_ratio, c_trivial_cherries]
+    df = df[c_pick_list]
 
 
 
-    to_latex(df, label="tab:overall", caption="Overview of our collection of GitHub projects.", position=table_pos, column_format="lS[table-format=4.0, round-precision=0]S[table-format=7.0, round-precision=0]S[table-format=1.2, round-precision=2]S[table-format=2.1, round-precision=1]S[table-format=2.0, round-precision=0]")
+    df.loc[c_total] = [c_total] + [df[p].sum() for p in c_pick_list if pd.api.types.is_numeric_dtype(df[p])]
+    for m in mean_list:
+        df.loc[c_total, m] /= 10
+
+    df[c_language].replace('C#', 'C\#', inplace=True)
+    df = df.rename(columns=table_names)
+
+
+    to_latex(df, label="tab:overall", caption="Overview of our collection of GitHub projects.", position=table_pos, column_format=get_siunit_column_format(df))
     pass
 
 def report_projects(pr_df):
