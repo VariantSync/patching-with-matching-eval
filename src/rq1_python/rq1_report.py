@@ -8,6 +8,12 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as font_manager
 from scipy.stats import spearmanr
+import math
+
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    from yaml import Loader
 
 pd.set_option('display.expand_frame_repr', False)  # Avoid line breaks in long columns
 pd.set_option('display.max_columns', None)         # Display all columns
@@ -33,21 +39,74 @@ c_repo_name = "repo_name"
 c_forks = 'forks'
 c_branches = 'total_number_of_branches'
 c_stars = 'stars'
+c_trivial_cherries = 'trivial_cherries'
+c_sampled_cherries = 'sampled_cherries'
+c_sampled_projects_per_language = "projects"
+
+
+table_names = {c_language:"{language}", c_sampled_projects_per_language:"{projects}", c_commits:"{commits}", c_cherry_ratio:"{\makecell{cherry \\\\ pick \%}}", c_trivial_cherries:"{\makecell{trivial \\\\ cherry \\\\ pick \%}}", c_sampled_cherries:'{\makecell{sampled \\\\ cherry \\\\ picks}}'}
+c_total = "total"
+table_pos = "!tb"
+percentage_fformat = "%.1f"
 
 plot_labels = {c_commits:"\#Commits", c_language:"Language", c_cherries:"\#Cherrypicks", c_cherry_ratio:"$\frac{\#Cherrypicks}{\#Commits}$"}
+
+
+def add_midrule(latex_str: str, index: int = 0) -> str:
+    lines = latex_str.splitlines()
+    if not index:
+        index = len(lines) - 4
+    else:
+        index = len(lines) - index
+    lines.insert(index, r'\midrule')
+    return '\n'.join(lines)
+
+def add_total_row(df):
+    df.loc[c_total] = df.sum()
+    return df
+
+# useful for DataFrames
+# possibly adds a bottom total row, with its own \midrule
+def to_latex(df, float_format=None, label="tab:???", caption="???", position=table_pos, index=True, add_total=False, add_mean=False, two_column=False, column_format=None, csv_name=""):
+    if not csv_name:
+        csv_name = label.split(":")[-1] + ".csv"
+    else:
+        csv_name += ".csv"
+    df.to_csv(path_or_buf="." + csv_name, index_label=True)
+
+
+    latex_str = df.to_latex(label=label, caption=caption, index=index, position=position, column_format=column_format, escape = False)  # .replace('NaN', '')
+
+    latex_str = add_midrule(latex_str)
+    if two_column:
+        latex_str = latex_str.replace('\\begin{table}', '\\begin{table*}')
+        latex_str = latex_str.replace('\\end{table}', '\\end{table*}')
+    file_name = "." + label.split(":")[-1]
+    print(latex_str)
+    with open(file_name, "w+") as f:
+        f.write(latex_str)
+
+
+
 
 #returns header(main info about project), cherries of yaml
 def read_cherry(f):
     with open(f, 'r', encoding='utf-8') as file:
         start_stream = "".join(file.readlines()[:6])
-        cherries = yaml.safe_load(start_stream)
+        cherries = yaml.load(start_stream, Loader=Loader)
         project_info = cherries[0]
         project_info[c_language], project_info[c_commits], project_info[c_cherries] = project_info[c_language], int(project_info[c_commits]), int(project_info[c_cherries])
         return project_info
 
+def find_trivial_cherries(file_name):
+    with open(file_name, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+    return sum([1 if l == "    is_trivial: true\n" else 0 for l in lines])
+
 def read_yamls(files):
     #first define (headers for) dataFrames
     header = read_cherry(files[0])
+    header[c_trivial_cherries] = np.nan
     pr_df, ch_df = pd.DataFrame(columns=list(header.keys())), pd.DataFrame
 
     #read and append main project info and cherries for each file to their respective data_frames
@@ -55,13 +114,14 @@ def read_yamls(files):
         short_f = f.replace('\\', '/').split('/')[-1]
         print(f"{e}: {short_f}")
         header = read_cherry(f)
+        header[c_trivial_cherries] = find_trivial_cherries(f)
 
         pr_df = pr_df.append(header, ignore_index=True)
 
     #add new columns of interest
-    pr_df[c_cherry_ratio] = pr_df[c_cherries] / pr_df[c_commits]
+
     with open(repo_sample_yaml, 'r', encoding='utf-8') as file:
-        repo_sample_info = yaml.safe_load(file)
+        repo_sample_info = yaml.load(file, Loader=Loader)
 
     pr_df[c_forks] = np.nan
     pr_df[c_stars] = np.nan
@@ -69,15 +129,9 @@ def read_yamls(files):
         row_num = pr_df[pr_df[c_repo_name] == repo['full_name']].index.values.astype(int)[0]
         pr_df.at[row_num, c_forks] = repo['forks_count']
         pr_df.at[row_num, c_stars] = repo['stargazers_count']
-    pr_df[c_forks].astype(int)
-    pr_df[c_stars].astype(int)
+    pr_df[c_forks] = pr_df[c_forks].astype(int)
+    pr_df[c_stars] = pr_df[c_stars].astype(int)
     return pr_df, ch_df
-
-def custom_format(x):
-    if x < 10:
-        return f"{x:.3g}"
-    else:
-        return round(x)
 
 def column_report(lang, column_description, column, df):
     quantiles = [0, 0.25, 0.5, 0.75, 1]
@@ -85,7 +139,36 @@ def column_report(lang, column_description, column, df):
     formatted_list = [custom_format(x) for x in quantile_list]
     print(f"{lang}, for column \"{column_description}\" the quantiles ({quantiles} chosen) are: {formatted_list}")
 
+
+
+##projects,  #projects with cherry picks, #cherry picks, cherry pick %, complex cherry pick %, #sampled cherry picks
+def df_to_latex(pr_df):
+df = pr_df.copy()
+df.iloc[:, 2:] = pr_df.iloc[:, 2:].astype(int, errors='ignore')
+df = df.groupby(c_language).sum().reset_index()
+df[c_trivial_cherries] = df[c_trivial_cherries] / df[c_cherries] *100
+df[c_cherry_ratio] = df[c_cherries] / df[c_commits] *100
+df[c_sampled_cherries] = 0
+df[c_sampled_projects_per_language] = sample_per_language
+
+df = df.rename(index=df[c_language])
+df = df[[c_sampled_projects_per_language, c_commits, c_cherry_ratio, c_trivial_cherries, c_sampled_cherries]]
+df.loc["total"] = [df[c_sampled_projects_per_language].sum(), df[c_commits].sum(), df[c_cherry_ratio].sum()/len(df), df[c_trivial_cherries].sum()/len(df), df[c_sampled_cherries].sum()]
+for c in [c_sampled_projects_per_language, c_commits, c_sampled_cherries]:
+    df[c] = df[c].astype(int)
+
+df = df.rename(columns=table_names)
+df = df.rename(index={'C#':'C\#'})
+
+
+
+    to_latex(df, label="tab:overall", caption="Overview of our collection of GitHub projects.", position=table_pos, column_format="lS[table-format=4.0, round-precision=0]S[table-format=7.0, round-precision=0]S[table-format=1.2, round-precision=2]S[table-format=2.1, round-precision=1]S[table-format=2.0, round-precision=0]")
+    pass
+
 def report_projects(pr_df):
+    df_to_latex(pr_df)
+
+    pr_df[c_cherry_ratio] = pr_df[c_cherries] / pr_df[c_commits]
     num_languages = len(pr_df[c_language].unique())
     if num_languages > 1:
         lang = "ALL"
@@ -110,6 +193,9 @@ def report_projects(pr_df):
         print(extreme_projects)
         print(f"Most extreme projects, with most total cherry picks:")
         print(pr_df.sort_values(by=c_cherries).iloc[-10:])
+    df = pr_df[pr_df[c_cherries] > 0]
+    langs = list(df[c_language].unique())
+    print(f"Project# distribution by language: {[(l, len(df[df[c_language] == l])) for l in langs]}")
     print(f"Report end for {lang}.")
     pass
 
