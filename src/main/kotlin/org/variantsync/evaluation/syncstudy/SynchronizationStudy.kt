@@ -4,12 +4,10 @@ import org.apache.commons.io.FileUtils
 import org.tinylog.kotlin.Logger
 import org.variantsync.diffdetective.datasets.DatasetDescription
 import org.variantsync.diffdetective.load.GitLoader
-import org.variantsync.evaluation.EvalConfig
-import org.variantsync.evaluation.IDProvider
+import org.variantsync.evaluation.*
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
-import org.variantsync.evaluation.determineSampleSize
-import org.variantsync.evaluation.waitForShutdown
+import org.variantsync.evaluation.cherries.EvaluationRun
 import org.variantsync.vevos.simulation.VEVOS
 import org.variantsync.vevos.simulation.io.Resources
 import org.variantsync.vevos.simulation.io.data.VariabilityDatasetLoader
@@ -138,10 +136,10 @@ class SynchronizationStudy(
         Logger.info("Starting diffing and patching for SPL commits...")
 
         val futures = evalTasks.stream()
-            .map { runnable: SyncStudyTask -> threadPool.submit(runnable) }
+            .map { runnable: SyncStudyTask -> FutureAndEvalRun(threadPool.submit(runnable), EvaluationRun(0, "", "", "")) }
             .collect(Collectors.toList())
 
-        waitForShutdown(threadPool, futures)
+        waitForShutdown(threadPool, futures, config)
 
         // Finally, close all repos
         for (parentRepo in this.parentRepos.values) {

@@ -2,13 +2,16 @@ package org.variantsync.evaluation
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.variantsync.evaluation.analysis.CherryPickPatchOutcome
 import org.variantsync.evaluation.analysis.ExperimentResult
 import org.variantsync.evaluation.cherries.CherryDataset
+import org.variantsync.evaluation.cherries.EvaluationRun
 import org.variantsync.evaluation.syncstudy.panic
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
+import java.util.function.Consumer
 
 fun saveResult(
     result: ExperimentResult,
@@ -20,6 +23,19 @@ fun saveResult(
         panic(
             "Was not able to write filtered patch result file for run "
                     + runID, e
+        )
+    }
+}
+
+fun markEvalRun(
+    evalRun: EvaluationRun,
+    path: Path,
+) {
+    try {
+        writeAsJSON(evalRun, path, true)
+    } catch (e: IOException) {
+        panic(
+            "Was not able to mark eval run in file $path ", e
         )
     }
 }
@@ -63,4 +79,95 @@ fun saveSample(path: Path, sample: ArrayList<ArrayList<CherryDataset>>) {
 
 fun loadSample(path: Path): ArrayList<ArrayList<CherryDataset>> {
     ObjectInputStream(FileInputStream(path.toFile())).use { return it.readObject() as ArrayList<ArrayList<CherryDataset>> }
+}
+
+
+@Throws(IOException::class)
+fun loadResultObjects(paths: HashMap<Int, ArrayList<Path>>): HashMap<Int, MutableList<CherryPickPatchOutcome>> {
+    val outcomes = HashMap<Int, MutableList<CherryPickPatchOutcome>>()
+    for (rep in paths.keys) {
+        for (path in paths[rep]!!) {
+            Files.newBufferedReader(path).use { reader ->
+                val outcomeLines: MutableList<String> = ArrayList()
+                var line = reader.readLine()
+                while (line != null) {
+                    if (line.isEmpty()) {
+                        val outcome = parseResult(outcomeLines)
+                        outcomes.getOrPut(rep) { ArrayList() }.add(outcome)
+                        outcomeLines.clear()
+                    } else {
+                        outcomeLines.add(line)
+                    }
+                    line = reader.readLine()
+                }
+            }
+        }
+    }
+    return outcomes
+}
+
+@Throws(IOException::class)
+fun loadProcessedRuns(config: EvalConfig): MutableList<EvaluationRun> {
+    val runs = ArrayList<EvaluationRun>();
+    if (!Files.exists(config.EXPERIMENT_PROCESSED_FILE())) {
+        return runs
+    }
+    Files.newBufferedReader(config.EXPERIMENT_PROCESSED_FILE()).use { reader ->
+        val evalRunLines: MutableList<String> = ArrayList()
+        var line = reader.readLine()
+        while (line != null) {
+            if (line.isEmpty()) {
+                val evalRun = parseEvalRun(evalRunLines)
+                runs.add(evalRun)
+                evalRunLines.clear()
+            } else {
+                evalRunLines.add(line)
+            }
+            line = reader.readLine()
+        }
+    }
+    return runs
+}
+
+private fun parseEvalRun(lines: List<String>): EvaluationRun {
+    val sb = StringBuilder()
+    lines.forEach(Consumer { l: String? -> sb.append(l).append("\n") })
+    val mapper = jacksonObjectMapper()
+    mapper.registerModule(JavaTimeModule())
+    return mapper.readValue(sb.toString(), EvaluationRun::class.java)
+}
+
+private fun parseResult(lines: List<String>): CherryPickPatchOutcome {
+    val sb = StringBuilder()
+    lines.forEach(Consumer { l: String? -> sb.append(l).append("\n") })
+    val mapper = jacksonObjectMapper()
+    mapper.registerModule(JavaTimeModule())
+    return mapper.readValue(sb.toString(), CherryPickPatchOutcome::class.java)
+}
+
+fun listResultFiles(resultsDir: Path) : HashMap<Int, ArrayList<Path>> {
+    val runDirs = ArrayList<Path>()
+    Files.list(resultsDir).use { files ->
+        files.filter { f: Path ->
+            val fileName = f.getName(f.nameCount-1).toString()
+            fileName.startsWith("rep")
+        }.forEach { f: Path ->
+            runDirs.add(f)
+        }
+    }
+    val resultFiles = HashMap<Int, ArrayList<Path>>()
+
+    for (runDir in runDirs) {
+        Files.list(runDir).use { files ->
+            files.filter { f: Path ->
+                val fileName = f.fileName.toString()
+                fileName.endsWith(".results")
+            }.forEach { f: Path ->
+                    val runId = f.getName(f.nameCount-1).toString().split("-")[1].toInt()
+                    resultFiles.getOrPut(runId) { ArrayList() }.add(f)
+            }
+        }
+    }
+
+    return resultFiles
 }

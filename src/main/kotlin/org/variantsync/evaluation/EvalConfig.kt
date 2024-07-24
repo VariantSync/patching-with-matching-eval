@@ -112,6 +112,13 @@ class EvalConfig(propertiesFile: File) {
     }
 
     /**
+     * @return The path to the file remembering processed runs
+     */
+    fun EXPERIMENT_PROCESSED_FILE(): Path {
+        return Path.of(config!!.getString(EXPERIMENT_PROCESSED_FILE))
+    }
+
+    /**
      * @return The path to the results directory
      */
     fun EXPERIMENT_DIR_RESULTS(): Path {
@@ -221,6 +228,9 @@ class EvalConfig(propertiesFile: File) {
 
         // The directory for saving the results
         private const val EXPERIMENT_DIR_RESULTS = "experiment.dir.results"
+
+        // The directory for saving the results
+        private const val EXPERIMENT_PROCESSED_FILE = "experiment.processed-file"
 
         // The minimum number of cherries in a dataset for it to be considered
         private const val EXPERIMENT_DATASET_MIN_SIZE = "experiment.dataset.min-size"

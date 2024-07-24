@@ -36,6 +36,7 @@ class CherryPickEvalTask(
     private val cherryPick: CherryPick,
     private val availableOperations: BlockingQueue<CherryEvalOperations>,
     private val runID: ULong,
+    val evalRun: EvaluationRun,
 ) : Callable<TaskOutcome> {
 
     override fun call(): TaskOutcome {
@@ -64,7 +65,7 @@ class CherryPickEvalTask(
             Logger.debug("There are now " + availableOperations.size + " operations available.")
         }
 
-        return TaskOutcome(runID, experimentResult)
+        return TaskOutcome(runID, experimentResult, evalRun)
     }
 
     private fun opsToString(): String {
