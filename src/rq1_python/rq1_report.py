@@ -139,7 +139,7 @@ def read_yamls(files):
 def column_report(lang, column_description, column, df):
     quantiles = [0, 0.25, 0.5, 0.75, 1]
     quantile_list = list(df[column].quantile(quantiles))
-    formatted_list = [custom_format(x) for x in quantile_list]
+    formatted_list = [f"{x:.3g}" for x in quantile_list]
     print(f"{lang}, for column \"{column_description}\" the quantiles ({quantiles} chosen) are: {formatted_list}")
 
 #this function does not handle extreme numbers like 0.0000000000000123
@@ -205,7 +205,7 @@ def report_projects(pr_df):
     repos_with_cherries = len(pr_df[pr_df[c_cherries] > 0])
     print(f"{lang}, number of repositories with cherries: {repos_with_cherries}, and without cherries: {num_languages*sample_per_language - repos_with_cherries}, ratio: {repos_with_cherries/(num_languages*sample_per_language)}.")
     print(f"{lang}, total number of commits, within all projects {'' if num_languages > 1 else 'of '+lang}: {sum(pr_df[c_commits])}")
-    print(f"{lang}, total number of cherries, within all projects {'' if num_languages > 1 else 'of '+lang}: {sum(pr_df[c_cherries])}, mean cherry to commit ratio: {custom_format(sum(pr_df[c_cherries])/sum(pr_df[c_commits]))}")
+    print(f"{lang}, total number of cherries, within all projects {'' if num_languages > 1 else 'of '+lang}: {sum(pr_df[c_cherries])}, mean cherry to commit ratio: {sum(pr_df[c_cherries])/sum(pr_df[c_commits]):.3g}")
     column_report(lang, c_commits, c_commits, pr_df)
     column_report(lang, c_cherries, c_cherries, pr_df)
     column_report(lang, c_cherry_ratio, c_cherry_ratio, pr_df)
