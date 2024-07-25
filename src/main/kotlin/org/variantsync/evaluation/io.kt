@@ -6,7 +6,7 @@ import org.variantsync.evaluation.analysis.CherryPickPatchOutcome
 import org.variantsync.evaluation.analysis.ExperimentResult
 import org.variantsync.evaluation.cherries.CherryDataset
 import org.variantsync.evaluation.cherries.EvaluationRun
-import org.variantsync.evaluation.syncstudy.panic
+import org.variantsync.evaluation.cherries.panic
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path

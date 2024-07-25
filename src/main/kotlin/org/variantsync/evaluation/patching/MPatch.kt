@@ -6,8 +6,8 @@ import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.MPatchCommand
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
+import org.variantsync.evaluation.cherries.panic
 import org.variantsync.evaluation.readContentSafely
-import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException
 import java.nio.file.Files
