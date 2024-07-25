@@ -119,7 +119,8 @@ def relative_difference(base_patcher: Patcher, results):
             base_values = base_values[:min_length]
             other_values = other_values[:min_length]
 
-            _, p = wilcoxon(base_values, other_values)
+            # _, p = wilcoxon(base_values, other_values)
+            p = sign_test(base_values, other_values)
             average_difference = np.mean(other_values - base_values)
             average_difference /= np.mean(base_values)
             print(f"{metric}-{other_patcher}-base: {b}")
@@ -148,6 +149,21 @@ def relative_difference(base_patcher: Patcher, results):
             i += 1
 
     return differences_per_patcher
+
+
+def sign_test(data1, data2):
+    # The sign test can be approximated by a binomial test
+    from scipy.stats import binomtest
+
+    differences = [y - x for x, y in zip(data1, data2)]
+    num_positive = sum(diff > 0 for diff in differences)
+    num_negative = sum(diff < 0 for diff in differences)
+
+    n = num_positive + num_negative
+    k = min(num_positive, num_negative)
+
+    p_value = binomtest(k, n, p=0.5, alternative="two-sided").pvalue
+    return p_value
 
 
 def significance(results):
