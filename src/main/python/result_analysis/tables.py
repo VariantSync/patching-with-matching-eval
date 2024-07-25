@@ -221,11 +221,11 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
     repos = load_repositories(path_to_repo_list)
 
     results_per_patcher = {}  # type: Dict[Patcher, Dict[Repository, List[PatchResult]]]
-    mpatch_better = 0
-    better_diff = 0
-    mpatch_equal = 0
-    mpatch_worse = 0
-    worse_diff = 0
+    all_equal = 0
+    mpatch_best = 0
+    patch_best = 0
+    apply_best = 0
+    cp_best = 0
     total = 0
     for patcher in Patcher:  # Patcher is an enum
         results = load_all_results(path_to_results, patcher)
@@ -242,10 +242,10 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
         repo_results_apply = results_per_patcher[Patcher.GitApply][repo]
         repo_results_cherry = results_per_patcher[Patcher.GitCherry][repo]
 
-        sorted(repo_results_mpatch, key=lambda x: x.run_id)
-        sorted(repo_results_upatch, key=lambda x: x.run_id)
-        sorted(repo_results_apply, key=lambda x: x.run_id)
-        sorted(repo_results_cherry, key=lambda x: x.run_id)
+        sorted(repo_results_mpatch, key=lambda x: x.pick_id)
+        sorted(repo_results_upatch, key=lambda x: x.pick_id)
+        sorted(repo_results_apply, key=lambda x: x.pick_id)
+        sorted(repo_results_cherry, key=lambda x: x.pick_id)
 
         repo_results_mpatch = {r.run_id: r for r in repo_results_mpatch}
         repo_results_upatch = {r.run_id: r for r in repo_results_upatch}
@@ -260,6 +260,8 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
             res_upatch = repo_results_upatch.get(i, None)  # type: Optional[PatchResult]
             res_apply = repo_results_apply.get(i, None)  # type: Optional[PatchResult]
             res_cherry = repo_results_cherry.get(i, None)  # type: Optional[PatchResult]
+
+            scenario_size = res_mpatch.num_changes_total
 
             rm = res_mpatch.outcome_classification.num_incorrect()
             ru = (
@@ -278,41 +280,35 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
                 else float("inf")
             )
 
-            fn = res_mpatch.outcome_classification.fn()
-            if fn > rc:
-                if fn > 100:
-                    print(
-                        "Worse for patch "
-                        + str(i)
-                        + " in "
-                        + str(repo)
-                        + " with "
-                        + str(rm)
-                        + " vs. "
-                        + str(rc)
-                    )
+            minimum = min(rm, ru, ra, rc)
+            rm_min = min(ru, ra, rc)
+            ru_min = min(rm, ra, rc)
+            ra_min = min(rm, ru, rc)
+            rc_min = min(rm, ru, ra)
 
-            if rm < ru and rm < ra:
-                mpatch_better += 1
-                if ru < ra:
-                    # We consider the difference to the one that has fewer errors
-                    better_diff += ru - rm
-                else:
-                    better_diff += ra - rm
-            elif rm > ru or rm > ra:
-                mpatch_worse += 1
-                if ru < ra:
-                    # We consider the difference to the one that has fewer errors
-                    worse_diff += rm - ru
-                else:
-                    worse_diff += rm - ra
-            else:
-                mpatch_equal += 1
+            if rm < rm_min:
+                if scenario_size < 10:
+                    print("Found possible example:")
+                    user, repo = res_mpatch.dataset.split("_")[1:]
+                    url = f"https://www.github.com/{user}/{repo}/commit/"
+                    print(res_mpatch.dataset)
+                    print(f"Cherry: {url}{res_mpatch.cherry_id}")
+                    print(f"Target: {url}{res_mpatch.pick_id}")
+                    print()
+                mpatch_best += 1
+            if ru < ru_min:
+                patch_best += 1
+            if ra < ra_min:
+                apply_best += 1
+            if rc < rc_min:
+                cp_best += 1
+            if rm == ru == ra == rc:
+                all_equal += 1
             total += 1
 
-    print("mpatch is better: " + str(100 * mpatch_better / total) + "%")
-    print("mpatch is equal: " + str(100 * mpatch_equal / total) + "%")
-    print("mpatch is worse: " + str(100 * mpatch_worse / total) + "%")
-    print("better diff: " + str(better_diff / total))
-    print("worse diff: " + str(worse_diff / total))
+    print("all are equal: " + f"{(100 * all_equal / total):.2f}%")
+    print("mpatch is sole best: " + f"{(100 * mpatch_best / total):.2f}%")
+    print("patch is sole best: " + f"{(100 * patch_best / total):.2f}%")
+    print("apply is sole best: " + f"{(100 * apply_best / total):.2f}%")
+    print("cherry-pick is sole best: " + f"{(100 * cp_best / total):.2f}%")
     print()
