@@ -73,7 +73,7 @@ class CherryPickStudy(
 
         for (cherryPick in dataset.cherryPicks) {
             val runID = idProvider.next()
-            val run = EvaluationRun(repetition, dataset.datasetName, cherryPick.cherryCommit, cherryPick.targetCommit)
+            val run = EvaluationRun(repetition, dataset.datasetName, cherryPick.cherryCommit, cherryPick.expectedResultCommit)
             if (completedRuns.contains(run)) {
                 Logger.info("Skipped cherry pick of run $runID (already processed)")
                 continue
