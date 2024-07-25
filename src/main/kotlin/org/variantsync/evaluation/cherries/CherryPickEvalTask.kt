@@ -1,6 +1,5 @@
 package org.variantsync.evaluation.cherries
 
-import de.ovgu.featureide.fm.core.base.IFeature
 import org.prop4j.Node
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.CherryPickResultAnalysis
@@ -12,10 +11,10 @@ import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.DiffCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
+import org.variantsync.evaluation.error.Panic
 import org.variantsync.evaluation.filterUnpatchedFiles
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
-import org.variantsync.evaluation.syncstudy.panic
 import org.variantsync.vevos.simulation.feature.Variant
 import org.variantsync.vevos.simulation.feature.config.IConfiguration
 import java.io.IOException
@@ -326,4 +325,19 @@ class AllTrueConfiguration : IConfiguration {
     override fun satisfies(p0: Node?): Boolean {
         return true
     }
+}
+
+// Abort the program
+fun panic(message: String, e: Exception) {
+    Logger.error(message)
+    Logger.error(e.message)
+    Logger.error(e)
+    e.printStackTrace()
+    throw Panic(message)
+}
+
+// Abort the program
+fun panic(message: String) {
+    Logger.error(message)
+    throw Panic(message)
 }
