@@ -42,7 +42,7 @@ class PatchResult:
         self.dataset = json_object.get("dataset").rsplit(".", 1)[0]
         self.run_id = json_object.get("runID")
         self.cherry_id = json_object.get("cherry")
-        self.target_id = json_object.get("target")
+        self.pick_id = json_object.get("pick")
         self.num_actual_vs_expected = int(json_object.get("normalActualVsExpected"))
         self.num_changes_total = int(json_object.get("lineNormal"))
         self.num_changes_applied = int(json_object.get("lineSuccessNormal"))
@@ -56,7 +56,7 @@ class PatchResult:
         return (
             f"PatchResult(dataset={self.dataset}, runID={
                 self.run_id}, cherry={self.cherry_id}, "
-            f"target={self.target_id}, normalActualVsExpected={
+            f"target={self.pick_id}, normalActualVsExpected={
                 self.num_actual_vs_expected}, "
             f"lineNormal={self.num_changes_total}, lineSuccessNormal={
                 self.num_changes_applied}, "
@@ -69,7 +69,7 @@ class PatchResult:
         return (
             f"PatchResult(dataset={repr(self.dataset)}, runID={
                 repr(self.run_id)}, cherry={repr(self.cherry_id)}, "
-            f"target={repr(self.target_id)}, normalActualVsExpected={
+            f"target={repr(self.pick_id)}, normalActualVsExpected={
                 repr(self.num_actual_vs_expected)}, "
             f"lineNormal={repr(self.num_changes_total)}, lineSuccessNormal={
                 repr(self.num_changes_applied)}, "
