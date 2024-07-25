@@ -22,7 +22,7 @@ from result_analysis.result_handling import (
 from result_analysis.result_handling import overall_automation
 from result_analysis.result_handling import edit_distance
 from result_analysis.result_handling import runtime
-from result_analysis.result_handling import cluster_results_per_patcher
+from result_analysis.result_handling import accumulate_data_per_patcher
 from collections import defaultdict
 from statsmodels.stats.multitest import multipletests
 from scipy.stats import wilcoxon
@@ -59,7 +59,7 @@ def rq3_table_generation(
 
     print("Result dirs: " + str(result_dirs))
 
-    results_per_patcher = cluster_results_per_patcher(
+    results_per_patcher = accumulate_data_per_patcher(
         repos=repos,
         result_dirs=result_dirs,
         languages=languages,

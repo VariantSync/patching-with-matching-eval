@@ -150,7 +150,7 @@ def runtime(results: List[PatchResult]) -> tuple[float, int]:
     return (sum(runtimes) / len(runtimes), sorted(runtimes)[len(runtimes) // 2])
 
 
-def cluster_results_per_patcher(
+def accumulate_data_per_patcher(
     repos, result_dirs, languages, only_non_trivial
 ) -> Dict:
     results_per_patcher = defaultdict(dict)
