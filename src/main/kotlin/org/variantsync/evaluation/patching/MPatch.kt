@@ -57,6 +57,7 @@ class MPatch(private val name: String, private val strip: Int, private val maxMa
             result.success.forEach(Consumer { message: String? -> Logger.debug(message) })
         } else {
             Logger.error("mpatch failed")
+            throw UTF8Exception()
         }
 
         rejects.rejects.addAll(readRejectsFromFile(operations, rejectFile, withFiler).rejects)
@@ -224,4 +225,5 @@ private class RejectId(val path: Path, val index: Int) {
     }
 }
 
+class UTF8Exception(): Exception("Input did not contain valid UTF-8") {}
 

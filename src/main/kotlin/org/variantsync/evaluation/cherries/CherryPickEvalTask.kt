@@ -15,6 +15,7 @@ import org.variantsync.evaluation.error.Panic
 import org.variantsync.evaluation.filterUnpatchedFiles
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
+import org.variantsync.evaluation.patching.UTF8Exception
 import org.variantsync.vevos.simulation.feature.Variant
 import org.variantsync.vevos.simulation.feature.config.IConfiguration
 import java.io.IOException
@@ -151,6 +152,9 @@ class CherryPickEvalTask(
                 var rejectsNormal: Rejects
                 try {
                      rejectsNormal = patcher.applyPatch(operations, source, target, false)
+                } catch (e: UTF8Exception) {
+                    Logger.warn(e)
+                    return ArrayList()
                 } catch (e: Exception) {
                     Logger.warn(e)
                     rejectsNormal = Rejects(ArrayList())
