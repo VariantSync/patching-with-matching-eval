@@ -10,7 +10,7 @@ class CherryPickPatchOutcome
  * @param dataset                  The considered subject
  * @param runID                    The id of this run
  * @param cherry                 The id of the parent commit
- * @param target                 The id of the child commit
+ * @param pick                 The id of the child commit
  * @param normalActualVsExpected   Number of differences between the patched target variant and the expected result (without filtering)
  * @param lineNormal               Number of unfiltered line-level patches
  * @param lineSuccessNormal        Number of successful line-level patches
@@ -18,7 +18,7 @@ class CherryPickPatchOutcome
     val dataset: String,
     val runID: ULong,
     val cherry: String,
-    val target: String,
+    val pick: String,
     val normalActualVsExpected: Long,
     val lineNormal: Long,
     val lineSuccessNormal: Long,
@@ -30,8 +30,8 @@ class CherryPickPatchOutcome
         return "PatchOutcome{" +
                 "dataset='" + dataset + '\'' +
                 ", runID=" + runID +
-                ", commitV0='" + cherry + '\'' +
-                ", commitV1='" + target + '\'' +
+                ", cherry='" + cherry + '\'' +
+                ", pick='" + pick + '\'' +
                 ", normalActualVsExpected=" + normalActualVsExpected +
                 ", lineNormal=" + lineNormal +
                 ", lineSuccessNormal=" + lineSuccessNormal +

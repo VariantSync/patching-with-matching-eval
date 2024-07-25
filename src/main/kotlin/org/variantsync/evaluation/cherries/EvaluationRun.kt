@@ -30,7 +30,7 @@ fun outcomesToRuns(outcomes: Map<Int, List<CherryPickPatchOutcome>>): Set<Evalua
     val evaluationRuns = mutableSetOf<EvaluationRun>()
     for (rep in outcomes.keys) {
         for (outcome in outcomes[rep]!!) {
-            evaluationRuns.add(EvaluationRun(rep, outcome.dataset, outcome.cherry, outcome.target))
+            evaluationRuns.add(EvaluationRun(rep, outcome.dataset, outcome.cherry, outcome.pick))
         }
     }
     return evaluationRuns
