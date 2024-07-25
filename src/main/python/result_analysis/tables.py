@@ -28,16 +28,16 @@ from statsmodels.stats.multitest import multipletests
 from scipy.stats import wilcoxon
 
 languages = [
-    ("Python", "py"),
-    ("JavaScript", "js"),
-    ("Go", "go"),
-    ("C++", "c++"),
-    ("Java", "java"),
-    ("TypeScript", "ts"),
-    ("C", "c"),
-    ("C#", "c#"),
-    ("PHP", "php"),
-    ("Rust", "rust"),
+    ("Python", "Python"),
+    ("JavaScript", "JavaScr."),
+    ("Go", "Go"),
+    ("C++", "C++"),
+    ("Java", "Java"),
+    ("TypeScript", "TypeScr."),
+    ("C", "C"),
+    ("C#", "C#"),
+    ("PHP", "PHP"),
+    ("Rust", "Rust"),
 ]
 
 
@@ -72,12 +72,11 @@ def rq3_table_generation(
         for patcher in Patcher:  # Patcher is an enum
             patcher_data = results_per_patcher[patcher.nice_name()][language]
             print(patcher_data)
-    language_names = [lang[0] for lang in languages]
     patcher_names = [patcher.nice_name() for patcher in Patcher]
     # corrected_significance, corrected_alpha = significance(results_per_patcher)
     differences = relative_difference(Patcher.MPatch, results_per_patcher)
     generate_metrics_result_table(
-        patcher_names, language_names, results_per_patcher, differences, file_metrics
+        patcher_names, languages, results_per_patcher, differences, file_metrics
     )
     # generate_power_estimate_table(
     #     patcher_names, language_names, results_per_patcher, corrected_alpha, file_power
@@ -88,38 +87,48 @@ def relative_difference(base_patcher: Patcher, results):
     base = base_patcher.nice_name()
 
     differences_per_patcher = defaultdict(dict)
+    averages = []
     differences = []
     p_values = []
     for other_patcher in Patcher:
         other_patcher = other_patcher.nice_name()
         for metric in Metric:
+            base_values = []
+            other_values = []
+            for dataset in results[base]:
+                base_values.extend(
+                    np.array(results[base][dataset].per_patch.get(metric))
+                )
+                other_values.extend(
+                    np.array(results[other_patcher][dataset].per_patch.get(metric))
+                )
+            base_values = np.array(base_values)
+            other_values = np.array(other_values)
+            b = np.mean(base_values)
+            o = np.mean(other_values)
+
             if other_patcher == base:
                 differences_per_patcher[other_patcher][metric] = (
+                    b,
                     0.0,
                     np.inf,
                 )
                 continue
-            base_values = []
-            other_values = []
-            for dataset in results[base]:
-                base_values.extend(np.array(results[base][dataset].get(metric)))
-                other_values.extend(
-                    np.array(results[other_patcher][dataset].get(metric))
-                )
-            base_values = np.array(base_values)
-            other_values = np.array(other_values)
+
+            min_length = min(len(base_values), len(other_values))
+            base_values = base_values[:min_length]
+            other_values = other_values[:min_length]
 
             _, p = wilcoxon(base_values, other_values)
-            average_difference = np.average(other_values - base_values)
-            average_difference /= np.average(base_values)
-            b = np.average(base_values)
-            o = np.average(other_values)
+            average_difference = np.mean(other_values - base_values)
+            average_difference /= np.mean(base_values)
             print(f"{metric}-{other_patcher}-base: {b}")
             print(f"{metric}-{other_patcher}-other: {o}")
             print(f"average diff: {average_difference}")
             print()
             differences.append(average_difference)
             p_values.append(p)
+            averages.append(o)
 
     _, corrected_p_values, _, _ = multipletests(
         p_values, alpha=0.05, method="bonferroni"
@@ -130,12 +139,9 @@ def relative_difference(base_patcher: Patcher, results):
         patcher = patcher.nice_name()
         for metric in Metric:
             if patcher == base:
-                differences_per_patcher[patcher][metric] = (
-                    0.0,
-                    np.inf,
-                )
                 continue
             differences_per_patcher[patcher][metric] = (
+                averages[i],
                 differences[i],
                 corrected_p_values[i],
             )

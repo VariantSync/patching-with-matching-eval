@@ -1,7 +1,7 @@
 from typing import Callable
 from typing import List
 from typing import Dict
-from result_analysis.eval_setup import Repository
+from result_analysis.eval_setup import AccumulatedPatcherData, Repository
 from result_analysis.eval_setup import PatchResult
 from result_analysis.eval_setup import OutcomeClassification
 from result_analysis.eval_setup import Patcher
@@ -171,10 +171,42 @@ def cluster_results_per_patcher(
                 tp = 0.0
                 fp = 0.0
                 fn = 0.0
+                data_per_patch = None
                 for res in results:
-                    tp += res.outcome_classification.tp()
-                    fp += res.outcome_classification.fp()
-                    fn += res.outcome_classification.fn()
+                    oc = res.outcome_classification
+                    if oc.num_incorrect() + oc.num_correct() == 0:
+                        continue
+                    tp += oc.tp()
+                    fp += oc.fp()
+                    fn += oc.fn()
+                    p, r = calculate_precision_recall(
+                        oc.tp(),
+                        oc.fp(),
+                        oc.fn(),
+                    )
+                    num_incorrect = oc.num_incorrect()
+                    if num_incorrect == 0:
+                        a = 1
+                    else:
+                        a = 0
+                    if data_per_patch is None:
+                        data_per_patch = RQ3PatcherData(
+                            patcher=patcher,
+                            precision=p,
+                            recall=r,
+                            patch_automation=a,
+                            avg_edit_distance=num_incorrect,
+                            avg_runtime=res.patch_duration,
+                        )
+                    else:
+                        data_per_patch.add_data(
+                            precision=p,
+                            recall=r,
+                            patch_automation=a,
+                            avg_edit_distance=num_incorrect,
+                            avg_runtime=res.patch_duration,
+                        )
+
                 precision, recall = calculate_precision_recall(
                     tp=tp,
                     fp=fp,
@@ -186,14 +218,17 @@ def cluster_results_per_patcher(
                 (average_run, _) = runtime(results)
 
                 if language in results_per_patcher[patcher.nice_name()]:
-                    patcher_data = results_per_patcher[patcher.nice_name()][language]
-                    patcher_data.add_data(
+                    accumulated_data = results_per_patcher[patcher.nice_name()][
+                        language
+                    ]
+                    accumulated_data.accumulated_data.add_data(
                         precision=precision,
                         recall=recall,
                         patch_automation=oa,
                         avg_edit_distance=average_ed,
                         avg_runtime=average_run,
                     )
+                    accumulated_data.data_per_patch.extend(data_per_patch)
                 else:
                     patcher_data = RQ3PatcherData(
                         patcher=patcher,
@@ -203,5 +238,6 @@ def cluster_results_per_patcher(
                         avg_edit_distance=average_ed,
                         avg_runtime=average_run,
                     )
+                    patcher_data = AccumulatedPatcherData(patcher_data, data_per_patch)
                     results_per_patcher[patcher.nice_name()][language] = patcher_data
     return results_per_patcher

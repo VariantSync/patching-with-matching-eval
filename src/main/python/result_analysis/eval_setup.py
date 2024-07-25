@@ -3,8 +3,8 @@ import numpy as np
 
 
 class Patcher(Enum):
-    # MPatch1 = "pwm_f1"
     MPatch = "pwm_f2"
+    # MPatch1 = "pwm_f1"
     UnixPatch = "unix_patch"
     GitApply = "git_apply"
     GitCherry = "git_cherry"
@@ -17,8 +17,8 @@ class Patcher(Enum):
 
     def nice_name(self):
         return {
-            # Patcher.MPatch1: "PwM-f1",
             Patcher.MPatch: "\\texttt{PwM}",
+            # Patcher.MPatch1: "\\texttt{PwM-f1}",
             Patcher.UnixPatch: "\\texttt{patch}",
             Patcher.GitApply: "\\texttt{apply}",
             Patcher.GitCherry: "\\texttt{cherry-pick}",
@@ -233,3 +233,9 @@ class RQ3PatcherData:
 
     def get(self, metric: Metric) -> float:
         return getattr(self, metric.value)
+
+
+class AccumulatedPatcherData:
+    def __init__(self, accumulated: RQ3PatcherData, per_patch: RQ3PatcherData):
+        self.accumulated = accumulated
+        self.per_patch = per_patch

@@ -8,26 +8,29 @@ from result_analysis.simulation import power_analysis_simulation
 def generate_metrics_result_table(
     patcher_names, languages, results_per_patcher, differences, file
 ):
+    language_names = [lang[1] for lang in languages]
+    languages = [lang[0] for lang in languages]
+
     with open(file, "w") as file:
         # Begin the tabular environment
-        file.write("\\begin{tabular}{|l|l|" + "r|" * len(languages) + "r|r|}\n")
+        file.write("\\begin{tabular}{|l|l|" + "c|" * len(languages) + "c|c|c|}\n")
         file.write("\\hline\n")
 
         # Write the multi-column header for languages
         language_header = (
             "Metric & Patcher & \\multicolumn{"
             + str(len(languages))
-            + "}{c|}{Project Languages} & \\multirow{2}{*}{$\\stackrel{+}{\\scriptstyle{-}}\\%$} & \\multirow{2}{*}{p} \\\\\n"
+            + "}{c|}{Project Languages} & mean & \\multirow{2}{*}{$\\stackrel{+}{\\scriptstyle{-}}\\%$} & \\multirow{2}{*}{p} \\\\\n"
         )
         file.write(language_header)
         file.write("\\cline{3-" + str(len(languages) + 2) + "}\n")
 
         # Write the language names
-        language_names = [language for language in languages]
+        language_names = [name for name in language_names]
         for i in range(0, len(language_names)):
             if language_names[i] == "C#":
                 language_names[i] = "C\\#"
-        file.write(" & & " + " & ".join(language_names) + "& & \\\\\n")
+        file.write(" & & " + " & ".join(language_names) + " & p. patch & & \\\\\n")
         file.write("\\hline\n")
 
         # Write the multi-rows and their corresponding rows
@@ -44,7 +47,7 @@ def generate_metrics_result_table(
                 for language in languages:
                     value = 0
                     best_type = ""
-                    results = results_per_patcher[patcher][language]
+                    results = results_per_patcher[patcher][language].accumulated
                     value = np.mean(results.get(metric))
                     postfix = ""
                     if metric == Metric.Precision:
@@ -80,7 +83,7 @@ def generate_metrics_result_table(
                     else:
                         line += f" & {value:.2f}{postfix}"
 
-                (diff, p_value) = differences[patcher][metric]
+                (average, diff, p_value) = differences[patcher][metric]
                 if p_value < 0.01:
                     color = "blue!50"
                 elif p_value < 0.02:
@@ -95,8 +98,9 @@ def generate_metrics_result_table(
                     color = "white"
                 diff *= 100
                 if p_value == np.inf:
-                    line += " & -- & --"
+                    line += f" & {average:.2f} & -- & --"
                 else:
+                    line += f" & \\cellcolor{{{color}}}{average:.2f}"
                     line += f" & \\cellcolor{{{color}}}{diff:.2f}\\%"
                     line += f" & \\cellcolor{{{color}}}{p_value:.2f}"
                 file.write(line + " \\\\\n")
@@ -109,7 +113,7 @@ def generate_metrics_result_table(
 def determine_best(results_per_patcher, patcher_names, metric, best_type, language):
     values = []
     for patcher in patcher_names:
-        results = results_per_patcher[patcher][language]
+        results = results_per_patcher[patcher][language].accumulated
         if metric == Metric.Automation:
             values.append(100 * np.mean(results.get(metric)))
         else:
