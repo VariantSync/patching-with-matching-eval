@@ -154,6 +154,8 @@ class CherryPickEvalTask(
                      rejectsNormal = patcher.applyPatch(operations, source, target, false)
                 } catch (e: UTF8Exception) {
                     Logger.warn(e)
+                    patcher.clean(operations)
+                    operations.repoManager.resetTargetVariant()
                     return ArrayList()
                 } catch (e: Exception) {
                     Logger.warn(e)
