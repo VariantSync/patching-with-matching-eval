@@ -173,7 +173,7 @@ fun main(args: Array<String>) {
     val rand = SecureRandom(seed)
     val allSamples = createOrLoadSamples(config, datasetsPerLanguage, rand)
 
-    // cloneDatasets(allSamples, config)
+    cloneDatasets(allSamples, config)
 
     val n = max(Runtime.getRuntime().availableProcessors(), 1)
     Logger.info("Processing $n repos in parallel")
