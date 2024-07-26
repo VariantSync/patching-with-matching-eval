@@ -280,16 +280,30 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
                 else float("inf")
             )
 
-            minimum = min(rm, ru, ra, rc)
             rm_min = min(ru, ra, rc)
             ru_min = min(rm, ra, rc)
             ra_min = min(rm, ru, rc)
             rc_min = min(rm, ru, ra)
 
+            lang, user = res_mpatch.dataset.split("_")[:2]
+            repo = "_".join(res_mpatch.dataset.split("_")[2:])
             if rm < rm_min:
-                if scenario_size < 10:
+                scenario_fits = scenario_size < 20 and lang != "C" and lang != "PHP"
+                wrong_location = (
+                    res_upatch.outcome_classification.applied_wrong_location
+                    if res_upatch is not None
+                    else 0
+                )
+                missing = (
+                    res_upatch.outcome_classification.missing
+                    if res_upatch is not None
+                    else 0
+                )
+
+                patch_fits = wrong_location > 0 and missing > 0
+                cp_fits = rc > 0
+                if scenario_fits and patch_fits and cp_fits:
                     print("Found possible example:")
-                    user, repo = res_mpatch.dataset.split("_")[1:]
                     url = f"https://www.github.com/{user}/{repo}/commit/"
                     print(res_mpatch.dataset)
                     print(f"Cherry: {url}{res_mpatch.cherry_id}")
