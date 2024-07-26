@@ -66,7 +66,7 @@ public class MPatchCommand extends ShellCommand {
     }
 
     public MPatchCommand maxMatchDistance(final int maxMatchDistance) {
-        this.args.add("--max_match_distance=" + maxMatchDistance);
+        this.args.add("--match_distance_cutoff=" + maxMatchDistance);
         return this;
     }
 

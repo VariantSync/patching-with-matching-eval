@@ -3,8 +3,8 @@ import numpy as np
 
 
 class Patcher(Enum):
-    # MPatch1 = "pwm_f1"
     MPatch = "pwm_f2"
+    # MPatch1 = "pwm_f1"
     UnixPatch = "unix_patch"
     GitApply = "git_apply"
     GitCherry = "git_cherry"
@@ -17,8 +17,8 @@ class Patcher(Enum):
 
     def nice_name(self):
         return {
-            # Patcher.MPatch1: "PwM-f1",
             Patcher.MPatch: "\\texttt{PwM}",
+            # Patcher.MPatch1: "\\texttt{PwM-f1}",
             Patcher.UnixPatch: "\\texttt{patch}",
             Patcher.GitApply: "\\texttt{apply}",
             Patcher.GitCherry: "\\texttt{cherry-pick}",
@@ -42,7 +42,7 @@ class PatchResult:
         self.dataset = json_object.get("dataset").rsplit(".", 1)[0]
         self.run_id = json_object.get("runID")
         self.cherry_id = json_object.get("cherry")
-        self.target_id = json_object.get("target")
+        self.pick_id = json_object.get("pick")
         self.num_actual_vs_expected = int(json_object.get("normalActualVsExpected"))
         self.num_changes_total = int(json_object.get("lineNormal"))
         self.num_changes_applied = int(json_object.get("lineSuccessNormal"))
@@ -56,7 +56,7 @@ class PatchResult:
         return (
             f"PatchResult(dataset={self.dataset}, runID={
                 self.run_id}, cherry={self.cherry_id}, "
-            f"target={self.target_id}, normalActualVsExpected={
+            f"target={self.pick_id}, normalActualVsExpected={
                 self.num_actual_vs_expected}, "
             f"lineNormal={self.num_changes_total}, lineSuccessNormal={
                 self.num_changes_applied}, "
@@ -69,7 +69,7 @@ class PatchResult:
         return (
             f"PatchResult(dataset={repr(self.dataset)}, runID={
                 repr(self.run_id)}, cherry={repr(self.cherry_id)}, "
-            f"target={repr(self.target_id)}, normalActualVsExpected={
+            f"target={repr(self.pick_id)}, normalActualVsExpected={
                 repr(self.num_actual_vs_expected)}, "
             f"lineNormal={repr(self.num_changes_total)}, lineSuccessNormal={
                 repr(self.num_changes_applied)}, "
@@ -233,3 +233,9 @@ class RQ3PatcherData:
 
     def get(self, metric: Metric) -> float:
         return getattr(self, metric.value)
+
+
+class AccumulatedPatcherData:
+    def __init__(self, accumulated: RQ3PatcherData, per_patch: RQ3PatcherData):
+        self.accumulated = accumulated
+        self.per_patch = per_patch

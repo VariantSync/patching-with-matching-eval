@@ -21,7 +21,6 @@ def load_repositories(path_to_yaml: str) -> Dict[str, Repository]:
             + "_"
             + repo_data["name"]
         )
-        print(full_name)
         repos[full_name] = Repository(
             id=repo_data["id"], name=full_name, language=repo_data["language"]
         )

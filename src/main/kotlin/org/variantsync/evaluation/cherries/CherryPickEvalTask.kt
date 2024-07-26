@@ -1,6 +1,5 @@
 package org.variantsync.evaluation.cherries
 
-import de.ovgu.featureide.fm.core.base.IFeature
 import org.prop4j.Node
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.CherryPickResultAnalysis
@@ -12,10 +11,11 @@ import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.shell.CpCommand
 import org.variantsync.evaluation.baseline.shell.DiffCommand
 import org.variantsync.evaluation.baseline.shell.RmCommand
+import org.variantsync.evaluation.error.Panic
 import org.variantsync.evaluation.filterUnpatchedFiles
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
-import org.variantsync.evaluation.syncstudy.panic
+import org.variantsync.evaluation.patching.UTF8Exception
 import org.variantsync.vevos.simulation.feature.Variant
 import org.variantsync.vevos.simulation.feature.config.IConfiguration
 import java.io.IOException
@@ -152,6 +152,11 @@ class CherryPickEvalTask(
                 var rejectsNormal: Rejects
                 try {
                      rejectsNormal = patcher.applyPatch(operations, source, target, false)
+                } catch (e: UTF8Exception) {
+                    Logger.warn(e)
+                    patcher.clean(operations)
+                    operations.repoManager.resetTargetVariant()
+                    return ArrayList()
                 } catch (e: Exception) {
                     Logger.warn(e)
                     rejectsNormal = Rejects(ArrayList())
@@ -326,4 +331,19 @@ class AllTrueConfiguration : IConfiguration {
     override fun satisfies(p0: Node?): Boolean {
         return true
     }
+}
+
+// Abort the program
+fun panic(message: String, e: Exception) {
+    Logger.error(message)
+    Logger.error(e.message)
+    Logger.error(e)
+    e.printStackTrace()
+    throw Panic(message)
+}
+
+// Abort the program
+fun panic(message: String) {
+    Logger.error(message)
+    throw Panic(message)
 }

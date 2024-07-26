@@ -54,7 +54,7 @@ class CherryPickStudy(
             Files.createDirectories(config.EXPERIMENT_DIR_RESULTS())
         }
         val repoPath: Path = cloneGitHubRepo(config, dataset.repositoryId)
-        val t = min(config.EXPERIMENT_THREAD_COUNT(), dataset.cherryPicks.size / 5)
+        val t = min(config.EXPERIMENT_THREAD_COUNT(), dataset.cherryPicks.size / 100)
         this.numThreads = max(1, t)
         this.availableOperations = LinkedBlockingQueue(numThreads)
 
@@ -73,7 +73,7 @@ class CherryPickStudy(
 
         for (cherryPick in dataset.cherryPicks) {
             val runID = idProvider.next()
-            val run = EvaluationRun(repetition, dataset.datasetName, cherryPick.cherryCommit, cherryPick.targetCommit)
+            val run = EvaluationRun(repetition, dataset.datasetName, cherryPick.cherryCommit, cherryPick.expectedResultCommit)
             if (completedRuns.contains(run)) {
                 Logger.info("Skipped cherry pick of run $runID (already processed)")
                 continue
@@ -173,9 +173,9 @@ fun main(args: Array<String>) {
     val rand = SecureRandom(seed)
     val allSamples = createOrLoadSamples(config, datasetsPerLanguage, rand)
 
-    // cloneDatasets(allSamples, config)
+    cloneDatasets(allSamples, config)
 
-    val n = max(Runtime.getRuntime().availableProcessors() / config.EXPERIMENT_THREAD_COUNT(), 1)
+    val n = max(Runtime.getRuntime().availableProcessors(), 1)
     Logger.info("Processing $n repos in parallel")
     val threadPool = Executors.newFixedThreadPool(n)
 

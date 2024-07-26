@@ -1,10 +1,7 @@
 package org.variantsync.evaluation.cherries
 
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.api.errors.JGitInternalException
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.baseline.shell.*
-import org.variantsync.evaluation.syncstudy.panic
 import java.nio.file.Path
 
 class VariantRepoManager(

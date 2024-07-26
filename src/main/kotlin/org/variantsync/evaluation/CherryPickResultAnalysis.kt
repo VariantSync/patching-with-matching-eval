@@ -4,9 +4,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.tinylog.kotlin.Logger
 import org.variantsync.diffdetective.util.Assert
-import org.variantsync.evaluation.SyncStudyResultAnalysis.percentage
-import org.variantsync.evaluation.SyncStudyResultAnalysis.printCorrectness
-import org.variantsync.evaluation.SyncStudyResultAnalysis.printPrecisionRecall
 import org.variantsync.evaluation.analysis.*
 import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
 import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
@@ -138,7 +135,7 @@ object CherryPickResultAnalysis {
 
         Assert.assertEquals(normalResult.resultCount(), lineNormal.size.toLong())
         return CherryPickPatchOutcome(
-            dataset, runID, cherryPick.cherryCommit, cherryPick.targetCommit, OriginalDiff.determineChangedLines(resultDiffNormal, STRIP).size.toLong(),
+            dataset, runID, cherryPick.cherryCommit, cherryPick.expectedResultCommit, OriginalDiff.determineChangedLines(resultDiffNormal, STRIP).size.toLong(),
             lineNormal.size.toLong(), lineNormal.size.toLong() - lineNormalFailed.size.toLong(),
             normalResult,
             patchDuration,
@@ -364,4 +361,73 @@ object CherryPickResultAnalysis {
         val lineSuccessNormal: Long,
     )
 
+    fun percentage(x: Long, y: Long): String {
+        val percentage: Double = if (y == 0L) {
+            0.0
+        } else {
+            100 * (x.toDouble() / y.toDouble())
+        }
+        return String.format("%3.1f%s", percentage, "%")
+    }
+
+    fun printCorrectness(sb: StringBuilder, result: AccumulatedResult) {
+        val correct = result.correctCount().toDouble()
+        val incorrect = result.incorrectCount().toDouble()
+        val total = result.resultCount().toDouble()
+        val correctPerc = 100.0 * correct / total
+        val incorrectPerc = 100.0 * incorrect / total
+        val appliedP: Double = 100.0 * result.applied.v.toDouble() / total
+        val invalidP: Double = 100.0 * result.invalid.v.toDouble() / total
+        val wrongLocationP: Double = 100.0 * result.wrongLocation.v.toDouble() / total
+        val missingP: Double = 100.0 * result.missing.v.toDouble() / total
+        val filteredCorrectlyP: Double = 100.0 * result.filteredCorrectly.v.toDouble() / total
+        val filteredIncorrectlyP: Double = 100.0 * result.filteredIncorrectly.v.toDouble() / total
+        val mitigatedInvalidP: Double = 100.0 * result.mitigatedInvalid.v.toDouble() / total
+        val mitigatedMissingP: Double = 100.0 * result.mitigatedMissing.v.toDouble() / total
+        sb.append(String.format("Correct: %1.2f%%  (%d of %d)", correctPerc, correct.toLong(), total.toLong()))
+            .append(LINE_SEP)
+        sb.append(String.format("Incorrect: %1.2f%% (%d of %d)", incorrectPerc, incorrect.toLong(), total.toLong()))
+            .append(LINE_SEP)
+        sb.append("++ Distribution ++").append(LINE_SEP)
+        sb.append(String.format("%1.2f%% applied, %1.2f%% invalid", appliedP, invalidP))
+            .append(LINE_SEP)
+        sb.append(
+            String.format(
+                "%1.2f%% missing, %1.2f%% wrong location",
+                missingP, wrongLocationP
+            )
+        ).append(LINE_SEP)
+        sb.append(
+            String.format(
+                "%1.2f%% filtered correctly, %1.2f%% filtered incorrectly",
+                filteredCorrectlyP,
+                filteredIncorrectlyP
+            )
+        )
+            .append(LINE_SEP)
+        sb.append(
+            String.format(
+                "%1.2f%% mitigated invalid, %1.2f%% mitigated missing",
+                mitigatedInvalidP,
+                mitigatedMissingP
+            )
+        )
+            .append(LINE_SEP)
+    }
+
+    fun printPrecisionRecall(
+        sb: StringBuilder, tp: Long, fp: Long,
+        tn: Long, fn: Long
+    ) {
+        val precision = tp.toDouble() / (tp.toDouble() + fp)
+        val recall = tp.toDouble() / (tp.toDouble() + fn)
+        val fMeasure = 2 * precision * recall / (precision + recall)
+        sb.append("TP: ").append(tp).append(LINE_SEP)
+        sb.append("FP: ").append(fp).append(LINE_SEP)
+        sb.append("TN: ").append(tn).append(LINE_SEP)
+        sb.append("FN: ").append(fn).append(LINE_SEP)
+        sb.append(String.format("Precision: %1.2f", precision)).append(LINE_SEP)
+        sb.append(String.format("Recall: %1.2f", recall)).append(LINE_SEP)
+        sb.append(String.format("F-Measure: %1.2f", fMeasure)).append(LINE_SEP)
+    }
 }
