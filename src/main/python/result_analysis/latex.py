@@ -13,14 +13,14 @@ def generate_metrics_result_table(
 
     with open(file, "w") as file:
         # Begin the tabular environment
-        file.write("\\begin{tabular}{|l|l|" + "r|" * len(languages) + "r|r|r|}\n")
+        file.write("\\begin{tabular}{|c|l|" + "r|" * len(languages) + "r|r|r|}\n")
         file.write("\\hline\n")
 
         # Write the multi-column header for languages
         language_header = (
             "Metric & Patcher & \\multicolumn{"
             + str(len(languages))
-            + "}{c|}{Project Languages} & mean & \\multirow{2}{*}{$\\stackrel{+}{\\scriptstyle{-}}\\%$} & \\multirow{2}{*}{p} \\\\\n"
+            + "}{c|}{Project Languages} & \\multirow{2}{*}{\\overhead{x}} & \\multirow{2}{*}{$\\stackrel{+}{\\scriptstyle{-}}\\%$} & \\multirow{2}{*}{p} \\\\\n"
         )
         file.write(language_header)
         file.write("\\cline{3-" + str(len(languages) + 2) + "}\n")
@@ -30,7 +30,7 @@ def generate_metrics_result_table(
         for i in range(0, len(language_names)):
             if language_names[i] == "C#":
                 language_names[i] = "C\\#"
-        file.write(" & & " + " & ".join(language_names) + " & p. patch & & \\\\\n")
+        file.write(" & & " + " & ".join(language_names) + " & & & \\\\\n")
         file.write("\\hline\n")
 
         # Write the multi-rows and their corresponding rows
@@ -84,10 +84,8 @@ def generate_metrics_result_table(
                         line += f" & {value:.2f}{postfix}"
 
                 (average, diff, p_value) = differences[patcher][metric]
-                p_text = f"{p_value:.2f}"
                 if p_value < 0.01:
                     color = "blue!25"
-                    p_text = "$<$0.01"
                 elif p_value < 0.02:
                     color = "blue!20"
                 elif p_value < 0.03:
@@ -106,7 +104,7 @@ def generate_metrics_result_table(
                 else:
                     line += f" & \\cellcolor{{{color}}}{average:.2f}"
                     line += f" & \\cellcolor{{{color}}}{diff:.2f}\\%"
-                    line += f" & \\cellcolor{{{color}}}{p_text}"
+                    line += f" & \\cellcolor{{{color}}}{p_value:.2f}"
                 file.write(line + " \\\\\n")
             file.write("\\hline\n")
 
