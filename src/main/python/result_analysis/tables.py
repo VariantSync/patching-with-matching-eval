@@ -288,7 +288,7 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
             lang, user = res_mpatch.dataset.split("_")[:2]
             repo = "_".join(res_mpatch.dataset.split("_")[2:])
             if rm < rm_min:
-                scenario_fits = scenario_size < 20 and lang != "C" and lang != "PHP"
+                scenario_fits = scenario_size < 50 and lang != "C" and lang != "PHP"
                 wrong_location = (
                     res_upatch.outcome_classification.applied_wrong_location
                     if res_upatch is not None

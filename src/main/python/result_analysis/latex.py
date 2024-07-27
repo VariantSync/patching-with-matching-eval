@@ -13,7 +13,7 @@ def generate_metrics_result_table(
 
     with open(file, "w") as file:
         # Begin the tabular environment
-        file.write("\\begin{tabular}{|l|l|" + "c|" * len(languages) + "c|c|c|}\n")
+        file.write("\\begin{tabular}{|l|l|" + "r|" * len(languages) + "r|r|r|}\n")
         file.write("\\hline\n")
 
         # Write the multi-column header for languages
@@ -97,6 +97,8 @@ def generate_metrics_result_table(
                 else:
                     color = "white"
                 diff *= 100
+                if metric == Metric.Automation:
+                    average *= 100
                 if p_value == np.inf:
                     line += f" & {average:.2f} & -- & --"
                 else:
