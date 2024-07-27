@@ -20,7 +20,7 @@ def generate_metrics_result_table(
         language_header = (
             "Metric & Patcher & \\multicolumn{"
             + str(len(languages))
-            + "}{c|}{Project Languages} & \\multirow{2}{*}{\\overhead{x}} & \\multirow{2}{*}{$\\stackrel{+}{\\scriptstyle{-}}\\%$} & \\multirow{2}{*}{p} \\\\\n"
+            + "}{c|}{Project Languages} & \\multirow{2}{*}{$\\overhead{x}$} & \\multirow{2}{*}{$\\stackrel{+}{\\scriptstyle{-}}\\%$} & \\multirow{2}{*}{p} \\\\\n"
         )
         file.write(language_header)
         file.write("\\cline{3-" + str(len(languages) + 2) + "}\n")
