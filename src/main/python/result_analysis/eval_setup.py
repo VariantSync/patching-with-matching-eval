@@ -17,11 +17,11 @@ class Patcher(Enum):
 
     def nice_name(self):
         return {
-            Patcher.MPatch: "\\texttt{PwM}",
-            # Patcher.MPatch1: "\\texttt{PwM-f1}",
-            Patcher.UnixPatch: "\\texttt{patch}",
-            Patcher.GitApply: "\\texttt{apply}",
-            Patcher.GitCherry: "\\texttt{cherry-pick}",
+            Patcher.MPatch: "\\approach{}",
+            # Patcher.MPatch1: "\\texttt{mpatch-f1}",
+            Patcher.UnixPatch: "\\patch{}",
+            Patcher.GitApply: "\\gitapply{}",
+            Patcher.GitCherry: "\\gitcherrypickshort{}",
         }[self]
 
 
@@ -189,9 +189,9 @@ class Metric(Enum):
         return {
             Metric.Precision: "Precision",
             Metric.Recall: "Recall",
-            Metric.Automation: "Automation (\\%)",
+            Metric.Automation: "Autom. (\\%)",
             Metric.EditDistance: "Req. Fixes",
-            Metric.Runtime: "Runtime (s)",
+            Metric.Runtime: "Time (s)",
         }[self]
 
 

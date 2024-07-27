@@ -84,16 +84,18 @@ def generate_metrics_result_table(
                         line += f" & {value:.2f}{postfix}"
 
                 (average, diff, p_value) = differences[patcher][metric]
+                p_text = f"{p_value:.2f}"
                 if p_value < 0.01:
-                    color = "blue!50"
+                    color = "blue!25"
+                    p_text = "$<$0.01"
                 elif p_value < 0.02:
-                    color = "blue!40"
-                elif p_value < 0.03:
-                    color = "blue!30"
-                elif p_value < 0.04:
                     color = "blue!20"
-                elif p_value < 0.05:
+                elif p_value < 0.03:
+                    color = "blue!15"
+                elif p_value < 0.04:
                     color = "blue!10"
+                elif p_value < 0.05:
+                    color = "blue!05"
                 else:
                     color = "white"
                 diff *= 100
@@ -104,7 +106,7 @@ def generate_metrics_result_table(
                 else:
                     line += f" & \\cellcolor{{{color}}}{average:.2f}"
                     line += f" & \\cellcolor{{{color}}}{diff:.2f}\\%"
-                    line += f" & \\cellcolor{{{color}}}{p_value:.2f}"
+                    line += f" & \\cellcolor{{{color}}}{p_text}"
                 file.write(line + " \\\\\n")
             file.write("\\hline\n")
 
