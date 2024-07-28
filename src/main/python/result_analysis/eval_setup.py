@@ -189,8 +189,8 @@ class Metric(Enum):
         return {
             Metric.Precision: "Precision",
             Metric.Recall: "Recall",
-            Metric.Automation: "Autom.\\\\(\\%)",
-            Metric.EditDistance: "Req.\\\\Fixes",
+            Metric.Automation: "Autom. (\\%)",
+            Metric.EditDistance: "Req. Fixes",
             Metric.Runtime: "Time (s)",
         }[self]
 

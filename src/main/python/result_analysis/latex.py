@@ -12,16 +12,13 @@ def generate_metrics_result_table(
     languages = [lang[0] for lang in languages]
 
     with open(file, "w") as file:
+        fmt = "S[table-format=2.2]|" * (3 + len(languages))
         # Begin the tabular environment
-        file.write("\\begin{tabular}{|c|l|" + "r|" * len(languages) + "r|r|r|}\n")
+        file.write("\\begin{tabular}{|l|c|" + fmt + "}\n")
         file.write("\\hline\n")
 
         # Write the multi-column header for languages
-        language_header = (
-            "Metric & Patcher & \\multicolumn{"
-            + str(len(languages))
-            + "}{c|}{Project Languages} & \\multirow{2}{*}{$\\overhead{x}$} & \\multirow{2}{*}{$\\stackrel{+}{\\scriptstyle{-}}\\%$} & \\multirow{2}{*}{p} \\\\\n"
-        )
+        language_header = "\\multirow{2}{*}{Metric} & \\multirow{2}{*}{Patcher} & \\multicolumn{10}{c|}{Project Languages} & \\multicolumn{1}{c|}{\\multirow{2}{*}{$\\overline{x}$}} & \\multicolumn{1}{c|}{\\multirow{2}{*}{$\\pm\\%$}} & \\multicolumn{1}{c|}{\\multirow{2}{*}{p}}\\\\\n"
         file.write(language_header)
         file.write("\\cline{3-" + str(len(languages) + 2) + "}\n")
 
@@ -47,7 +44,7 @@ def generate_metrics_result_table(
                 for language in languages:
                     value = 0
                     best_type = ""
-                    results = results_per_patcher[patcher][language].accumulated
+                    results = results_per_patcher[patcher][language].per_patch
                     value = np.mean(results.get(metric))
                     postfix = ""
                     if metric == Metric.Precision:
@@ -79,7 +76,7 @@ def generate_metrics_result_table(
                     #            ]
 
                     if value == max_value:
-                        line += f" & \\textbf{{{value:.2f}}}{postfix}"
+                        line += f" & \\bfseries {value:.2f}{postfix}"
                     else:
                         line += f" & {value:.2f}{postfix}"
 
@@ -100,7 +97,7 @@ def generate_metrics_result_table(
                 if metric == Metric.Automation:
                     average *= 100
                 if p_value == np.inf:
-                    line += f" & {average:.2f} & -- & --"
+                    line += f" & {average:.2f} &  & "
                 else:
                     line += f" & \\cellcolor{{{color}}}{average:.2f}"
                     line += f" & \\cellcolor{{{color}}}{diff:.2f}\\%"
@@ -115,7 +112,7 @@ def generate_metrics_result_table(
 def determine_best(results_per_patcher, patcher_names, metric, best_type, language):
     values = []
     for patcher in patcher_names:
-        results = results_per_patcher[patcher][language].accumulated
+        results = results_per_patcher[patcher][language].per_patch
         if metric == Metric.Automation:
             values.append(100 * np.mean(results.get(metric)))
         else:
@@ -131,8 +128,9 @@ def generate_power_estimate_table(
     patcher_names, languages, results_per_patcher, corrected_alpha, file
 ):
     with open(file, "w") as file:
+        fmt = "S[table-format=2.2]|" * (3 + len(languages))
         # Begin the tabular environment
-        file.write("\\begin{tabular}{|l|" + "r|" * len(languages) + "r|}\n")
+        file.write("\\begin{tabular}{|l|" + fmt + "}\n")
         file.write("\\hline\n")
 
         # Write the multi-column header for languages
