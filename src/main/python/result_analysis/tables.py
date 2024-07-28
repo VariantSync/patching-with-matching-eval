@@ -29,11 +29,11 @@ from scipy.stats import wilcoxon
 
 languages = [
     ("Python", "Python"),
-    ("JavaScript", "\\multicolumn{1}{c|}{JavaS.}"),
+    ("JavaScript", "\\multicolumn{1}{c}{JavaS.}"),
     ("Go", "Go"),
-    ("C++", "\\multicolumn{1}{c|}{C++}"),
+    ("C++", "\\multicolumn{1}{c}{C++}"),
     ("Java", "Java"),
-    ("TypeScript", "\\multicolumn{1}{c|}{TypeS.}"),
+    ("TypeScript", "\\multicolumn{1}{c}{TypeS.}"),
     ("C", "C"),
     ("C#", "C#"),
     ("PHP", "PHP"),

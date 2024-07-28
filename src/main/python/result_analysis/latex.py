@@ -12,13 +12,13 @@ def generate_metrics_result_table(
     languages = [lang[0] for lang in languages]
 
     with open(file, "w") as file:
-        fmt = "S[table-format=2.2]|" * (3 + len(languages))
+        fmt = "S[table-format=2.2]" * (3 + len(languages))
         # Begin the tabular environment
-        file.write("\\begin{tabular}{|l|c|" + fmt + "}\n")
-        file.write("\\hline\n")
+        file.write("\\begin{tabular}{lc" + fmt + "}\n")
+        file.write("\\toprule\n")
 
         # Write the multi-column header for languages
-        language_header = "\\multirow{2}{*}{Metric} & \\multirow{2}{*}{Patcher} & \\multicolumn{10}{c|}{Project Languages} & \\multicolumn{1}{c|}{\\multirow{2}{*}{$\\overline{x}$}} & \\multicolumn{1}{c|}{\\multirow{2}{*}{$\\pm\\%$}} & \\multicolumn{1}{c|}{\\multirow{2}{*}{p}}\\\\\n"
+        language_header = " & & \\multicolumn{10}{c}{Project Languages} &  & & \\\\\n"
         file.write(language_header)
         file.write("\\cline{3-" + str(len(languages) + 2) + "}\n")
 
@@ -27,11 +27,17 @@ def generate_metrics_result_table(
         for i in range(0, len(language_names)):
             if language_names[i] == "C#":
                 language_names[i] = "C\\#"
-        file.write(" & & " + " & ".join(language_names) + " & & & \\\\\n")
-        file.write("\\hline\n")
+        file.write(
+            "Metric & Patcher & "
+            + " & ".join(language_names)
+            + " & \\multicolumn{1}{c}{$\\overline{x}$} & \\multicolumn{1}{c}{$\\pm\\%$} & \\multicolumn{1}{c}{p} \\\\\n"
+        )
 
         # Write the multi-rows and their corresponding rows
+        file.write("\\toprule\n")
         for metric in Metric:
+            if metric != Metric.Precision:
+                file.write("\\midrule\n")
             file.write(
                 "\\multirow{"
                 + str(len(results_per_patcher))
@@ -81,18 +87,7 @@ def generate_metrics_result_table(
                         line += f" & {value:.2f}{postfix}"
 
                 (average, diff, p_value) = differences[patcher][metric]
-                if p_value < 0.01:
-                    color = "blue!25"
-                elif p_value < 0.02:
-                    color = "blue!20"
-                elif p_value < 0.03:
-                    color = "blue!15"
-                elif p_value < 0.04:
-                    color = "blue!10"
-                elif p_value < 0.05:
-                    color = "blue!05"
-                else:
-                    color = "white"
+                color = "white"
                 diff *= 100
                 if metric == Metric.Automation:
                     average *= 100
@@ -103,9 +98,9 @@ def generate_metrics_result_table(
                     line += f" & \\cellcolor{{{color}}}{diff:.2f}\\%"
                     line += f" & \\cellcolor{{{color}}}{p_value:.2f}"
                 file.write(line + " \\\\\n")
-            file.write("\\hline\n")
 
         # End the tabular environment
+        file.write("\\bottomrule\n")
         file.write("\\end{tabular}")
 
 
