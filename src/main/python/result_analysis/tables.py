@@ -326,3 +326,77 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
     print("apply is sole best: " + f"{(100 * apply_best / total):.2f}%")
     print("cherry-pick is sole best: " + f"{(100 * cp_best / total):.2f}%")
     print()
+
+
+def find_example(path_to_results, path_to_repo_list, only_non_trivial):
+    global languages
+    repos = load_repositories(path_to_repo_list)
+
+    results_per_patcher = {}  # type: Dict[Patcher, Dict[Repository, List[PatchResult]]]
+    for patcher in Patcher:  # Patcher is an enum
+        results = load_all_results(path_to_results, patcher)
+        # Filter trivial results
+        if only_non_trivial:
+            results = non_trivial_results(results)
+        # Group results by repo
+        results_per_patcher[patcher] = results_per_repo(results, repos)
+
+    results = results_per_patcher[Patcher.MPatch]
+    for repo in results.keys():
+        repo_results_mpatch = results[repo]
+        repo_results_upatch = results_per_patcher[Patcher.UnixPatch][repo]
+        repo_results_apply = results_per_patcher[Patcher.GitApply][repo]
+        repo_results_cherry = results_per_patcher[Patcher.GitCherry][repo]
+
+        sorted(repo_results_mpatch, key=lambda x: x.pick_id)
+        sorted(repo_results_upatch, key=lambda x: x.pick_id)
+        sorted(repo_results_apply, key=lambda x: x.pick_id)
+        sorted(repo_results_cherry, key=lambda x: x.pick_id)
+
+        repo_results_mpatch = {r.run_id: r for r in repo_results_mpatch}
+        repo_results_upatch = {r.run_id: r for r in repo_results_upatch}
+        repo_results_apply = {r.run_id: r for r in repo_results_apply}
+        repo_results_cherry = {r.run_id: r for r in repo_results_cherry}
+
+        for i in repo_results_mpatch.keys():
+            res_mpatch = repo_results_mpatch.get(i, None)  # type: Optional[PatchResult]
+            if res_mpatch is None:
+                continue
+
+            res_upatch = repo_results_upatch.get(i, None)  # type: Optional[PatchResult]
+            res_cherry = repo_results_cherry.get(i, None)  # type: Optional[PatchResult]
+
+            scenario_size = res_mpatch.num_changes_total
+
+            rm = res_mpatch.outcome_classification.edit_distance
+            rc = (
+                res_cherry.outcome_classification.num_incorrect()
+                if res_cherry is not None
+                else float("inf")
+            )
+
+            lang, user = res_mpatch.dataset.split("_")[:2]
+            repo = "_".join(res_mpatch.dataset.split("_")[2:])
+            if rm == 0:
+                scenario_fits = scenario_size < 50 and lang != "C" and lang != "PHP"
+                wrong_location = (
+                    res_upatch.outcome_classification.applied_wrong_location
+                    if res_upatch is not None
+                    else 0
+                )
+                missing = (
+                    res_upatch.outcome_classification.missing
+                    if res_upatch is not None
+                    else 0
+                )
+
+                patch_fits = wrong_location > 0 and missing > 0
+                cp_fits = rc > 0
+                if scenario_fits and patch_fits and cp_fits:
+                    print("Found possible example:")
+                    url = f"https://www.github.com/{user}/{repo}/commit/"
+                    print(res_mpatch.dataset)
+                    print(f"Cherry: {url}{res_mpatch.cherry_id}")
+                    print(f"Target: {url}{res_mpatch.pick_id}")
+                    print()
+    print()
