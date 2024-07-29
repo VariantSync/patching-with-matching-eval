@@ -126,7 +126,7 @@ class OutcomeClassification:
         return self.missing + self.applied_wrong_location + self.filtered_incorrectly
 
     def num_positive(self) -> int:
-        return self.applied_correctly + self.missing + self.mitigated_missing
+        return self.applied_correctly + self.missing + self.applied_wrong_location
 
     def num_correct(self) -> int:
         return self.tp() + self.tn()
