@@ -113,7 +113,7 @@ def edit_distance(results: List[PatchResult]) -> tuple[float, int]:
         return (-1.0, -1)
     edit_distances = []
     for result in results:
-        edit_distances.append(result.outcome_classification.num_incorrect())
+        edit_distances.append(result.outcome_classification.edit_distance)
 
     return (
         sum(edit_distances) / len(edit_distances),
@@ -174,7 +174,7 @@ def accumulate_data_per_patcher(
                 data_per_patch = None
                 for res in results:
                     oc = res.outcome_classification
-                    if oc.num_incorrect() + oc.num_correct() == 0:
+                    if oc.num_positive() == 0:
                         continue
                     tp += oc.tp()
                     fp += oc.fp()
@@ -184,6 +184,8 @@ def accumulate_data_per_patcher(
                         oc.fp(),
                         oc.fn(),
                     )
+                    # if np.isnan(p) or np.isnan(r):
+                    #    continue
                     num_incorrect = oc.num_incorrect()
                     if num_incorrect == 0:
                         a = 1

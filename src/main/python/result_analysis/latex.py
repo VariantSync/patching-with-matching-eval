@@ -12,16 +12,13 @@ def generate_metrics_result_table(
     languages = [lang[0] for lang in languages]
 
     with open(file, "w") as file:
+        fmt = "S[table-format=2.2]" * (4 + len(languages))
         # Begin the tabular environment
-        file.write("\\begin{tabular}{|l|l|" + "c|" * len(languages) + "c|c|c|}\n")
-        file.write("\\hline\n")
+        file.write("\\begin{tabular}{lc" + fmt + "}\n")
+        file.write("\\toprule\n")
 
         # Write the multi-column header for languages
-        language_header = (
-            "Metric & Patcher & \\multicolumn{"
-            + str(len(languages))
-            + "}{c|}{Project Languages} & mean & \\multirow{2}{*}{$\\stackrel{+}{\\scriptstyle{-}}\\%$} & \\multirow{2}{*}{p} \\\\\n"
-        )
+        language_header = " & & \\multicolumn{10}{c}{Project Languages} & & &\\\\\n"
         file.write(language_header)
         file.write("\\cline{3-" + str(len(languages) + 2) + "}\n")
 
@@ -30,11 +27,17 @@ def generate_metrics_result_table(
         for i in range(0, len(language_names)):
             if language_names[i] == "C#":
                 language_names[i] = "C\\#"
-        file.write(" & & " + " & ".join(language_names) + " & p. patch & & \\\\\n")
-        file.write("\\hline\n")
+        file.write(
+            "Metric & Patcher & "
+            + " & ".join(language_names)
+            + " & \\multicolumn{1}{c}{$\\overline{x}$} & \\multicolumn{1}{c}{$\\pm\\%$} & \\multicolumn{1}{c}{r} \\\\\n"
+        )
 
         # Write the multi-rows and their corresponding rows
+        file.write("\\toprule\n")
         for metric in Metric:
+            if metric != Metric.Precision:
+                file.write("\\midrule\n")
             file.write(
                 "\\multirow{"
                 + str(len(results_per_patcher))
@@ -42,13 +45,14 @@ def generate_metrics_result_table(
                 + metric.nice_name()
                 + "}\n"
             )
+            best_average = determine_best_average(differences, patcher_names, metric)
             for patcher in patcher_names:
                 line = " & " + patcher
                 for language in languages:
                     value = 0
                     best_type = ""
-                    results = results_per_patcher[patcher][language].accumulated
-                    value = np.mean(results.get(metric))
+                    results = results_per_patcher[patcher][language].per_patch
+                    value = np.nanmean(results.get(metric))
                     postfix = ""
                     if metric == Metric.Precision:
                         best_type = "max"
@@ -79,45 +83,44 @@ def generate_metrics_result_table(
                     #            ]
 
                     if value == max_value:
-                        line += f" & \\textbf{{{value:.2f}}}{postfix}"
+                        line += f" & \\bfseries {value:.2f}{postfix}"
                     else:
                         line += f" & {value:.2f}{postfix}"
 
-                (average, diff, p_value) = differences[patcher][metric]
-                if p_value < 0.01:
-                    color = "blue!50"
-                elif p_value < 0.02:
-                    color = "blue!40"
-                elif p_value < 0.03:
-                    color = "blue!30"
-                elif p_value < 0.04:
-                    color = "blue!20"
-                elif p_value < 0.05:
-                    color = "blue!10"
+                (average, diff, p_value, effect) = differences[patcher][metric]
+
+                if metric == Metric.Automation:
+                    average *= 100
+                    best_average *= 100
+
+                if average == best_average:
+                    average_text = f"\\bfseries {average:.2f}"
                 else:
-                    color = "white"
+                    average_text = f"{average:.2f}"
+
+                color = "white"
                 diff *= 100
-                if p_value == np.inf:
-                    line += f" & {average:.2f} & -- & --"
+                if np.isnan(p_value):
+                    line += f" & {average_text} &  & "
                 else:
-                    line += f" & \\cellcolor{{{color}}}{average:.2f}"
+                    line += f" & \\cellcolor{{{color}}}{average_text}"
                     line += f" & \\cellcolor{{{color}}}{diff:.2f}\\%"
-                    line += f" & \\cellcolor{{{color}}}{p_value:.2f}"
+                    line += f" & \\cellcolor{{{color}}}{effect:.2f}"
                 file.write(line + " \\\\\n")
-            file.write("\\hline\n")
 
         # End the tabular environment
+        file.write("\\bottomrule\n")
         file.write("\\end{tabular}")
 
 
 def determine_best(results_per_patcher, patcher_names, metric, best_type, language):
     values = []
     for patcher in patcher_names:
-        results = results_per_patcher[patcher][language].accumulated
+        results = results_per_patcher[patcher][language].per_patch
         if metric == Metric.Automation:
-            values.append(100 * np.mean(results.get(metric)))
+            values.append(100 * np.nanmean(results.get(metric)))
         else:
-            values.append(np.mean(results.get(metric)))
+            values.append(np.nanmean(results.get(metric)))
 
     if best_type == "max":
         return max(values)
@@ -125,84 +128,26 @@ def determine_best(results_per_patcher, patcher_names, metric, best_type, langua
         return min(values)
 
 
-def generate_power_estimate_table(
-    patcher_names, languages, results_per_patcher, corrected_alpha, file
-):
-    with open(file, "w") as file:
-        # Begin the tabular environment
-        file.write("\\begin{tabular}{|l|" + "r|" * len(languages) + "r|}\n")
-        file.write("\\hline\n")
+def determine_best_average(differences, patcher_names, metric):
+    values = []
+    for patcher in patcher_names:
+        results = differences[patcher][metric][0]
+        values.append(results)
 
-        # Write the multi-column header for languages
-        language_header = (
-            "Metric & \\multicolumn{"
-            + str(len(languages))
-            + "}{c|}{Project Languages} & Average Power\\\\\n"
-        )
-        file.write(language_header)
-        file.write("\\cline{2-" + str(len(languages) + 1) + "}\n")
+    if metric == Metric.Precision:
+        best_type = "max"
+    elif metric == Metric.Recall:
+        best_type = "max"
+    elif metric == Metric.Automation:
+        best_type = "max"
+    elif metric == Metric.EditDistance:
+        best_type = "min"
+    elif metric == Metric.Runtime:
+        best_type = "min"
+    else:
+        exit(-1)
 
-        # Write the language names
-        language_names = [language for language in languages]
-        for i in range(0, len(language_names)):
-            if language_names[i] == "C#":
-                language_names[i] = "C\\#"
-        file.write(" & " + " & ".join(language_names) + " & \\\\\n")
-        file.write("\\hline\n")
-
-        # Parameters for the power analysis
-        num_simulations = 1000
-        num_datasets = len(languages)
-        num_patchers = len(patcher_names)
-        our_patcher = Patcher.MPatch.nice_name()
-        # Write the multi-rows and their corresponding rows
-        for metric in Metric:
-            line = metric.nice_name()
-            n = 0
-            effect_sizes = []
-            deviations = []
-            for language in results_per_patcher[our_patcher]:
-                results_ours = results_per_patcher[our_patcher][language]
-                values_ours = results_ours.get(metric)
-                mean_ours = np.mean(values_ours)
-                n = len(values_ours)
-
-                e = []
-                d = [np.std(values_ours)]
-                for patcher in patcher_names:
-                    if patcher == our_patcher:
-                        continue
-
-                    results_other = results_per_patcher[patcher][language]
-                    values_other = results_other.get(metric)
-                    mean_other = np.mean(values_other)
-                    e.append(np.abs(mean_ours - mean_other))
-                    d.append(np.std(values_other))
-                effect_sizes.append(e)
-                deviations.append(d)
-
-            # Perform the power analysis using the corrected significance level
-            deviations = np.array(deviations)
-            effect_sizes = np.array(effect_sizes)
-            print("\nStarting power estimation for " + str(metric))
-            estimated_power = power_analysis_simulation(
-                num_simulations,
-                num_datasets,
-                num_patchers,
-                n,
-                effect_sizes,
-                deviations,
-                corrected_alpha,
-                distribution="normal",
-            )
-            for language, power in zip(languages, estimated_power):
-                line += " & " + str(100 * np.min(power))
-            average_power = 100 * np.mean(estimated_power)
-            line += " & " + str(average_power)
-
-            file.write(line + " \\\\\n")
-        file.write("\\hline\n")
-
-        # End the tabular environment
-        file.write("\\end{tabular}")
-        print("Saved power table")
+    if best_type == "max":
+        return np.nanmax(values)
+    elif best_type == "min":
+        return np.nanmin(values)

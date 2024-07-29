@@ -12,7 +12,6 @@ from result_analysis.eval_setup import Repository
 from result_analysis.io import load_repositories
 from result_analysis.io import load_all_results
 from result_analysis.latex import generate_metrics_result_table
-from result_analysis.latex import generate_power_estimate_table
 from result_analysis.result_handling import (
     edit_distance_percentiles,
     non_trivial_results,
@@ -29,11 +28,11 @@ from scipy.stats import wilcoxon
 
 languages = [
     ("Python", "Python"),
-    ("JavaScript", "JavaScr."),
+    ("JavaScript", "\\multicolumn{1}{c}{JavaS.}"),
     ("Go", "Go"),
-    ("C++", "C++"),
+    ("C++", "\\multicolumn{1}{c}{C++}"),
     ("Java", "Java"),
-    ("TypeScript", "TypeScr."),
+    ("TypeScript", "\\multicolumn{1}{c}{TypeS.}"),
     ("C", "C"),
     ("C#", "C#"),
     ("PHP", "PHP"),
@@ -90,6 +89,7 @@ def relative_difference(base_patcher: Patcher, results):
     averages = []
     differences = []
     p_values = []
+    effects = []
     for other_patcher in Patcher:
         other_patcher = other_patcher.nice_name()
         for metric in Metric:
@@ -104,14 +104,15 @@ def relative_difference(base_patcher: Patcher, results):
                 )
             base_values = np.array(base_values)
             other_values = np.array(other_values)
-            b = np.mean(base_values)
-            o = np.mean(other_values)
+            b = np.nanmean(base_values)
+            o = np.nanmean(other_values)
 
             if other_patcher == base:
                 differences_per_patcher[other_patcher][metric] = (
                     b,
                     0.0,
-                    np.inf,
+                    np.nan,
+                    np.nan,
                 )
                 continue
 
@@ -120,9 +121,9 @@ def relative_difference(base_patcher: Patcher, results):
             other_values = other_values[:min_length]
 
             # _, p = wilcoxon(base_values, other_values)
-            p = sign_test(base_values, other_values)
-            average_difference = np.mean(other_values - base_values)
-            average_difference /= np.mean(base_values)
+            p, d = wilcoxon_effect_size(base_values, other_values)
+            average_difference = np.nanmean(other_values - base_values)
+            average_difference /= np.nanmean(base_values)
             print(f"{metric}-{other_patcher}-base: {b}")
             print(f"{metric}-{other_patcher}-other: {o}")
             print(f"average diff: {average_difference}")
@@ -130,6 +131,7 @@ def relative_difference(base_patcher: Patcher, results):
             differences.append(average_difference)
             p_values.append(p)
             averages.append(o)
+            effects.append(d)
 
     _, corrected_p_values, _, _ = multipletests(
         p_values, alpha=0.05, method="bonferroni"
@@ -145,6 +147,7 @@ def relative_difference(base_patcher: Patcher, results):
                 averages[i],
                 differences[i],
                 corrected_p_values[i],
+                effects[i],
             )
             i += 1
 
@@ -152,18 +155,43 @@ def relative_difference(base_patcher: Patcher, results):
 
 
 def sign_test(data1, data2):
-    # The sign test can be approximated by a binomial test
     from scipy.stats import binomtest
 
-    differences = [y - x for x, y in zip(data1, data2)]
+    filtered_data = [
+        (x, y) for x, y in zip(data1, data2) if not (np.isnan(x) or np.isnan(y))
+    ]
+    differences = [y - x for x, y in filtered_data]
     num_positive = sum(diff > 0 for diff in differences)
     num_negative = sum(diff < 0 for diff in differences)
-
     n = num_positive + num_negative
     k = min(num_positive, num_negative)
 
-    p_value = binomtest(k, n, p=0.5, alternative="two-sided").pvalue
-    return p_value
+    binom_result = binomtest(k, n, p=0.5, alternative="two-sided")
+    p_value = binom_result.pvalue
+
+    # test statistic (Z) for the effect size
+    Z = (abs(k - n) - 1) / np.sqrt(n * 0.5 * 0.5)
+    # effect size (r)
+    r = Z / np.sqrt(n)
+    return p_value, r
+
+
+def wilcoxon_effect_size(data1, data2):
+    filtered_data = [
+        (x, y) for x, y in zip(data1, data2) if not (np.isnan(x) or np.isnan(y))
+    ]
+    data1, data2 = zip(*filtered_data)
+
+    stat, p_value = wilcoxon(data1, data2)
+
+    N = np.sum(np.array(data1) != np.array(data2))
+    expected_rank_sum = N * (N + 1) / 4
+    if np.mean(data2) > np.mean(data1):
+        rank_biserial_r = (stat - expected_rank_sum) / expected_rank_sum
+    else:
+        rank_biserial_r = (expected_rank_sum - stat) / expected_rank_sum
+
+    return p_value, rank_biserial_r
 
 
 def significance(results):
@@ -288,7 +316,7 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
             lang, user = res_mpatch.dataset.split("_")[:2]
             repo = "_".join(res_mpatch.dataset.split("_")[2:])
             if rm < rm_min:
-                scenario_fits = scenario_size < 20 and lang != "C" and lang != "PHP"
+                scenario_fits = scenario_size < 50 and lang != "C" and lang != "PHP"
                 wrong_location = (
                     res_upatch.outcome_classification.applied_wrong_location
                     if res_upatch is not None
@@ -325,4 +353,78 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
     print("patch is sole best: " + f"{(100 * patch_best / total):.2f}%")
     print("apply is sole best: " + f"{(100 * apply_best / total):.2f}%")
     print("cherry-pick is sole best: " + f"{(100 * cp_best / total):.2f}%")
+    print()
+
+
+def find_example(path_to_results, path_to_repo_list, only_non_trivial):
+    global languages
+    repos = load_repositories(path_to_repo_list)
+
+    results_per_patcher = {}  # type: Dict[Patcher, Dict[Repository, List[PatchResult]]]
+    for patcher in Patcher:  # Patcher is an enum
+        results = load_all_results(path_to_results, patcher)
+        # Filter trivial results
+        if only_non_trivial:
+            results = non_trivial_results(results)
+        # Group results by repo
+        results_per_patcher[patcher] = results_per_repo(results, repos)
+
+    results = results_per_patcher[Patcher.MPatch]
+    for repo in results.keys():
+        repo_results_mpatch = results[repo]
+        repo_results_upatch = results_per_patcher[Patcher.UnixPatch][repo]
+        repo_results_apply = results_per_patcher[Patcher.GitApply][repo]
+        repo_results_cherry = results_per_patcher[Patcher.GitCherry][repo]
+
+        sorted(repo_results_mpatch, key=lambda x: x.pick_id)
+        sorted(repo_results_upatch, key=lambda x: x.pick_id)
+        sorted(repo_results_apply, key=lambda x: x.pick_id)
+        sorted(repo_results_cherry, key=lambda x: x.pick_id)
+
+        repo_results_mpatch = {r.run_id: r for r in repo_results_mpatch}
+        repo_results_upatch = {r.run_id: r for r in repo_results_upatch}
+        repo_results_apply = {r.run_id: r for r in repo_results_apply}
+        repo_results_cherry = {r.run_id: r for r in repo_results_cherry}
+
+        for i in repo_results_mpatch.keys():
+            res_mpatch = repo_results_mpatch.get(i, None)  # type: Optional[PatchResult]
+            if res_mpatch is None:
+                continue
+
+            res_upatch = repo_results_upatch.get(i, None)  # type: Optional[PatchResult]
+            res_cherry = repo_results_cherry.get(i, None)  # type: Optional[PatchResult]
+
+            scenario_size = res_mpatch.num_changes_total
+
+            rm = res_mpatch.outcome_classification.edit_distance
+            rc = (
+                res_cherry.outcome_classification.num_incorrect()
+                if res_cherry is not None
+                else float("inf")
+            )
+
+            lang, user = res_mpatch.dataset.split("_")[:2]
+            repo = "_".join(res_mpatch.dataset.split("_")[2:])
+            if rm == 0:
+                scenario_fits = scenario_size < 50 and lang != "C" and lang != "PHP"
+                wrong_location = (
+                    res_upatch.outcome_classification.applied_wrong_location
+                    if res_upatch is not None
+                    else 0
+                )
+                missing = (
+                    res_upatch.outcome_classification.missing
+                    if res_upatch is not None
+                    else 0
+                )
+
+                patch_fits = wrong_location > 0 and missing > 0
+                cp_fits = rc > 0
+                if scenario_fits and patch_fits and cp_fits:
+                    print("Found possible example:")
+                    url = f"https://www.github.com/{user}/{repo}/commit/"
+                    print(res_mpatch.dataset)
+                    print(f"Cherry: {url}{res_mpatch.cherry_id}")
+                    print(f"Target: {url}{res_mpatch.pick_id}")
+                    print()
     print()

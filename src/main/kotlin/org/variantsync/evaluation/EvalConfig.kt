@@ -6,6 +6,7 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder
 import org.apache.commons.configuration2.builder.fluent.Parameters
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler
 import org.apache.commons.configuration2.ex.ConfigurationException
+import org.variantsync.evaluation.cherries.CherryType
 import java.io.File
 import java.nio.file.Path
 
@@ -195,6 +196,10 @@ class EvalConfig(propertiesFile: File) {
         return config!!.getLong(SAMPLING_SEED, 42)
     }
 
+    fun EXPERIMENT_CHERRY_TYPE(): CherryType {
+        return config!!.getEnum(EXPERIMENT_CHERRY_TYPE, CherryType::class.java)
+    }
+
     companion object {
         // The first id of repetitions for each commit and source target combination
         private const val EXPERIMENT_REPEATS_START = "experiment.repeats.start"
@@ -216,6 +221,8 @@ class EvalConfig(propertiesFile: File) {
 
         // The file containing the list of datasets
         private const val EXPERIMENT_DATASETS = "experiment.datasets"
+
+        private const val EXPERIMENT_CHERRY_TYPE = "experiment.cherry-type"
 
         // Enable saving of certain files (e.g., feature list, presence conditions, configurations) for
         // additional debugging

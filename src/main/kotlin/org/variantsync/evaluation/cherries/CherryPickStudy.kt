@@ -175,7 +175,7 @@ fun main(args: Array<String>) {
 
     cloneDatasets(allSamples, config)
 
-    val n = max(Runtime.getRuntime().availableProcessors(), 1)
+    val n = 10
     Logger.info("Processing $n repos in parallel")
     val threadPool = Executors.newFixedThreadPool(n)
 
@@ -378,7 +378,7 @@ class YamlFileVisitor : SimpleFileVisitor<Path>() {
 fun loadPRDatasets(config: EvalConfig): Map<String, MutableList<CherryDataset>> {
     val datasetsPerLanguage = HashMap<String, MutableList<CherryDataset>>()
     for (yamlFile in getYamlFiles(config.EXPERIMENT_DATASETS())) {
-        val dataset = loadDataset(yamlFile)
+        val dataset = loadDataset(yamlFile, config.EXPERIMENT_CHERRY_TYPE())
         if (dataset.isPresent) {
             val datasetSize = dataset.get().cherryPicks.size
             if (datasetSize < config.EXPERIMENT_DATASET_MIN_SIZE() || datasetSize > config.EXPERIMENT_DATASET_MAX_SIZE()) {
@@ -411,7 +411,13 @@ fun getYamlFiles(directoryPath: Path): List<Path> {
     return yamlFileVisitor.yamlFiles
 }
 
-fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
+enum class CherryType {
+    Trivial,
+    Complex,
+    Both,
+}
+
+fun loadDataset(pathToYaml: Path, cherryType: CherryType): Optional<CherryDataset> {
     val parseException = IllegalArgumentException("the yaml file under $pathToYaml cannot be parsed into a pr dataset")
 
     val loaderOptions = LoaderOptions()
@@ -450,7 +456,9 @@ fun loadDataset(pathToYaml: Path): Optional<CherryDataset> {
         }
         val isTrivial = cp["is_trivial"] as? Boolean ?: true
 
-        if (isTrivial) {
+        if (cherryType == CherryType.Trivial && !isTrivial) {
+            continue
+        } else if (cherryType == CherryType.Complex && isTrivial) {
             continue
         }
 
