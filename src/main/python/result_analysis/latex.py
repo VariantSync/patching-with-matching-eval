@@ -12,13 +12,13 @@ def generate_metrics_result_table(
     languages = [lang[0] for lang in languages]
 
     with open(file, "w") as file:
-        fmt = "S[table-format=2.2]" * (3 + len(languages))
+        fmt = "S[table-format=2.2]" * (4 + len(languages))
         # Begin the tabular environment
         file.write("\\begin{tabular}{lc" + fmt + "}\n")
         file.write("\\toprule\n")
 
         # Write the multi-column header for languages
-        language_header = " & & \\multicolumn{10}{c}{Project Languages} &  & & \\\\\n"
+        language_header = " & & \\multicolumn{10}{c}{Project Languages} & & &\\\\\n"
         file.write(language_header)
         file.write("\\cline{3-" + str(len(languages) + 2) + "}\n")
 
@@ -30,7 +30,7 @@ def generate_metrics_result_table(
         file.write(
             "Metric & Patcher & "
             + " & ".join(language_names)
-            + " & \\multicolumn{1}{c}{$\\overline{x}$} & \\multicolumn{1}{c}{$\\pm\\%$} & \\multicolumn{1}{c}{p} \\\\\n"
+            + " & \\multicolumn{1}{c}{$\\overline{x}$} & \\multicolumn{1}{c}{$\\pm\\%$} & \\multicolumn{1}{c}{r} \\\\\n"
         )
 
         # Write the multi-rows and their corresponding rows
@@ -45,9 +45,7 @@ def generate_metrics_result_table(
                 + metric.nice_name()
                 + "}\n"
             )
-            best_average = determine_best_average(
-                differences, patcher_names, metric
-            )
+            best_average = determine_best_average(differences, patcher_names, metric)
             for patcher in patcher_names:
                 line = " & " + patcher
                 for language in languages:
@@ -89,7 +87,7 @@ def generate_metrics_result_table(
                     else:
                         line += f" & {value:.2f}{postfix}"
 
-                (average, diff, p_value) = differences[patcher][metric]
+                (average, diff, p_value, effect) = differences[patcher][metric]
 
                 if metric == Metric.Automation:
                     average *= 100
@@ -107,7 +105,7 @@ def generate_metrics_result_table(
                 else:
                     line += f" & \\cellcolor{{{color}}}{average_text}"
                     line += f" & \\cellcolor{{{color}}}{diff:.2f}\\%"
-                    line += f" & \\cellcolor{{{color}}}{p_value:.2f}"
+                    line += f" & \\cellcolor{{{color}}}{effect:.2f}"
                 file.write(line + " \\\\\n")
 
         # End the tabular environment

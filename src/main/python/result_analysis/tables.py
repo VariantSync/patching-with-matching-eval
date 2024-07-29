@@ -89,6 +89,7 @@ def relative_difference(base_patcher: Patcher, results):
     averages = []
     differences = []
     p_values = []
+    effects = []
     for other_patcher in Patcher:
         other_patcher = other_patcher.nice_name()
         for metric in Metric:
@@ -111,6 +112,7 @@ def relative_difference(base_patcher: Patcher, results):
                     b,
                     0.0,
                     np.nan,
+                    np.nan,
                 )
                 continue
 
@@ -119,7 +121,7 @@ def relative_difference(base_patcher: Patcher, results):
             other_values = other_values[:min_length]
 
             # _, p = wilcoxon(base_values, other_values)
-            p = sign_test(base_values, other_values)
+            p, d = wilcoxon_effect_size(base_values, other_values)
             average_difference = np.nanmean(other_values - base_values)
             average_difference /= np.nanmean(base_values)
             print(f"{metric}-{other_patcher}-base: {b}")
@@ -129,6 +131,7 @@ def relative_difference(base_patcher: Patcher, results):
             differences.append(average_difference)
             p_values.append(p)
             averages.append(o)
+            effects.append(d)
 
     _, corrected_p_values, _, _ = multipletests(
         p_values, alpha=0.05, method="bonferroni"
@@ -144,6 +147,7 @@ def relative_difference(base_patcher: Patcher, results):
                 averages[i],
                 differences[i],
                 corrected_p_values[i],
+                effects[i],
             )
             i += 1
 
@@ -153,20 +157,41 @@ def relative_difference(base_patcher: Patcher, results):
 def sign_test(data1, data2):
     from scipy.stats import binomtest
 
-    # Filter out pairs where either value is nan
     filtered_data = [
         (x, y) for x, y in zip(data1, data2) if not (np.isnan(x) or np.isnan(y))
     ]
-
     differences = [y - x for x, y in filtered_data]
     num_positive = sum(diff > 0 for diff in differences)
     num_negative = sum(diff < 0 for diff in differences)
-
     n = num_positive + num_negative
     k = min(num_positive, num_negative)
 
-    p_value = binomtest(k, n, p=0.5, alternative="two-sided").pvalue
-    return p_value
+    binom_result = binomtest(k, n, p=0.5, alternative="two-sided")
+    p_value = binom_result.pvalue
+
+    # test statistic (Z) for the effect size
+    Z = (abs(k - n) - 1) / np.sqrt(n * 0.5 * 0.5)
+    # effect size (r)
+    r = Z / np.sqrt(n)
+    return p_value, r
+
+
+def wilcoxon_effect_size(data1, data2):
+    filtered_data = [
+        (x, y) for x, y in zip(data1, data2) if not (np.isnan(x) or np.isnan(y))
+    ]
+    data1, data2 = zip(*filtered_data)
+
+    stat, p_value = wilcoxon(data1, data2)
+
+    N = np.sum(np.array(data1) != np.array(data2))
+    expected_rank_sum = N * (N + 1) / 4
+    if np.mean(data2) > np.mean(data1):
+        rank_biserial_r = (stat - expected_rank_sum) / expected_rank_sum
+    else:
+        rank_biserial_r = (expected_rank_sum - stat) / expected_rank_sum
+
+    return p_value, rank_biserial_r
 
 
 def significance(results):
