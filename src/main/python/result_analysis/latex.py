@@ -45,6 +45,9 @@ def generate_metrics_result_table(
                 + metric.nice_name()
                 + "}\n"
             )
+            best_average = determine_best_average(
+                differences, patcher_names, metric
+            )
             for patcher in patcher_names:
                 line = " & " + patcher
                 for language in languages:
@@ -87,14 +90,22 @@ def generate_metrics_result_table(
                         line += f" & {value:.2f}{postfix}"
 
                 (average, diff, p_value) = differences[patcher][metric]
-                color = "white"
-                diff *= 100
+
                 if metric == Metric.Automation:
                     average *= 100
-                if p_value == np.inf:
-                    line += f" & {average:.2f} &  & "
+                    best_average *= 100
+
+                if average == best_average:
+                    average_text = f"\\bfseries {average:.2f}"
                 else:
-                    line += f" & \\cellcolor{{{color}}}{average:.2f}"
+                    average_text = f"{average:.2f}"
+
+                color = "white"
+                diff *= 100
+                if np.isnan(p_value):
+                    line += f" & {average_text} &  & "
+                else:
+                    line += f" & \\cellcolor{{{color}}}{average_text}"
                     line += f" & \\cellcolor{{{color}}}{diff:.2f}\\%"
                     line += f" & \\cellcolor{{{color}}}{p_value:.2f}"
                 file.write(line + " \\\\\n")
@@ -117,3 +128,28 @@ def determine_best(results_per_patcher, patcher_names, metric, best_type, langua
         return max(values)
     elif best_type == "min":
         return min(values)
+
+
+def determine_best_average(differences, patcher_names, metric):
+    values = []
+    for patcher in patcher_names:
+        results = differences[patcher][metric][0]
+        values.append(results)
+
+    if metric == Metric.Precision:
+        best_type = "max"
+    elif metric == Metric.Recall:
+        best_type = "max"
+    elif metric == Metric.Automation:
+        best_type = "max"
+    elif metric == Metric.EditDistance:
+        best_type = "min"
+    elif metric == Metric.Runtime:
+        best_type = "min"
+    else:
+        exit(-1)
+
+    if best_type == "max":
+        return np.nanmax(values)
+    elif best_type == "min":
+        return np.nanmin(values)

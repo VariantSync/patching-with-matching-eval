@@ -113,7 +113,7 @@ def edit_distance(results: List[PatchResult]) -> tuple[float, int]:
         return (-1.0, -1)
     edit_distances = []
     for result in results:
-        edit_distances.append(result.outcome_classification.num_incorrect())
+        edit_distances.append(result.outcome_classification.edit_distance)
 
     return (
         sum(edit_distances) / len(edit_distances),

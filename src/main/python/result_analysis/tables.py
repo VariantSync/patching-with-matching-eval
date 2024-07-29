@@ -110,7 +110,7 @@ def relative_difference(base_patcher: Patcher, results):
                 differences_per_patcher[other_patcher][metric] = (
                     b,
                     0.0,
-                    np.inf,
+                    np.nan,
                 )
                 continue
 
