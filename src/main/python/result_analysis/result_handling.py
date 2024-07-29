@@ -184,8 +184,8 @@ def accumulate_data_per_patcher(
                         oc.fp(),
                         oc.fn(),
                     )
-                    if p < 0 or r < 0:
-                        continue
+                    # if np.isnan(p) or np.isnan(r):
+                    #    continue
                     num_incorrect = oc.num_incorrect()
                     if num_incorrect == 0:
                         a = 1

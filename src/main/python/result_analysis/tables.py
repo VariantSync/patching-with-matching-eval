@@ -12,7 +12,6 @@ from result_analysis.eval_setup import Repository
 from result_analysis.io import load_repositories
 from result_analysis.io import load_all_results
 from result_analysis.latex import generate_metrics_result_table
-from result_analysis.latex import generate_power_estimate_table
 from result_analysis.result_handling import (
     edit_distance_percentiles,
     non_trivial_results,
@@ -104,8 +103,8 @@ def relative_difference(base_patcher: Patcher, results):
                 )
             base_values = np.array(base_values)
             other_values = np.array(other_values)
-            b = np.mean(base_values)
-            o = np.mean(other_values)
+            b = np.nanmean(base_values)
+            o = np.nanmean(other_values)
 
             if other_patcher == base:
                 differences_per_patcher[other_patcher][metric] = (
@@ -121,8 +120,8 @@ def relative_difference(base_patcher: Patcher, results):
 
             # _, p = wilcoxon(base_values, other_values)
             p = sign_test(base_values, other_values)
-            average_difference = np.mean(other_values - base_values)
-            average_difference /= np.mean(base_values)
+            average_difference = np.nanmean(other_values - base_values)
+            average_difference /= np.nanmean(base_values)
             print(f"{metric}-{other_patcher}-base: {b}")
             print(f"{metric}-{other_patcher}-other: {o}")
             print(f"average diff: {average_difference}")
@@ -152,10 +151,14 @@ def relative_difference(base_patcher: Patcher, results):
 
 
 def sign_test(data1, data2):
-    # The sign test can be approximated by a binomial test
     from scipy.stats import binomtest
 
-    differences = [y - x for x, y in zip(data1, data2)]
+    # Filter out pairs where either value is nan
+    filtered_data = [
+        (x, y) for x, y in zip(data1, data2) if not (np.isnan(x) or np.isnan(y))
+    ]
+
+    differences = [y - x for x, y in filtered_data]
     num_positive = sum(diff > 0 for diff in differences)
     num_negative = sum(diff < 0 for diff in differences)
 
