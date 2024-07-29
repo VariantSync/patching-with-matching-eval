@@ -174,7 +174,7 @@ def accumulate_data_per_patcher(
                 data_per_patch = None
                 for res in results:
                     oc = res.outcome_classification
-                    if oc.num_incorrect() + oc.num_correct() == 0:
+                    if oc.num_positive() == 0:
                         continue
                     tp += oc.tp()
                     fp += oc.fp()
