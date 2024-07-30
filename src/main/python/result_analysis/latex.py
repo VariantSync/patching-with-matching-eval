@@ -30,7 +30,7 @@ def generate_metrics_result_table(
         file.write(
             "Metric & Patcher & "
             + " & ".join(language_names)
-            + " & \\multicolumn{1}{c}{$\\overline{x}$} & \\multicolumn{1}{c}{$\\pm\\%$} & \\multicolumn{1}{c}{r} \\\\\n"
+            + " & \\multicolumn{1}{c}{$\\overline{x}$} & \\multicolumn{1}{c}{$\\pm\\%$} & \\multicolumn{1}{c}{$|r_{RB}|$} \\\\\n"
         )
 
         # Write the multi-rows and their corresponding rows
@@ -88,6 +88,7 @@ def generate_metrics_result_table(
                         line += f" & {value:.2f}{postfix}"
 
                 (average, diff, p_value, effect) = differences[patcher][metric]
+                effect = np.abs(effect)
 
                 if metric == Metric.Automation:
                     average *= 100
