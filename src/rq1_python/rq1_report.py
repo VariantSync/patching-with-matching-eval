@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.font_manager as font_manager
 from scipy.stats import spearmanr
 import math
+import json
 
 try:
     from yaml import CLoader as Loader
@@ -22,6 +23,9 @@ yaml_folder = "../../simulation-files/data/cherries/"
 repo_sample_yaml = "../../simulation-files/data/repo-sample.yaml"
 language_count = 10
 sample_per_language = 500
+
+min_denominator = 5     #projects with: "every many-th commit is a cherrypick or more" are noteworthy
+min_ratio = 1/min_denominator
 
 green, blue, orange = '#2ca02c', '#1f77b4', '#ff7f0e'
 colors = [green, blue, orange]
@@ -47,7 +51,7 @@ c_projects_with_cherries = "projects_with_cherries"
 #directly from AlexS, no automatism, yet
 sampled_cherry_list = [9227,1405,11215,5522,8375,698,2533,5840,1979,3530]
 
-table_names = {c_projects_with_cherries:"{\makecell{projects \\\\ with \\\\ cherry \\\\ picks}}", c_language:"{language}", c_sampled_projects_per_language:"{projects}", c_cherries:"{\makecell{cherry \\\\ picks}}", c_cherry_ratio:"{\makecell{cherry \\\\ pick \%}}", c_trivial_cherries:"{\makecell{complex \\\\ cherry \\\\ pick \%}}", c_sampled_cherries:'{\makecell{sampled \\\\ cherry \\\\ picks}}'}
+table_names = {c_repo_name:"repository", "rq_git_cherry":"{\mymakecell{required \\\\ fixes \\\\ \\gitcherrypickshort}}", "rq_pwm_f2":"{\mymakecell{required \\\\ fixes \\\\ \\approach}}", "ap_git_cherry":"{\mymakecell{fully \\\\ automatable \\\\ \\gitcherrypickshort{} \%}}", "ap_pwm_f2":"{\mymakecell{fully \\\\ automatable \\\\ \\approach{} \%}}", c_projects_with_cherries:"{\mymakecell{projects \\\\ with \\\\ cherry \\\\ picks}}", c_language:"{\mymakecell[l]{main \\\\ repository \\\\ language}}", c_sampled_projects_per_language:"{\mymakecell[l]{sampled \\\\ projects}}", c_cherries:"{\mymakecell{cherry \\\\ picks}}", c_cherry_ratio:"{\mymakecell{cherry \\\\ pick \%}}", c_trivial_cherries:"{\mymakecell{complex \\\\ cherry \\\\ pick \%}}", c_sampled_cherries:'{\mymakecell{sampled \\\\ cherry \\\\ picks}}'}
 
 c_total = "total"
 table_pos = "!tb"
@@ -70,7 +74,7 @@ def add_total_row(df):
 
 # useful for DataFrames
 # possibly adds a bottom total row, with its own \midrule
-def to_latex(df, float_format=None, label="tab:???", caption="???", position=table_pos, index=True, add_total=False, add_mean=False, two_column=False, column_format=None, csv_name=""):
+def to_latex(df, float_format=None, label="tab:???", caption="???", position=table_pos, index=True, add_total=False, add_mean=False, two_column=False, column_format=None, csv_name="", addmr=False):
     if not csv_name:
         csv_name = label.split(":")[-1] + ".csv"
     else:
@@ -80,7 +84,8 @@ def to_latex(df, float_format=None, label="tab:???", caption="???", position=tab
 
     latex_str = df.to_latex(label=label, caption=caption, index=False, position=position, column_format=column_format, escape = False)  # .replace('NaN', '')
 
-    latex_str = add_midrule(latex_str)
+    if addmr:
+        latex_str = add_midrule(latex_str)
     if two_column:
         latex_str = latex_str.replace('\\begin{table}', '\\begin{table*}')
         latex_str = latex_str.replace('\\end{table}', '\\end{table*}')
@@ -88,6 +93,7 @@ def to_latex(df, float_format=None, label="tab:???", caption="???", position=tab
     print(latex_str)
     with open(file_name, "w+") as f:
         f.write(latex_str)
+    return latex_str
 
 
 
@@ -173,10 +179,10 @@ def df_to_latex(pr_df):
     df[c_sampled_projects_per_language] = sample_per_language
     df[c_projects_with_cherries] = pr_df[pr_df[c_cherries] > 0].groupby(c_language)[c_cherries].count().values
 
-    c_pick_list = [c_language, c_sampled_projects_per_language, c_projects_with_cherries, c_cherries, c_cherry_ratio, c_trivial_cherries, c_sampled_cherries]
+    c_pick_list = [c_language, c_sampled_projects_per_language, c_projects_with_cherries, c_cherries, c_cherry_ratio, c_trivial_cherries]
     df = df[c_pick_list]
 
-    
+
 
     df.loc[c_total] = [c_total] + [df[p].sum() for p in c_pick_list if pd.api.types.is_numeric_dtype(df[p])]
     df.loc[c_total, c_cherry_ratio] = pr_df[c_cherries].sum() / pr_df[c_commits].sum() * 100
@@ -186,7 +192,7 @@ def df_to_latex(pr_df):
     df = df.rename(columns=table_names)
 
 
-    to_latex(df, label="tab:overall", caption="Overview of our collection of GitHub projects.", position=table_pos, column_format=get_siunit_column_format(df))
+    to_latex(df, label="tab:overall", caption="Overview of our collection of GitHub projects.", position=table_pos, column_format=get_siunit_column_format(df), addmr=True)
     pass
 
 def report_projects(pr_df):
@@ -210,8 +216,6 @@ def report_projects(pr_df):
     column_report(lang, c_cherry_ratio, c_cherry_ratio, pr_df)
 
     if len(pr_df[c_language].unique()) > 1:
-        min_denominator = 5
-        min_ratio = 1/min_denominator
         extreme_projects = pr_df[pr_df[c_cherry_ratio] > min_ratio].sort_values(by=c_cherry_ratio)
         print(f"Most extreme projects, with more than 1 in {min_denominator} (>{min_ratio}) commits being a cherry-pick:")
         print(extreme_projects)
@@ -221,7 +225,7 @@ def report_projects(pr_df):
     langs = list(df[c_language].unique())
     print(f"Project# distribution by language: {[(l, len(df[df[c_language] == l])) for l in langs]}")
     print(f"Report end for {lang}.")
-    pass
+    return pr_df
 
 def setup_plt():
     path_font = "C:\\Users\\lanpi\\AppData\\Local\\Microsoft\\Windows\\Fonts\\cmunrm.ttf"
@@ -255,12 +259,77 @@ def correlate(df):
 
     plt.show()
 
+def impact_file(file):
+    rq = 0                                                               #total required fixes of file
+    ap = 0                                                               #patches that were automatically executable
+    seen = 0                                                             #seen patches (not skipped)
+    with open(file, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+        for l in lines:
+            if l == "\n":                                                #skip if empty line
+                continue
+            di = json.loads(l)
+            nR = di["normalResult"]
+            if nR["missing"] + nR["applied"] + nR["wrongLocation"] == 0:       #skip if nothing should have been done
+                continue
+            seen += 1
+            rq += nR["wrongLocation"]*2 + nR["missing"] + nR["invalid"]    #required fixes + FP + FN
+            if nR["wrongLocation"] + nR["missing"] + nR["invalid"] == 0: #nothing went wrong?, then it is automatically executable
+                ap += 1
+    return rq, ap/seen, seen
+
+def impact_analysis(pr_df):
+    approaches = ["git_cherry", "pwm_f2"]
+    prefix = 'C:\\work\\patching-with-matching-eval\\simulation-files\\results\\cherries\\rep-1\\'
+
+    df = pr_df.sort_values(by=c_cherry_ratio)[-5:].append(pr_df.sort_values(by=c_cherries)[-5:])
+
+    langs = list(df[c_language])
+    projects = list(df[c_repo_name])
+    pnames0 = [p.split("/")[0] for p in projects]
+    pnames1 = [p.split("/")[1] for p in projects]
+
+    idf = pd.DataFrame(columns=[c_repo_name] + ["rq_" + app for app in approaches] + ["ap_" + app for app in approaches])
+
+    for i in range(len(pnames0)):
+        idf.loc[len(idf)] = [projects[i]] + [np.nan]*len(approaches)*2
+        for approach in approaches:
+            file = prefix + f"{langs[i]}_{pnames0[i]}_{pnames1[i]}.yaml_{approach}.results"
+            rq, ap, seen = impact_file(file)
+            idf.loc[len(idf)-1, "rq_"+approach] = rq / seen
+            idf.loc[len(idf)-1, "ap_" + approach] = ap*100
+            #idf.loc[len(idf)-1, "seen"] = seen
+
+    idf.insert(1, c_language, np.nan)
+    idf.insert(2, c_cherry_ratio, np.nan)
+    idf.insert(3, c_cherries, np.nan)
+    idf.insert(4, c_trivial_cherries, np.nan)
+
+    for index, row in idf.iterrows():
+        idf.loc[index, c_language] = pr_df[pr_df[c_repo_name] == row[c_repo_name]][c_language].values[0]
+        idf.loc[index, c_cherries] = pr_df[pr_df[c_repo_name] == row[c_repo_name]][c_cherries].values[0]
+        idf.loc[index, c_cherry_ratio] = pr_df[pr_df[c_repo_name] == row[c_repo_name]][c_cherries].values[0] / pr_df[pr_df[c_repo_name] == row[c_repo_name]][c_commits].values[0]
+        idf.loc[index, c_trivial_cherries] = pr_df[pr_df[c_repo_name] == row[c_repo_name]][c_cherries].values[0] - pr_df[pr_df[c_repo_name] == row[c_repo_name]][c_trivial_cherries].values[0]
+    idf[c_cherries] = idf[c_cherries].astype(int, errors='ignore')
+    idf[c_trivial_cherries] = idf[c_trivial_cherries].astype(int, errors='ignore')
+    idf = idf.rename(columns={c_language:"{\mymakecell{main \\\\ language}}"})
+    idf = idf.rename(columns={c_trivial_cherries:"{\mymakecell{complex \\\\ cherry \\\\ picks}}"})
+    idf = idf.rename(columns=table_names)
+
+    tl = to_latex(idf, label="tab:impact", caption="Potential impact for the projects with the most relative and most absolute cherry picks. We compare \\approach{} to \\gitcherrypick.", position=table_pos, column_format="llS[table-format=2.2, round-precision=2]S[table-format=5.0, round-precision=0]S[table-format=4.0, round-precision=0]S[table-format=2.1, round-precision=1]S[table-format=2.1, round-precision=1]S[table-format=2.1, round-precision=1]S[table-format=2.1, round-precision=1]")
+    tl = tl.replace('JetBrains', '\t\midrule\n' + 'JetBrains')
+
+    print(tl)
+    return idf
+
 
 
 if __name__ == '__main__':
     yml_files = [f for f in glob.glob(os.path.join(yaml_folder, '**', '*.yaml'), recursive=True)]
     pr_df, ch_df = read_yamls(yml_files)
-    report_projects(pr_df)
+    pr_df = report_projects(pr_df)
+    impact_analysis(pr_df)
+
     correlate(pr_df)
     plot_projects(pr_df)
     for language in pr_df[c_language].unique():
