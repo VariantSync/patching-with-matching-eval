@@ -186,10 +186,7 @@ def wilcoxon_effect_size(data1, data2):
 
     N = np.sum(np.array(data1) != np.array(data2))
     expected_rank_sum = N * (N + 1) / 4
-    if np.mean(data2) > np.mean(data1):
-        rank_biserial_r = (stat - expected_rank_sum) / expected_rank_sum
-    else:
-        rank_biserial_r = (expected_rank_sum - stat) / expected_rank_sum
+    rank_biserial_r = (stat - expected_rank_sum) / expected_rank_sum
 
     return p_value, rank_biserial_r
 
