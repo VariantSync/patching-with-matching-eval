@@ -105,6 +105,25 @@ def edit_distance_percentiles(
     return tuple(percentiles)
 
 
+def outlier_free_results(
+    results: List[PatchResult],
+) -> list[PatchResult]:
+    if not results:
+        return results
+
+    edit_distances = [
+        result.outcome_classification.num_incorrect() for result in results
+    ]
+    b99 = np.percentile(edit_distances, 99)
+
+    filtered_results = [
+        result
+        for result in results
+        if result.outcome_classification.num_incorrect() <= b99
+    ]
+    return filtered_results
+
+
 def edit_distance(results: List[PatchResult]) -> tuple[float, int]:
     """
     Calculate the average edit distance and median edit distance from a list of results.
@@ -162,6 +181,7 @@ def accumulate_data_per_patcher(
                 # Filter trivial results
                 if only_non_trivial:
                     results = non_trivial_results(results)
+                # results = outlier_free_results(results)
                 # Group results by repo
                 results = results_per_repo(results, repos)
                 # Accumulate repo results per language
