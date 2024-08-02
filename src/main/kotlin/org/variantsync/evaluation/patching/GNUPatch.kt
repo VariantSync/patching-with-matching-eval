@@ -14,7 +14,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
 
-class UnixPatch(private val name: String, private val strip: Int) : Patcher {
+class GNUPatch(private val name: String, private val strip: Int) : Patcher {
     override fun applyPatch(
         operations: Operations,
         sourceVariant: Variant,
