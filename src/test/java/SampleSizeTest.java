@@ -26,8 +26,10 @@ public class SampleSizeTest {
     @ParameterizedTest
     @MethodSource("providesSampleSizes")
     public void simpleSize(int population, int expectedSampleSize) {
-        var configFile = new File("src/main/resources/config-debug.properties");
+        var configFile = new File("src/test/resources/config-test.properties");
         var sampleSize = SamplingKt.determineSampleSize(new EvalConfig(configFile), population);
+        System.out.println("Population: " + population);
+        System.out.println("Sample size: " + sampleSize);
         Assertions.assertEquals(sampleSize, expectedSampleSize);
     }
 }
