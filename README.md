@@ -7,7 +7,7 @@ Our sample of GitHub repositories and our dataset of mined patch scenarios is lo
 The sample and dataset are compressed as zip archives that have to be unpacked before they can be used.
 
 Our implementation of mpatch was written in Rust and can be found under [mpatch](mpatch). In its [README](mpatch/README.md), you can also find instructions on
-how to generate the documentation for mpatch, which can also be found under [mpatch/doc](mpatch/doc/mpatch/index.html)
+how to generate the documentation for mpatch.
 
 The implementation of our evaluation setup can be found in the Java and Kotlin sources in the [src](src/main) folder. 
 The main file of the evaluation is [PatcherEvaluationMain.kt](src/main/kotlin/org/variantsync/evaluation/PatcherEvaluationMain.kt).
@@ -15,7 +15,8 @@ The main file of the evaluation is [PatcherEvaluationMain.kt](src/main/kotlin/or
 Our scripts for applying the various metrics to the different patchers and analyzing the statistics can be found under [src/main/python](src/main/python/result_analysis). 
 
 ## Results without outliers
-In our paper, we mention that we re-analyzed our results after excluding 0.05% of results that were outliers. 
+In our paper, we mention that we re-analyzed our results after excluding outliers. 
+Specifically, we removed the top 0.05% of results with the highest number of required fixes for each patcher; thus, treating patchers equally in this regard. 
 The updated version of Table IV is shown below. 
 
 ![results-without-outliers.png](results/results-without-outliers.png)
