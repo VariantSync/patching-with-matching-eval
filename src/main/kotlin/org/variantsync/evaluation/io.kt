@@ -2,7 +2,7 @@ package org.variantsync.evaluation
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.variantsync.evaluation.analysis.CherryPickPatchOutcome
+import org.variantsync.evaluation.analysis.PatchOutcome
 import org.variantsync.evaluation.analysis.ExperimentResult
 import org.variantsync.evaluation.cherries.CherryDataset
 import org.variantsync.evaluation.cherries.EvaluationRun
@@ -83,8 +83,8 @@ fun loadSample(path: Path): ArrayList<ArrayList<CherryDataset>> {
 
 
 @Throws(IOException::class)
-fun loadResultObjects(paths: HashMap<Int, ArrayList<Path>>): HashMap<Int, MutableList<CherryPickPatchOutcome>> {
-    val outcomes = HashMap<Int, MutableList<CherryPickPatchOutcome>>()
+fun loadResultObjects(paths: HashMap<Int, ArrayList<Path>>): HashMap<Int, MutableList<PatchOutcome>> {
+    val outcomes = HashMap<Int, MutableList<PatchOutcome>>()
     for (rep in paths.keys) {
         for (path in paths[rep]!!) {
             Files.newBufferedReader(path).use { reader ->
@@ -137,12 +137,12 @@ private fun parseEvalRun(lines: List<String>): EvaluationRun {
     return mapper.readValue(sb.toString(), EvaluationRun::class.java)
 }
 
-private fun parseResult(lines: List<String>): CherryPickPatchOutcome {
+private fun parseResult(lines: List<String>): PatchOutcome {
     val sb = StringBuilder()
     lines.forEach(Consumer { l: String? -> sb.append(l).append("\n") })
     val mapper = jacksonObjectMapper()
     mapper.registerModule(JavaTimeModule())
-    return mapper.readValue(sb.toString(), CherryPickPatchOutcome::class.java)
+    return mapper.readValue(sb.toString(), PatchOutcome::class.java)
 }
 
 fun listResultFiles(resultsDir: Path) : HashMap<Int, ArrayList<Path>> {

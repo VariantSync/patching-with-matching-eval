@@ -114,7 +114,7 @@ object CherryPickResultAnalysis {
         rejectsNormal: Rejects, evolutionChanges: OriginalDiff,
         patchDuration: Duration,
         patchIsTrivial: Boolean,
-    ): CherryPickPatchOutcome {
+    ): PatchOutcome {
         Logger.debug("Processing outcome of $runID for patch process in " + workdir.workDir())
         // number of tried line-level patches
         val lineNormal = OriginalDiff.determineChangedLines(normalPatch, STRIP)
@@ -134,7 +134,7 @@ object CherryPickResultAnalysis {
         )
 
         Assert.assertEquals(normalResult.resultCount(), lineNormal.size.toLong())
-        return CherryPickPatchOutcome(
+        return PatchOutcome(
             dataset, runID, cherryPick.cherryCommit, cherryPick.expectedResultCommit, OriginalDiff.determineChangedLines(resultDiffNormal, STRIP).size.toLong(),
             lineNormal.size.toLong(), lineNormal.size.toLong() - lineNormalFailed.size.toLong(),
             normalResult,
@@ -345,12 +345,12 @@ object CherryPickResultAnalysis {
         )
     }
 
-    private fun parseResult(lines: List<String>): CherryPickPatchOutcome {
+    private fun parseResult(lines: List<String>): PatchOutcome {
         val sb = StringBuilder()
         lines.forEach(Consumer { l: String? -> sb.append(l).append("\n") })
         val mapper = jacksonObjectMapper()
         mapper.registerModule(JavaTimeModule())
-        return mapper.readValue(sb.toString(), CherryPickPatchOutcome::class.java)
+        return mapper.readValue(sb.toString(), PatchOutcome::class.java)
     }
 
     data class AccumulatedOutcome(

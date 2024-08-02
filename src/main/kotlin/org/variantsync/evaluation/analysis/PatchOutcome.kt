@@ -5,7 +5,7 @@ import java.time.Duration
 /**
  * Represents the outcome of a single experimental run in the study.
  */
-class CherryPickPatchOutcome
+class PatchOutcome
 /**
  * @param dataset                  The considered subject
  * @param runID                    The id of this run
