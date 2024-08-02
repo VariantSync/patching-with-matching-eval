@@ -132,23 +132,7 @@ def edit_distance(results: List[PatchResult]) -> tuple[float, int]:
         return (-1.0, -1)
     edit_distances = []
     for result in results:
-        edit_distances.append(result.outcome_classification.edit_distance)
-
-    return (
-        sum(edit_distances) / len(edit_distances),
-        sorted(edit_distances)[len(edit_distances) // 2],
-    )
-
-
-def edit_distance_alt(results: List[PatchResult]) -> tuple[float, int]:
-    """
-    Calculate the average edit distance and median edit distance from a list of results.
-    """
-    if not results:
-        return (-1.0, -1)
-    edit_distances = []
-    for result in results:
-        edit_distances.append(result.outcome_classification.edit_distance)
+        edit_distances.append(result.outcome_classification.num_incorrect())
 
     return (
         sum(edit_distances) / len(edit_distances),
@@ -181,7 +165,7 @@ def accumulate_data_per_patcher(
                 # Filter trivial results
                 if only_non_trivial:
                     results = non_trivial_results(results)
-                results = outlier_free_results(results)
+                # results = outlier_free_results(results)
                 # Group results by repo
                 results = results_per_repo(results, repos)
                 # Accumulate repo results per language

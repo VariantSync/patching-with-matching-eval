@@ -1,12 +1,12 @@
 from result_analysis.tables import (
-    better_or_worse,
     find_example,
     metrics_table_generation,
 )
 
-results_dir = "../../../../evaluation-workdir/results/cherries"
-repo_sample = "../../../../evaluation-workdir/data/repo-sample.yaml"
-metrics_file = "../../../../evaluation-workdir/tables/metrics.tex"
+results_dir = "../../../evaluation-workdir/results/"
+repo_sample = "../../../evaluation-workdir/data/repo-sample.yaml"
+# metrics_file = "../../../evaluation-workdir/tables/metrics.tex"
+metrics_file = "/home/alex/papers/self/patching-with-matching/paper/tables/metrics.tex"
 
 
 def main():
@@ -17,7 +17,6 @@ def main():
         file_metrics=metrics_file,
         file_power="",
     )
-    better_or_worse(results_dir + "rep-1/", repo_sample, False)
 
 
 def example():
