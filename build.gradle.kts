@@ -31,7 +31,7 @@ dependencies {
     implementation("org.jetbrains:annotations:24.0.1")
     implementation("net.ssehub:kernel_haven:1.0.0")
     implementation("net.lingala.zip4j:zip4j:2.11.4")
-    implementation("org.anon:diffdetective:1.0.0")
+    implementation("org.anon:diffd:1.0.0")
     implementation("org.slf4j:slf4j-api:2.0.5")
     implementation("org.slf4j:slf4j-simple:2.0.5")
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml

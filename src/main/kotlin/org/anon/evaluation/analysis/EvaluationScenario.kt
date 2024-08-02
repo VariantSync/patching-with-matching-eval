@@ -1,6 +1,6 @@
 package org.anon.evaluation.analysis
 
-import org.anon.diffdetective.util.Assert
+import org.anon.diffd.util.Assert
 import org.anon.evaluation.util.diff.lines.ChangedLine
 import org.anon.evaluation.patching.Change
 
