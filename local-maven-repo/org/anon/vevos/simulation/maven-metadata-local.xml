@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-  <groupId>org.variantsync.vevos</groupId>
+  <groupId>org.anon.vevos</groupId>
   <artifactId>simulation</artifactId>
   <versioning>
     <release>2.0.0</release>

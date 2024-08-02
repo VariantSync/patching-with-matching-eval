@@ -3,7 +3,7 @@ package org.anon.evaluation
 import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.execution.*
+import org.anon.evaluation.execution.*
 import org.anon.evaluation.util.shell.CpCommand
 import org.anon.evaluation.util.shell.RmCommand
 import org.anon.evaluation.util.shell.ShellExecutor

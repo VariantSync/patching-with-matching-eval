@@ -1,7 +1,7 @@
 package org.anon.evaluation.execution
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.analysis.TaskOutcome
+import org.anon.evaluation.analysis.TaskOutcome
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit

@@ -1,7 +1,7 @@
 package org.anon.evaluation.util.shell;
 
-import org.variantsync.evaluation.error.ShellException;
-import org.variantsync.functjonal.Result;
+import org.anon.evaluation.error.ShellException;
+import org.anon.functjonal.Result;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

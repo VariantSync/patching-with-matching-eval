@@ -1,14 +1,14 @@
 package org.anon.evaluation.patching
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.execution.Operations
+import org.anon.evaluation.execution.Operations
 import org.anon.evaluation.util.diff.DiffParser
 import org.anon.evaluation.util.diff.components.OriginalDiff
 import org.anon.evaluation.util.shell.MPatchCommand
 import org.anon.evaluation.util.shell.ShellExecutor
-import org.variantsync.evaluation.execution.panic
-import org.variantsync.evaluation.execution.readContentSafely
-import org.variantsync.vevos.simulation.feature.Variant
+import org.anon.evaluation.execution.panic
+import org.anon.evaluation.execution.readContentSafely
+import org.anon.vevos.simulation.feature.Variant
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path

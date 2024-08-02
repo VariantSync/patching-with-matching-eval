@@ -1,7 +1,7 @@
 package org.anon.evaluation.util.diff.components;
 
 import org.anon.evaluation.util.diff.lines.Line;
-import org.variantsync.evaluation.patching.Change;
+import org.anon.evaluation.patching.Change;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

@@ -3,7 +3,7 @@ package org.anon.evaluation.util.diff.components;
 import org.anon.evaluation.util.diff.lines.AddedLine;
 import org.anon.evaluation.util.diff.lines.ChangedLine;
 import org.anon.evaluation.util.diff.lines.RemovedLine;
-import org.variantsync.evaluation.patching.Change;
+import org.anon.evaluation.patching.Change;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

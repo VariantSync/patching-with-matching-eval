@@ -1,8 +1,8 @@
 package org.anon.evaluation.analysis
 
-import org.variantsync.diffdetective.util.Assert
+import org.anon.diffdetective.util.Assert
 import org.anon.evaluation.util.diff.lines.ChangedLine
-import org.variantsync.evaluation.patching.Change
+import org.anon.evaluation.patching.Change
 
 class EvaluationScenario(
     private val required: CountingMap<Change>,

@@ -2,9 +2,9 @@ package org.anon.evaluation.util.shell;
 
 import kotlin.text.Charsets;
 import org.tinylog.Logger;
-import org.variantsync.evaluation.error.SetupError;
-import org.variantsync.evaluation.error.ShellException;
-import org.variantsync.functjonal.Result;
+import org.anon.evaluation.error.SetupError;
+import org.anon.evaluation.error.ShellException;
+import org.anon.functjonal.Result;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -6,7 +6,7 @@ import org.anon.evaluation.util.diff.components.HunkLocation;
 import org.anon.evaluation.util.diff.components.OriginalDiff;
 import org.anon.evaluation.util.diff.lines.*;
 import org.tinylog.Logger;
-import org.variantsync.evaluation.util.diff.lines.*;
+import org.anon.evaluation.util.diff.lines.*;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;

@@ -1,13 +1,13 @@
 package org.anon.evaluation.analysis
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.diffdetective.util.Assert
+import org.anon.diffdetective.util.Assert
 import org.anon.evaluation.util.diff.components.OriginalDiff
 import org.anon.evaluation.util.diff.lines.ChangedLine
-import org.variantsync.evaluation.execution.CherryPick
-import org.variantsync.evaluation.execution.Operations
-import org.variantsync.evaluation.patching.Change
-import org.variantsync.evaluation.patching.Rejects
+import org.anon.evaluation.execution.CherryPick
+import org.anon.evaluation.execution.Operations
+import org.anon.evaluation.patching.Change
+import org.anon.evaluation.patching.Rejects
 import java.time.Duration
 
 object ResultAnalysis {

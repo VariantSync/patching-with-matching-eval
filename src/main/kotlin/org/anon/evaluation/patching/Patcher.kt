@@ -1,8 +1,8 @@
 package org.anon.evaluation.patching
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.execution.Operations
-import org.variantsync.vevos.simulation.feature.Variant
+import org.anon.evaluation.execution.Operations
+import org.anon.vevos.simulation.feature.Variant
 import java.nio.file.Files
 
 interface Patcher {

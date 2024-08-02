@@ -2,20 +2,20 @@ package org.anon.evaluation.execution
 
 import org.prop4j.Node
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.analysis.ResultAnalysis
-import org.variantsync.evaluation.analysis.ExperimentResult
-import org.variantsync.evaluation.analysis.TaskOutcome
+import org.anon.evaluation.analysis.ResultAnalysis
+import org.anon.evaluation.analysis.ExperimentResult
+import org.anon.evaluation.analysis.TaskOutcome
 import org.anon.evaluation.util.diff.DiffParser
 import org.anon.evaluation.util.diff.components.OriginalDiff
 import org.anon.evaluation.util.shell.CpCommand
 import org.anon.evaluation.util.shell.DiffCommand
 import org.anon.evaluation.util.shell.RmCommand
-import org.variantsync.evaluation.error.Panic
-import org.variantsync.evaluation.patching.Patcher
-import org.variantsync.evaluation.patching.Rejects
-import org.variantsync.evaluation.patching.UTF8Exception
-import org.variantsync.vevos.simulation.feature.Variant
-import org.variantsync.vevos.simulation.feature.config.IConfiguration
+import org.anon.evaluation.error.Panic
+import org.anon.evaluation.patching.Patcher
+import org.anon.evaluation.patching.Rejects
+import org.anon.evaluation.patching.UTF8Exception
+import org.anon.vevos.simulation.feature.Variant
+import org.anon.vevos.simulation.feature.config.IConfiguration
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -214,7 +214,7 @@ class CherryPickEvalTask(
 
     /**
      * Get the difference between the target variant after patching and the target variant in the
-     * next de.variantsync.studies.evolution step. Then, filter all differences that do not belong
+     * next de.anon.studies.evolution step. Then, filter all differences that do not belong
      * to the source variant and could have therefore not been synchronized in any case.
      */
     private fun getActualVsExpected(

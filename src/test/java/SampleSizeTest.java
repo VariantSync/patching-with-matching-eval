@@ -2,8 +2,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.variantsync.evaluation.execution.EvalConfig;
-import org.variantsync.evaluation.execution.SamplingKt;
+import org.anon.evaluation.execution.EvalConfig;
+import org.anon.evaluation.execution.SamplingKt;
 
 import java.io.File;
 import java.util.stream.Stream;

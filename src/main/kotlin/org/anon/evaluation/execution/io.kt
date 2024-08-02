@@ -2,8 +2,8 @@ package org.anon.evaluation.execution
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.variantsync.evaluation.analysis.PatchOutcome
-import org.variantsync.evaluation.analysis.ExperimentResult
+import org.anon.evaluation.analysis.PatchOutcome
+import org.anon.evaluation.analysis.ExperimentResult
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path

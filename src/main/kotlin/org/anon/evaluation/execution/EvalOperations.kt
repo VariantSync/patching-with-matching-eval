@@ -3,7 +3,7 @@ package org.anon.evaluation.execution
 import org.tinylog.kotlin.Logger
 import org.anon.evaluation.util.shell.AppliedPatchTracker
 import org.anon.evaluation.util.shell.ShellExecutor
-import org.variantsync.evaluation.patching.Patcher
+import org.anon.evaluation.patching.Patcher
 import java.io.IOException
 import java.io.UncheckedIOException
 import java.nio.file.Files

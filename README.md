@@ -10,7 +10,7 @@ Our implementation of mpatch was written in Rust and can be found under [mpatch]
 how to generate the documentation for mpatch.
 
 The implementation of our evaluation setup can be found in the Java and Kotlin sources in the [src](src/main) folder. 
-The main file of the evaluation is [PatcherEvaluationMain.kt](src/main/kotlin/org/variantsync/evaluation/PatcherEvaluationMain.kt).
+The main file of the evaluation is [PatcherEvaluationMain.kt](src/main/kotlin/org/anon/evaluation/PatcherEvaluationMain.kt).
 
 Our scripts for applying the various metrics to the different patchers and analyzing the statistics can be found under [src/main/python](src/main/python/result_analysis). 
 
