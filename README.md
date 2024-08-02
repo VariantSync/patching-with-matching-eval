@@ -13,6 +13,7 @@ The implementation of our evaluation setup can be found in the Java and Kotlin s
 The main file of the evaluation is [PatcherEvaluationMain.kt](src/main/kotlin/org/variantsync/evaluation/PatcherEvaluationMain.kt).
 
 Our scripts for applying the various metrics to the different patchers and analyzing the statistics can be found under [src/main/python](src/main/python/result_analysis). 
+The raw results of our evaluation are archived under [evaluation-workdir/results](evaluation-workdir/results)
 
 ## Results without outliers
 In our paper, we mention that we re-analyzed our results after excluding outliers. 
