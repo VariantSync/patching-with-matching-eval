@@ -34,13 +34,13 @@ class CherryPickEvalTask(
     private val config: EvalConfig,
     private val datasetName: String,
     private val cherryPick: CherryPick,
-    private val availableOperations: BlockingQueue<CherryEvalOperations>,
+    private val availableOperations: BlockingQueue<EvalOperations>,
     private val runID: ULong,
     val evalRun: EvaluationRun,
 ) : Callable<TaskOutcome> {
 
     override fun call(): TaskOutcome {
-        val operations: CherryEvalOperations
+        val operations: EvalOperations
 
         synchronized(CherryPickEvalTask::class.java) {
             // Retrieve the operations and the repo manager for this task
@@ -77,7 +77,7 @@ class CherryPickEvalTask(
         return sb.toString()
     }
 
-    fun callExecution(operations: CherryEvalOperations): List<ExperimentResult> {
+    fun callExecution(operations: EvalOperations): List<ExperimentResult> {
         try {
             // repoManager.cleanRepoStates()
             if (!operations.repoManager.prepareCherryPick(cherryPick)) {
@@ -220,7 +220,7 @@ class CherryPickEvalTask(
      * to the source variant and could have therefore not been synchronized in any case.
      */
     private fun getActualVsExpected(
-        operations: CherryEvalOperations,
+        operations: EvalOperations,
         pathToExpectedResult: Path,
         target: Variant,
         currentPR: CherryPick
@@ -263,7 +263,7 @@ class CherryPickEvalTask(
 
     // Get the difference between two directories using UNIX diff
     private fun getOriginalDiff(
-        operations: CherryEvalOperations,
+        operations: EvalOperations,
         v0Path: Path, v1Path: Path
     ): OriginalDiff {
         return getOriginalDiff(operations, v0Path, v1Path, false)
@@ -271,7 +271,7 @@ class CherryPickEvalTask(
 
     // Get the difference between two directories using UNIX diff
     private fun getOriginalDiff(
-        operations: CherryEvalOperations,
+        operations: EvalOperations,
         v0Path: Path, v1Path: Path, ignoreBlanks: Boolean
     ): OriginalDiff {
         val diffCommand: DiffCommand = DiffCommand.Recommended(
@@ -292,7 +292,7 @@ class CherryPickEvalTask(
     }
 
     private fun patchFilesDebug(
-        operations: CherryEvalOperations,
+        operations: EvalOperations,
         patcher: Patcher,
         originalPatch: OriginalDiff,
         currentPR: CherryPick,

@@ -44,7 +44,7 @@ class CherryPickStudy(
     // The study tasks that are to be executed in parallel
     private val evalTasks: MutableList<CherryPickEvalTask>
     private val numThreads: Int
-    private val availableOperations: BlockingQueue<CherryEvalOperations>
+    private val availableOperations: BlockingQueue<EvalOperations>
 
     /**
      * Initialize the study from the given configuration
@@ -61,7 +61,7 @@ class CherryPickStudy(
         Logger.info("Preparing working directories for $numThreads threads.")
         for (i in 1..numThreads) {
             // Add one operations instance for each thread; each instance defines its own working directory
-            val operations = CherryEvalOperations(config.EXPERIMENT_DIR_MAIN(), repoPath)
+            val operations = EvalOperations(config.EXPERIMENT_DIR_MAIN(), repoPath)
             // Clean old variant files
             cleanVariantDirectories(operations)
             // Copy the source and target variant to the respective variant directories
@@ -503,7 +503,7 @@ fun loadDataset(pathToYaml: Path, cherryType: CherryType): Optional<CherryDatase
     return Optional.of(CherryDataset(pathToYaml.fileName.toString(), repoName, language, cherryPicks))
 }
 
-private fun prepareVariantDirectories(operations: CherryEvalOperations, gitHubRepoPath: Path) {
+private fun prepareVariantDirectories(operations: EvalOperations, gitHubRepoPath: Path) {
     Logger.debug("Creating new source and target variant copies.")
     operations.shell.execute(CpCommand(gitHubRepoPath, operations.sourceVariantV0).recursive())
         .expect("Was not able to copy source variant V0.")
@@ -515,7 +515,7 @@ private fun prepareVariantDirectories(operations: CherryEvalOperations, gitHubRe
         .expect("Was not able to copy target variant V1.")
 }
 
-private fun cleanVariantDirectories(operations: CherryEvalOperations) {
+private fun cleanVariantDirectories(operations: EvalOperations) {
     Logger.debug("Cleaning old variant files.")
     if (Files.exists(operations.sourceVariantV0)) {
         operations.shell.execute(RmCommand(operations.sourceVariantV0).recursive().force())

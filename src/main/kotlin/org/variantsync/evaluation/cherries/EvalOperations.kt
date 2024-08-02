@@ -11,7 +11,7 @@ import java.io.UncheckedIOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class CherryEvalOperations(mainDir: Path, gitHubRepoPath: Path) : Operations() {
+class EvalOperations(mainDir: Path, gitHubRepoPath: Path) : Operations() {
     // Working directory
     @JvmField
     var workDir: Path

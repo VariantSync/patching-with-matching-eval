@@ -5,7 +5,7 @@ import org.variantsync.evaluation.Operations
 import org.variantsync.evaluation.baseline.diff.DiffParser
 import org.variantsync.evaluation.baseline.shell.GitCherryPickCommand
 import org.variantsync.evaluation.baseline.shell.ShellExecutor
-import org.variantsync.evaluation.cherries.CherryEvalOperations
+import org.variantsync.evaluation.cherries.EvalOperations
 import org.variantsync.evaluation.error.ShellException
 import org.variantsync.evaluation.readContentSafely
 import org.variantsync.vevos.simulation.feature.Variant
@@ -29,7 +29,7 @@ class GitCP(private val name: String, private val strip: Int, private val strate
         }
         val patch = DiffParser.toOriginalDiff(readContentSafely(pathToPatchFile))
 
-        if (operations !is CherryEvalOperations) {
+        if (operations !is EvalOperations) {
             // If this is not an evaluation of cherry picks, we cannot apply git cherry pick as patcher
             return Rejects(patch.intoChanges(strip))
         }
