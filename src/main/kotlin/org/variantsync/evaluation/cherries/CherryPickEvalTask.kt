@@ -6,11 +6,11 @@ import org.variantsync.evaluation.ResultAnalysis
 import org.variantsync.evaluation.EvalConfig
 import org.variantsync.evaluation.analysis.ExperimentResult
 import org.variantsync.evaluation.analysis.TaskOutcome
-import org.variantsync.evaluation.baseline.diff.DiffParser
-import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
-import org.variantsync.evaluation.baseline.shell.CpCommand
-import org.variantsync.evaluation.baseline.shell.DiffCommand
-import org.variantsync.evaluation.baseline.shell.RmCommand
+import org.variantsync.evaluation.util.diff.DiffParser
+import org.variantsync.evaluation.util.diff.components.OriginalDiff
+import org.variantsync.evaluation.util.shell.CpCommand
+import org.variantsync.evaluation.util.shell.DiffCommand
+import org.variantsync.evaluation.util.shell.RmCommand
 import org.variantsync.evaluation.error.Panic
 import org.variantsync.evaluation.filterUnpatchedFiles
 import org.variantsync.evaluation.patching.Patcher

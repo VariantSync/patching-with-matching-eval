@@ -2,10 +2,10 @@ package org.variantsync.evaluation.patching
 
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.Operations
-import org.variantsync.evaluation.baseline.diff.DiffParser
-import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
-import org.variantsync.evaluation.baseline.shell.MPatchCommand
-import org.variantsync.evaluation.baseline.shell.ShellExecutor
+import org.variantsync.evaluation.util.diff.DiffParser
+import org.variantsync.evaluation.util.diff.components.OriginalDiff
+import org.variantsync.evaluation.util.shell.MPatchCommand
+import org.variantsync.evaluation.util.shell.ShellExecutor
 import org.variantsync.evaluation.cherries.panic
 import org.variantsync.evaluation.readContentSafely
 import org.variantsync.vevos.simulation.feature.Variant

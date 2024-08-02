@@ -1,5 +1,5 @@
 import org.tinylog.Logger;
-import org.variantsync.evaluation.baseline.shell.*;
+import org.variantsync.evaluation.util.shell.*;
 import org.variantsync.evaluation.error.ShellException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

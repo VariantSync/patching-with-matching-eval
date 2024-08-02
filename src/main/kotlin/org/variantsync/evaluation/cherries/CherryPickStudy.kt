@@ -4,9 +4,9 @@ import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.*
-import org.variantsync.evaluation.baseline.shell.CpCommand
-import org.variantsync.evaluation.baseline.shell.RmCommand
-import org.variantsync.evaluation.baseline.shell.ShellExecutor
+import org.variantsync.evaluation.util.shell.CpCommand
+import org.variantsync.evaluation.util.shell.RmCommand
+import org.variantsync.evaluation.util.shell.ShellExecutor
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.File

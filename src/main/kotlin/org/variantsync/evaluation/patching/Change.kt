@@ -1,10 +1,10 @@
 package org.variantsync.evaluation.patching
 
-import org.variantsync.evaluation.baseline.diff.components.Hunk
-import org.variantsync.evaluation.baseline.diff.lines.AddedLine
-import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
-import org.variantsync.evaluation.baseline.diff.lines.Line
-import org.variantsync.evaluation.baseline.diff.lines.RemovedLine
+import org.variantsync.evaluation.util.diff.components.Hunk
+import org.variantsync.evaluation.util.diff.lines.AddedLine
+import org.variantsync.evaluation.util.diff.lines.ChangedLine
+import org.variantsync.evaluation.util.diff.lines.Line
+import org.variantsync.evaluation.util.diff.lines.RemovedLine
 import java.nio.file.Path
 
 

@@ -1,7 +1,7 @@
 package org.variantsync.evaluation.analysis
 
 import org.variantsync.diffdetective.util.Assert
-import org.variantsync.evaluation.baseline.diff.lines.ChangedLine
+import org.variantsync.evaluation.util.diff.lines.ChangedLine
 import org.variantsync.evaluation.patching.Change
 
 class EvaluationScenario(

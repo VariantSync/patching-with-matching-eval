@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.variantsync.evaluation.baseline.diff.DiffParser;
-import org.variantsync.evaluation.baseline.diff.components.OriginalDiff;
+import org.variantsync.evaluation.util.diff.DiffParser;
+import org.variantsync.evaluation.util.diff.components.OriginalDiff;
 
 import java.io.IOException;
 import java.nio.file.Files;

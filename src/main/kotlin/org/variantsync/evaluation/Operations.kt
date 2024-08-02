@@ -1,7 +1,7 @@
 package org.variantsync.evaluation
 
-import org.variantsync.evaluation.baseline.shell.AppliedPatchTracker
-import org.variantsync.evaluation.baseline.shell.ShellExecutor
+import org.variantsync.evaluation.util.shell.AppliedPatchTracker
+import org.variantsync.evaluation.util.shell.ShellExecutor
 import java.nio.file.Path
 
 abstract class Operations {

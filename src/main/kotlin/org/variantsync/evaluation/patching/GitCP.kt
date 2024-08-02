@@ -2,9 +2,9 @@ package org.variantsync.evaluation.patching
 
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.Operations
-import org.variantsync.evaluation.baseline.diff.DiffParser
-import org.variantsync.evaluation.baseline.shell.GitCherryPickCommand
-import org.variantsync.evaluation.baseline.shell.ShellExecutor
+import org.variantsync.evaluation.util.diff.DiffParser
+import org.variantsync.evaluation.util.shell.GitCherryPickCommand
+import org.variantsync.evaluation.util.shell.ShellExecutor
 import org.variantsync.evaluation.cherries.EvalOperations
 import org.variantsync.evaluation.error.ShellException
 import org.variantsync.evaluation.readContentSafely

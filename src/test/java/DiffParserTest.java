@@ -1,19 +1,16 @@
-import org.variantsync.evaluation.baseline.diff.DiffParser;
-import org.variantsync.evaluation.baseline.diff.components.*;
-import org.variantsync.evaluation.baseline.diff.lines.AddedLine;
-import org.variantsync.evaluation.baseline.diff.lines.ContextLine;
-import org.variantsync.evaluation.baseline.diff.lines.Line;
-import org.variantsync.evaluation.baseline.diff.lines.RemovedLine;
+import org.variantsync.evaluation.util.diff.DiffParser;
+import org.variantsync.evaluation.util.diff.components.*;
+import org.variantsync.evaluation.util.diff.lines.AddedLine;
+import org.variantsync.evaluation.util.diff.lines.ContextLine;
+import org.variantsync.evaluation.util.diff.lines.Line;
+import org.variantsync.evaluation.util.diff.lines.RemovedLine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.variantsync.evaluation.EvalUtilsKt.readContentSafely;

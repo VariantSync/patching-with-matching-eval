@@ -1,7 +1,7 @@
 package org.variantsync.evaluation
 
-import org.variantsync.evaluation.baseline.diff.components.FileDiff
-import org.variantsync.evaluation.baseline.diff.components.OriginalDiff
+import org.variantsync.evaluation.util.diff.components.FileDiff
+import org.variantsync.evaluation.util.diff.components.OriginalDiff
 import org.variantsync.evaluation.patching.*
 import java.io.IOException
 import java.nio.file.Files
