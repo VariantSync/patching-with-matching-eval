@@ -4,16 +4,12 @@ push.sh
 target
 /plots/out/
 plots/__pycache__/
-simulation-files/busybox/
-/simulation-files/ground-truth/
 /log.txt
 /warn.txt
 /debug_log.txt
 .classpath
 .project
 .settings
-simulation-files/ground-truth.zip
-/debug.txt
 /.gradle/
 /build/
 /logs/
@@ -28,5 +24,4 @@ src/main/python/test.synctex.gz
 src/main/python/test.pdf
 src/main/python/experiment_table.tex
 src/main/python/result_analysis/experiment_table.tex
-cherry-sample.ser
 src/main/python/output.txt

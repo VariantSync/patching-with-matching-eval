@@ -1,3 +1,0 @@
-[submodule "mpatch"]
-	path = mpatch
-	url = git@github.com:VariantSync/mpatch.git
