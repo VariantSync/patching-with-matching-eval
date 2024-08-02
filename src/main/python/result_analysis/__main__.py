@@ -1,21 +1,16 @@
-from result_analysis.latex import generate_metrics_result_table
-from result_analysis.plots import (
-    automation_boxplot_results_lang_per_proj,
-    boxplot_results_lang_per_proj,
-    ed_runtime_boxplot_results_lang_overall,
+from result_analysis.tables import (
+    better_or_worse,
+    find_example,
+    metrics_table_generation,
 )
-from result_analysis.plots import boxplot_results_lang_overall
-from sys import argv
 
-from result_analysis.tables import better_or_worse, find_example, rq3_table_generation
-
-results_dir = "/home/alex/data/cherry-picks/results/"
-repo_sample = "/home/alex/programming/patching-with-matching-eval/evaluation-workdir/data/repo-sample.yaml"
-metrics_file = "/home/alex/papers/self/patching-with-matching/paper/tables/metrics.tex"
+results_dir = "../../../../evaluation-workdir/results/cherries"
+repo_sample = "../../../../evaluation-workdir/data/repo-sample.yaml"
+metrics_file = "../../../../evaluation-workdir/tables/metrics.tex"
 
 
 def main():
-    rq3_table_generation(
+    metrics_table_generation(
         results_dir,
         repo_sample,
         only_non_trivial=False,

@@ -1,8 +1,6 @@
 import numpy as np
 
 from result_analysis.eval_setup import Metric
-from result_analysis.eval_setup import Patcher
-from result_analysis.simulation import power_analysis_simulation
 
 
 def generate_metrics_result_table(
@@ -73,14 +71,6 @@ def generate_metrics_result_table(
                     max_value = determine_best(
                         results_per_patcher, patcher_names, metric, best_type, language
                     )
-
-                    # p_value = 1.0
-                    # if patcher in corrected_significance:
-                    #    if language in corrected_significance[patcher]:
-                    #        if metric in corrected_significance[patcher][language]:
-                    #            p_value = corrected_significance[patcher][language][
-                    #                metric
-                    #            ]
 
                     if value == max_value:
                         line += f" & \\bfseries {value:.2f}{postfix}"

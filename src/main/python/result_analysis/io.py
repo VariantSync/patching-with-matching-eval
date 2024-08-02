@@ -35,15 +35,6 @@ def load_all_results(directory_path, patcher: Patcher):
 
 
 def read_results_from_file(file_path) -> List[PatchResult]:
-    """Out result files contain lists of JSON objects that are separated by
-    blank lines, e.g.,:
-    ```json
-    {"key":"val",...}
-
-
-    {"key":"val",...}
-    ```
-    """
     results = []
     with open(file_path, "r") as file:
         file_content = file.read().strip()

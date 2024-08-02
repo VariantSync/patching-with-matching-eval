@@ -4,7 +4,6 @@ import numpy as np
 
 class Patcher(Enum):
     MPatch = "pwm_f2"
-    # MPatch1 = "pwm_f1"
     UnixPatch = "unix_patch"
     GitApply = "git_apply"
     GitCherry = "git_cherry"
@@ -18,7 +17,6 @@ class Patcher(Enum):
     def nice_name(self):
         return {
             Patcher.MPatch: "\\approach{}",
-            # Patcher.MPatch1: "\\texttt{mpatch-f1}",
             Patcher.UnixPatch: "\\patch{}",
             Patcher.GitApply: "\\gitapply{}",
             Patcher.GitCherry: "\\gitcherrypickshort{}",

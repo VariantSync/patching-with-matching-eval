@@ -1,26 +1,14 @@
 import os
-from typing import List
-from typing import Dict
-from typing import Optional
-
 import numpy as np
 
 from result_analysis.eval_setup import Metric, Patcher
-from result_analysis.eval_setup import RQ3PatcherData
-from result_analysis.eval_setup import PatchResult
-from result_analysis.eval_setup import Repository
 from result_analysis.io import load_repositories
 from result_analysis.io import load_all_results
 from result_analysis.latex import generate_metrics_result_table
 from result_analysis.result_handling import (
-    edit_distance_percentiles,
     non_trivial_results,
     results_per_repo,
-    all_results_per_language,
 )
-from result_analysis.result_handling import overall_automation
-from result_analysis.result_handling import edit_distance
-from result_analysis.result_handling import runtime
 from result_analysis.result_handling import accumulate_data_per_patcher
 from collections import defaultdict
 from statsmodels.stats.multitest import multipletests
@@ -48,7 +36,7 @@ def list_all_dirs(path):
     ]
 
 
-def rq3_table_generation(
+def metrics_table_generation(
     path_to_results, path_to_repo_list, only_non_trivial, file_metrics, file_power
 ):
     global languages
@@ -245,7 +233,7 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
     global languages
     repos = load_repositories(path_to_repo_list)
 
-    results_per_patcher = {}  # type: Dict[Patcher, Dict[Repository, List[PatchResult]]]
+    results_per_patcher = {}
     all_equal = 0
     mpatch_best = 0
     patch_best = 0
@@ -278,13 +266,13 @@ def better_or_worse(path_to_results, path_to_repo_list, only_non_trivial):
         repo_results_cherry = {r.run_id: r for r in repo_results_cherry}
 
         for i in repo_results_mpatch.keys():
-            res_mpatch = repo_results_mpatch.get(i, None)  # type: Optional[PatchResult]
+            res_mpatch = repo_results_mpatch.get(i, None)
             if res_mpatch is None:
                 continue
 
-            res_upatch = repo_results_upatch.get(i, None)  # type: Optional[PatchResult]
-            res_apply = repo_results_apply.get(i, None)  # type: Optional[PatchResult]
-            res_cherry = repo_results_cherry.get(i, None)  # type: Optional[PatchResult]
+            res_upatch = repo_results_upatch.get(i, None)
+            res_apply = repo_results_apply.get(i, None)
+            res_cherry = repo_results_cherry.get(i, None)
 
             scenario_size = res_mpatch.num_changes_total
 
@@ -357,7 +345,7 @@ def find_example(path_to_results, path_to_repo_list, only_non_trivial):
     global languages
     repos = load_repositories(path_to_repo_list)
 
-    results_per_patcher = {}  # type: Dict[Patcher, Dict[Repository, List[PatchResult]]]
+    results_per_patcher = {}
     for patcher in Patcher:  # Patcher is an enum
         results = load_all_results(path_to_results, patcher)
         # Filter trivial results
@@ -384,12 +372,12 @@ def find_example(path_to_results, path_to_repo_list, only_non_trivial):
         repo_results_cherry = {r.run_id: r for r in repo_results_cherry}
 
         for i in repo_results_mpatch.keys():
-            res_mpatch = repo_results_mpatch.get(i, None)  # type: Optional[PatchResult]
+            res_mpatch = repo_results_mpatch.get(i, None)
             if res_mpatch is None:
                 continue
 
-            res_upatch = repo_results_upatch.get(i, None)  # type: Optional[PatchResult]
-            res_cherry = repo_results_cherry.get(i, None)  # type: Optional[PatchResult]
+            res_upatch = repo_results_upatch.get(i, None)
+            res_cherry = repo_results_cherry.get(i, None)
 
             scenario_size = res_mpatch.num_changes_total
 
