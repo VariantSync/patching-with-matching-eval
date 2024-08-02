@@ -2,7 +2,7 @@
 name = "pwm_eval"
 version = "0.1.0"
 description = "Result analysis scripts for patching with matching"
-authors = ["Alexander Schultheiß <AlexanderSchultheiss@pm.me>"]
+authors = ["anonymous"]
 packages = [
     { include = "result_analysis", from = "." }
 ]
