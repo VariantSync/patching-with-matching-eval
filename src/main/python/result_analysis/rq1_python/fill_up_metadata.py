@@ -1,8 +1,8 @@
 import requests
 import yaml
 
-repo_sample_file = "../../simulation-files/data/repo-sample.yaml"
-yamls_folder = "../../simulation-files/data/cherries/"
+repo_sample_file = "../../evaluation-workdir/data/repo-sample.yaml"
+yamls_folder = "../../evaluation-workdir/data/cherries/"
 GITHUB_API_URL = "https://api.github.com"
 #with open("access_token", "r") as file:
 #    ACCESS_TOKEN = file.read()

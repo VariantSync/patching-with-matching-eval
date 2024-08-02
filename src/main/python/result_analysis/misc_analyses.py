@@ -44,7 +44,7 @@ def print_result_data():
 
 
 def load_repos():
-    repo_sample = "../../../simulation-files/data/repo-sample.yaml"
+    repo_sample = "../../../evaluation-workdir/data/repo-sample.yaml"
     repos = load_repositories(repo_sample)
     print("num repos: " + str(len(repos)))
     return repos

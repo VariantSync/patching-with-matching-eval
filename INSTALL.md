@@ -89,10 +89,10 @@ While the validation is running, it's progress is constantly printed to the term
 ...
 ```
 
-The results of the validation are stored in the [simulation-files](simulation-files) directory.
+The results of the validation are stored in the [evaluation-workdir](evaluation-workdir) directory.
 
 ### Expected Output of the Validation
-The results are saved in a simple [results](simulation-files/results.txt) file in the [simulation-files](simulation-files) directory. For each run, a JSON object containing the required evaluation data is written to the results file. 
+The results are saved in a simple [results](evaluation-workdir/results.txt) file in the [evaluation-workdir](evaluation-workdir) directory. For each run, a JSON object containing the required evaluation data is written to the results file. 
 
 A summary of the results is printed to the console at the end of the validation. This summary should look similar to this: 
 ```
@@ -142,8 +142,8 @@ Balanced Accuracy: 0.94
 
 ++++++++++++++++++++++++++++++++++++++
 Plotting figures
-No chache found at /home/user/simulation-files/results.txt.cache
-Opening /home/user/simulation-files/results.txt
+No chache found at /home/user/evaluation-workdir/results.txt.cache
+Opening /home/user/evaluation-workdir/results.txt
 
 Parsed Values:
 commitPatches = 345
@@ -160,10 +160,10 @@ Done.
 
 #### Plots
 Furthermore, the validation plots figures, similar to the ones in our paper, for the validation's results. 
-After the validation is complete, the following files can be found in `simulation-files/plots`:
-- [rq1_applicability](simulation-files/plots/rq1_applicability.pdf)
-- [rq2_correctness](simulation-files/plots/rq2_correctness.pdf)
-- [rq3_domain_knowledge](simulation-files/plots/rq3_domain_knowledge.pdf)
+After the validation is complete, the following files can be found in `evaluation-workdir/plots`:
+- [rq1_applicability](evaluation-workdir/plots/rq1_applicability.pdf)
+- [rq2_correctness](evaluation-workdir/plots/rq2_correctness.pdf)
+- [rq3_domain_knowledge](evaluation-workdir/plots/rq3_domain_knowledge.pdf)
 
 The created plots should look similar to the plots shown below.
 
@@ -192,10 +192,10 @@ The created plots should look similar to the plots shown below.
 `Fix:` Follow the instructions described above in the section `Build the Docker Container`.
 
 ### No results after validation, or 'cannot create directory...: Permission denied'
-`Problem:` This problem can occur due to how permissions are managed inside the Docker container. More specifically, it will appear, if Docker is executed with elevated permissions (i.e., `sudo`) and if there is no [simulation-files](simulation-files) directory because it was deleted manually. In this case, Docker will create the directory with elevated permissions, and the Docker user has no permissions to access the directory.
+`Problem:` This problem can occur due to how permissions are managed inside the Docker container. More specifically, it will appear, if Docker is executed with elevated permissions (i.e., `sudo`) and if there is no [evaluation-workdir](evaluation-workdir) directory because it was deleted manually. In this case, Docker will create the directory with elevated permissions, and the Docker user has no permissions to access the directory.
 
-`Fix:` If there is a _simulation-files_ directory, delete it with elevated permission (e.g., `sudo rm -r results`). 
-Then, execute `git restore simulation-files` to restore the deleted directory.
+`Fix:` If there is a _evaluation-workdir_ directory, delete it with elevated permission (e.g., `sudo rm -r results`). 
+Then, execute `git restore evaluation-workdir` to restore the deleted directory.
 
 ### Failed to create LLB definition: No match for platform in manifest
 Please contact us if you encounter the following issue while building the Docker image:

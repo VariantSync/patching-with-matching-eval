@@ -8,10 +8,10 @@ cherries() {
 		java -jar result-analysis-cherries.jar config-reproduction.properties
 	elif [ "$1" == 'cleanup' ]; then
 		echo "Running cleanup of old result files."
-		rm -r /home/user/simulation-files/results/
-		rm -r /home/user/simulation-files/main/
-		mkdir /home/user/simulation-files/results
-		mkdir /home/user/simulation-files/main
+		rm -r /home/user/evaluation-workdir/results/
+		rm -r /home/user/evaluation-workdir/main/
+		mkdir /home/user/evaluation-workdir/results
+		mkdir /home/user/evaluation-workdir/main
 	else
 		echo "Invalid argument: $1"
 	fi

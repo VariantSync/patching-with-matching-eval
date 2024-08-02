@@ -1,5 +1,5 @@
 #! /bin/bash
 echo "Starting $1"
-docker run --rm -v "$(pwd)/simulation-files/":"/home/user/simulation-files" pwm-eval "$@"
+docker run --rm -v "$(pwd)/evaluation-workdir/":"/home/user/evaluation-workdir" pwm-eval "$@"
 
 echo "Done."

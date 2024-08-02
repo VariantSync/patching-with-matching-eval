@@ -19,8 +19,8 @@ except ImportError:
 pd.set_option('display.expand_frame_repr', False)  # Avoid line breaks in long columns
 pd.set_option('display.max_columns', None)         # Display all columns
 
-yaml_folder = "../../simulation-files/data/cherries/"
-repo_sample_yaml = "../../simulation-files/data/repo-sample.yaml"
+yaml_folder = "../../evaluation-workdir/data/cherries/"
+repo_sample_yaml = "../../evaluation-workdir/data/repo-sample.yaml"
 language_count = 10
 sample_per_language = 500
 
@@ -280,7 +280,7 @@ def impact_file(file):
 
 def impact_analysis(pr_df):
     approaches = ["git_cherry", "pwm_f2"]
-    prefix = 'C:\\work\\patching-with-matching-eval\\simulation-files\\results\\cherries\\rep-1\\'
+    prefix = 'C:\\work\\patching-with-matching-eval\\evaluation-workdir\\results\\cherries\\rep-1\\'
 
     df = pr_df.sort_values(by=c_cherry_ratio)[-5:].append(pr_df.sort_values(by=c_cherries)[-5:])
 

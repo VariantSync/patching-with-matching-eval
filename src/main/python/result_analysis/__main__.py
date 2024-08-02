@@ -10,7 +10,7 @@ from sys import argv
 from result_analysis.tables import better_or_worse, find_example, rq3_table_generation
 
 results_dir = "/home/alex/data/cherry-picks/results/"
-repo_sample = "/home/alex/programming/patching-with-matching-eval/simulation-files/data/repo-sample.yaml"
+repo_sample = "/home/alex/programming/patching-with-matching-eval/evaluation-workdir/data/repo-sample.yaml"
 metrics_file = "/home/alex/papers/self/patching-with-matching/paper/tables/metrics.tex"
 
 
