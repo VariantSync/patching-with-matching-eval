@@ -181,7 +181,7 @@ def accumulate_data_per_patcher(
                 # Filter trivial results
                 if only_non_trivial:
                     results = non_trivial_results(results)
-                # results = outlier_free_results(results)
+                results = outlier_free_results(results)
                 # Group results by repo
                 results = results_per_repo(results, repos)
                 # Accumulate repo results per language
