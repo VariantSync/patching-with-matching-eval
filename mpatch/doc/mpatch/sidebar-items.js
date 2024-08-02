@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["ErrorKind"],"fn":["apply_all"],"mod":["alignment","application","diffs","error","filtering","matching","patch"],"struct":["AlignedPatch","DistanceFilter","Error","FileArtifact","FileDiff","FilePatch","KeepAllFilter","LCSMatcher","Matching","PatchOutcome","PatchPaths","VersionDiff"],"trait":["Filter","Matcher"]};

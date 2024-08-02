@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["FileChangeType","LineChangeType"],"fn":["apply_all"],"mod":["alignment","application","filtering","matching"],"struct":["AlignedPatch","Change","FilePatch","FilteredPatch","PatchOutcome","PatchPaths"]};

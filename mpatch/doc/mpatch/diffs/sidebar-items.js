@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["LineLocation","LineType"],"struct":["ChangedLines","DiffCommand","FileDiff","Hunk","HunkLine","HunkLocation","IntoChangedLines","SourceFileHeader","TargetFileHeader","VersionDiff"]};
