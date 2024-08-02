@@ -42,25 +42,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
 
-tasks.create<ShadowJar>("SyncStudy") {
-    archiveBaseName.set("synchronization-study")
-    archiveVersion.set("")
-
-    // Exclude signature files
-    exclude("META-INF/*.SF")
-    exclude("META-INF/*.DSA")
-    exclude("META-INF/*.RSA")
-
-    // Include the main source sets (classes and resources)
-    from(sourceSets.main.get().output)
-
-    configurations = listOf(project.configurations.runtimeClasspath.get())
-
-    manifest {
-        attributes["Main-Class"] = "org.variantsync.evaluation.syncstudy.SynchronizationStudyKt"
-    }
-}
-
 tasks.create<ShadowJar>("Cherries") {
     archiveBaseName.set("cherries")
     archiveVersion.set("")
@@ -76,46 +57,7 @@ tasks.create<ShadowJar>("Cherries") {
     configurations = listOf(project.configurations.runtimeClasspath.get())
 
     manifest {
-        attributes["Main-Class"] = "org.variantsync.evaluation.cherries.CherryPickStudyKt"
-    }
-}
-
-// Second JAR task
-tasks.create<ShadowJar>("CherriesAnalysis") {
-    archiveBaseName.set("result-analysis-cherries")
-    archiveVersion.set("")
-
-    // Exclude signature files
-    exclude("META-INF/*.SF")
-    exclude("META-INF/*.DSA")
-    exclude("META-INF/*.RSA")
-
-    // Include the main source sets (classes and resources)
-    from(sourceSets.main.get().output)
-
-    configurations = listOf(project.configurations.runtimeClasspath.get())
-
-    manifest {
-        attributes["Main-Class"] = "org.variantsync.evaluation.CherryPickResultAnalysis"
-    }
-}
-
-tasks.create<ShadowJar>("SyncStudyAnalysis") {
-    archiveBaseName.set("result-analysis-sync-study")
-    archiveVersion.set("")
-
-    // Exclude signature files
-    exclude("META-INF/*.SF")
-    exclude("META-INF/*.DSA")
-    exclude("META-INF/*.RSA")
-
-    // Include the main source sets (classes and resources)
-    from(sourceSets.main.get().output)
-
-    configurations = listOf(project.configurations.runtimeClasspath.get())
-
-    manifest {
-        attributes["Main-Class"] = "org.variantsync.evaluation.SyncStudyResultAnalysis"
+        attributes["Main-Class"] = "org.variantsync.evaluation.PatcherEvaluationMainKt"
     }
 }
 

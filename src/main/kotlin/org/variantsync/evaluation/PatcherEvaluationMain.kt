@@ -287,10 +287,11 @@ private fun createOrLoadSamples(
     langs.sort()
     for (language in langs) {
         val datasets = datasetsPerLanguage[language]!!
-        Logger.info("Sampling for next language $language with ${datasets.size} usable repositories")
         val sample: List<List<CherryDataset>> = if (config.EXPERIMENT_ENABLE_SAMPLING()) {
+            Logger.info("Sampling for next language $language with ${datasets.size} usable repositories")
             sampleCherries(config, datasets, rand)
         } else {
+            Logger.info("Loading dataset for $language with ${datasets.size} usable repositories")
             val temp = ArrayList<List<CherryDataset>>()
             for (i in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
                 temp.add(datasets)

@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 openjdk:19-alpine
+FROM openjdk:19-alpine
 
 # Build the jar files
 WORKDIR /home/user
@@ -11,11 +11,8 @@ COPY gradle gradle
 # Build the evaluation
 WORKDIR /home/user
 RUN ./gradlew Cherries || exit
-RUN ./gradlew SyncStudy || exit
-RUN ./gradlew SyncStudyAnalysis || exit
-RUN ./gradlew CherriesAnalysis || exit
 
-FROM --platform=linux/amd64 openjdk:19-alpine
+FROM openjdk:19-alpine
 
 RUN apk update
 # Install dependencies for unix patch
