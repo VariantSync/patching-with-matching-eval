@@ -75,7 +75,7 @@ class VariantRepoManager(
             failure = failure || shellTargetV0.execute(GitAddCommand(".")).isFailure
 
             if (failure) {
-                Logger.warn("First cleanup phase failed.")
+                Logger.debug("First cleanup phase failed.")
                 val tempExecutor = ShellExecutor(Logger::warn, Logger::warn, targetVariantV0.parent)
                 tempExecutor.execute(GitCherryPickCommand().abort(), targetVariantV0)
                 tempExecutor.execute(RmCommand(targetVariantV0).recursive().force())

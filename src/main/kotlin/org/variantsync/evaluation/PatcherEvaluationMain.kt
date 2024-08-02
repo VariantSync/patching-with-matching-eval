@@ -120,12 +120,12 @@ class CherryPickStudy(
             try {
                 FileUtils.deleteDirectory(operations.workDir.toFile())
             } catch (e: Exception) {
-                Logger.warn(e)
+                Logger.debug(e)
                 if (Files.exists(operations.workDir)) {
-                    Logger.warn("Trying to remove directory with 'rm -rf'")
+                    Logger.debug("Trying to remove directory with 'rm -rf'")
                     if (ShellExecutor(Logger::warn, Logger::warn, operations.workDir)
                         .execute(RmCommand(operations.workDir).recursive().force()).isSuccess) {
-                        Logger.warn("Success!")
+                        Logger.debug("Success!")
                     }
                 }
             }

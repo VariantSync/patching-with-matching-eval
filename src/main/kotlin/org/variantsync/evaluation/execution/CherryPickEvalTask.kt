@@ -151,12 +151,12 @@ class CherryPickEvalTask(
                 try {
                      rejectsNormal = patcher.applyPatch(operations, source, target, false)
                 } catch (e: UTF8Exception) {
-                    Logger.warn(e)
+                    Logger.debug(e)
                     patcher.clean(operations)
                     operations.repoManager.resetTargetVariant()
                     return ArrayList()
                 } catch (e: Exception) {
-                    Logger.warn(e)
+                    Logger.debug(e)
                     rejectsNormal = Rejects(ArrayList())
                 }
                 val end = Instant.now()

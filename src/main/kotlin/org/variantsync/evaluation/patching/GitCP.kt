@@ -71,7 +71,7 @@ class GitCP(private val name: String, private val strip: Int, private val strate
         val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.patchDir())
         val continueResult = customShell.execute(command, operations.patchDir())
         if (continueResult.isFailure && continueResult.failure.output.isNotEmpty()) {
-            Logger.warn(continueResult)
+            Logger.debug(continueResult)
         }
     }
 
