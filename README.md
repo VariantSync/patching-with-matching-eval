@@ -1,6 +1,7 @@
 # Reproduction Package for Pushing the Boundaries of Patch Automation
 
-This artifact comprises the files and data to reproduce our evaluation of various patchers, including mpatch.
+This artifact comprises the files and data to reproduce our evaluation of various patchers, including mpatch. 
+Unfortunately, this anonymous artifact is currently not functional due to the anonymization breaking packages and dependencies. 
 
 ## Content
 Our sample of GitHub repositories and our dataset of mined patch scenarios is located in the _evaluation-workdir/data_ directory of the evaluation's working directory.
