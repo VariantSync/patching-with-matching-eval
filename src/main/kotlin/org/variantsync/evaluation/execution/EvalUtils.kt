@@ -1,4 +1,4 @@
-package org.variantsync.evaluation
+package org.variantsync.evaluation.execution
 
 import org.variantsync.evaluation.util.diff.components.FileDiff
 import org.variantsync.evaluation.util.diff.components.OriginalDiff

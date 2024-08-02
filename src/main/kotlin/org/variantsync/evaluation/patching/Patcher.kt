@@ -1,7 +1,7 @@
 package org.variantsync.evaluation.patching
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.Operations
+import org.variantsync.evaluation.execution.Operations
 import org.variantsync.vevos.simulation.feature.Variant
 import java.nio.file.Files
 

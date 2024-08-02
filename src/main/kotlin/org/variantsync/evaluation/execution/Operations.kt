@@ -1,4 +1,4 @@
-package org.variantsync.evaluation
+package org.variantsync.evaluation.execution
 
 import org.variantsync.evaluation.util.shell.AppliedPatchTracker
 import org.variantsync.evaluation.util.shell.ShellExecutor

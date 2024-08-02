@@ -1,11 +1,11 @@
-package org.variantsync.evaluation
+package org.variantsync.evaluation.analysis
 
 import org.tinylog.kotlin.Logger
 import org.variantsync.diffdetective.util.Assert
-import org.variantsync.evaluation.analysis.*
 import org.variantsync.evaluation.util.diff.components.OriginalDiff
 import org.variantsync.evaluation.util.diff.lines.ChangedLine
 import org.variantsync.evaluation.execution.CherryPick
+import org.variantsync.evaluation.execution.Operations
 import org.variantsync.evaluation.patching.Change
 import org.variantsync.evaluation.patching.Rejects
 import java.time.Duration

@@ -1,9 +1,9 @@
-package org.variantsync.evaluation.execution
+package org.variantsync.evaluation
 
 import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.*
+import org.variantsync.evaluation.execution.*
 import org.variantsync.evaluation.util.shell.CpCommand
 import org.variantsync.evaluation.util.shell.RmCommand
 import org.variantsync.evaluation.util.shell.ShellExecutor

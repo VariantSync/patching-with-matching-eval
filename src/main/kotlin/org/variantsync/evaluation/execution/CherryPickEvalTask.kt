@@ -2,8 +2,7 @@ package org.variantsync.evaluation.execution
 
 import org.prop4j.Node
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.ResultAnalysis
-import org.variantsync.evaluation.EvalConfig
+import org.variantsync.evaluation.analysis.ResultAnalysis
 import org.variantsync.evaluation.analysis.ExperimentResult
 import org.variantsync.evaluation.analysis.TaskOutcome
 import org.variantsync.evaluation.util.diff.DiffParser
@@ -12,7 +11,6 @@ import org.variantsync.evaluation.util.shell.CpCommand
 import org.variantsync.evaluation.util.shell.DiffCommand
 import org.variantsync.evaluation.util.shell.RmCommand
 import org.variantsync.evaluation.error.Panic
-import org.variantsync.evaluation.filterUnpatchedFiles
 import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.patching.Rejects
 import org.variantsync.evaluation.patching.UTF8Exception
