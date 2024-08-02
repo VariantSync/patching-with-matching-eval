@@ -2,7 +2,7 @@ package org.variantsync.evaluation.cherries
 
 import org.prop4j.Node
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.CherryPickResultAnalysis
+import org.variantsync.evaluation.ResultAnalysis
 import org.variantsync.evaluation.EvalConfig
 import org.variantsync.evaluation.analysis.ExperimentResult
 import org.variantsync.evaluation.analysis.TaskOutcome
@@ -183,7 +183,7 @@ class CherryPickEvalTask(
                 }
 
                 /* Result Evaluation */
-                val patchOutcome = CherryPickResultAnalysis.processCherriesOutcome(
+                val patchOutcome = ResultAnalysis.processCherriesOutcome(
                     operations,
                     cherryPick,
                     datasetName,

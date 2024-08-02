@@ -19,7 +19,7 @@ import java.time.Duration
 import java.util.function.Consumer
 import kotlin.io.path.name
 
-object CherryPickResultAnalysis {
+object ResultAnalysis {
     private const val DIV = "++++++++++++++++++++++++++++++++++++++"
     private val LINE_SEP = System.lineSeparator()
     private const val STRIP = 1
