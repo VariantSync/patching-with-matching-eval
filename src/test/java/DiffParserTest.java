@@ -1,9 +1,9 @@
-import org.variantsync.evaluation.util.diff.DiffParser;
-import org.variantsync.evaluation.util.diff.components.*;
-import org.variantsync.evaluation.util.diff.lines.AddedLine;
-import org.variantsync.evaluation.util.diff.lines.ContextLine;
-import org.variantsync.evaluation.util.diff.lines.Line;
-import org.variantsync.evaluation.util.diff.lines.RemovedLine;
+import org.anon.evaluation.util.diff.DiffParser;
+import org.anon.evaluation.util.diff.components.*;
+import org.anon.evaluation.util.diff.lines.AddedLine;
+import org.anon.evaluation.util.diff.lines.ContextLine;
+import org.anon.evaluation.util.diff.lines.Line;
+import org.anon.evaluation.util.diff.lines.RemovedLine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
