@@ -4,7 +4,7 @@ This artifact comprises the files and data to reproduce our evaluation of variou
 
 ## Content
 Our implementation of mpatch was written in Rust and can be found under [mpatch](mpatch). In its [README](mpatch/README.md), you can also find instructions on
-how to generate the documentation for mpatch.  
+how to generate the documentation for mpatch, which can also be found under [mpatch/doc](mpatch/doc/mpatch/index.html)
 
 The implementation of our evaluation setup can be found in the Java and Kotlin sources in the [src](src/main) folder. 
 The main file of the evaluation is [PatcherEvaluationMain.kt](src/main/kotlin/org/variantsync/evaluation/PatcherEvaluationMain.kt).
