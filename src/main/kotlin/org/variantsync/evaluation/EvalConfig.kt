@@ -6,7 +6,7 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder
 import org.apache.commons.configuration2.builder.fluent.Parameters
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler
 import org.apache.commons.configuration2.ex.ConfigurationException
-import org.variantsync.evaluation.cherries.CherryType
+import org.variantsync.evaluation.execution.CherryType
 import java.io.File
 import java.nio.file.Path
 

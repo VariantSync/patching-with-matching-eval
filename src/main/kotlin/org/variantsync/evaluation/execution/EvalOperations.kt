@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.cherries
+package org.variantsync.evaluation.execution
 
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.Operations

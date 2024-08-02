@@ -2,7 +2,7 @@ package org.variantsync.evaluation
 
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.analysis.TaskOutcome
-import org.variantsync.evaluation.cherries.EvaluationRun
+import org.variantsync.evaluation.execution.EvaluationRun
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit

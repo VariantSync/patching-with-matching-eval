@@ -9,7 +9,7 @@ import org.variantsync.evaluation.util.diff.DiffParser
 import org.variantsync.evaluation.util.diff.components.Hunk
 import org.variantsync.evaluation.util.shell.GitApplyCommand
 import org.variantsync.evaluation.util.shell.ShellExecutor
-import org.variantsync.evaluation.cherries.panic
+import org.variantsync.evaluation.execution.panic
 import org.variantsync.evaluation.readContentSafely
 import org.variantsync.vevos.simulation.feature.Variant
 import java.io.File

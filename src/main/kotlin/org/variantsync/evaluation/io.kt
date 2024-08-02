@@ -4,9 +4,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.variantsync.evaluation.analysis.PatchOutcome
 import org.variantsync.evaluation.analysis.ExperimentResult
-import org.variantsync.evaluation.cherries.CherryDataset
-import org.variantsync.evaluation.cherries.EvaluationRun
-import org.variantsync.evaluation.cherries.panic
+import org.variantsync.evaluation.execution.CherryDataset
+import org.variantsync.evaluation.execution.EvaluationRun
+import org.variantsync.evaluation.execution.panic
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path

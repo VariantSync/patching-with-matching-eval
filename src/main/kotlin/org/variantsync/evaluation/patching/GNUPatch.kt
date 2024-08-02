@@ -5,7 +5,7 @@ import org.variantsync.evaluation.Operations
 import org.variantsync.evaluation.util.diff.DiffParser
 import org.variantsync.evaluation.util.diff.components.OriginalDiff
 import org.variantsync.evaluation.util.shell.PatchCommand
-import org.variantsync.evaluation.cherries.panic
+import org.variantsync.evaluation.execution.panic
 import org.variantsync.evaluation.error.ShellException
 import org.variantsync.evaluation.readContentSafely
 import org.variantsync.vevos.simulation.feature.Variant
