@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Applies all file patches that are found in the diff file. This function also requires a path to the directories of the source and target variants for the patch application, because it tries to match the artifacts of the source variant with the artifacts of the target variant. The calculated matching is then used to determine the best locations for a specific change to a file."><title>apply_all in mpatch::patch - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5ca6ca2a1f83705a.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="mpatch" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0-nightly (8bfcae730 2024-07-23)" data-channel="nightly" data-search-js="search-d234aafac6c221dd.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-d2fab2bf619172d3.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc fn"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../mpatch/index.html">mpatch</a><span class="version">1.0.0</span></h2></div><div class="sidebar-elems"><h2><a href="index.html">In mpatch::patch</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Function <a href="../index.html">mpatch</a>::<wbr><a href="index.html">patch</a>::<wbr><a class="fn" href="#">apply_all</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../src/mpatch/patch.rs.html#64-118">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>pub fn apply_all(
+    patch_paths: <a class="struct" href="../struct.PatchPaths.html" title="struct mpatch::PatchPaths">PatchPaths</a>,
+    strip: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>,
+    dryrun: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>,
+    matcher: impl <a class="trait" href="../trait.Matcher.html" title="trait mpatch::Matcher">Matcher</a>,
+    filter: impl <a class="trait" href="../trait.Filter.html" title="trait mpatch::Filter">Filter</a>,
+) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="struct" href="../struct.Error.html" title="struct mpatch::Error">Error</a>&gt;</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Applies all file patches that are found in the diff file. This function also requires a path to
+the directories of the source and target variants for the patch application, because it tries
+to match the artifacts of the source variant with the artifacts of the target variant. The
+calculated matching is then used to determine the best locations for a specific change to a
+file.</p>
+<p>This function creates new files for files that are created by a patch, and it deletes files for
+file deletions in a patch, regardless of whether the lines in the patch match the lines in the
+file completelty.</p>
+<h3 id="parameters"><a class="doc-anchor" href="#parameters">§</a>Parameters</h3><h4 id="source_dir_path"><a class="doc-anchor" href="#source_dir_path">§</a>source_dir_path</h4>
+<p>Specifies the path to the root directory of the source variant of the diff. The source variant
+is the version of the program that was modified by the changes that are now to be applied.</p>
+<h4 id="target_dir_path"><a class="doc-anchor" href="#target_dir_path">§</a>target_dir_path</h4>
+<p>Specifies the path to the root directory of the target variant that is to be patched.</p>
+<h4 id="patch_file_path"><a class="doc-anchor" href="#patch_file_path">§</a>patch_file_path</h4>
+<p>Specifies the path to the diff that describes all changes that are to be applied. This diff
+should usually have been determined between two versions of the source variant.</p>
+<h4 id="rejects_file_path"><a class="doc-anchor" href="#rejects_file_path">§</a>rejects_file_path</h4>
+<p>You may optionally provide a path to a rejects file to which all rejected changes are written.
+If no path is provided, the rejects are printed to stdout.</p>
+<h4 id="strip"><a class="doc-anchor" href="#strip">§</a>strip</h4>
+<p>You can also define a path strip <code>s</code>. The strip is used to remove the leading <code>s</code> elements from
+a path (e.g., the path <code>hello/world/directory</code> becomes <code>world/directory</code> for a strip of <code>s=1</code>).
+Providing a strip is usually necessary because diffs are created based on two version of a
+source variant that are located in different directories (e.g., <code>source-A/...</code> and
+<code>source-B/...</code>). This top-level directory should be cut from the path for the patch being
+applied successfully.</p>
+<h4 id="dryrun"><a class="doc-anchor" href="#dryrun">§</a>dryrun</h4>
+<p>You should also specify whether the patch application should be made persistant (i.e., patched
+files are saved), or if this is only a dryrun. In case of a dryrun, the patch application is
+only simulated, printing all rejects to stdout without file changes.</p>
+<h4 id="matcher"><a class="doc-anchor" href="#matcher">§</a>matcher</h4>
+<p>Lastly, this function requires a matcher that is used to calculate the matching between source
+and target variant. See <code>mpatch::matching</code> for more information.</p>
+</div></details></section></div></main></body></html>

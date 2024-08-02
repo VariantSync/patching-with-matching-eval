@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["align_filtered_patch_to_target","align_patch_to_target","align_to_multiple_targets"]};

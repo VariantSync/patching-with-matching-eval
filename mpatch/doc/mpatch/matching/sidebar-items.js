@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["LCSMatcher","MatchOffset","Matching"],"trait":["Matcher"],"type":["MatchId"]};

@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["anstream","anstyle","anstyle_parse","anstyle_query","clap","clap_builder","clap_derive","clap_lex","colorchoice","heck","is_terminal_polyfill","mpatch","proc_macro2","quote","similar","strsim","syn","unicode_ident","utf8parse"];
