@@ -5,8 +5,7 @@ from result_analysis.tables import (
 
 results_dir = "../../../evaluation-workdir/results/"
 repo_sample = "../../../evaluation-workdir/data/repo-sample.yaml"
-# metrics_file = "../../../evaluation-workdir/tables/metrics.tex"
-metrics_file = "/home/alex/papers/self/patching-with-matching/paper/tables/metrics.tex"
+metrics_file = "../../../evaluation-workdir/tables/metrics.tex"
 
 
 def main():
