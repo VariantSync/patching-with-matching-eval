@@ -13,13 +13,13 @@ The repository sample and datasets are compressed as zip archives that have to b
 __Note__:
 
 - The `repo-sample.zip` file in `evaluation-workdir/data/` contains a single-yml file which enumerates the metadata for all sampled repositories.
-- To unpack the dataset of cherry picks, you may need to perform the following command on a Linux console first:
+- To unpack the dataset of cherry picks, you may need to perform the following command on a Linux console first. Thereafter, you can extract all the mined cherry picks from the created `unsplit-mined-cherries.zip` file.
+
 
 ```shell
 zip -s 0 mined-cherries.zip --out unsplit-mined-cherries.zip
 ```
 
-Thereafter, you can extract all the mined cherry picks from the created `unsplit-mined-cherries.zip` file.
 
 - The `mpatch` directory contains the mpatch tool which is implemented in Rust. In its `README` file, you can find instructions on
 how to generate the documentation for mpatch.
