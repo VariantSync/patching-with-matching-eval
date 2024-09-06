@@ -1,0 +1,132 @@
+- total_number_of_branches: '360'
+  language: Java
+  repo_name: elastic/elasticsearch
+  total_number_of_commits: '141531'
+  total_number_of_results: '5'
+  total_number_of_committers: '652'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: da511f4e033db6e8a6aa2a54b23e906b5e026845
+        parent_ids:
+        - 5f51b08b7a4473f08c1245c629b6a8dbc3594db0
+        message: "SQL: Implement FORMAT function (#55454)\n\nImplement FORMAT according to the SQL Server spec: https://docs.microsoft.com/en-us/sql/t-sql/functions/format-transact-sql?view=sql-server-ver15#ExampleD by translating to the java.time patterns used in DATETIME_FORMAT.\r\n\r\nCloses: #54965\r\n\r\nCo-authored-by: Marios Trivyzas <matriv@users.noreply.github.com>\r\nCo-authored-by: Bogdan Pintea <bogdan.pintea@elastic.co>\r\nCo-authored-by: Andrei Stefan <astefan@users.noreply.github.com>"
+        author: Binu R J <16700196+binu-r@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1600695131, offset: 120, sign: 43 } }'
+      target:
+        id: 1f612cccbb1be786989db99369d99b846e29d9ac
+        parent_ids:
+        - cadd5dc53f8d58f03aaaa1e343e2466b4d53a567
+        message: "SQL: Implement FORMAT function (#55454) (#62701)\n\nImplement FORMAT according to the SQL Server spec: https://docs.microsoft.com/en-us/sql/t-sql/functions/format-transact-sql?view=sql-server-ver15#ExampleD by translating to the java.time patterns used in DATETIME_FORMAT.\r\n\r\nCloses: #54965\r\n\r\nCo-authored-by: Marios Trivyzas <matriv@users.noreply.github.com>\r\nCo-authored-by: Bogdan Pintea <bogdan.pintea@elastic.co>\r\nCo-authored-by: Andrei Stefan <astefan@users.noreply.github.com>\r\n(cherry picked from commit da511f4e033db6e8a6aa2a54b23e906b5e026845)\r\n"
+        author: Marios Trivyzas <matriv@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1600708924, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 8f7afbdeb9295999b48a6c36db5b31cbe0cee432
+        parent_ids:
+        - 1a099fa07531d96efd9f771ff9dc8b6775fd35fa
+        message: "SQL: Fix issue with timezone when paginating (#52101)\n\nPreviously, when the specified (or default) fetchSize led to\r\nsubsequent HTTP requests and the usage of cursors, those subsequent\r\nwere no longer using the client timezone specified in the initial\r\nSQL query. As a consequence, Even though the query is executed once\r\n(with the correct timezone) the processing of the query results by\r\nthe HitExtractors in the next pages was done using the default\r\ntimezone Z. This could lead to incorrect results.\r\n\r\nFix the issue by correctly using the initially specified timezone,\r\nwhich is found in the deserialisation of the cursor string.\r\n\r\nFixes: #51258"
+        author: Marios Trivyzas <matriv@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1581429546, offset: 60, sign: 43 } }'
+      target:
+        id: 4797347ae8f3d2024452d150e2b84da53b990de5
+        parent_ids:
+        - 3976770cccdc693438d39b56f535ed96e3d7d09b
+        message: |
+          SQL: [Tests] Add integ tests for timezone and pagination (#52101)
+
+          Cherry pick and adapt tests to validate correct behaviour
+          regarding processing of results that involve the use of the client
+          configured timezone by the HitExtractors when paginating over
+          the results of the query (use of cursors).
+
+          (cherry picked from commit 8f7afbdeb9295999b48a6c36db5b31cbe0cee432)
+        author: Marios Trivyzas <matriv@users.noreply.github.com>
+        committer: Marios Trivyzas <matriv@gmail.com>
+        time: 'Time { raw: git_time { time: 1581436246, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 12072b200efedfbc894bd33d781a392b26789071
+        parent_ids:
+        - e753e12f613d6abf5363d029b0dfda9aa5547721
+        message: "Run code snippets in ReindexDocumentationIT (#35165)\n\n\r\nCloses #32093"
+        author: Vladimir Dolzhenko <vladimir.dolzhenko@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1541163135, offset: 60, sign: 43 } }'
+      target:
+        id: 16c7bcc58e4ab534ae9876035ec72608735f6574
+        parent_ids:
+        - d91dc731004cd8241ddf333b089b21e29a645f43
+        message: |
+          Run code snippets in ReindexDocumentationIT (#35165)
+
+          Closes #32093
+
+          (cherry picked from commit 12072b200efedfbc894bd33d781a392b26789071)
+        author: Vladimir Dolzhenko <vladimir.dolzhenko@gmail.com>
+        committer: Vladimir Dolzhenko <vladimir.dolzhenko@gmail.com>
+        time: 'Time { raw: git_time { time: 1541164166, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 63fa4184ec1965c3223ce15dd618c3c508de1162
+        parent_ids:
+        - 710c60d4d73cde477da2c22d92fe5b55e97608a5
+        message: |-
+          Add 8.5.2 release notes (#91797)
+
+          Add 8.5.2 release notes
+        author: Bogdan Pintea <bogdan.pintea@elastic.co>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1669138368, offset: 60, sign: 43 } }'
+      target:
+        id: 2cf3276fa43c31193a13aa6fa7006fad207d51a6
+        parent_ids:
+        - 4e0a18fc8ee8b1931a84da74dfdf7eff217df2ba
+        message: |-
+          Add 8.5.2 release notes (#91797) (#91824)
+
+          Add 8.5.2 release notes
+
+          (cherry picked from commit 63fa4184ec1965c3223ce15dd618c3c508de1162)
+        author: Bogdan Pintea <bogdan.pintea@elastic.co>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1669142152, offset: -300, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9f1875ee2cb72b7e70bcd3fca21c36815d826f6d
+        parent_ids:
+        - a419993068f0a5692da37de4884c0e7bdc7fd315
+        message: |-
+          [DOCS] Fix docs for user profiles (#102452)
+
+          * [DOCS] Fix docs for user profiles
+        author: Fabio Busatto <52658645+bytebilly@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700732297, offset: 60, sign: 43 } }'
+      target:
+        id: 5459965e613ab84edc4e6e4436cd56a8a1ff07d3
+        parent_ids:
+        - e226621c79f8d792e63dbbf3949d36abaebde43d
+        message: |-
+          [DOCS] Fix docs for user profiles (#102452) (#102521)
+
+          * [DOCS] Fix docs for user profiles
+
+          (cherry picked from commit 9f1875ee2cb72b7e70bcd3fca21c36815d826f6d)
+
+          Co-authored-by: Fabio Busatto <52658645+bytebilly@users.noreply.github.com>
+        author: Abdon Pijpelink <abdon.pijpelink@elastic.co>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700739305, offset: -300, sign: 45 } }'
+    is_trivial: false

@@ -2,6 +2,7 @@ from result_analysis.tables import (
     find_example,
     metrics_table_generation,
 )
+from result_analysis.analyze_results import find_outliers
 
 results_dir = "../../../evaluation-workdir/results/"
 repo_sample = "../../../evaluation-workdir/data/repo-sample.yaml"
@@ -21,6 +22,10 @@ def main():
 
 def example():
     find_example(results_dir + "rep-1/", repo_sample, False)
+
+
+def outliers():
+    find_outliers(results_dir + "rep-1/", repo_sample, False)
 
 
 if __name__ == "__main__":
