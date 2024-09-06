@@ -175,7 +175,7 @@ fun main(args: Array<String>) {
 
     cloneDatasets(allSamples, config)
 
-    val n = 10
+    val n = 5
     Logger.info("Processing $n repos in parallel")
     val threadPool = Executors.newFixedThreadPool(n)
 
