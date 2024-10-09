@@ -21,6 +21,7 @@ run-eval = "result_analysis.__main__:main"
 power-simulation = "result_analysis.simulation:main"
 find-example = "result_analysis.__main__:example"
 find-outliers = "result_analysis.__main__:outliers"
+compare-patchers = "result_analysis.__main__:compare"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

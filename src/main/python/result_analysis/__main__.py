@@ -1,6 +1,7 @@
 from result_analysis.tables import (
     find_example,
     metrics_table_generation,
+    venn_diagram,
 )
 from result_analysis.analyze_results import find_outliers
 
@@ -26,6 +27,10 @@ def example():
 
 def outliers():
     find_outliers(results_dir + "rep-1/", repo_sample, False)
+
+
+def compare():
+    venn_diagram(results_dir + "rep-1/", repo_sample, False)
 
 
 if __name__ == "__main__":

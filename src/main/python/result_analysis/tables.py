@@ -229,3 +229,107 @@ def find_example(path_to_results, path_to_repo_list, only_non_trivial):
                     print(f"Target: {url}{res_mpatch.pick_id}")
                     print()
     print()
+
+
+def venn_diagram(path_to_results, path_to_repo_list, only_non_trivial):
+    global languages
+    repos = load_repositories(path_to_repo_list)
+
+    results_per_patcher = {}
+    for patcher in Patcher:  # Patcher is an enum
+        results = load_all_results(path_to_results, patcher)
+        # Filter trivial results
+        if only_non_trivial:
+            results = non_trivial_results(results)
+        # Group results by repo
+        results_per_patcher[patcher] = results_per_repo(results, repos)
+
+    results = results_per_patcher[Patcher.MPatch]
+
+    rm_best = 0
+    rm_equal = 0
+    rm_worse = 0
+    num_total = 0
+    rc_better = 0
+    ru_better = 0
+    ra_better = 0
+    rc_worse = 0
+    ru_worse = 0
+    ra_worse = 0
+
+    for repo in results.keys():
+        repo_results_mpatch = results[repo]
+        repo_results_upatch = results_per_patcher[Patcher.UnixPatch][repo]
+        repo_results_apply = results_per_patcher[Patcher.GitApply][repo]
+        repo_results_cherry = results_per_patcher[Patcher.GitCherry][repo]
+
+        sorted(repo_results_mpatch, key=lambda x: x.pick_id)
+        sorted(repo_results_upatch, key=lambda x: x.pick_id)
+        sorted(repo_results_apply, key=lambda x: x.pick_id)
+        sorted(repo_results_cherry, key=lambda x: x.pick_id)
+
+        repo_results_mpatch = {r.run_id: r for r in repo_results_mpatch}
+        repo_results_upatch = {r.run_id: r for r in repo_results_upatch}
+        repo_results_apply = {r.run_id: r for r in repo_results_apply}
+        repo_results_cherry = {r.run_id: r for r in repo_results_cherry}
+
+        for i in repo_results_mpatch.keys():
+            res_mpatch = repo_results_mpatch.get(i, None)
+            if res_mpatch is None:
+                continue
+
+            res_upatch = repo_results_upatch.get(i, None)
+            res_cherry = repo_results_cherry.get(i, None)
+            res_apply = repo_results_apply.get(i, None)
+
+            rm = res_mpatch.outcome_classification.num_incorrect()
+            rc = (
+                res_cherry.outcome_classification.num_incorrect()
+                if res_cherry is not None
+                else float("inf")
+            )
+            ru = (
+                res_upatch.outcome_classification.num_incorrect()
+                if res_upatch is not None
+                else float("inf")
+            )
+            ra = (
+                res_apply.outcome_classification.num_incorrect()
+                if res_apply is not None
+                else float("inf")
+            )
+            lang, user = res_mpatch.dataset.split("_")[:2]
+            repo = "_".join(res_mpatch.dataset.split("_")[2:])
+
+            if rm < rc:
+                rc_worse += 1
+            if rm < ru:
+                ru_worse += 1
+            if rm < ra:
+                ra_worse += 1
+
+            if rm < rc and rm < ru and rm < ra:
+                rm_best += 1
+            elif rm <= rc and rm <= ru and rm <= ra:
+                rm_equal += 1
+            else:
+                rm_worse += 1
+                if rm > rc:
+                    rc_better += 1
+                if rm > ru:
+                    ru_better += 1
+                if rm > ra:
+                    ra_better += 1
+            num_total += 1
+
+    print("mpatch is best: " + str(rm_best / num_total))
+    print("mpatch at least as good: " + str(rm_equal / num_total))
+    print("mpatch worse: " + str(rm_worse / num_total))
+    print("cp better: " + str(rc_better / num_total))
+    print("patch better: " + str(ru_better / num_total))
+    print("apply better: " + str(ra_better / num_total))
+
+    print("cp worse: " + str(rc_worse / num_total))
+    print("patch worse: " + str(ru_worse / num_total))
+    print("apply worse: " + str(ra_worse / num_total))
+    print()
