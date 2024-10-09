@@ -7,7 +7,7 @@ from result_analysis.eval_setup import OutcomeClassification
 from result_analysis.eval_setup import Patcher
 from result_analysis.eval_setup import RQ3PatcherData
 from result_analysis.io import load_all_results
-from result_analysis.metrics import calculate_precision_recall
+from result_analysis.metrics import calculate_f1_score, calculate_precision_recall
 from collections import defaultdict
 import numpy as np
 
@@ -188,6 +188,7 @@ def accumulate_data_per_patcher(
                         oc.fp(),
                         oc.fn(),
                     )
+                    f1 = calculate_f1_score(p, r)
                     # if np.isnan(p) or np.isnan(r):
                     #    continue
                     num_incorrect = oc.num_incorrect()
@@ -200,6 +201,7 @@ def accumulate_data_per_patcher(
                             patcher=patcher,
                             precision=p,
                             recall=r,
+                            f1_score=f1,
                             patch_automation=a,
                             avg_edit_distance=num_incorrect,
                             avg_runtime=res.patch_duration,
@@ -208,6 +210,7 @@ def accumulate_data_per_patcher(
                         data_per_patch.add_data(
                             precision=p,
                             recall=r,
+                            f1_score=f1,
                             patch_automation=a,
                             avg_edit_distance=num_incorrect,
                             avg_runtime=res.patch_duration,
@@ -218,6 +221,8 @@ def accumulate_data_per_patcher(
                     fp=fp,
                     fn=fn,
                 )
+
+                f1_score = calculate_f1_score(precision, recall)
 
                 oa = overall_automation(results)
                 (average_ed, _) = edit_distance(results)
@@ -230,6 +235,7 @@ def accumulate_data_per_patcher(
                     accumulated_data.accumulated_data.add_data(
                         precision=precision,
                         recall=recall,
+                        f1_score=f1_score,
                         patch_automation=oa,
                         avg_edit_distance=average_ed,
                         avg_runtime=average_run,
@@ -240,6 +246,7 @@ def accumulate_data_per_patcher(
                         patcher=patcher,
                         precision=precision,
                         recall=recall,
+                        f1_score=f1_score,
                         patch_automation=oa,
                         avg_edit_distance=average_ed,
                         avg_runtime=average_run,

@@ -174,8 +174,7 @@ class OutcomeClassification:
 
 
 class Metric(Enum):
-    Precision = "precision"
-    Recall = "recall"
+    F1Score = "f1_score"
     Automation = "patch_automation"
     EditDistance = "avg_edit_distance"
     Runtime = "avg_runtime"
@@ -188,8 +187,7 @@ class Metric(Enum):
 
     def nice_name(self):
         return {
-            Metric.Precision: "Precision",
-            Metric.Recall: "Recall",
+            Metric.F1Score: "F1 Score",
             Metric.Automation: "Autom. (\\%)",
             Metric.EditDistance: "Req. Fixes",
             Metric.Runtime: "Time (s)",
@@ -202,22 +200,31 @@ class RQ3PatcherData:
         patcher: Patcher,
         precision: float,
         recall: float,
+        f1_score: float,
         patch_automation: float,
         avg_edit_distance: float,
         avg_runtime: float,
     ):
         self.precision = np.array([precision])
         self.recall = np.array([recall])
+        self.f1_score = np.array([f1_score])
         self.patcher = patcher
         self.patch_automation = np.array([patch_automation])
         self.avg_edit_distance = np.array([avg_edit_distance])
         self.avg_runtime = np.array([avg_runtime])
 
     def add_data(
-        self, precision, recall, patch_automation, avg_edit_distance, avg_runtime
+        self,
+        precision,
+        recall,
+        f1_score,
+        patch_automation,
+        avg_edit_distance,
+        avg_runtime,
     ):
         self.precision = np.append(self.precision, precision)
         self.recall = np.append(self.recall, recall)
+        self.f1_score = np.append(self.f1_score, f1_score)
         self.patch_automation = np.append(self.patch_automation, patch_automation)
         self.avg_edit_distance = np.append(self.avg_edit_distance, avg_edit_distance)
         self.avg_runtime = np.append(self.avg_runtime, avg_runtime)

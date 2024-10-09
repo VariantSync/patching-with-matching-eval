@@ -34,7 +34,7 @@ def generate_metrics_result_table(
         # Write the multi-rows and their corresponding rows
         file.write("\\toprule\n")
         for metric in Metric:
-            if metric != Metric.Precision:
+            if metric != Metric.F1Score:
                 file.write("\\midrule\n")
             file.write(
                 "\\multirow{"
@@ -52,9 +52,7 @@ def generate_metrics_result_table(
                     results = results_per_patcher[patcher][language].per_patch
                     value = np.nanmean(results.get(metric))
                     postfix = ""
-                    if metric == Metric.Precision:
-                        best_type = "max"
-                    elif metric == Metric.Recall:
+                    if metric == Metric.F1Score:
                         best_type = "max"
                     elif metric == Metric.Automation:
                         value = 100 * value
@@ -125,9 +123,7 @@ def determine_best_average(differences, patcher_names, metric):
         results = differences[patcher][metric][0]
         values.append(results)
 
-    if metric == Metric.Precision:
-        best_type = "max"
-    elif metric == Metric.Recall:
+    if metric == Metric.F1Score:
         best_type = "max"
     elif metric == Metric.Automation:
         best_type = "max"
