@@ -174,10 +174,11 @@ class OutcomeClassification:
 
 
 class Metric(Enum):
-    F1Score = "f1_score"
     Automation = "patch_automation"
     EditDistance = "avg_edit_distance"
-    Runtime = "avg_runtime"
+    F1Score = "f1_score"
+    Precision = "precision"
+    Recall = "recall"
 
     def __str__(self):
         return self.value
@@ -189,8 +190,9 @@ class Metric(Enum):
         return {
             Metric.F1Score: "F1 Score",
             Metric.Automation: "Autom. (\\%)",
+            Metric.Precision: "Precision",
+            Metric.Recall: "Recall",
             Metric.EditDistance: "Req. Fixes",
-            Metric.Runtime: "Time (s)",
         }[self]
 
 

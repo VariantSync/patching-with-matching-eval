@@ -34,7 +34,7 @@ def generate_metrics_result_table(
         # Write the multi-rows and their corresponding rows
         file.write("\\toprule\n")
         for metric in Metric:
-            if metric != Metric.F1Score:
+            if metric != Metric.Automation:
                 file.write("\\midrule\n")
             file.write(
                 "\\multirow{"
@@ -54,15 +54,19 @@ def generate_metrics_result_table(
                     postfix = ""
                     if metric == Metric.F1Score:
                         best_type = "max"
+                    elif metric == Metric.Precision:
+                        best_type = "max"
+                    elif metric == Metric.Recall:
+                        best_type = "max"
                     elif metric == Metric.Automation:
                         value = 100 * value
                         best_type = "max"
                         # postfix = "\\%"
                     elif metric == Metric.EditDistance:
                         best_type = "min"
-                    elif metric == Metric.Runtime:
-                        best_type = "min"
-                        # postfix = "s"
+                    # elif metric == Metric.Runtime:
+                    # best_type = "min"
+                    # postfix = "s"
                     else:
                         value = -1
 
@@ -125,11 +129,13 @@ def determine_best_average(differences, patcher_names, metric):
 
     if metric == Metric.F1Score:
         best_type = "max"
+    elif metric == Metric.Precision:
+        best_type = "max"
+    elif metric == Metric.Recall:
+        best_type = "max"
     elif metric == Metric.Automation:
         best_type = "max"
     elif metric == Metric.EditDistance:
-        best_type = "min"
-    elif metric == Metric.Runtime:
         best_type = "min"
     else:
         exit(-1)
