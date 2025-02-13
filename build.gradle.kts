@@ -16,7 +16,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.XXXX-1.vevos:simulation:2.0.0")
     // https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2
     implementation("org.apache.commons:commons-configuration2:2.9.0")
     implementation("commons-logging:commons-logging:1.3.1")
@@ -31,7 +30,6 @@ dependencies {
     implementation("org.jetbrains:annotations:24.0.1")
     implementation("net.ssehub:kernel_haven:1.0.0")
     implementation("net.lingala.zip4j:zip4j:2.11.4")
-    implementation("org.XXXX-1:diffdetective:1.0.0")
     implementation("org.slf4j:slf4j-api:2.0.5")
     implementation("org.slf4j:slf4j-simple:2.0.5")
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml
