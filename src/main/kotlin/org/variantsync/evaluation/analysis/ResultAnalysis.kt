@@ -1,7 +1,7 @@
 package org.XXXX-1.evaluation.analysis
 
 import org.tinylog.kotlin.Logger
-import org.XXXX-1.diffdetective.util.Assert
+import org.XXXX-1.XXXX-1.util.Assert
 import org.XXXX-1.evaluation.util.diff.components.OriginalDiff
 import org.XXXX-1.evaluation.util.diff.lines.ChangedLine
 import org.XXXX-1.evaluation.execution.CherryPick

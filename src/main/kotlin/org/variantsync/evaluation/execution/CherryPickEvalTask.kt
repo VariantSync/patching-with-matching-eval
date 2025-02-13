@@ -14,8 +14,8 @@ import org.XXXX-1.evaluation.error.Panic
 import org.XXXX-1.evaluation.patching.Patcher
 import org.XXXX-1.evaluation.patching.Rejects
 import org.XXXX-1.evaluation.patching.UTF8Exception
-import org.XXXX-1.vevos.simulation.feature.Variant
-import org.XXXX-1.vevos.simulation.feature.config.IConfiguration
+import org.XXXX-1.XXXX-1.simulation.feature.Variant
+import org.XXXX-1.XXXX-1.simulation.feature.config.IConfiguration
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path

@@ -1,6 +1,6 @@
 package org.XXXX-1.evaluation.analysis
 
-import org.XXXX-1.diffdetective.util.Assert
+import org.XXXX-1.XXXX-1.util.Assert
 import org.XXXX-1.evaluation.util.diff.lines.ChangedLine
 import org.XXXX-1.evaluation.patching.Change
 

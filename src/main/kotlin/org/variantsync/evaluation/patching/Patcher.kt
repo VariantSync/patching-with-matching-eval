@@ -2,7 +2,7 @@ package org.XXXX-1.evaluation.patching
 
 import org.tinylog.kotlin.Logger
 import org.XXXX-1.evaluation.execution.Operations
-import org.XXXX-1.vevos.simulation.feature.Variant
+import org.XXXX-1.XXXX-1.simulation.feature.Variant
 import java.nio.file.Files
 
 interface Patcher {

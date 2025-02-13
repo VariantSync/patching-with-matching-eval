@@ -11,7 +11,7 @@ import org.XXXX-1.evaluation.util.shell.GitApplyCommand
 import org.XXXX-1.evaluation.util.shell.ShellExecutor
 import org.XXXX-1.evaluation.execution.panic
 import org.XXXX-1.evaluation.execution.readContentSafely
-import org.XXXX-1.vevos.simulation.feature.Variant
+import org.XXXX-1.XXXX-1.simulation.feature.Variant
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files

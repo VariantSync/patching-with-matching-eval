@@ -8,7 +8,7 @@ import org.XXXX-1.evaluation.util.shell.ShellExecutor
 import org.XXXX-1.evaluation.execution.EvalOperations
 import org.XXXX-1.evaluation.error.ShellException
 import org.XXXX-1.evaluation.execution.readContentSafely
-import org.XXXX-1.vevos.simulation.feature.Variant
+import org.XXXX-1.XXXX-1.simulation.feature.Variant
 import java.nio.file.Files
 import java.util.function.Consumer
 
