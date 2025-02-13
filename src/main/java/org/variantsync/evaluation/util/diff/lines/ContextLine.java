@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.util.diff.lines;
+package org.XXXX-1.evaluation.util.diff.lines;
 
 /**
  * Represents a context line in a hunk of the difference between two files.

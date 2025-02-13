@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.util.diff.lines;
+package org.XXXX-1.evaluation.util.diff.lines;
 
 /**
  * Represents a removed line of source code in the difference of two files.

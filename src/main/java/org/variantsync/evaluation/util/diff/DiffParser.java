@@ -1,11 +1,11 @@
-package org.variantsync.evaluation.util.diff;
+package org.XXXX-1.evaluation.util.diff;
 
 import org.tinylog.Logger;
-import org.variantsync.evaluation.util.diff.components.FileDiff;
-import org.variantsync.evaluation.util.diff.components.Hunk;
-import org.variantsync.evaluation.util.diff.components.HunkLocation;
-import org.variantsync.evaluation.util.diff.components.OriginalDiff;
-import org.variantsync.evaluation.util.diff.lines.*;
+import org.XXXX-1.evaluation.util.diff.components.FileDiff;
+import org.XXXX-1.evaluation.util.diff.components.Hunk;
+import org.XXXX-1.evaluation.util.diff.components.HunkLocation;
+import org.XXXX-1.evaluation.util.diff.components.OriginalDiff;
+import org.XXXX-1.evaluation.util.diff.lines.*;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;

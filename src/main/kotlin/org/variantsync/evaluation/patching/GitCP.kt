@@ -1,19 +1,19 @@
-package org.variantsync.evaluation.patching
+package org.XXXX-1.evaluation.patching
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.execution.Operations
-import org.variantsync.evaluation.util.diff.DiffParser
-import org.variantsync.evaluation.util.shell.GitCherryPickCommand
-import org.variantsync.evaluation.util.shell.ShellExecutor
-import org.variantsync.evaluation.execution.EvalOperations
-import org.variantsync.evaluation.error.ShellException
-import org.variantsync.evaluation.execution.readContentSafely
-import org.variantsync.vevos.simulation.feature.Variant
+import org.XXXX-1.evaluation.execution.Operations
+import org.XXXX-1.evaluation.util.diff.DiffParser
+import org.XXXX-1.evaluation.util.shell.GitCherryPickCommand
+import org.XXXX-1.evaluation.util.shell.ShellExecutor
+import org.XXXX-1.evaluation.execution.EvalOperations
+import org.XXXX-1.evaluation.error.ShellException
+import org.XXXX-1.evaluation.execution.readContentSafely
+import org.XXXX-1.vevos.simulation.feature.Variant
 import java.nio.file.Files
 import java.util.function.Consumer
 
 class GitCP(private val name: String, private val strip: Int, private val strategy: MergeStrategy) : Patcher {
-    private var lastResult: org.variantsync.functjonal.Result<List<String>, ShellException>? = null
+    private var lastResult: org.XXXX-1.functjonal.Result<List<String>, ShellException>? = null
     private val conflictDetectionText = "CONFLICT (content): Merge conflict in "
 
     override fun applyPatch(

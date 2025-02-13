@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.execution
+package org.XXXX-1.evaluation.execution
 
 // where:
 //    (n) is the sample size,

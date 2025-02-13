@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.analysis
+package org.XXXX-1.evaluation.analysis
 
 enum class AnalysisMode {
     Trivial,

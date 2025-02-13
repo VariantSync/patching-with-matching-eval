@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.util.shell;
+package org.XXXX-1.evaluation.util.shell;
 
 public class GitAddCommand extends ShellCommand{
     private static final String COMMAND = "git";

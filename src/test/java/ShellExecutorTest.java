@@ -1,9 +1,9 @@
 import org.tinylog.Logger;
-import org.variantsync.evaluation.util.shell.*;
-import org.variantsync.evaluation.error.ShellException;
+import org.XXXX-1.evaluation.util.shell.*;
+import org.XXXX-1.evaluation.error.ShellException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.variantsync.functjonal.Result;
+import org.XXXX-1.functjonal.Result;
 
 import java.io.IOException;
 import java.nio.file.Files;

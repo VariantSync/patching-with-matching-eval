@@ -1,9 +1,9 @@
-package org.variantsync.evaluation.execution
+package org.XXXX-1.evaluation.execution
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.util.shell.AppliedPatchTracker
-import org.variantsync.evaluation.util.shell.ShellExecutor
-import org.variantsync.evaluation.patching.Patcher
+import org.XXXX-1.evaluation.util.shell.AppliedPatchTracker
+import org.XXXX-1.evaluation.util.shell.ShellExecutor
+import org.XXXX-1.evaluation.patching.Patcher
 import java.io.IOException
 import java.io.UncheckedIOException
 import java.nio.file.Files

@@ -1,6 +1,6 @@
-package org.variantsync.evaluation.patching
+package org.XXXX-1.evaluation.patching
 
-import org.variantsync.evaluation.util.diff.lines.ChangedLine
+import org.XXXX-1.evaluation.util.diff.lines.ChangedLine
 import java.util.stream.Collectors
 
 data class Rejects(val rejects: MutableList<Change>) {

@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.util.diff.lines;
+package org.XXXX-1.evaluation.util.diff.lines;
 
 import java.nio.file.Path;
 import java.util.Objects;

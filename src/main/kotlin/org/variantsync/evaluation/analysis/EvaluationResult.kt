@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.analysis
+package org.XXXX-1.evaluation.analysis
 
 class EvaluationResult(
     val applied: Applied, val invalid: Invalid, val wrongLocation: WrongLocation, val missing: Missing,

@@ -1,7 +1,7 @@
-package org.variantsync.evaluation.execution
+package org.XXXX-1.evaluation.execution
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.loadPRDatasets
+import org.XXXX-1.evaluation.loadPRDatasets
 import java.io.File
 import java.io.IOException
 import java.io.UncheckedIOException

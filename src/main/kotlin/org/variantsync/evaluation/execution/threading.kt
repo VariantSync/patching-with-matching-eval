@@ -1,7 +1,7 @@
-package org.variantsync.evaluation.execution
+package org.XXXX-1.evaluation.execution
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.analysis.TaskOutcome
+import org.XXXX-1.evaluation.analysis.TaskOutcome
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit

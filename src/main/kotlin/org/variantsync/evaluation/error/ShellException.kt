@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.error
+package org.XXXX-1.evaluation.error
 
 import java.util.function.Consumer
 

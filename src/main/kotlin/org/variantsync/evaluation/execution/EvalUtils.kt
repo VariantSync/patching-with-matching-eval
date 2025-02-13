@@ -1,8 +1,8 @@
-package org.variantsync.evaluation.execution
+package org.XXXX-1.evaluation.execution
 
-import org.variantsync.evaluation.util.diff.components.FileDiff
-import org.variantsync.evaluation.util.diff.components.OriginalDiff
-import org.variantsync.evaluation.patching.*
+import org.XXXX-1.evaluation.util.diff.components.FileDiff
+import org.XXXX-1.evaluation.util.diff.components.OriginalDiff
+import org.XXXX-1.evaluation.patching.*
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path

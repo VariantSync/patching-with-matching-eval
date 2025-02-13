@@ -1,10 +1,10 @@
-package org.variantsync.evaluation.util.shell;
+package org.XXXX-1.evaluation.util.shell;
 
 import kotlin.text.Charsets;
 import org.tinylog.Logger;
-import org.variantsync.evaluation.error.SetupError;
-import org.variantsync.evaluation.error.ShellException;
-import org.variantsync.functjonal.Result;
+import org.XXXX-1.evaluation.error.SetupError;
+import org.XXXX-1.evaluation.error.ShellException;
+import org.XXXX-1.functjonal.Result;
 
 import java.io.BufferedReader;
 import java.io.IOException;

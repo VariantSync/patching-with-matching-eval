@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.util.diff.components;
+package org.XXXX-1.evaluation.util.diff.components;
 
 import java.util.Objects;
 

@@ -1,14 +1,14 @@
-package org.variantsync.evaluation.patching
+package org.XXXX-1.evaluation.patching
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.execution.Operations
-import org.variantsync.evaluation.util.diff.DiffParser
-import org.variantsync.evaluation.util.diff.components.OriginalDiff
-import org.variantsync.evaluation.util.shell.PatchCommand
-import org.variantsync.evaluation.execution.panic
-import org.variantsync.evaluation.error.ShellException
-import org.variantsync.evaluation.execution.readContentSafely
-import org.variantsync.vevos.simulation.feature.Variant
+import org.XXXX-1.evaluation.execution.Operations
+import org.XXXX-1.evaluation.util.diff.DiffParser
+import org.XXXX-1.evaluation.util.diff.components.OriginalDiff
+import org.XXXX-1.evaluation.util.shell.PatchCommand
+import org.XXXX-1.evaluation.execution.panic
+import org.XXXX-1.evaluation.error.ShellException
+import org.XXXX-1.evaluation.execution.readContentSafely
+import org.XXXX-1.vevos.simulation.feature.Variant
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path

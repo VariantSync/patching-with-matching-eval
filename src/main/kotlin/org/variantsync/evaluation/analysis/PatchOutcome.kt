@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.analysis
+package org.XXXX-1.evaluation.analysis
 
 import java.time.Duration
 

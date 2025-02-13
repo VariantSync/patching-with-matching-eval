@@ -1,9 +1,9 @@
-package org.variantsync.evaluation.util.diff.components;
+package org.XXXX-1.evaluation.util.diff.components;
 
-import org.variantsync.evaluation.util.diff.lines.AddedLine;
-import org.variantsync.evaluation.util.diff.lines.Line;
-import org.variantsync.evaluation.util.diff.lines.MetaLine;
-import org.variantsync.evaluation.util.diff.lines.RemovedLine;
+import org.XXXX-1.evaluation.util.diff.lines.AddedLine;
+import org.XXXX-1.evaluation.util.diff.lines.Line;
+import org.XXXX-1.evaluation.util.diff.lines.MetaLine;
+import org.XXXX-1.evaluation.util.diff.lines.RemovedLine;
 
 import java.util.ArrayList;
 import java.util.List;

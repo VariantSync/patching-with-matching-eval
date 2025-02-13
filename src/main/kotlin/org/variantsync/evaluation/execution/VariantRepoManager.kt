@@ -1,7 +1,7 @@
-package org.variantsync.evaluation.execution
+package org.XXXX-1.evaluation.execution
 
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.util.shell.*
+import org.XXXX-1.evaluation.util.shell.*
 import java.nio.file.Path
 
 class VariantRepoManager(

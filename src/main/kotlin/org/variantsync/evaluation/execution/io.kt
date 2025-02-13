@@ -1,9 +1,9 @@
-package org.variantsync.evaluation.execution
+package org.XXXX-1.evaluation.execution
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.variantsync.evaluation.analysis.PatchOutcome
-import org.variantsync.evaluation.analysis.ExperimentResult
+import org.XXXX-1.evaluation.analysis.PatchOutcome
+import org.XXXX-1.evaluation.analysis.ExperimentResult
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path

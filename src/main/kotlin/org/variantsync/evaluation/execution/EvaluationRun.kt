@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.execution
+package org.XXXX-1.evaluation.execution
 
 class EvaluationRun(val repetition: Int, val datasetName: String, val cherry: String, val pick: String) {
     override fun equals(other: Any?): Boolean {

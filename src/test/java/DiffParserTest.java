@@ -1,9 +1,9 @@
-import org.variantsync.evaluation.util.diff.DiffParser;
-import org.variantsync.evaluation.util.diff.components.*;
-import org.variantsync.evaluation.util.diff.lines.AddedLine;
-import org.variantsync.evaluation.util.diff.lines.ContextLine;
-import org.variantsync.evaluation.util.diff.lines.Line;
-import org.variantsync.evaluation.util.diff.lines.RemovedLine;
+import org.XXXX-1.evaluation.util.diff.DiffParser;
+import org.XXXX-1.evaluation.util.diff.components.*;
+import org.XXXX-1.evaluation.util.diff.lines.AddedLine;
+import org.XXXX-1.evaluation.util.diff.lines.ContextLine;
+import org.XXXX-1.evaluation.util.diff.lines.Line;
+import org.XXXX-1.evaluation.util.diff.lines.RemovedLine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static org.variantsync.evaluation.execution.EvalUtilsKt.readContentSafely;
+import static org.XXXX-1.evaluation.execution.EvalUtilsKt.readContentSafely;
 
 public class DiffParserTest {
 

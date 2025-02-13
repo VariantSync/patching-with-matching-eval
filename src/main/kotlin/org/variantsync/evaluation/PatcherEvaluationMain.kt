@@ -1,12 +1,12 @@
-package org.variantsync.evaluation
+package org.XXXX-1.evaluation
 
 import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.execution.*
-import org.variantsync.evaluation.util.shell.CpCommand
-import org.variantsync.evaluation.util.shell.RmCommand
-import org.variantsync.evaluation.util.shell.ShellExecutor
+import org.XXXX-1.evaluation.execution.*
+import org.XXXX-1.evaluation.util.shell.CpCommand
+import org.XXXX-1.evaluation.util.shell.RmCommand
+import org.XXXX-1.evaluation.util.shell.ShellExecutor
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.File

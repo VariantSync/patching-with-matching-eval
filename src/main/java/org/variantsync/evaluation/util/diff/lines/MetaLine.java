@@ -1,4 +1,4 @@
-package org.variantsync.evaluation.util.diff.lines;
+package org.XXXX-1.evaluation.util.diff.lines;
 
 /**
  * Represents lines with metadata (e.g., information about EOF) in the difference of two files.

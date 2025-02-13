@@ -1,7 +1,7 @@
-package org.variantsync.evaluation.util.shell;
+package org.XXXX-1.evaluation.util.shell;
 
-import org.variantsync.evaluation.error.ShellException;
-import org.variantsync.functjonal.Result;
+import org.XXXX-1.evaluation.error.ShellException;
+import org.XXXX-1.functjonal.Result;
 
 import java.util.Arrays;
 import java.util.List;

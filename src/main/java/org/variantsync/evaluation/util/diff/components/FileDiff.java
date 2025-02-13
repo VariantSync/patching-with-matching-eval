@@ -1,7 +1,7 @@
-package org.variantsync.evaluation.util.diff.components;
+package org.XXXX-1.evaluation.util.diff.components;
 
-import org.variantsync.evaluation.util.diff.lines.Line;
-import org.variantsync.evaluation.patching.Change;
+import org.XXXX-1.evaluation.util.diff.lines.Line;
+import org.XXXX-1.evaluation.patching.Change;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
