@@ -57,7 +57,7 @@ class PatchCompositionAnalysis(
     // The study tasks that are to be executed in parallel
     private val evalTasks: MutableList<PatchCompositionTask>
     private val numThreads: Int
-    private val availableOperations: BlockingQueue<EvalOperations>
+    private val availableOperations: BlockingQueue<CompositionAnalysisOperations>
 
     init {
         if (!Files.exists(config.EXPERIMENT_DIR_RESULTS())) {
@@ -71,7 +71,7 @@ class PatchCompositionAnalysis(
         Logger.info("Preparing working directories for $numThreads threads.")
         for (i in 1..numThreads) {
             // Add one operations instance for each thread; each instance defines its own working directory
-            val operations = EvalOperations(config.EXPERIMENT_DIR_MAIN(), repoPath)
+            val operations = CompositionAnalysisOperations(config.EXPERIMENT_DIR_MAIN(), repoPath)
             // Clean old variant files
             cleanVariantDirectories(operations)
             // Copy the source and target variant to the respective variant directories

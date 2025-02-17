@@ -25,6 +25,7 @@ import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Callable
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class PatchCompositionTask(
@@ -32,13 +33,13 @@ class PatchCompositionTask(
     private val config: EvalConfig,
     private val datasetName: String,
     private val cherryPick: CherryPick,
-    private val availableOperations: BlockingQueue<EvalOperations>,
+    private val availableOperations: BlockingQueue<CompositionAnalysisOperations>,
     private val runID: ULong,
     val evalRun: EvaluationRun,
 ) : Callable<TaskOutcome> {
 
     override fun call(): TaskOutcome {
-        val operations: EvalOperations
+        val operations: CompositionAnalysisOperations
 
         synchronized(CherryPickEvalTask::class.java) {
             // Retrieve the operations and the repo manager for this task
@@ -75,7 +76,7 @@ class PatchCompositionTask(
         return sb.toString()
     }
 
-    fun callExecution(operations: EvalOperations): List<ExperimentResult> {
+    fun callExecution(operations: CompositionAnalysisOperations): List<ExperimentResult> {
         try {
             // repoManager.cleanRepoStates()
             if (!operations.repoManager.prepareCherryPick(cherryPick)) {
@@ -96,11 +97,6 @@ class PatchCompositionTask(
         val source = Variant("source", AllTrueConfiguration())
         val target = Variant("target", AllTrueConfiguration())
 
-        if (Files.exists(operations.splitPatchFile)) {
-            Logger.debug("Cleaning old patch file " + operations.splitPatchFile)
-            operations.shell.execute(RmCommand(operations.splitPatchFile))
-        }
-
         // Apply diff to both versions of source variant
         Logger.debug("Diffing source...")
         val originalPatch = getOriginalDiff(
@@ -117,135 +113,34 @@ class PatchCompositionTask(
             return ArrayList()
         }
 
-        if (config.EXPERIMENT_DEBUG()) {
-            saveDiff(
-                originalPatch,
-                operations.debugDir(cherryPick).resolve("original.diff")
-            )
-        }
-
-        saveDiff(originalPatch, operations.patchFile)
         Logger.debug("Saved original diff.")
 
         val results = ArrayList<ExperimentResult>()
         try {
             Logger.debug("Starting patch application for cherry-pick " + cherryPick.id)
-            var evolutionDiff =
-                getOriginalDiff(operations, operations.targetVariantV0, operations.targetVariantV1)
 
-            val patchIsTrivial = originalPatch.partiallyEquals(evolutionDiff, operations.STRIP)
-            if (patchIsTrivial) {
-                // We only focus on variability, which is expressed by differences in the patch and evolution
-                Logger.debug("Patch is trivial")
-            } else {
-                Logger.debug("Patch is not trivial")
+            /* Application of patches without knowledge about features */
+            Logger.debug("Applying patch from cherry-pick...")
+            // TODO: Analyze
+            val fileMap = HashMap<String, Int>()
+            for (fileDiff in originalPatch.fileDiffs) {
+                val fileType = fileDiff.oldFile.fileName.toFile().extension
+                fileMap[fileType] = fileMap.getOrDefault(fileType, 0) + 1
             }
 
-            evolutionDiff = filterUnpatchedFiles(originalPatch, evolutionDiff, operations.STRIP)
+            // TODO: Save result
+            val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("rep-${repetition}")
+                .resolve("${datasetName}_${patcher.name()}.results")
+            results.add(ExperimentResult(patchOutcome, resultFile))
 
-            for (patcher in operations.patchers) {
-                /* Application of patches without knowledge about features */
-                Logger.debug("Applying patch from cherry-pick...")
-                val start = Instant.now()
-                var rejectsNormal: Rejects
-                try {
-                     rejectsNormal = patcher.applyPatch(operations, source, target, false)
-                } catch (e: UTF8Exception) {
-                    Logger.debug(e)
-                    patcher.clean(operations)
-                    operations.repoManager.resetTargetVariant()
-                    return ArrayList()
-                } catch (e: Exception) {
-                    Logger.debug(e)
-                    rejectsNormal = Rejects(ArrayList())
-                }
-                val end = Instant.now()
-                val patchDuration = Duration.between(start, end)
-
-                // Gather the patch result
-                var actualVsExpectedNormal =
-                    getActualVsExpected(operations, operations.targetVariantV1, target, cherryPick)
-                actualVsExpectedNormal = filterUnpatchedFiles(originalPatch, actualVsExpectedNormal, operations.STRIP)
-
-                if (config.EXPERIMENT_DEBUG()) {
-                    patchFilesDebug(
-                        operations,
-                        patcher,
-                        originalPatch,
-                        cherryPick,
-                        source,
-                        target,
-                        rejectsNormal,
-                        evolutionDiff
-                    )
-                }
-
-                /* Result Evaluation */
-                val patchOutcome = ResultAnalysis.processCherriesOutcome(
-                    operations,
-                    cherryPick,
-                    datasetName,
-                    runID,
-                    originalPatch,
-                    actualVsExpectedNormal,
-                    rejectsNormal,
-                    evolutionDiff,
-                    patchDuration,
-                    patchIsTrivial,
-                )
-
-                val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("rep-${repetition}").resolve("${datasetName}_${patcher.name()}.results")
-                results.add(ExperimentResult(patchOutcome, resultFile))
-
-                Logger.debug(
-                    "Finished patching for cherry " + cherryPick.cherryCommit + " and target "
-                            + cherryPick.targetCommit
-                )
-
-                patcher.clean(operations)
-                operations.repoManager.resetTargetVariant()
-            }
+            Logger.debug(
+                "Finished analysis for cherry " + cherryPick.cherryCommit + " and target "
+                        + cherryPick.targetCommit
+            )
         } catch (e: Exception) {
             Logger.debug("Captured exception for cherry pick ${cherryPick.id}: ", e.message)
         }
         return results
-    }
-
-
-    /**
-     * Get the difference between the target variant after patching and the target variant in the
-     * next de.variantsync.studies.evolution step. Then, filter all differences that do not belong
-     * to the source variant and could have therefore not been synchronized in any case.
-     */
-    private fun getActualVsExpected(
-        operations: EvalOperations,
-        pathToExpectedResult: Path,
-        target: Variant,
-        currentPR: CherryPick
-    ): OriginalDiff {
-        val resultDiff = getOriginalDiff(operations, operations.patchDir(), pathToExpectedResult, true)
-        if (config.EXPERIMENT_DEBUG() && !resultDiff.isEmpty) {
-            try {
-                saveDiff(
-                    resultDiff, operations.debugDir(currentPR).resolve(target.name)
-                        .resolve(target.name + "_actual_expected.diff")
-                )
-            } catch (e: IOException) {
-                Logger.error("Was not able to save resultDiffOriginal:\n{}", e)
-            }
-        }
-        return resultDiff
-    }
-
-    // Save the difference as a patch file
-    private fun saveRejects(rejects: Rejects, file: Path) {
-        // Save the fine diff to a file
-        try {
-            Files.createDirectories(file.parent)
-            Files.write(file, rejects.toLines())
-        } catch (e: IOException) {
-            panic("Was not able to save diff to file $file")
-        }
     }
 
     // Save the difference as a patch file
@@ -261,7 +156,7 @@ class PatchCompositionTask(
 
     // Get the difference between two directories using UNIX diff
     private fun getOriginalDiff(
-        operations: EvalOperations,
+        operations: CompositionAnalysisOperations,
         v0Path: Path, v1Path: Path
     ): OriginalDiff {
         return getOriginalDiff(operations, v0Path, v1Path, false)
@@ -269,7 +164,7 @@ class PatchCompositionTask(
 
     // Get the difference between two directories using UNIX diff
     private fun getOriginalDiff(
-        operations: EvalOperations,
+        operations: CompositionAnalysisOperations,
         v0Path: Path, v1Path: Path, ignoreBlanks: Boolean
     ): OriginalDiff {
         val diffCommand: DiffCommand = DiffCommand.Recommended(
@@ -288,60 +183,4 @@ class PatchCompositionTask(
             DiffParser.toOriginalDiff(output.failure.output)
         }
     }
-
-    private fun patchFilesDebug(
-        operations: EvalOperations,
-        patcher: Patcher,
-        originalPatch: OriginalDiff,
-        currentPR: CherryPick,
-        source: Variant,
-        target: Variant,
-        rejectsNormal: Rejects,
-        evolutionDiff: OriginalDiff
-    ) {
-        saveDiff(
-            originalPatch,
-            operations.debugDir(currentPR).resolve(source.name + ".diff")
-        )
-        saveRejects(
-            rejectsNormal,
-            operations.debugDir(currentPR).resolve(target.name)
-                .resolve(target.name + "_rejects_normal_${patcher.name()}.diff")
-        )
-        operations.debugDir(currentPR).resolve(target.name).toFile().mkdirs()
-        saveDiff(
-            evolutionDiff,
-            operations.debugDir(currentPR).resolve(target.name)
-                .resolve(target.name + "_evolution.diff")
-        )
-        operations.shell.execute(
-            CpCommand(
-                operations.patchDir(),
-                operations.debugDir(currentPR).resolve(target.name).resolve("patched_filtered")
-            ).recursive()
-        )
-            .expect("Was not able to copy variant $target.name")
-    }
-
-}
-
-class AllTrueConfiguration : IConfiguration {
-    override fun satisfies(p0: Node?): Boolean {
-        return true
-    }
-}
-
-// Abort the program
-fun panic(message: String, e: Exception) {
-    Logger.error(message)
-    Logger.error(e.message)
-    Logger.error(e)
-    e.printStackTrace()
-    throw Panic(message)
-}
-
-// Abort the program
-fun panic(message: String) {
-    Logger.error(message)
-    throw Panic(message)
 }
