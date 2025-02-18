@@ -40,7 +40,6 @@ import kotlin.system.exitProcess
 class PatchCompositionAnalysis(
     val config: EvalConfig,
     dataset: CherryDataset,
-    repetition: Int,
     idProvider: IDProvider,
     completedRuns: Set<EvaluationRun>,
 ) {
@@ -73,14 +72,13 @@ class PatchCompositionAnalysis(
 
         for (cherryPick in dataset.cherryPicks) {
             val runID = idProvider.next()
-            val run = EvaluationRun(repetition, dataset.datasetName, cherryPick.cherryCommit, cherryPick.expectedResultCommit)
+            val run = EvaluationRun(0, dataset.datasetName, cherryPick.cherryCommit, cherryPick.expectedResultCommit)
             if (completedRuns.contains(run)) {
                 Logger.info("Skipped cherry pick of run $runID (already processed)")
                 continue
             }
             evalTasks.add(
                 PatchCompositionTask(
-                    repetition,
                     config,
                     dataset.datasetName,
                     cherryPick,
@@ -167,11 +165,9 @@ fun main(args: Array<String>) {
 
     val completedRunsAll = loadCompletedRuns(config)
 
-    for (repetition in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
-        val repetitionIndex = repetition - config.EXPERIMENT_REPEATS_START()
-        val numCherryPicks = countCherryPicks(allSamples[repetitionIndex])
+        val numCherryPicks = countCherryPicks(allSamples[0])
 
-        val completedRuns = completedRunsAll.getOrDefault(repetition, HashMap())
+        val completedRuns = completedRunsAll.getOrDefault(0, HashMap())
         var completed = 0
         Logger.info("Already considered ${completedRuns.size} repos.")
         completedRuns.forEach { s -> completed += s.value.size}
@@ -179,21 +175,21 @@ fun main(args: Array<String>) {
         Thread.sleep(5000)
 
 
-        Logger.info("Considering a total of $numCherryPicks cherry-picks for repetition $repetition")
-        for (dataset in allSamples[repetitionIndex]) {
+        Logger.info("Considering a total of $numCherryPicks cherry picks")
+        for (dataset in allSamples[0]) {
             while (idProvider.next() < id) {}
             id += dataset.cherryPicks.size.toUInt()
 
             if (completedRuns.contains(dataset.datasetName) && completedRuns[dataset.datasetName]!!.size == dataset.cherryPicks.size) {
                 // Skip this dataset, it was already processed
-                Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName} (rep.: $repetition)")
-                printProgress(completed, numCherryPicks, repetition, 0uL)
+                Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName}")
+                printProgress(completed, numCherryPicks, 0, 0uL)
                 continue
             }
             threadPool.submit {
                 val i = id
                 Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
-                val study = PatchCompositionAnalysis(config, dataset, repetition, idProvider, completedRuns.getOrDefault(dataset.datasetName, HashSet()))
+                val study = PatchCompositionAnalysis(config, dataset, idProvider, completedRuns.getOrDefault(dataset.datasetName, HashSet()))
                 try {
                     study.run()
                 } catch (e: Exception) {
@@ -201,11 +197,10 @@ fun main(args: Array<String>) {
                     Logger.error(e)
                 }
                 completed += dataset.cherryPicks.size
-                printProgress(completed, numCherryPicks, repetition, i)
+                printProgress(completed, numCherryPicks, 0, i)
             }
         }
         threadPool.awaitTermination(10, TimeUnit.DAYS)
-    }
     threadPool.shutdown()
 
     exitProcess(0)

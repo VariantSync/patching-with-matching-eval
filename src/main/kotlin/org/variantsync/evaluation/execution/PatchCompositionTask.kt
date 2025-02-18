@@ -13,10 +13,9 @@ import java.util.concurrent.Callable
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class PatchComposition(val fileMap: Map<String, Int>)
+class PatchComposition(val evalRun: EvaluationRun, val fileMap: Map<String, Int>)
 
 class PatchCompositionTask(
-    private val repetition: Int,
     private val config: EvalConfig,
     private val datasetName: String,
     private val cherryPick: CherryPick,
@@ -102,16 +101,15 @@ class PatchCompositionTask(
         try {
             /* Application of patches without knowledge about features */
             Logger.debug("Analyzing patch composition of cherry-pick...")
-            // TODO: Analyze
             val fileMap = HashMap<String, Int>()
             for (fileDiff in originalPatch.fileDiffs) {
                 val fileType = fileDiff.oldFile.fileName.toFile().extension
                 fileMap[fileType] = fileMap.getOrDefault(fileType, 0) + 1
             }
 
-            val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("rep-${repetition}")
+            val resultFile = config.EXPERIMENT_DIR_RESULTS()
                 .resolve("${datasetName}.composition")
-            results.add(TaskResult(PatchComposition(fileMap), resultFile))
+            results.add(TaskResult(PatchComposition(evalRun, fileMap), resultFile))
 
             Logger.debug(
                 "Finished analysis for cherry " + cherryPick.cherryCommit + " and target "
