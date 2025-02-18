@@ -80,17 +80,16 @@ fun loadSample(path: Path): ArrayList<ArrayList<CherryDataset>> {
 
 
 @Throws(IOException::class)
-fun loadResultObjects(paths: HashMap<Int, ArrayList<Path>>): HashMap<Int, MutableList<PatchOutcome>> {
-    val outcomes = HashMap<Int, MutableList<PatchOutcome>>()
-    for (rep in paths.keys) {
-        for (path in paths[rep]!!) {
+fun loadCompositionResults(paths: List<Path>): List<PatchComposition> {
+    val outcomes = ArrayList<PatchComposition>()
+        for (path in paths) {
             Files.newBufferedReader(path).use { reader ->
                 val outcomeLines: MutableList<String> = ArrayList()
                 var line = reader.readLine()
                 while (line != null) {
                     if (line.isEmpty()) {
                         val outcome = parseResult(outcomeLines)
-                        outcomes.getOrPut(rep) { ArrayList() }.add(outcome)
+                        outcomes.add(outcome)
                         outcomeLines.clear()
                     } else {
                         outcomeLines.add(line)
@@ -98,7 +97,6 @@ fun loadResultObjects(paths: HashMap<Int, ArrayList<Path>>): HashMap<Int, Mutabl
                     line = reader.readLine()
                 }
             }
-        }
     }
     return outcomes
 }
@@ -134,12 +132,12 @@ private fun parseEvalRun(lines: List<String>): EvaluationRun {
     return mapper.readValue(sb.toString(), EvaluationRun::class.java)
 }
 
-private fun parseResult(lines: List<String>): PatchOutcome {
+private fun parseResult(lines: List<String>): PatchComposition {
     val sb = StringBuilder()
     lines.forEach(Consumer { l: String? -> sb.append(l).append("\n") })
     val mapper = jacksonObjectMapper()
     mapper.registerModule(JavaTimeModule())
-    return mapper.readValue(sb.toString(), PatchOutcome::class.java)
+    return mapper.readValue(sb.toString(), PatchComposition::class.java)
 }
 
 fun listResultFiles(resultsDir: Path) : HashMap<Int, ArrayList<Path>> {
