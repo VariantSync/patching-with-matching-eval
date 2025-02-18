@@ -5,7 +5,9 @@ import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.util.diff.components.FileDiff
 import org.variantsync.evaluation.util.diff.components.OriginalDiff
 import org.variantsync.evaluation.patching.*
+import org.variantsync.evaluation.util.diff.DiffParser
 import org.variantsync.evaluation.util.shell.CpCommand
+import org.variantsync.evaluation.util.shell.DiffCommand
 import org.variantsync.evaluation.util.shell.RmCommand
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
@@ -426,4 +428,34 @@ fun loadCompletedRuns(config: EvalConfig): HashMap<Int, MutableMap<String, Mutab
         set.add(run)
     }
     return map
+}
+
+// Get the difference between two directories using UNIX diff
+fun getOriginalDiff(
+    operations: EvalOperations,
+    v0Path: Path, v1Path: Path
+): OriginalDiff {
+    return getOriginalDiff(operations, v0Path, v1Path, false)
+}
+
+// Get the difference between two directories using UNIX diff
+fun getOriginalDiff(
+    operations: EvalOperations,
+    v0Path: Path, v1Path: Path, ignoreBlanks: Boolean
+): OriginalDiff {
+    val diffCommand: DiffCommand = DiffCommand.Recommended(
+        operations.workDir.relativize(v0Path),
+        operations.workDir.relativize(v1Path)
+    ).exclude(".*")
+    if (ignoreBlanks) {
+        diffCommand.ignoreBlankLines()
+    }
+    val output = operations.shell.execute(diffCommand, operations.workDir)
+    //.expect("Was not able to diff variants.")
+    return if (output.isSuccess) {
+        DiffParser.toOriginalDiff(output.success)
+    } else {
+        // Assume that the error lines still contain valid diffs, which is usually the case
+        DiffParser.toOriginalDiff(output.failure.output)
+    }
 }

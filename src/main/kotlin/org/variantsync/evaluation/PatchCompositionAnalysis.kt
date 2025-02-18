@@ -1,27 +1,17 @@
 package org.variantsync.evaluation
 
 import org.apache.commons.io.FileUtils
-import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.execution.*
-import org.variantsync.evaluation.util.shell.CpCommand
 import org.variantsync.evaluation.util.shell.RmCommand
 import org.variantsync.evaluation.util.shell.ShellExecutor
-import org.yaml.snakeyaml.LoaderOptions
-import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.io.IOException
 import java.io.UncheckedIOException
-import java.math.RoundingMode
 import java.nio.ByteBuffer
-import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.SimpleFileVisitor
-import java.nio.file.attribute.BasicFileAttributes
 import java.security.SecureRandom
-import java.text.DecimalFormat
-import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
@@ -203,7 +193,7 @@ fun main(args: Array<String>) {
             threadPool.submit {
                 val i = id
                 Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
-                val study = CherryPickStudy(config, dataset, repetition, idProvider, completedRuns.getOrDefault(dataset.datasetName, HashSet()))
+                val study = PatchCompositionAnalysis(config, dataset, repetition, idProvider, completedRuns.getOrDefault(dataset.datasetName, HashSet()))
                 try {
                     study.run()
                 } catch (e: Exception) {

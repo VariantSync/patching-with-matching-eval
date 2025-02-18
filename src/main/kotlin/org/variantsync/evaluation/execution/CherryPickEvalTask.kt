@@ -1,14 +1,13 @@
 package org.variantsync.evaluation.execution
 
+import de.ovgu.featureide.fm.core.base.IFeature
 import org.prop4j.Node
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.analysis.ResultAnalysis
-import org.variantsync.evaluation.analysis.ExperimentResult
+import org.variantsync.evaluation.analysis.TaskResult
 import org.variantsync.evaluation.analysis.TaskOutcome
-import org.variantsync.evaluation.util.diff.DiffParser
 import org.variantsync.evaluation.util.diff.components.OriginalDiff
 import org.variantsync.evaluation.util.shell.CpCommand
-import org.variantsync.evaluation.util.shell.DiffCommand
 import org.variantsync.evaluation.util.shell.RmCommand
 import org.variantsync.evaluation.error.Panic
 import org.variantsync.evaluation.patching.Patcher
@@ -48,7 +47,7 @@ class CherryPickEvalTask(
             Logger.debug("Remaining after take: " + opsToString())
         }
 
-        var experimentResult = Optional.empty<List<ExperimentResult>>()
+        var experimentResult = Optional.empty<List<TaskResult>>()
         try {
             experimentResult = Optional.of(callExecution(operations))
         } catch (e: Throwable) {
@@ -75,7 +74,7 @@ class CherryPickEvalTask(
         return sb.toString()
     }
 
-    fun callExecution(operations: EvalOperations): List<ExperimentResult> {
+    fun callExecution(operations: EvalOperations): List<TaskResult> {
         try {
             // repoManager.cleanRepoStates()
             if (!operations.repoManager.prepareCherryPick(cherryPick)) {
@@ -127,7 +126,7 @@ class CherryPickEvalTask(
         saveDiff(originalPatch, operations.patchFile)
         Logger.debug("Saved original diff.")
 
-        val results = ArrayList<ExperimentResult>()
+        val results = ArrayList<TaskResult>()
         try {
             Logger.debug("Starting patch application for cherry-pick " + cherryPick.id)
             var evolutionDiff =
@@ -195,7 +194,7 @@ class CherryPickEvalTask(
                 )
 
                 val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("rep-${repetition}").resolve("${datasetName}_${patcher.name()}.results")
-                results.add(ExperimentResult(patchOutcome, resultFile))
+                results.add(TaskResult(patchOutcome, resultFile))
 
                 Logger.debug(
                     "Finished patching for cherry " + cherryPick.cherryCommit + " and target "
@@ -259,36 +258,6 @@ class CherryPickEvalTask(
         }
     }
 
-    // Get the difference between two directories using UNIX diff
-    private fun getOriginalDiff(
-        operations: EvalOperations,
-        v0Path: Path, v1Path: Path
-    ): OriginalDiff {
-        return getOriginalDiff(operations, v0Path, v1Path, false)
-    }
-
-    // Get the difference between two directories using UNIX diff
-    private fun getOriginalDiff(
-        operations: EvalOperations,
-        v0Path: Path, v1Path: Path, ignoreBlanks: Boolean
-    ): OriginalDiff {
-        val diffCommand: DiffCommand = DiffCommand.Recommended(
-            operations.workDir.relativize(v0Path),
-            operations.workDir.relativize(v1Path)
-        ).exclude(".*")
-        if (ignoreBlanks) {
-            diffCommand.ignoreBlankLines()
-        }
-        val output = operations.shell.execute(diffCommand, operations.workDir)
-        //.expect("Was not able to diff variants.")
-        return if (output.isSuccess) {
-            DiffParser.toOriginalDiff(output.success)
-        } else {
-            // Assume that the error lines still contain valid diffs, which is usually the case
-            DiffParser.toOriginalDiff(output.failure.output)
-        }
-    }
-
     private fun patchFilesDebug(
         operations: EvalOperations,
         patcher: Patcher,
@@ -328,6 +297,10 @@ class CherryPickEvalTask(
 class AllTrueConfiguration : IConfiguration {
     override fun satisfies(p0: Node?): Boolean {
         return true
+    }
+
+    override fun getFeatures(): MutableList<IFeature> {
+        return ArrayList()
     }
 }
 

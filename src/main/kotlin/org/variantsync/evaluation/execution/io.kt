@@ -3,7 +3,7 @@ package org.variantsync.evaluation.execution
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.variantsync.evaluation.analysis.PatchOutcome
-import org.variantsync.evaluation.analysis.ExperimentResult
+import org.variantsync.evaluation.analysis.TaskResult
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path
@@ -11,7 +11,7 @@ import java.nio.file.StandardOpenOption
 import java.util.function.Consumer
 
 fun saveResult(
-    result: ExperimentResult,
+    result: TaskResult,
     runID: ULong,
 ) {
     try {

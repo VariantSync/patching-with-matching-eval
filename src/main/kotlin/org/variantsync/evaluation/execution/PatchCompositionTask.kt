@@ -1,32 +1,19 @@
 package org.variantsync.evaluation.execution
 
-import org.prop4j.Node
 import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.analysis.ResultAnalysis
-import org.variantsync.evaluation.analysis.ExperimentResult
+import org.variantsync.evaluation.analysis.TaskResult
 import org.variantsync.evaluation.analysis.TaskOutcome
 import org.variantsync.evaluation.util.diff.DiffParser
 import org.variantsync.evaluation.util.diff.components.OriginalDiff
-import org.variantsync.evaluation.util.shell.CpCommand
 import org.variantsync.evaluation.util.shell.DiffCommand
-import org.variantsync.evaluation.util.shell.RmCommand
-import org.variantsync.evaluation.error.Panic
-import org.variantsync.evaluation.patching.Patcher
-import org.variantsync.evaluation.patching.Rejects
-import org.variantsync.evaluation.patching.UTF8Exception
-import org.variantsync.vevos.simulation.feature.Variant
-import org.variantsync.vevos.simulation.feature.config.IConfiguration
-import java.io.IOException
-import java.nio.file.Files
 import java.nio.file.Path
-import java.time.Duration
-import java.time.Instant
 import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Callable
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
+class PatchComposition(val fileMap: Map<String, Int>)
 
 class PatchCompositionTask(
     private val repetition: Int,
@@ -41,7 +28,7 @@ class PatchCompositionTask(
     override fun call(): TaskOutcome {
         val operations: CompositionAnalysisOperations
 
-        synchronized(CherryPickEvalTask::class.java) {
+        synchronized(PatchCompositionTask::class.java) {
             // Retrieve the operations and the repo manager for this task
             Logger.debug("Getting the next available operations (" + availableOperations.size + ")")
             operations = availableOperations.take()
@@ -49,7 +36,7 @@ class PatchCompositionTask(
             Logger.debug("Remaining after take: " + opsToString())
         }
 
-        var experimentResult = Optional.empty<List<ExperimentResult>>()
+        var experimentResult = Optional.empty<List<TaskResult>>()
         try {
             experimentResult = Optional.of(callExecution(operations))
         } catch (e: Throwable) {
@@ -76,7 +63,7 @@ class PatchCompositionTask(
         return sb.toString()
     }
 
-    fun callExecution(operations: CompositionAnalysisOperations): List<ExperimentResult> {
+    fun callExecution(operations: CompositionAnalysisOperations): List<TaskResult> {
         try {
             // repoManager.cleanRepoStates()
             if (!operations.repoManager.prepareCherryPick(cherryPick)) {
@@ -92,10 +79,6 @@ class PatchCompositionTask(
         if (config.EXPERIMENT_DEBUG() && operations.debugDir(cherryPick).toFile().mkdirs()) {
             Logger.debug("Created Debug directory.")
         }
-
-        /* we have no knowledge about features, so the configuration agrees with everything*/
-        val source = Variant("source", AllTrueConfiguration())
-        val target = Variant("target", AllTrueConfiguration())
 
         // Apply diff to both versions of source variant
         Logger.debug("Diffing source...")
@@ -115,12 +98,10 @@ class PatchCompositionTask(
 
         Logger.debug("Saved original diff.")
 
-        val results = ArrayList<ExperimentResult>()
+        val results = ArrayList<TaskResult>()
         try {
-            Logger.debug("Starting patch application for cherry-pick " + cherryPick.id)
-
             /* Application of patches without knowledge about features */
-            Logger.debug("Applying patch from cherry-pick...")
+            Logger.debug("Analyzing patch composition of cherry-pick...")
             // TODO: Analyze
             val fileMap = HashMap<String, Int>()
             for (fileDiff in originalPatch.fileDiffs) {
@@ -128,10 +109,9 @@ class PatchCompositionTask(
                 fileMap[fileType] = fileMap.getOrDefault(fileType, 0) + 1
             }
 
-            // TODO: Save result
             val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("rep-${repetition}")
-                .resolve("${datasetName}_${patcher.name()}.results")
-            results.add(ExperimentResult(patchOutcome, resultFile))
+                .resolve("${datasetName}.composition")
+            results.add(TaskResult(PatchComposition(fileMap), resultFile))
 
             Logger.debug(
                 "Finished analysis for cherry " + cherryPick.cherryCommit + " and target "
@@ -141,17 +121,6 @@ class PatchCompositionTask(
             Logger.debug("Captured exception for cherry pick ${cherryPick.id}: ", e.message)
         }
         return results
-    }
-
-    // Save the difference as a patch file
-    private fun saveDiff(fineDiff: OriginalDiff, file: Path) {
-        // Save the fine diff to a file
-        try {
-            Files.createDirectories(file.parent)
-            Files.write(file, fineDiff.toLines())
-        } catch (e: IOException) {
-            panic("Was not able to save diff to file $file")
-        }
     }
 
     // Get the difference between two directories using UNIX diff

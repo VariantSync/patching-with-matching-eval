@@ -31,7 +31,7 @@ class CompositionAnalysisOperations(mainDir: Path, gitHubRepoPath: Path) : Opera
 
     val patchers: List<Patcher>
 
-    val repoManager: VariantRepoManager
+    val repoManager: SourceRepoManager
 
     val STRIP = 1
 
@@ -58,7 +58,7 @@ class CompositionAnalysisOperations(mainDir: Path, gitHubRepoPath: Path) : Opera
             )
 
         patchers = defaultPatchers(STRIP)
-        repoManager = VariantRepoManager(sourceVariantV0, sourceVariantV1, gitHubRepoPath)
+        repoManager = SourceRepoManager(sourceVariantV0, sourceVariantV1, gitHubRepoPath)
     }
 
     fun debugDir(directory: String): Path {
@@ -69,12 +69,32 @@ class CompositionAnalysisOperations(mainDir: Path, gitHubRepoPath: Path) : Opera
         return debugDir(commit.cherryCommit)
     }
 
+    override fun rejectsFile(): Path {
+        TODO("Not yet implemented")
+    }
+
+    override fun rejectsFileFiltered(): Path {
+        TODO("Not yet implemented")
+    }
+
+    override fun splitAndFilteredPatchFile(): Path {
+        TODO("Not yet implemented")
+    }
+
+    override fun splitPatchFile(): Path {
+        TODO("Not yet implemented")
+    }
+
     override fun workDir(): Path {
         return workDir
     }
 
     override fun shell(): ShellExecutor {
         return shell
+    }
+
+    override fun patchDir(): Path {
+        TODO("Not yet implemented")
     }
 
     override fun appliedPatchTracker(): AppliedPatchTracker {
