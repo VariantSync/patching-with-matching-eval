@@ -13,10 +13,6 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 /**
@@ -26,8 +22,6 @@ public class ShellExecutor {
     private final Consumer<String> outputReader;
     private final Consumer<String> errorReader;
     private final Path workDir;
-    private final ExecutorService outputCollection;
-    private final ExecutorService errorCollection;
 
     /**
      * Initialize a new ShellExecutor
@@ -50,8 +44,6 @@ public class ShellExecutor {
         this.workDir = workDir;
         this.outputReader = outputReader;
         this.errorReader = errorReader;
-        outputCollection = Executors.newSingleThreadExecutor();
-        errorCollection = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -83,8 +75,6 @@ public class ShellExecutor {
         builder.command(command.parts());
 
         final Process process;
-        final Future<?> outputFuture;
-        final Future<?> errorFuture;
         final List<String> output = new ArrayList<>();
         final Consumer<String> shareOutput = s -> {
             output.add(s);
@@ -93,8 +83,8 @@ public class ShellExecutor {
 
         try {
             process = builder.start();
-            outputFuture = outputCollection.submit(collectOutput(process.getInputStream(), shareOutput));
-            errorFuture = errorCollection.submit(collectOutput(process.getErrorStream(), errorReader));
+            collectOutput(process.getInputStream(), shareOutput);
+            collectOutput(process.getErrorStream(), errorReader);
         } catch (final IOException e) {
             Logger.error("Was not able to execute " + command, e);
             e.printStackTrace();
@@ -104,17 +94,14 @@ public class ShellExecutor {
         final int exitCode;
         try {
             exitCode = process.waitFor();
-            outputFuture.get();
-            errorFuture.get();
-        } catch (final InterruptedException | ExecutionException e) {
+        } catch (final InterruptedException e) {
             Logger.error("Interrupted while waiting for process to end.", e);
             return Result.Failure(new ShellException(e));
         }
         return command.interpretResult(exitCode, output);
     }
 
-private Runnable collectOutput(final InputStream inputStream, final Consumer<String> consumer) {
-    return () -> {
+private void collectOutput(final InputStream inputStream, final Consumer<String> consumer) {
         try (inputStream; final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, Charsets.UTF_8))) {
             StringBuilder output = new StringBuilder();
             int character;
@@ -131,6 +118,5 @@ private Runnable collectOutput(final InputStream inputStream, final Consumer<Str
         } catch (final IOException e) {
             Logger.error("Exception thrown while reading stream of Shell command.", e);
         }
-    };
 }
 }
