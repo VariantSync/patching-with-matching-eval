@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "2.1.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     application
 }
@@ -76,7 +76,7 @@ tasks.create<ShadowJar>("Composition") {
     configurations = listOf(project.configurations.runtimeClasspath.get())
 
     manifest {
-        attributes["Main-Class"] = "org.variantsync.evaluation.PatchCompositionAnalysis"
+        attributes["Main-Class"] = "org.variantsync.evaluation.PatchCompositionAnalysisKt"
     }
 }
 
