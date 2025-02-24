@@ -104,7 +104,9 @@ fun cloneDatasets(
     val datasetsToClone = HashSet<CherryDataset>()
     for (s in allSamples) {
         for (dataset in allSamples[0]) {
-            datasetsToClone.add(dataset)
+            if (dataset.cherryPicks.size > 0) {
+                datasetsToClone.add(dataset)
+            }
         }
     }
 
