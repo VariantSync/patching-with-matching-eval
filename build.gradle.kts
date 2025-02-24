@@ -61,6 +61,25 @@ tasks.create<ShadowJar>("Cherries") {
     }
 }
 
+tasks.create<ShadowJar>("Composition") {
+    archiveBaseName.set("composition")
+    archiveVersion.set("")
+
+    // Exclude signature files
+    exclude("META-INF/*.SF")
+    exclude("META-INF/*.DSA")
+    exclude("META-INF/*.RSA")
+
+    // Include the main source sets (classes and resources)
+    from(sourceSets.main.get().output)
+
+    configurations = listOf(project.configurations.runtimeClasspath.get())
+
+    manifest {
+        attributes["Main-Class"] = "org.variantsync.evaluation.PatchCompositionAnalysis"
+    }
+}
+
 tasks.test {
     useJUnitPlatform()
 }

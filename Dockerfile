@@ -11,6 +11,7 @@ COPY gradle gradle
 # Build the evaluation
 WORKDIR /home/user
 RUN ./gradlew Cherries || exit
+RUN ./gradlew Composition || exit
 
 FROM openjdk:19-alpine
 
