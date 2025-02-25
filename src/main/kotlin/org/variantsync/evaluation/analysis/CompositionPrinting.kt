@@ -20,10 +20,19 @@ fun main(args: Array<String>) {
     val compositionResults = loadCompositionResults(resultFiles)
 
     // What are the top-10 most-patched file types?
-    val mergedResults = mergeMaps(compositionResults.map { r -> r.fileMap })
+    val mergedResults = HashMap<String, Int>()
+    for (compositionResult in compositionResults) {
+        val lang = compositionResult.evalRun.datasetName.split("_").first()
+        for (entry in compositionResult.fileMap) {
+            val key = lang + "-" + entry.key
+            mergedResults[key] = mergedResults.getOrDefault(key, 0) + 1
+        }
+    }
+   // val mergedResults = mergeMaps(compositionResults.map { r -> r.fileMap })
 
     // How often are the patches of the top-10 most-patched pure?
     val numberFormatter = NumberFormat.getNumberInstance(Locale.US)
+    val percentageFormatter = NumberFormat.getPercentInstance(Locale.US)
 
     val top10 = topNValues(mergedResults, 10)
     println("++++++++++++++++++++++++++++++++")
@@ -32,7 +41,8 @@ fun main(args: Array<String>) {
     val maxKeyLength = top10.maxOf { it.first.length }
     val maxValLength = top10.maxOf { numberFormatter.format(it.second).length }
     for (t in top10) {
-        println("${t.first.padEnd(maxKeyLength)} : ${numberFormatter.format(t.second).padStart(maxValLength)}")
+        val percentage =  (t.second.toDouble() / mergedResults.values.sum().toDouble())
+    println("${t.first.padEnd(maxKeyLength)} : ${numberFormatter.format(t.second).padStart(maxValLength)}   ${percentageFormatter.format(percentage)}")
     }
     println("-------------------------------")
     println()
@@ -43,8 +53,9 @@ fun main(args: Array<String>) {
     }
 
     for (r in compositionResults) {
+        val lang = r.evalRun.datasetName.split("_").first()
         if (r.fileMap.size == 1) {
-            val key = r.fileMap.keys.first()
+            val key = lang + "-" + r.fileMap.keys.first()
             if (top10pure.containsKey(key)) {
                 top10pure[key] = top10pure[key]!! + 1
             }
@@ -55,7 +66,8 @@ fun main(args: Array<String>) {
     println("+++++ TOP 10 PURE PATCHES +++++")
     for (pure in top10pure.entries
         .sortedByDescending { it.value }) {
-        println("${pure.key.padEnd(maxKeyLength)} : ${numberFormatter.format(pure.value).padStart(maxValLength)}")
+        val percentage =  pure.value.toDouble() / compositionResults.size.toDouble()
+        println("${pure.key.padEnd(maxKeyLength)} : ${numberFormatter.format(pure.value).padStart(maxValLength)}   ${percentageFormatter.format(percentage)}")
     }
     println("-------------------------------")
     println()
