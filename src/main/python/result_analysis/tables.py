@@ -1,11 +1,12 @@
 import os
 import numpy as np
 
-from result_analysis.eval_setup import Metric, Patcher
+from result_analysis.eval_setup import Metric, PatchResult, Patcher
 from result_analysis.io import load_repositories
 from result_analysis.io import load_all_results
 from result_analysis.latex import generate_metrics_result_table
 from result_analysis.result_handling import (
+    all_results_per_language,
     non_trivial_results,
     results_per_repo,
 )
@@ -34,6 +35,29 @@ def list_all_dirs(path):
         for d in os.listdir(path)
         if os.path.isdir(os.path.join(path, d))
     ]
+
+
+def patch_sizes(path_to_results, path_to_repo_list):
+    global languages
+    repos = load_repositories(path_to_repo_list)
+
+    results_per_patcher = {}
+    patcher = Patcher.MPatch  # Patcher is an enum
+    results = load_all_results(path_to_results, patcher)
+    results = non_trivial_results(results)
+    # Group results by repo
+    results = results_per_repo(results, repos)
+    results = all_results_per_language(results)
+
+    from typing import List
+
+    for language in languages:
+        res = results[language[0]]  # type: List[PatchResult]
+        changes = []
+        for r in res:
+            changes.append(r.num_changes_total)
+        m = np.mean(changes)
+        print(f"Mean number of changes for {language[0]}: {m}")
 
 
 def metrics_table_generation(
