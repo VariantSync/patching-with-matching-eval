@@ -50,17 +50,17 @@ fun main(args: Array<String>) {
     println("-------------------------------")
     println()
 
-    val top10pure = HashMap<String, Int>()
+    val topNpure = HashMap<String, Int>()
     for (t in topN) {
-        top10pure[t.first] = 0
+        topNpure[t.first] = 0
     }
 
     var impurePatches = 0
     for (r in compositionResults) {
         if (r.fileMap.size == 1) {
             val key = r.fileMap.keys.first()
-            if (top10pure.containsKey(key)) {
-                top10pure[key] = top10pure[key]!! + 1
+            if (topNpure.containsKey(key)) {
+                topNpure[key] = topNpure[key]!! + 1
             }
         } else {
             impurePatches++
@@ -70,7 +70,7 @@ fun main(args: Array<String>) {
     println(" There are " + numberFormatter.format(compositionResults.size) + " patches")
     println(" There are $impurePatches impure patches")
     println("+++++ TOP $n PURE PATCHES +++++")
-    for (pure in top10pure.entries
+    for (pure in topNpure.entries
         .sortedByDescending { it.value }) {
         val percentage =  pure.value.toDouble() / compositionResults.size.toDouble()
         println("${pure.key.padEnd(maxKeyLength)} : ${numberFormatter.format(pure.value).padStart(maxValLength)}   ${percentageFormatter.format(percentage)}")
@@ -78,6 +78,20 @@ fun main(args: Array<String>) {
     println("-------------------------------")
     println()
 
+    val languageRelatedFiles = listOf("java", "py", "go", "js", "cpp", "hpp", "c", "h", "ts", "cs", "php", "rst")
+    var numLangRelPatches = 0
+    var numLangRelFilePatches = 0
+    for (l in languageRelatedFiles) {
+        numLangRelFilePatches += mergedResults[l]!!
+        numLangRelPatches += topNpure[l]!!
+    }
+    val relPatchesPercentage = 100.0 * (numLangRelPatches.toDouble() / compositionResults.size)
+    val relFilePatchesPercentage = 100.0 * (numLangRelFilePatches.toDouble() / mergedResults.values.sum())
+    println("+++++ LANG RELATED PATCHES +++++")
+    println("There are " + numberFormatter.format(numLangRelFilePatches) + " patched files related to the top langs. (" + relFilePatchesPercentage + "%)")
+    println("There are " + numberFormatter.format(numLangRelPatches) + " pure patches related to the top langs. (" + relPatchesPercentage + "%)")
+    println("-------------------------------")
+    println()
     exitProcess(0)
 }
 
