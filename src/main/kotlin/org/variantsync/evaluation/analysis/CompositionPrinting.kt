@@ -78,7 +78,7 @@ fun main(args: Array<String>) {
     println("-------------------------------")
     println()
 
-    val languageRelatedFiles = listOf("java", "py", "go", "js", "cpp", "hpp", "c", "h", "ts", "cs", "php", "rst")
+    val languageRelatedFiles = listOf("java", "py", "go", "js", "cpp", "hpp", "c", "h", "ts", "cs", "php", "rs")
     var numLangRelPatches = 0
     var numLangRelFilePatches = 0
     for (l in languageRelatedFiles) {
