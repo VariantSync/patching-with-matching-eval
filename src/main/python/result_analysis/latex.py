@@ -8,7 +8,7 @@ def generate_metrics_result_table(
 ):
     language_names = [lang[1] for lang in languages]
     languages = [lang[0] for lang in languages]
-    t = 30
+    t = 90
     mpatch_over_t = 0
 
     with open(file, "w") as file:

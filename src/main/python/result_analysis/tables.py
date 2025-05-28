@@ -357,3 +357,64 @@ def venn_diagram(path_to_results, path_to_repo_list, only_non_trivial):
     print("patch worse: " + str(ru_worse / num_total))
     print("apply worse: " + str(ra_worse / num_total))
     print()
+
+
+def direct_runtime_comparison(path_to_results, path_to_repo_list, only_non_trivial):
+    global languages
+    repos = load_repositories(path_to_repo_list)
+
+    results_per_patcher = {}
+    for patcher in Patcher:  # Patcher is an enum
+        results = load_all_results(path_to_results, patcher)
+        # Filter trivial results
+        if only_non_trivial:
+            results = non_trivial_results(results)
+        # Group results by repo
+        results_per_patcher[patcher] = results_per_repo(results, repos)
+
+    results = results_per_patcher[Patcher.MPatch]
+
+    mpatch_faster_than_cp = 0
+    total = 0
+    mpatch_faster_than_apply = 0
+
+    for repo in results.keys():
+        repo_results_mpatch = results[repo]
+        repo_results_apply = results_per_patcher[Patcher.GitApply][repo]
+        repo_results_cherry = results_per_patcher[Patcher.GitCherry][repo]
+
+        sorted(repo_results_mpatch, key=lambda x: x.pick_id)
+        sorted(repo_results_apply, key=lambda x: x.pick_id)
+        sorted(repo_results_cherry, key=lambda x: x.pick_id)
+
+        repo_results_mpatch = {r.run_id: r for r in repo_results_mpatch}
+        repo_results_apply = {r.run_id: r for r in repo_results_apply}
+        repo_results_cherry = {r.run_id: r for r in repo_results_cherry}
+
+        for i in repo_results_mpatch.keys():
+            res_mpatch = repo_results_mpatch.get(i, None)
+            if res_mpatch is None:
+                continue
+
+            res_cherry = repo_results_cherry.get(i, None)
+            res_apply = repo_results_apply.get(i, None)
+
+            rm = res_mpatch.patch_duration
+            rc = res_cherry.patch_duration if res_cherry is not None else float("inf")
+            ra = res_apply.patch_duration if res_apply is not None else float("inf")
+
+            if rm < ra:
+                mpatch_faster_than_apply += 1
+
+            if rm < rc:
+                mpatch_faster_than_cp += 1
+
+            total += 1
+
+    total_str = str(total)
+    print(
+        f"mpatch faster than apply: {mpatch_faster_than_apply} / {total_str} ({mpatch_faster_than_apply / total})"
+    )
+    print(
+        f"mpatch faster than cp: {mpatch_faster_than_cp} / {total_str} ({mpatch_faster_than_cp / total})"
+    )

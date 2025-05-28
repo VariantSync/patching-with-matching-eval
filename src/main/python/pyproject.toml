@@ -22,6 +22,7 @@ power-simulation = "result_analysis.simulation:main"
 find-example = "result_analysis.__main__:example"
 find-outliers = "result_analysis.__main__:outliers"
 compare-patchers = "result_analysis.__main__:compare"
+runtime-comparison = "result_analysis.__main__:runtime"
 calc_patch_sizes = "result_analysis.__main__:sizes"
 
 [build-system]

@@ -3,6 +3,7 @@ from result_analysis.tables import (
     metrics_table_generation,
     patch_sizes,
     venn_diagram,
+    direct_runtime_comparison,
 )
 from result_analysis.analyze_results import find_outliers
 
@@ -38,6 +39,10 @@ def compare():
 
 def sizes():
     patch_sizes(results_dir + "rep-1/", repo_sample)
+
+
+def runtime():
+    direct_runtime_comparison(results_dir + "rep-1/", repo_sample, False)
 
 
 if __name__ == "__main__":
