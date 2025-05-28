@@ -68,7 +68,6 @@ def generate_metrics_result_table(
                                 if v > t:
                                     mpatch_over_t += 1
                             total_vals += len(values)
-                        value = np.nanpercentile(values, 99.0)
                     postfix = ""
                     if metric == Metric.F1Score:
                         best_type = "max"
