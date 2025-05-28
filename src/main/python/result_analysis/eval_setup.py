@@ -52,27 +52,19 @@ class PatchResult:
 
     def __str__(self):
         return (
-            f"PatchResult(dataset={self.dataset}, runID={
-                self.run_id}, cherry={self.cherry_id}, "
-            f"target={self.pick_id}, normalActualVsExpected={
-                self.num_actual_vs_expected}, "
-            f"lineNormal={self.num_changes_total}, lineSuccessNormal={
-                self.num_changes_applied}, "
-            f"normalResult={self.outcome_classification}, patchDuration={
-                self.patch_duration}, "
+            f"PatchResult(dataset={self.dataset}, runID={self.run_id}, cherry={self.cherry_id}, "
+            f"target={self.pick_id}, normalActualVsExpected={self.num_actual_vs_expected}, "
+            f"lineNormal={self.num_changes_total}, lineSuccessNormal={self.num_changes_applied}, "
+            f"normalResult={self.outcome_classification}, patchDuration={self.patch_duration}, "
             f"patchIsTrivial={self.patch_is_trivial})"
         )
 
     def __repr__(self):
         return (
-            f"PatchResult(dataset={repr(self.dataset)}, runID={
-                repr(self.run_id)}, cherry={repr(self.cherry_id)}, "
-            f"target={repr(self.pick_id)}, normalActualVsExpected={
-                repr(self.num_actual_vs_expected)}, "
-            f"lineNormal={repr(self.num_changes_total)}, lineSuccessNormal={
-                repr(self.num_changes_applied)}, "
-            f"normalResult={repr(self.outcome_classification)}, patchDuration={
-                repr(self.patch_duration)}, "
+            f"PatchResult(dataset={repr(self.dataset)}, runID={repr(self.run_id)}, cherry={repr(self.cherry_id)}, "
+            f"target={repr(self.pick_id)}, normalActualVsExpected={repr(self.num_actual_vs_expected)}, "
+            f"lineNormal={repr(self.num_changes_total)}, lineSuccessNormal={repr(self.num_changes_applied)}, "
+            f"normalResult={repr(self.outcome_classification)}, patchDuration={repr(self.patch_duration)}, "
             f"patchIsTrivial={repr(self.patch_is_trivial)})"
         )
 
@@ -234,7 +226,7 @@ class RQ3PatcherData:
             f"Patcher: {self.patcher:<12} "
             f"Precision: {np.mean(self.precision):1.2f}, "
             f"Recall: {np.mean(self.recall):1.2f}, "
-            f"Patch Automation: {100*np.mean(self.patch_automation):2.2f}%, "
+            f"Patch Automation: {100 * np.mean(self.patch_automation):2.2f}%, "
             f"Avg Edit Distance: {np.mean(self.avg_edit_distance):2.2f}, "
             f"Avg Runtime: {np.mean(self.avg_runtime):1.2f}s"
         )
