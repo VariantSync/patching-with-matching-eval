@@ -8,7 +8,8 @@ def generate_metrics_result_table(
 ):
     language_names = [lang[1] for lang in languages]
     languages = [lang[0] for lang in languages]
-    t = 90
+    t = 60
+    total_vals = 0
     mpatch_over_t = 0
 
     with open(file, "w") as file:
@@ -66,6 +67,7 @@ def generate_metrics_result_table(
                             for v in values:
                                 if v > t:
                                     mpatch_over_t += 1
+                            total_vals += len(values)
                         value = np.nanpercentile(values, 99.0)
                     postfix = ""
                     if metric == Metric.F1Score:
@@ -116,7 +118,7 @@ def generate_metrics_result_table(
         # End the tabular environment
         file.write("\\bottomrule\n")
         file.write("\\end{tabular}")
-        print("mpatch over t: " + str(mpatch_over_t))
+        print(f"mpatch over t: {mpatch_over_t} / {total_vals}")
 
 
 def determine_best(results_per_patcher, patcher_names, metric, best_type, language):
