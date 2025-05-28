@@ -1,6 +1,6 @@
 import numpy as np
 
-from result_analysis.eval_setup import Metric
+from result_analysis.eval_setup import Metric, Patcher
 
 
 def generate_metrics_result_table(
@@ -8,6 +8,8 @@ def generate_metrics_result_table(
 ):
     language_names = [lang[1] for lang in languages]
     languages = [lang[0] for lang in languages]
+    t = 30
+    mpatch_over_t = 0
 
     with open(file, "w") as file:
         fmt = "S[table-format=2.2]" * (4 + len(languages))
@@ -51,6 +53,20 @@ def generate_metrics_result_table(
                     best_type = ""
                     results = results_per_patcher[patcher][language].per_patch
                     value = np.nanmean(results.get(metric))
+                    if metric == Metric.Runtime:
+                        values = results.get(metric)
+                        print(
+                            str(patcher) + " -- " + str(language) + ":",
+                            [
+                                float(f"{v:.4f}")
+                                for v in sorted(values, reverse=True)[:20]
+                            ],
+                        )
+                        if patcher == Patcher.MPatch.nice_name():
+                            for v in values:
+                                if v > t:
+                                    mpatch_over_t += 1
+                        value = np.nanpercentile(values, 99.0)
                     postfix = ""
                     if metric == Metric.F1Score:
                         best_type = "max"
@@ -100,6 +116,7 @@ def generate_metrics_result_table(
         # End the tabular environment
         file.write("\\bottomrule\n")
         file.write("\\end{tabular}")
+        print("mpatch over t: " + str(mpatch_over_t))
 
 
 def determine_best(results_per_patcher, patcher_names, metric, best_type, language):
