@@ -14,10 +14,3 @@ The main file of the evaluation is _src/main/kotlin/org/anon/evaluation/PatcherE
 
 Our scripts for applying the various metrics to the different patchers and analyzing the statistics can be found under _src/main/python/result_analysis_. 
 The raw results of our evaluation are archived under _evaluation-workdir/results_
-
-## Results without outliers
-In our paper, we mention that we re-analyzed our results after excluding outliers. 
-Specifically, we removed the top 0.05% of results with the highest number of required fixes for each patcher; thus, treating patchers equally in this regard. 
-The updated version of Table IV is shown below. 
-
-![results-without-outliers.png](results/results-without-outliers.png)
