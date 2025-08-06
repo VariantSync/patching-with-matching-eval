@@ -37,7 +37,7 @@ def generate_metrics_result_table(
         # Write the multi-rows and their corresponding rows
         file.write("\\toprule\n")
         for metric in Metric:
-            if metric != Metric.F1Score:
+            if metric != Metric.Automation:
                 file.write("\\midrule\n")
             file.write(
                 "\\multirow{"
@@ -70,6 +70,10 @@ def generate_metrics_result_table(
                             total_vals += len(values)
                     postfix = ""
                     if metric == Metric.F1Score:
+                        best_type = "max"
+                    elif metric == Metric.Precision:
+                        best_type = "max"
+                    elif metric == Metric.Recall:
                         best_type = "max"
                     elif metric == Metric.Automation:
                         value = 100 * value
@@ -142,6 +146,10 @@ def determine_best_average(differences, patcher_names, metric):
         values.append(results)
 
     if metric == Metric.F1Score:
+        best_type = "max"
+    elif metric == Metric.Precision:
+        best_type = "max"
+    elif metric == Metric.Recall:
         best_type = "max"
     elif metric == Metric.Automation:
         best_type = "max"

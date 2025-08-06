@@ -16,7 +16,7 @@ class Patcher(Enum):
 
     def nice_name(self):
         return {
-            Patcher.MPatch: "\\approach{}",
+            Patcher.MPatch: "\\mpatch{}",
             Patcher.UnixPatch: "\\patch{}",
             Patcher.GitApply: "\\gitapply{}",
             Patcher.GitCherry: "\\gitcherrypickshort{}",
@@ -166,9 +166,11 @@ class OutcomeClassification:
 
 
 class Metric(Enum):
-    F1Score = "f1_score"
     Automation = "patch_automation"
     EditDistance = "avg_edit_distance"
+    F1Score = "f1_score"
+    Precision = "precision"
+    Recall = "recall"
     Runtime = "avg_runtime"
 
     def __str__(self):
@@ -179,9 +181,11 @@ class Metric(Enum):
 
     def nice_name(self):
         return {
-            Metric.F1Score: "F1 Score",
             Metric.Automation: "Autom. (\\%)",
             Metric.EditDistance: "Req. Fixes",
+            Metric.F1Score: "F1 Score",
+            Metric.Precision: "Precision",
+            Metric.Recall: "Recall",
             Metric.Runtime: "Time (s)",
         }[self]
 
