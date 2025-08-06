@@ -1,10 +1,5 @@
 package org.variantsync.evaluation
 
-import org.apache.commons.io.FileUtils
-import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.execution.*
-import org.variantsync.evaluation.util.shell.RmCommand
-import org.variantsync.evaluation.util.shell.ShellExecutor
 import java.io.File
 import java.io.IOException
 import java.io.UncheckedIOException
@@ -23,6 +18,11 @@ import kotlin.collections.HashSet
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.system.exitProcess
+import org.apache.commons.io.FileUtils
+import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.execution.*
+import org.variantsync.evaluation.util.shell.RmCommand
+import org.variantsync.evaluation.util.shell.ShellExecutor
 
 // What this analysis has to do
 // clone repos
@@ -38,10 +38,10 @@ import kotlin.system.exitProcess
 // How many patches affect only C code?
 // How many patches affect only PHP code?
 class PatchCompositionAnalysis(
-    val config: EvalConfig,
-    dataset: CherryDataset,
-    idProvider: IDProvider,
-    completedRuns: Set<EvaluationRun>,
+        val config: EvalConfig,
+        dataset: CherryDataset,
+        idProvider: IDProvider,
+        completedRuns: Set<EvaluationRun>,
 ) {
     // The study tasks that are to be executed in parallel
     private val evalTasks: MutableList<PatchCompositionTask>
@@ -59,7 +59,8 @@ class PatchCompositionAnalysis(
 
         Logger.info("Preparing working directories for $numThreads threads.")
         for (i in 1..numThreads) {
-            // Add one operations instance for each thread; each instance defines its own working directory
+            // Add one operations instance for each thread; each instance defines its own working
+            // directory
             val operations = CompositionAnalysisOperations(config.EXPERIMENT_DIR_MAIN(), repoPath)
             // Clean old variant files
             cleanVariantDirectories(operations)
@@ -72,41 +73,51 @@ class PatchCompositionAnalysis(
 
         for (cherryPick in dataset.cherryPicks) {
             val runID = idProvider.next()
-            val run = EvaluationRun(0, dataset.datasetName, cherryPick.cherryCommit, cherryPick.expectedResultCommit)
+            val run =
+                    EvaluationRun(
+                            0,
+                            dataset.datasetName,
+                            cherryPick.cherryCommit,
+                            cherryPick.expectedResultCommit
+                    )
             if (completedRuns.contains(run)) {
                 Logger.info("Skipped cherry pick of run $runID (already processed)")
                 continue
             }
             evalTasks.add(
-                PatchCompositionTask(
-                    config,
-                    dataset.datasetName,
-                    cherryPick,
-                    availableOperations,
-                    runID,
-                    run,
-                )
+                    PatchCompositionTask(
+                            config,
+                            dataset.datasetName,
+                            cherryPick,
+                            availableOperations,
+                            runID,
+                            run,
+                    )
             )
         }
     }
 
-    /**
-     * Execute the study.
-     */
+    /** Execute the study. */
     fun run() {
         val threadPool = Executors.newFixedThreadPool(numThreads)
         Logger.info("Scheduling ${evalTasks.size} tasks...")
 
-        val futures = evalTasks.stream()
-            .map { runnable: PatchCompositionTask -> FutureAndEvalRun(threadPool.submit(runnable), runnable.evalRun) }
-            .collect(Collectors.toList())
+        val futures =
+                evalTasks
+                        .stream()
+                        .map { runnable: PatchCompositionTask ->
+                            FutureAndEvalRun(threadPool.submit(runnable), runnable.evalRun)
+                        }
+                        .collect(Collectors.toList())
 
         Logger.info("Scheduled all tasks.")
 
         val hadTimeout = waitForShutdown(threadPool, futures, config)
 
         if (hadTimeout) {
-            Logger.info("Timeout detected. Marking task of ${evalTasks.first().evalRun.datasetName} as completed.")
+            Logger.info(
+                    "Timeout detected. Marking task of ${evalTasks.first().evalRun.datasetName} as completed."
+            )
             for (evalTask in evalTasks) {
                 markEvalRun(evalTask.evalRun, config.EXPERIMENT_PROCESSED_FILE())
             }
@@ -122,7 +133,9 @@ class PatchCompositionAnalysis(
                 if (Files.exists(operations.workDir)) {
                     Logger.debug("Trying to remove directory with 'rm -rf'")
                     if (ShellExecutor(Logger::warn, Logger::warn, operations.workDir)
-                        .execute(RmCommand(operations.workDir).recursive().force()).isSuccess) {
+                                    .execute(RmCommand(operations.workDir).recursive().force())
+                                    .isSuccess
+                    ) {
                         Logger.debug("Success!")
                     }
                 }
@@ -135,23 +148,27 @@ class PatchCompositionAnalysis(
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
         System.err.println(
-            "The first argument should provide the path to the configuration file that is to be used"
+                "The first argument should provide the path to the configuration file that is to be used"
         )
     }
     val config = EvalConfig(File(args[0]))
     Logger.info("Starting experiment initialization.")
-    val datasetsPerLanguage: Map<String, MutableList<CherryDataset>> = try {
-        loadPRDatasets(config)
-    } catch (e: IOException) {
-        Logger.error(
-            "Was not able to load the yaml datasets from '"
-                    + config.EXPERIMENT_DATASETS() + "'"
-        )
-        throw UncheckedIOException(e)
-    }
+    val datasetsPerLanguage: Map<String, MutableList<CherryDataset>> =
+            try {
+                loadPRDatasets(config)
+            } catch (e: IOException) {
+                Logger.error(
+                        "Was not able to load the yaml datasets from '" +
+                                config.EXPERIMENT_DATASETS() +
+                                "'"
+                )
+                throw UncheckedIOException(e)
+            }
 
-    val seed: ByteArray = ByteBuffer.allocate(java.lang.Long.BYTES).putLong(config.EXPERIMENT_REPEATS_START()
-            + config.SEED()).array()
+    val seed: ByteArray =
+            ByteBuffer.allocate(java.lang.Long.BYTES)
+                    .putLong(config.EXPERIMENT_REPEATS_START() + config.SEED())
+                    .array()
     val idProvider = IDProvider(config.EXPERIMENT_START_ID())
     var id = 0uL
     val rand = SecureRandom(seed)
@@ -165,42 +182,49 @@ fun main(args: Array<String>) {
 
     val completedRunsAll = loadCompletedRuns(config)
 
-        val numCherryPicks = countCherryPicks(allSamples[0])
+    val numCherryPicks = countCherryPicks(allSamples[0])
 
-        val completedRuns = completedRunsAll.getOrDefault(0, HashMap())
-        var completed = 0
-        Logger.info("Already considered ${completedRuns.size} repos.")
-        completedRuns.forEach { s -> completed += s.value.size}
-        Logger.info("Processed a total of $completed evaluation runs.\n")
-        Thread.sleep(5000)
+    val completedRuns = completedRunsAll.getOrDefault(0, HashMap())
+    var completed = 0
+    Logger.info("Already considered ${completedRuns.size} repos.")
+    completedRuns.forEach { s -> completed += s.value.size }
+    Logger.info("Processed a total of $completed evaluation runs.\n")
+    Thread.sleep(5000)
 
+    Logger.info("Considering a total of $numCherryPicks cherry picks")
+    for (dataset in allSamples[0]) {
+        while (idProvider.next() < id) {}
+        id += dataset.cherryPicks.size.toUInt()
 
-        Logger.info("Considering a total of $numCherryPicks cherry picks")
-        for (dataset in allSamples[0]) {
-            while (idProvider.next() < id) {}
-            id += dataset.cherryPicks.size.toUInt()
-
-            if (completedRuns.contains(dataset.datasetName) && completedRuns[dataset.datasetName]!!.size == dataset.cherryPicks.size) {
-                // Skip this dataset, it was already processed
-                Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName}")
-                printProgress(completed, numCherryPicks, 0, 0uL)
-                continue
-            }
-            threadPool.submit {
-                val i = id
-                Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
-                val study = PatchCompositionAnalysis(config, dataset, idProvider, completedRuns.getOrDefault(dataset.datasetName, HashSet()))
-                try {
-                    study.run()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Logger.error(e)
-                }
-                completed += dataset.cherryPicks.size
-                printProgress(completed, numCherryPicks, 0, i)
-            }
+        if (completedRuns.contains(dataset.datasetName) &&
+                        completedRuns[dataset.datasetName]!!.size == dataset.cherryPicks.size
+        ) {
+            // Skip this dataset, it was already processed
+            Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName}")
+            printProgress(completed, numCherryPicks, 0, 0uL)
+            continue
         }
-        threadPool.awaitTermination(10, TimeUnit.DAYS)
+        threadPool.submit {
+            val i = id
+            Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
+            val study =
+                    PatchCompositionAnalysis(
+                            config,
+                            dataset,
+                            idProvider,
+                            completedRuns.getOrDefault(dataset.datasetName, HashSet())
+                    )
+            try {
+                study.run()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Logger.error(e)
+            }
+            completed += dataset.cherryPicks.size
+            printProgress(completed, numCherryPicks, 0, i)
+        }
+    }
+    threadPool.awaitTermination(10, TimeUnit.DAYS)
     threadPool.shutdown()
 
     exitProcess(0)
