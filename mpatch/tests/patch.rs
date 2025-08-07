@@ -1,18 +1,6 @@
 pub mod test_utils;
 
-use mpatch::{
-    patch::{alignment::align_patch_to_target, AlignedPatch},
-    FileArtifact, LCSMatcher, Matcher,
-};
-use test_utils::{get_aligned_patch, read_patch, run_alignment_test, run_application_test};
-
-// TODO: Test multi-alignment
-// TODO: Test file creation
-// TODO: Test file removal
-// TODO: Test file renaming
-// TODO: Test file permission change
-// TODO: Test patch application to entire directory
-// TODO: Test missing target files
+use test_utils::{get_aligned_patch, run_alignment_test, run_application_test};
 
 const INVARIANT_SOURCE: &str = "tests/samples/source_variant/version-0/invariant.c";
 const INVARIANT_TARGET: &str = "tests/samples/target_variant/version-0/invariant.c";
@@ -50,6 +38,18 @@ const APPENDING_TARGET: &str = "tests/samples/target_variant/version-0/appending
 const APPENDING_DIFF: &str = "tests/diffs/appending.diff";
 const EXPECTED_APPENDING_PATCH: &str = "tests/expected_patches/appending.diff";
 const EXPECTED_APPENDING_RESULT: &str = "tests/samples/target_variant/version-1/appending.c";
+
+const PREPENDING_SOURCE: &str = "tests/samples/source_variant/version-0/prepending.c";
+const PREPENDING_TARGET: &str = "tests/samples/target_variant/version-0/prepending.c";
+const PREPENDING_DIFF: &str = "tests/diffs/prepending.diff";
+const EXPECTED_PREPENDING_PATCH: &str = "tests/expected_patches/prepending.diff";
+const EXPECTED_PREPENDING_RESULT: &str = "tests/samples/target_variant/version-1/prepending.c";
+
+const ANCHOR_BELOW_SOURCE: &str = "tests/samples/source_variant/version-0/anchor_below.c";
+const ANCHOR_BELOW_TARGET: &str = "tests/samples/target_variant/version-0/anchor_below.c";
+const ANCHOR_BELOW_DIFF: &str = "tests/diffs/anchor_below.diff";
+const EXPECTED_ANCHOR_BELOW_PATCH: &str = "tests/expected_patches/anchor_below.diff";
+const EXPECTED_ANCHOR_BELOW_RESULT: &str = "tests/samples/target_variant/version-1/anchor_below.c";
 
 #[test]
 fn invariant_alignment() {
@@ -142,4 +142,37 @@ fn apply_non_existant() {
 fn apply_appending() {
     let aligned_patch = get_aligned_patch(APPENDING_SOURCE, APPENDING_TARGET, APPENDING_DIFF);
     run_application_test(aligned_patch, EXPECTED_APPENDING_RESULT, 0);
+}
+
+#[test]
+fn prepending_alignment() {
+    run_alignment_test(
+        PREPENDING_SOURCE,
+        PREPENDING_TARGET,
+        PREPENDING_DIFF,
+        EXPECTED_PREPENDING_PATCH,
+    );
+}
+
+#[test]
+fn apply_prepending() {
+    let aligned_patch = get_aligned_patch(PREPENDING_SOURCE, PREPENDING_TARGET, PREPENDING_DIFF);
+    run_application_test(aligned_patch, EXPECTED_PREPENDING_RESULT, 0);
+}
+
+#[test]
+fn anchor_below_alignment() {
+    run_alignment_test(
+        ANCHOR_BELOW_SOURCE,
+        ANCHOR_BELOW_TARGET,
+        ANCHOR_BELOW_DIFF,
+        EXPECTED_ANCHOR_BELOW_PATCH,
+    );
+}
+
+#[test]
+fn apply_anchor_below() {
+    let aligned_patch =
+        get_aligned_patch(ANCHOR_BELOW_SOURCE, ANCHOR_BELOW_TARGET, ANCHOR_BELOW_DIFF);
+    run_application_test(aligned_patch, EXPECTED_ANCHOR_BELOW_RESULT, 0);
 }
