@@ -1,51 +1,47 @@
 package org.variantsync.evaluation.patching
 
-import org.apache.commons.io.FileUtils
-import org.apache.commons.io.filefilter.IOFileFilter
-import org.apache.commons.io.filefilter.TrueFileFilter
-import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.execution.Operations
-import org.variantsync.evaluation.util.diff.DiffParser
-import org.variantsync.evaluation.util.diff.components.Hunk
-import org.variantsync.evaluation.util.shell.GitApplyCommand
-import org.variantsync.evaluation.util.shell.ShellExecutor
-import org.variantsync.evaluation.execution.panic
-import org.variantsync.evaluation.execution.readContentSafely
-import org.variantsync.vevos.simulation.feature.Variant
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
-
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.filefilter.IOFileFilter
+import org.apache.commons.io.filefilter.TrueFileFilter
+import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.execution.Operations
+import org.variantsync.evaluation.execution.panic
+import org.variantsync.evaluation.execution.readContentSafely
+import org.variantsync.evaluation.util.diff.DiffParser
+import org.variantsync.evaluation.util.diff.components.Hunk
+import org.variantsync.evaluation.util.shell.GitApplyCommand
+import org.variantsync.evaluation.util.shell.ShellExecutor
+import org.variantsync.vevos.simulation.feature.Variant
 
 class GitApply(private val name: String, private val strip: Int) : Patcher {
     override fun applyPatch(
-        operations: Operations,
-        sourceVariant: Variant,
-        targetVariant: Variant,
-        withFiler: Boolean
+            operations: Operations,
+            sourceVariant: Variant,
+            targetVariant: Variant,
+            withFiler: Boolean
     ): Rejects {
-        val pathToPatchFile = if (withFiler) {
-            operations.filteredPatchFile()
-        } else {
-            operations.patchFile()
-        }
+        val pathToPatchFile =
+                if (withFiler) {
+                    operations.filteredPatchFile()
+                } else {
+                    operations.patchFile()
+                }
 
         if (!Files.exists(pathToPatchFile)) {
             // If there is nothing to patch, there is nothing to reject
             return Rejects(ArrayList())
         }
 
-        val patchCommand = GitApplyCommand.Recommended(pathToPatchFile).strip(strip)
-            .reject()
+        val patchCommand = GitApplyCommand.Recommended(pathToPatchFile).strip(strip).reject()
 
         // apply patch to target variant
         val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir())
-        val result = customShell.execute(
-            patchCommand,
-            operations.patchDir()
-        )
+        val result = customShell.execute(patchCommand, operations.patchDir())
 
         val rejects = Rejects(ArrayList())
         if (result.isSuccess) {
@@ -55,7 +51,8 @@ class GitApply(private val name: String, private val strip: Int) : Patcher {
             result.failure.output.forEach(Consumer { message: String? -> Logger.debug(message) })
         }
 
-        rejects.rejects.addAll(readRejectsFromFile(operations, withFiler).rejects)
+        // TODO: Parsing of rejects might not work as intended, check execution without it
+        // rejects.rejects.addAll(readRejectsFromFile(operations, withFiler).rejects)
 
         return rejects
     }
@@ -78,21 +75,24 @@ class GitApply(private val name: String, private val strip: Int) : Patcher {
 
     private fun findRejects(operations: Operations): Collection<File> {
         // Define a file filter to select .rej files
-        val rejectFilter: IOFileFilter = object : IOFileFilter {
-            override fun accept(file: File): Boolean {
-                return file.name.endsWith(".rej")
-            }
+        val rejectFilter: IOFileFilter =
+                object : IOFileFilter {
+                    override fun accept(file: File): Boolean {
+                        return file.name.endsWith(".rej")
+                    }
 
-            override fun accept(dir: File?, name: String): Boolean {
-                return name.endsWith(".rej")
-            }
-        }
+                    override fun accept(dir: File?, name: String): Boolean {
+                        return name.endsWith(".rej")
+                    }
+                }
         // Search for reject files recursively
-        val rejectFiles: Collection<File> = FileUtils.listFiles(
-            operations.patchDir().toFile(),
-            rejectFilter,
-            TrueFileFilter.INSTANCE // This filter accepts all directories for recursive search
-        )
+        val rejectFiles: Collection<File> =
+                FileUtils.listFiles(
+                        operations.patchDir().toFile(),
+                        rejectFilter,
+                        TrueFileFilter.INSTANCE // This filter accepts all directories for recursive
+                        // search
+                        )
         return rejectFiles
     }
 
@@ -133,7 +133,6 @@ class GitApply(private val name: String, private val strip: Int) : Patcher {
         // Parse the content of the last hunk
         hunks.add(DiffParser.parseHunk(hunkLines))
 
-
         // Filter the hunks of each patch to extract changed lines
         val rejects = ArrayList<Change>()
         for (hunk in hunks) {
@@ -153,3 +152,4 @@ class GitApply(private val name: String, private val strip: Int) : Patcher {
         }
     }
 }
+
