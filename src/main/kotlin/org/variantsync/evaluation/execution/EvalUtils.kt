@@ -128,6 +128,30 @@ fun cloneDatasets(allSamples: ArrayList<ArrayList<CherryDataset>>, config: EvalC
     Logger.info("Cloned all datasets\n")
 }
 
+fun cleanUnrequiredDatasets(allSamples: ArrayList<ArrayList<CherryDataset>>, config: EvalConfig) {
+    Logger.info("Looking for datasets that should be cleaned.")
+    val datasetsToClean = HashSet<CherryDataset>()
+    for (s in allSamples) {
+        for (dataset in allSamples[0]) {
+            if (dataset.cherryPicks.size == 0) {
+                datasetsToClean.add(dataset)
+            }
+        }
+    }
+
+    Logger.info("There are ${datasetsToClean.size} to clean.")
+    var num = 0
+    for (dataset in datasetsToClean) {
+        val cloneDir = config.EXPERIMENT_DIR_REPOS().resolve(dataset.repositoryId.replace("/", "_"))
+        if (cloneDir.toFile().deleteRecursively()) {
+            num += 1
+        } else {
+            Logger.error("Was not able to delete " + cloneDir)
+        }
+    }
+    Logger.info("Cleaned %s datasets\n", num)
+}
+
 fun createOrLoadSamples(
         config: EvalConfig,
         datasetsPerLanguage: Map<String, MutableList<CherryDataset>>,
@@ -518,4 +542,3 @@ fun getOriginalDiff(
         DiffParser.toOriginalDiff(output.failure.output)
     }
 }
-
