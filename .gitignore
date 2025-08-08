@@ -26,3 +26,4 @@ src/main/python/experiment_table.tex
 src/main/python/result_analysis/experiment_table.tex
 src/main/python/output.txt
 kls_database.db
+bin
