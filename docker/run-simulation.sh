@@ -2,6 +2,8 @@
 
 cherries() {
     echo "Running evaluation on cherry picks."
+    echo "User id: $(id -u)"
+    echo "Group id: $(id -g)"
 
     if [ "$1" == 'replication' ]; then
         java -jar -Dtinylog.configuration=/home/user/tinylog.properties cherries.jar config-reproduction.properties
@@ -20,10 +22,8 @@ cherries() {
 }
 
 if [ "$1" == '' ]; then
-    echo "./execute.sh cherries replication"
+    echo "./execute.sh replication"
     exit
-fi
-
-if [ "$1" == 'cherries' ]; then
-    cherries $2
+else
+    cherries $1
 fi
