@@ -10,6 +10,7 @@
 - [ ] INSTALL.md
 - [ ] STATUS.md
 - [ ] Integrate result analysis in Docker
+- [ ] Unpacking of dataset by Docker
 
 # Decades of GNU Patch and Git Cherry-Pick: Can We Do Better? 
 
