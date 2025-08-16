@@ -77,12 +77,30 @@ def metrics_table_generation(
         only_non_trivial=only_non_trivial,
     )
 
+    num_results_per_patcher = {}
+    for patcher in Patcher:
+        num_results_per_patcher[patcher] = 0
+
     for language in languages:
         language = language[0]
         print(language)
         for patcher in Patcher:  # Patcher is an enum
             patcher_data = results_per_patcher[patcher.nice_name()][language]
             print(patcher_data)
+            num = len(patcher_data.per_patch.f1_score)
+            num_results_per_patcher[patcher] += num
+            print(
+                "There are",
+                num,
+                "results for patcher",
+                patcher.nice_name(),
+                "in language",
+                language,
+            )
+
+    for patcher in Patcher:
+        print("There are", num_results_per_patcher[patcher], "results for", patcher)
+
     patcher_names = [patcher.nice_name() for patcher in Patcher]
     # corrected_significance, corrected_alpha = significance(results_per_patcher)
     differences = relative_difference(Patcher.MPatch, results_per_patcher)
