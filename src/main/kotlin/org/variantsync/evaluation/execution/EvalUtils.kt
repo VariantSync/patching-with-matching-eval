@@ -20,9 +20,11 @@ import org.variantsync.evaluation.util.diff.components.FileDiff
 import org.variantsync.evaluation.util.diff.components.OriginalDiff
 import org.variantsync.evaluation.util.shell.CpCommand
 import org.variantsync.evaluation.util.shell.DiffCommand
+import org.variantsync.evaluation.util.shell.GitConfigCommand
 import org.variantsync.evaluation.util.shell.RmCommand
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
+import java.util.concurrent.atomic.AtomicInteger
 
 fun filterUnpatchedFiles(
         originalPatch: OriginalDiff,
@@ -51,7 +53,7 @@ fun defaultPatchers(strip: Int): List<Patcher> {
     val patchers = ArrayList<Patcher>()
     patchers.add(GNUPatch("unix_patch", strip))
     // patchers.add(MPatch("pwm_f1", strip, 1))
-    patchers.add(MPatch("pwm_f2", strip, 2))
+    //patchers.add(MPatch("pwm_f2", strip, 2))
     patchers.add(GitApply("git_apply", strip))
     patchers.add(GitCP("git_cherry", strip, MergeStrategy.Ours))
     return patchers
@@ -81,7 +83,6 @@ fun cloneGitHubRepo(config: EvalConfig, repoId: String): Path {
 
     Logger.info("cloning $repoUri into $cloneDir")
     Git.cloneRepository().setURI(repoUri).setDirectory(cloneDir.toFile()).call().close()
-    Logger.info("done")
     return cloneDir
 }
 
@@ -102,8 +103,8 @@ fun cloneDatasets(allSamples: ArrayList<ArrayList<CherryDataset>>, config: EvalC
     Logger.info("Looking for datasets that still should be cloned.")
     val datasetsToClone = HashSet<CherryDataset>()
     for (s in allSamples) {
-        for (dataset in allSamples[0]) {
-            if (dataset.cherryPicks.size > 0) {
+        for (dataset in s) {
+            if (dataset.cherryPicks.isNotEmpty()) {
                 datasetsToClone.add(dataset)
             }
         }
@@ -111,19 +112,26 @@ fun cloneDatasets(allSamples: ArrayList<ArrayList<CherryDataset>>, config: EvalC
 
     Logger.info("There are ${datasetsToClone.size} to check.")
     val threadPool = Executors.newFixedThreadPool(config.EXPERIMENT_THREAD_COUNT())
+    var i = AtomicInteger(0)
     for (dataset in datasetsToClone) {
         threadPool.submit {
             try {
                 cloneGitHubRepo(config, dataset.repositoryId)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
+                // Retry in case of a server error
                 Thread.sleep(60_000)
                 cloneGitHubRepo(config, dataset.repositoryId)
+            } finally {
+                synchronized(datasetsToClone) {
+                    i.andIncrement
+                    Logger.info { "Cloned or found %,d of %,d repositories".format(i.get(), datasetsToClone.size) }
+                }
             }
         }
     }
     threadPool.shutdown()
     if (!threadPool.awaitTermination(1, TimeUnit.DAYS)) {
-        Logger.error("Thread pool timeout.")
+        Logger.error("Thread pool timeout while cloning repositories.")
     }
     Logger.info("Cloned all datasets\n")
 }
@@ -412,6 +420,8 @@ fun prepareVariantDirectories(operations: EvalOperations, gitHubRepoPath: Path) 
             .shell
             .execute(CpCommand(gitHubRepoPath, operations.targetVariantV1).recursive())
             .expect("Was not able to copy target variant V1.")
+    // Disable GPG signing locally, in case it is enabled for a user
+    operations.shell.execute(GitConfigCommand.DisableGPGSignLocally(),operations.targetVariantV0).expect("Was not able to configure git")
 }
 
 fun prepareVariantDirectories(operations: CompositionAnalysisOperations, gitHubRepoPath: Path) {

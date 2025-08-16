@@ -112,16 +112,7 @@ class PatchCompositionAnalysis(
 
         Logger.info("Scheduled all tasks.")
 
-        val hadTimeout = waitForShutdown(threadPool, futures, config)
-
-        if (hadTimeout) {
-            Logger.info(
-                    "Timeout detected. Marking task of ${evalTasks.first().evalRun.datasetName} as completed."
-            )
-            for (evalTask in evalTasks) {
-                markEvalRun(evalTask.evalRun, config.EXPERIMENT_PROCESSED_FILE())
-            }
-        }
+        waitForShutdown(threadPool, futures, config)
 
         Logger.info("Running clean up.")
         // Delete all workdirs

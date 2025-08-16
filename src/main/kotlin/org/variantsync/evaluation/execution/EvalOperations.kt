@@ -47,6 +47,7 @@ class EvalOperations(mainDir: Path, gitHubRepoPath: Path) : Operations() {
 
     init {
         try {
+            var mainDir = mainDir.toAbsolutePath()
             if (mainDir.toFile().mkdirs()) {
                 Logger.info("Created main directory $mainDir")
             }

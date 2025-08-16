@@ -1,75 +1,43 @@
 package org.variantsync.evaluation
 
 import org.apache.commons.io.FileUtils
-import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.execution.*
-import org.variantsync.evaluation.util.shell.CpCommand
 import org.variantsync.evaluation.util.shell.RmCommand
 import org.variantsync.evaluation.util.shell.ShellExecutor
-import org.yaml.snakeyaml.LoaderOptions
-import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.io.IOException
 import java.io.UncheckedIOException
-import java.math.RoundingMode
 import java.nio.ByteBuffer
-import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.SimpleFileVisitor
-import java.nio.file.attribute.BasicFileAttributes
 import java.security.SecureRandom
-import java.text.DecimalFormat
 import java.util.*
 import java.util.concurrent.BlockingQueue
+import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.inc
+import kotlin.rem
 import kotlin.system.exitProcess
+import kotlin.toString
 
 class CherryPickStudy(
     val config: EvalConfig,
-    dataset: CherryDataset,
-    repetition: Int,
-    idProvider: IDProvider,
-    completedRuns: Set<EvaluationRun>,
-) {
-    // The study tasks that are to be executed in parallel
-    private val evalTasks: MutableList<CherryPickEvalTask>
-    private val numThreads: Int
-    private val availableOperations: BlockingQueue<EvalOperations>
+    val dataset: CherryDataset,
+    val repetition: Int,
+    val idProvider: IDProvider,
+    val completedRuns: Set<EvaluationRun>,
+): Callable<CherryDataset> {
 
-    /**
-     * Initialize the study from the given configuration
-     */
-    init {
-        if (!Files.exists(config.EXPERIMENT_DIR_RESULTS())) {
-            Files.createDirectories(config.EXPERIMENT_DIR_RESULTS())
-        }
-        val repoPath: Path = cloneGitHubRepo(config, dataset.repositoryId)
-        val t = min(config.EXPERIMENT_THREAD_COUNT(), dataset.cherryPicks.size / 100)
-        this.numThreads = max(1, t)
-        this.availableOperations = LinkedBlockingQueue(numThreads)
-
-        Logger.info("Preparing working directories for $numThreads threads.")
-        for (i in 1..numThreads) {
-            // Add one operations instance for each thread; each instance defines its own working directory
-            val operations = EvalOperations(config.EXPERIMENT_DIR_MAIN(), repoPath)
-            // Clean old variant files
-            cleanVariantDirectories(operations)
-            // Copy the source and target variant to the respective variant directories
-            prepareVariantDirectories(operations, repoPath)
-            availableOperations.add(operations)
-        }
-
-        this.evalTasks = ArrayList()
+    fun initializeEvalTasks(evalSetup: EvalOperations): MutableList<CherryPickEvalTask> {
+        val evalTasks: MutableList<CherryPickEvalTask> = ArrayList()
 
         for (cherryPick in dataset.cherryPicks) {
             val runID = idProvider.next()
@@ -84,53 +52,103 @@ class CherryPickStudy(
                     config,
                     dataset.datasetName,
                     cherryPick,
-                    availableOperations,
+                    evalSetup,
                     runID,
                     run,
                 )
             )
         }
+        return evalTasks
     }
 
     /**
      * Execute the study.
      */
-    fun run() {
-        val threadPool = Executors.newFixedThreadPool(numThreads)
-        Logger.info("Scheduling ${evalTasks.size} tasks...")
-
-        val futures = evalTasks.stream()
-            .map { runnable: CherryPickEvalTask -> FutureAndEvalRun(threadPool.submit(runnable), runnable.evalRun) }
-            .collect(Collectors.toList())
-
-        Logger.info("Scheduled all tasks.")
-
-        val hadTimeout = waitForShutdown(threadPool, futures, config)
-
-        if (hadTimeout) {
-            Logger.info("Timeout detected. Marking task of ${evalTasks.first().evalRun.datasetName} as completed.")
-            for (evalTask in evalTasks) {
-                markEvalRun(evalTask.evalRun, config.EXPERIMENT_PROCESSED_FILE())
+    override fun call():CherryDataset {
+        var evalSetup: EvalOperations? = null
+        try {
+            if (!Files.exists(config.EXPERIMENT_DIR_RESULTS())) {
+                Files.createDirectories(config.EXPERIMENT_DIR_RESULTS())
             }
-        }
 
-        Logger.info("Running clean up.")
-        // Delete all workdirs
-        for (operations in this.availableOperations) {
-            try {
-                FileUtils.deleteDirectory(operations.workDir.toFile())
-            } catch (e: Exception) {
-                Logger.debug(e)
-                if (Files.exists(operations.workDir)) {
-                    Logger.debug("Trying to remove directory with 'rm -rf'")
-                    if (ShellExecutor(Logger::warn, Logger::warn, operations.workDir)
-                        .execute(RmCommand(operations.workDir).recursive().force()).isSuccess) {
-                        Logger.debug("Success!")
-                    }
+            val repoPath: Path = cloneGitHubRepo(config, dataset.repositoryId)
+            evalSetup = EvalOperations(config.EXPERIMENT_DIR_MAIN(), repoPath)
+
+            // Clean old variant files
+            cleanVariantDirectories(evalSetup)
+            // Copy the source and target variant to the respective variant directories
+            prepareVariantDirectories(evalSetup, repoPath)
+
+            val evalTasks = initializeEvalTasks(evalSetup)
+
+            Logger.info("Beginning execution of ${evalTasks.size} evaluation tasks for " + this.dataset.datasetName)
+
+            var processed = 0uL
+            for (task in evalTasks) {
+                processed++
+                if (processed == 1uL || processed % 25uL == 0uL) {
+                    Logger.info(
+                        String.format(
+                            "Running task %s of %s.",
+                            processed.toString(),
+                            evalTasks.size.toString(),
+                        )
+                    )
                 }
+                executeTask(config, task)
+            }
+
+            Logger.info(
+                String.format(
+                    "Finished %s tasks.",
+                    evalTasks.size.toString()
+                )
+            )
+        } catch (e: Exception) {
+            Logger.error { "Was not able to " }
+            Logger.error(e)
+            e.printStackTrace()
+        } finally {
+            if (evalSetup != null) {
+                clean(evalSetup)
             }
         }
-        Logger.info("Cleaned all working directories.")
+        return dataset
+    }
+}
+
+fun executeTask(config: EvalConfig, task: CherryPickEvalTask) {
+    try {
+        val taskOutcome = task.execute()
+        val runID = taskOutcome.runID
+
+        if (taskOutcome.result.isPresent) {
+            for (result in taskOutcome.result.get()) {
+                saveResult(result, runID)
+            }
+        }
+    } catch (e: Throwable) {
+        Logger.error("Failed to finish task!")
+        Logger.error(e)
+        e.printStackTrace()
+    } finally{
+        markEvalRun(task.evalRun, config.EXPERIMENT_PROCESSED_FILE())
+    }
+}
+
+fun clean(evalSetup: EvalOperations) {
+    Logger.info("Running clean up.")
+    try {
+        FileUtils.deleteDirectory(evalSetup.workDir.toFile())
+    } catch (e: Exception) {
+        Logger.debug(e)
+        if (Files.exists(evalSetup.workDir)) {
+            Logger.debug("Trying to remove directory with 'rm -rf'")
+            if (ShellExecutor(Logger::warn, Logger::warn, evalSetup.workDir)
+                    .execute(RmCommand(evalSetup.workDir).recursive().force()).isSuccess) {
+                Logger.debug("Success!")
+            }
+        }
     }
 }
 
@@ -162,7 +180,7 @@ fun main(args: Array<String>) {
 
     cloneDatasets(allSamples, config)
 
-    val n = 5
+    val n = config.EXPERIMENT_THREAD_COUNT()
     Logger.info("Processing $n repos in parallel")
     val threadPool = Executors.newFixedThreadPool(n)
 
@@ -176,34 +194,27 @@ fun main(args: Array<String>) {
         var completed = 0
         Logger.info("Already considered ${completedRuns.size} repos.")
         completedRuns.forEach { s -> completed += s.value.size}
-        Logger.info("Processed a total of $completed evaluation runs.\n")
+        Logger.info("Already processed a total of $completed evaluation runs.\n")
         Thread.sleep(5000)
 
-
         Logger.info("Considering a total of $numCherryPicks cherry-picks for repetition $repetition")
+        val futures: MutableList<Future<CherryDataset>> = ArrayList()
         for (dataset in allSamples[repetitionIndex]) {
-            while (idProvider.next() < id) {}
             id += dataset.cherryPicks.size.toUInt()
-
             if (completedRuns.contains(dataset.datasetName) && completedRuns[dataset.datasetName]!!.size == dataset.cherryPicks.size) {
                 // Skip this dataset, it was already processed
-                Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName} (rep.: $repetition)")
+                Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName} (rep.: $repetition): Already processed.")
                 printProgress(completed, numCherryPicks, repetition, 0uL)
                 continue
             }
-            threadPool.submit {
-                val i = id
-                Logger.info("Preparing evaluation of cherry picks from ${dataset.datasetName}")
-                val study = CherryPickStudy(config, dataset, repetition, idProvider, completedRuns.getOrDefault(dataset.datasetName, HashSet()))
-                try {
-                    study.run()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Logger.error(e)
-                }
-                completed += dataset.cherryPicks.size
-                printProgress(completed, numCherryPicks, repetition, i)
-            }
+            val study = CherryPickStudy(config, dataset, repetition, idProvider, completedRuns.getOrDefault(dataset.datasetName, HashSet()))
+            val future: Future<CherryDataset> = threadPool.submit(study)
+            futures.add(future)
+        }
+        for (future in futures) {
+            val dataset = future.get()
+            completed += dataset.cherryPicks.size
+            printProgress(completed, numCherryPicks, repetition, id)
         }
         threadPool.awaitTermination(10, TimeUnit.DAYS)
     }
@@ -211,4 +222,3 @@ fun main(args: Array<String>) {
 
     exitProcess(0)
 }
-

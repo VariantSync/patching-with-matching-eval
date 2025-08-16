@@ -1,6 +1,5 @@
 package org.variantsync.evaluation.execution
 
-import de.ovgu.featureide.fm.core.base.IFeature
 import org.prop4j.Node
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.analysis.ResultAnalysis
@@ -21,8 +20,6 @@ import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
 import java.util.*
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.Callable
 import kotlin.collections.ArrayList
 
 
@@ -31,53 +28,26 @@ class CherryPickEvalTask(
     private val config: EvalConfig,
     private val datasetName: String,
     private val cherryPick: CherryPick,
-    private val availableOperations: BlockingQueue<EvalOperations>,
+    private val evalSetup: EvalOperations,
     private val runID: ULong,
     val evalRun: EvaluationRun,
-) : Callable<TaskOutcome> {
+)  {
 
-    override fun call(): TaskOutcome {
-        val operations: EvalOperations
-
-        synchronized(CherryPickEvalTask::class.java) {
-            // Retrieve the operations and the repo manager for this task
-            Logger.debug("Getting the next available operations (" + availableOperations.size + ")")
-            operations = availableOperations.take()
-            Logger.debug("There are now " + availableOperations.size + " operations available. Took $operations")
-            Logger.debug("Remaining after take: " + opsToString())
-        }
-
+    fun execute(): TaskOutcome {
         var experimentResult = Optional.empty<List<TaskResult>>()
         try {
-            experimentResult = Optional.of(callExecution(operations))
+            experimentResult = Optional.of(callExecution())
         } catch (e: Throwable) {
             Logger.error("Failed to finish task with runID $runID")
             Logger.error(e)
             e.printStackTrace()
-        } finally {
-            // Place the operations back in the queue to make them available to the next task
-            Logger.debug("Placing operation $operations back in queue (" + availableOperations.size + ")")
-            Logger.debug("Remaining before place back: " + opsToString())
-            availableOperations.add(operations)
-            Logger.debug("There are now " + availableOperations.size + " operations available.")
         }
-
         return TaskOutcome(runID, experimentResult, evalRun)
     }
 
-    private fun opsToString(): String {
-        val sb = StringBuilder()
-        for (op in availableOperations) {
-            sb.append(op)
-            sb.append(",")
-        }
-        return sb.toString()
-    }
-
-    fun callExecution(operations: EvalOperations): List<TaskResult> {
+    private fun callExecution(): List<TaskResult> {
         try {
-            // repoManager.cleanRepoStates()
-            if (!operations.repoManager.prepareCherryPick(cherryPick)) {
+            if (!evalSetup.repoManager.prepareCherryPick(cherryPick)) {
                 Logger.info("Not all commits of the cherry pick could be found... skipping cherry pick ${cherryPick.id} of $datasetName")
                 return ArrayList()
             }
@@ -87,7 +57,7 @@ class CherryPickEvalTask(
             return ArrayList()
         }
 
-        if (config.EXPERIMENT_DEBUG() && operations.debugDir(cherryPick).toFile().mkdirs()) {
+        if (config.EXPERIMENT_DEBUG() && evalSetup.debugDir(cherryPick).toFile().mkdirs()) {
             Logger.debug("Created Debug directory.")
         }
 
@@ -95,17 +65,17 @@ class CherryPickEvalTask(
         val source = Variant("source", AllTrueConfiguration())
         val target = Variant("target", AllTrueConfiguration())
 
-        if (Files.exists(operations.splitPatchFile)) {
-            Logger.debug("Cleaning old patch file " + operations.splitPatchFile)
-            operations.shell.execute(RmCommand(operations.splitPatchFile))
+        if (Files.exists(evalSetup.splitPatchFile)) {
+            Logger.debug("Cleaning old patch file " + evalSetup.splitPatchFile)
+            evalSetup.shell.execute(RmCommand(evalSetup.splitPatchFile))
         }
 
         // Apply diff to both versions of source variant
         Logger.debug("Diffing source...")
         val originalPatch = getOriginalDiff(
-            operations,
-            operations.sourceVariantV0,
-            operations.sourceVariantV1
+            evalSetup,
+            evalSetup.sourceVariantV0,
+            evalSetup.sourceVariantV1
         )
 
         if (originalPatch.isEmpty) {
@@ -119,20 +89,20 @@ class CherryPickEvalTask(
         if (config.EXPERIMENT_DEBUG()) {
             saveDiff(
                 originalPatch,
-                operations.debugDir(cherryPick).resolve("original.diff")
+                evalSetup.debugDir(cherryPick).resolve("original.diff")
             )
         }
 
-        saveDiff(originalPatch, operations.patchFile)
+        saveDiff(originalPatch, evalSetup.patchFile)
         Logger.debug("Saved original diff.")
 
         val results = ArrayList<TaskResult>()
         try {
             Logger.debug("Starting patch application for cherry-pick " + cherryPick.id)
             var evolutionDiff =
-                getOriginalDiff(operations, operations.targetVariantV0, operations.targetVariantV1)
+                getOriginalDiff(evalSetup, evalSetup.targetVariantV0, evalSetup.targetVariantV1)
 
-            val patchIsTrivial = originalPatch.partiallyEquals(evolutionDiff, operations.STRIP)
+            val patchIsTrivial = originalPatch.partiallyEquals(evolutionDiff, evalSetup.STRIP)
             if (patchIsTrivial) {
                 // We only focus on variability, which is expressed by differences in the patch and evolution
                 Logger.debug("Patch is trivial")
@@ -140,19 +110,19 @@ class CherryPickEvalTask(
                 Logger.debug("Patch is not trivial")
             }
 
-            evolutionDiff = filterUnpatchedFiles(originalPatch, evolutionDiff, operations.STRIP)
+            evolutionDiff = filterUnpatchedFiles(originalPatch, evolutionDiff, evalSetup.STRIP)
 
-            for (patcher in operations.patchers) {
+            for (patcher in evalSetup.patchers) {
                 /* Application of patches without knowledge about features */
                 Logger.debug("Applying patch from cherry-pick...")
                 val start = Instant.now()
                 var rejectsNormal: Rejects
                 try {
-                     rejectsNormal = patcher.applyPatch(operations, source, target, false)
+                     rejectsNormal = patcher.applyPatch(evalSetup, source, target, false)
                 } catch (e: UTF8Exception) {
                     Logger.debug(e)
-                    patcher.clean(operations)
-                    operations.repoManager.resetTargetVariant()
+                    patcher.clean(evalSetup)
+                    evalSetup.repoManager.resetTargetVariant()
                     return ArrayList()
                 } catch (e: Exception) {
                     Logger.debug(e)
@@ -163,12 +133,12 @@ class CherryPickEvalTask(
 
                 // Gather the patch result
                 var actualVsExpectedNormal =
-                    getActualVsExpected(operations, operations.targetVariantV1, target, cherryPick)
-                actualVsExpectedNormal = filterUnpatchedFiles(originalPatch, actualVsExpectedNormal, operations.STRIP)
+                    getActualVsExpected(evalSetup, evalSetup.targetVariantV1, target, cherryPick)
+                actualVsExpectedNormal = filterUnpatchedFiles(originalPatch, actualVsExpectedNormal, evalSetup.STRIP)
 
                 if (config.EXPERIMENT_DEBUG()) {
                     patchFilesDebug(
-                        operations,
+                        evalSetup,
                         patcher,
                         originalPatch,
                         cherryPick,
@@ -181,7 +151,7 @@ class CherryPickEvalTask(
 
                 /* Result Evaluation */
                 val patchOutcome = ResultAnalysis.processCherriesOutcome(
-                    operations,
+                    evalSetup,
                     cherryPick,
                     datasetName,
                     runID,
@@ -201,8 +171,8 @@ class CherryPickEvalTask(
                             + cherryPick.targetCommit
                 )
 
-                patcher.clean(operations)
-                operations.repoManager.resetTargetVariant()
+                patcher.clean(evalSetup)
+                evalSetup.repoManager.resetTargetVariant()
             }
         } catch (e: Exception) {
             Logger.debug("Captured exception for cherry pick ${cherryPick.id}: ", e.message)
@@ -242,7 +212,7 @@ class CherryPickEvalTask(
         try {
             Files.createDirectories(file.parent)
             Files.write(file, rejects.toLines())
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             panic("Was not able to save diff to file $file")
         }
     }
@@ -253,7 +223,7 @@ class CherryPickEvalTask(
         try {
             Files.createDirectories(file.parent)
             Files.write(file, fineDiff.toLines())
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             panic("Was not able to save diff to file $file")
         }
     }
