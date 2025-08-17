@@ -211,6 +211,7 @@ fun main(args: Array<String>) {
             val future: Future<CherryDataset> = threadPool.submit(study)
             futures.add(future)
         }
+        threadPool.shutdown()
         for (future in futures) {
             val dataset = future.get()
             completed += dataset.cherryPicks.size
@@ -218,7 +219,6 @@ fun main(args: Array<String>) {
         }
         threadPool.awaitTermination(10, TimeUnit.DAYS)
     }
-    threadPool.shutdown()
 
     exitProcess(0)
 }
