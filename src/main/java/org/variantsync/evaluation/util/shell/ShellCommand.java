@@ -29,6 +29,11 @@ public abstract class ShellCommand {
 
     @Override
     public String toString() {
-        return Arrays.toString(this.parts());
+        StringBuilder sb = new StringBuilder();
+        for (String part : parts()) {
+            sb.append(part);
+            sb.append(" ");
+        }
+        return sb.toString();
     }
 }

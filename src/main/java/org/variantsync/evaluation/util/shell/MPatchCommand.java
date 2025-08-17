@@ -1,15 +1,21 @@
 package org.variantsync.evaluation.util.shell;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Represents a shell 'patch' command that can be executed using a ShellExecutor
  */
 public class MPatchCommand extends ShellCommand {
-    private static final String COMMAND = "mpatch";
+    private final String command;
     private final ArrayList<String> args = new ArrayList<>();
+
+    private MPatchCommand() {
+        String home = System.getProperty("user.home");
+        Path binary = Paths.get(home, ".cargo", "bin", "mpatch");
+        this.command = binary.toString();
+    }
 
     /**
      * A MPatchCommand configured as recommended in the documentation of 'patch'
@@ -74,20 +80,11 @@ public class MPatchCommand extends ShellCommand {
     public String[] parts() {
         final String[] parts = new String[args.size() + 1];
 
-        parts[0] = COMMAND;
+        parts[0] = command;
         int index = 0;
         for (; index < args.size(); index++) {
             parts[index + 1] = args.get(index);
         }
-        //for (var part : parts) {
-        //     System.out.print(part + " ");
-        //  }
-        //  System.out.println();
         return parts;
-    }
-
-    @Override
-    public String toString() {
-        return "mpatch: " + Arrays.toString(parts());
     }
 }

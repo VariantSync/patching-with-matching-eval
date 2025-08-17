@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -64,7 +65,7 @@ public class ShellExecutor {
      */
     public Result<List<String>, ShellException> execute(final ShellCommand command, final Path executionDir) {
         if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-            throw new SetupError("The synchronization study can only be executed under Linux!");
+            throw new SetupError("The evaluation can only be executed under Linux!");
         }
 
         final ProcessBuilder builder = new ProcessBuilder();
@@ -74,45 +75,39 @@ public class ShellExecutor {
         Logger.debug("Executing '" + command + "' in directory " + builder.directory());
         builder.command(command.parts());
 
-        final Process process;
+        Process process = null;
         final List<String> output = new ArrayList<>();
         final Consumer<String> shareOutput = s -> {
             output.add(s);
             outputReader.accept(s);
         };
 
+        final int exitCode;
         try {
             process = builder.start();
             collectOutput(process.getInputStream(), shareOutput);
             collectOutput(process.getErrorStream(), errorReader);
+            exitCode = process.waitFor();
         } catch (final IOException e) {
             Logger.error("Was not able to execute " + command, e);
             e.printStackTrace();
             return Result.Failure(new ShellException(e));
-        }
-
-        final int exitCode;
-        try {
-            exitCode = process.waitFor();
         } catch (final InterruptedException e) {
             Logger.error("Interrupted while waiting for process to end.", e);
             return Result.Failure(new ShellException(e));
+        } finally {
+            if (process != null) {
+                process.destroy();
+            }
         }
+
         return command.interpretResult(exitCode, output);
     }
 
 private void collectOutput(final InputStream inputStream, final Consumer<String> consumer) {
         try (inputStream; final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, Charsets.UTF_8))) {
-            StringBuilder output = new StringBuilder();
-            int character;
-            while ((character = reader.read()) != -1) {
-                output.append((char) character);
-            }
-            if (output.isEmpty()) {
-                return;
-            }
-            String[] lines = output.toString().split("\n");
-            for (String line : lines) {
+            String line;
+            while ((line = reader.readLine()) != null) {
                 consumer.accept(line);
             }
         } catch (final IOException e) {
