@@ -1,33 +1,35 @@
 package org.variantsync.evaluation.patching
 
-import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.execution.Operations
-import org.variantsync.evaluation.util.diff.DiffParser
-import org.variantsync.evaluation.util.diff.components.OriginalDiff
-import org.variantsync.evaluation.util.shell.MPatchCommand
-import org.variantsync.evaluation.util.shell.ShellExecutor
-import org.variantsync.evaluation.execution.panic
-import org.variantsync.evaluation.execution.readContentSafely
-import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
+import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.execution.Operations
+import org.variantsync.evaluation.execution.panic
+import org.variantsync.evaluation.execution.readContentSafely
+import org.variantsync.evaluation.util.diff.DiffParser
+import org.variantsync.evaluation.util.diff.components.OriginalDiff
+import org.variantsync.evaluation.util.shell.MPatchCommand
+import org.variantsync.evaluation.util.shell.ShellExecutor
+import org.variantsync.vevos.simulation.feature.Variant
 
-class MPatch(private val name: String, private val strip: Int, private val maxMatchDistance: Int) : Patcher {
+class MPatch(private val name: String, private val strip: Int, private val maxMatchDistance: Int) :
+        Patcher {
 
     override fun applyPatch(
-        operations: Operations,
-        sourceVariant: Variant,
-        targetVariant: Variant,
-        withFiler: Boolean
+            operations: Operations,
+            sourceVariant: Variant,
+            targetVariant: Variant,
+            withFiler: Boolean
     ): Rejects {
 
-        val pathToPatchFile = if (withFiler) {
-            operations.filteredPatchFile()
-        } else {
-            operations.patchFile()
-        }
+        val pathToPatchFile =
+                if (withFiler) {
+                    operations.filteredPatchFile()
+                } else {
+                    operations.patchFile()
+                }
 
         if (!Files.exists(pathToPatchFile)) {
             // If there is nothing to patch, there is nothing to reject
@@ -36,21 +38,22 @@ class MPatch(private val name: String, private val strip: Int, private val maxMa
 
         val pathToSourceVariant = operations.sourceV0Path(sourceVariant.name)
 
-        val rejectFile = if (withFiler) {
-            operations.rejectsFileFiltered()
-        } else {
-            operations.rejectsFile()
-        }
+        val rejectFile =
+                if (withFiler) {
+                    operations.rejectsFileFiltered()
+                } else {
+                    operations.rejectsFile()
+                }
 
-        val patchCommand = MPatchCommand.Recommended(pathToSourceVariant, pathToPatchFile).strip(strip)
-            .rejectsFile(rejectFile).maxMatchDistance(this.maxMatchDistance)
+        val patchCommand =
+                MPatchCommand.Recommended(pathToSourceVariant, pathToPatchFile)
+                        .strip(strip)
+                        .rejectsFile(rejectFile)
+                        .maxMatchDistance(this.maxMatchDistance)
 
         // apply patch to target variant
         val customShell = ShellExecutor(Logger::debug, Logger::warn, operations.workDir())
-        val result = customShell.execute(
-            patchCommand,
-            operations.patchDir()
-        )
+        val result = customShell.execute(patchCommand, operations.patchDir())
 
         val rejects = Rejects(ArrayList())
         if (result.isSuccess) {
@@ -70,12 +73,17 @@ class MPatch(private val name: String, private val strip: Int, private val maxMa
     }
 
     // Read a rejects file
-    private fun readRejectsFromFile(operations: Operations, rejectFile: Path, withFiler: Boolean): Rejects {
-        val pathToPatchFile = if (withFiler) {
-            operations.filteredPatchFile()
-        } else {
-            operations.patchFile()
-        }
+    private fun readRejectsFromFile(
+            operations: Operations,
+            rejectFile: Path,
+            withFiler: Boolean
+    ): Rejects {
+        val pathToPatchFile =
+                if (withFiler) {
+                    operations.filteredPatchFile()
+                } else {
+                    operations.patchFile()
+                }
         val patch = DiffParser.toOriginalDiff(readContentSafely(pathToPatchFile))
         if (Files.exists(rejectFile)) {
             try {
@@ -100,7 +108,10 @@ class MPatch(private val name: String, private val strip: Int, private val maxMa
             var atHeader = true
             while (atHeader) {
                 if (nextLine.startsWith("--- ")) {
-                    oldFile = nextLine.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+                    oldFile =
+                            nextLine.split("\\s+".toRegex())
+                                    .dropLastWhile { it.isEmpty() }
+                                    .toTypedArray()[1]
                 } else if (nextLine.startsWith("+++ ")) {
                     atHeader = false
                 }
@@ -129,7 +140,6 @@ class MPatch(private val name: String, private val strip: Int, private val maxMa
         return rejects
     }
 
-
     private fun parseRejects(patch: OriginalDiff, lines: List<String>): Rejects {
         // The rejects are empty
         if (lines.isEmpty()) {
@@ -140,7 +150,8 @@ class MPatch(private val name: String, private val strip: Int, private val maxMa
         var fileDiffStart = ""
         var fileDiffFollow = ""
         if (lines[0].startsWith("diff")) {
-            // Several files were processed, the diff of each file starts with the 'diff' command that was used
+            // Several files were processed, the diff of each file starts with the 'diff' command
+            // that was used
             fileDiffStart = "diff"
             fileDiffFollow = "--- "
         } else if (lines[0].startsWith("--- ")) {
@@ -183,12 +194,13 @@ class MPatch(private val name: String, private val strip: Int, private val maxMa
                     }
                 }
             }
-            requireNotNull(fileDiffContent) { "The provided lines do not contain one of the expected fileDiffStart values" }
+            requireNotNull(fileDiffContent) {
+                "The provided lines do not contain one of the expected fileDiffStart values"
+            }
             fileDiffContent.add(line)
         }
         // Parse the content of the last file diff
         mPatchRejects.addAll(parseMPatchRejects(fileDiffContent))
-
 
         val rejects = Rejects(ArrayList())
         for ((changeId, change) in patch.intoChanges(strip).withIndex()) {
@@ -201,9 +213,7 @@ class MPatch(private val name: String, private val strip: Int, private val maxMa
 
         return rejects
     }
-
 }
-
 
 private class RejectId(val path: Path, val index: Int) {
     override fun equals(other: Any?): Boolean {
@@ -225,5 +235,4 @@ private class RejectId(val path: Path, val index: Int) {
     }
 }
 
-class UTF8Exception(): Exception("Input did not contain valid UTF-8") {}
-
+class UTF8Exception() : Exception("Input did not contain valid UTF-8") {}

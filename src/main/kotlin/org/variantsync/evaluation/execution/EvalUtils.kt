@@ -12,6 +12,7 @@ import java.text.DecimalFormat
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 import org.eclipse.jgit.api.Git
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.patching.*
@@ -24,7 +25,6 @@ import org.variantsync.evaluation.util.shell.GitConfigCommand
 import org.variantsync.evaluation.util.shell.RmCommand
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
-import java.util.concurrent.atomic.AtomicInteger
 
 fun filterUnpatchedFiles(
         originalPatch: OriginalDiff,
@@ -123,7 +123,12 @@ fun cloneDatasets(allSamples: ArrayList<ArrayList<CherryDataset>>, config: EvalC
             } finally {
                 synchronized(datasetsToClone) {
                     i.andIncrement
-                    Logger.info { "Cloned or found %,d of %,d repositories".format(i.get(), datasetsToClone.size) }
+                    Logger.info {
+                        "Cloned or found %,d of %,d repositories".format(
+                                i.get(),
+                                datasetsToClone.size
+                        )
+                    }
                 }
             }
         }
@@ -420,7 +425,10 @@ fun prepareVariantDirectories(operations: EvalOperations, gitHubRepoPath: Path) 
             .execute(CpCommand(gitHubRepoPath, operations.targetVariantV1).recursive())
             .expect("Was not able to copy target variant V1.")
     // Disable GPG signing locally, in case it is enabled for a user
-    operations.shell.execute(GitConfigCommand.DisableGPGSignLocally(),operations.targetVariantV0).expect("Was not able to configure git")
+    operations
+            .shell
+            .execute(GitConfigCommand.DisableGPGSignLocally(), operations.targetVariantV0)
+            .expect("Was not able to configure git")
 }
 
 fun prepareVariantDirectories(operations: CompositionAnalysisOperations, gitHubRepoPath: Path) {
@@ -527,4 +535,3 @@ fun getOriginalDiff(
         DiffParser.toOriginalDiff(output.failure.output)
     }
 }
-

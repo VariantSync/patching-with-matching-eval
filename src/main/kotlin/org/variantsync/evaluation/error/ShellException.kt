@@ -2,12 +2,9 @@ package org.variantsync.evaluation.error
 
 import java.util.function.Consumer
 
-/**
- * Custom Exception for representing errors caused by shell commands being executed.
- */
+/** Custom Exception for representing errors caused by shell commands being executed. */
 class ShellException : Exception {
-    @JvmField
-    val output: List<String>
+    @JvmField val output: List<String>
 
     constructor(e: Exception) : super(e) {
         output = ArrayList()

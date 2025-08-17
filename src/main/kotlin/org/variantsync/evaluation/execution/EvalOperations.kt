@@ -1,18 +1,17 @@
 package org.variantsync.evaluation.execution
 
-import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.util.shell.AppliedPatchTracker
-import org.variantsync.evaluation.util.shell.ShellExecutor
-import org.variantsync.evaluation.patching.Patcher
 import java.io.IOException
 import java.io.UncheckedIOException
 import java.nio.file.Files
 import java.nio.file.Path
+import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.patching.Patcher
+import org.variantsync.evaluation.util.shell.AppliedPatchTracker
+import org.variantsync.evaluation.util.shell.ShellExecutor
 
 class EvalOperations(mainDir: Path, gitHubRepoPath: Path) : Operations() {
     // Working directory
-    @JvmField
-    var workDir: Path
+    @JvmField var workDir: Path
 
     // Debug directory
     private val debugBaseDir: Path
@@ -65,15 +64,17 @@ class EvalOperations(mainDir: Path, gitHubRepoPath: Path) : Operations() {
         splitPatchFile = workDir.resolve("patch-split.diff")
         rejectsFile = workDir.resolve("rejects-normal.txt")
         appliedPatchTracker = AppliedPatchTracker()
-        shell =
-            ShellExecutor(
-                appliedPatchTracker,
-                appliedPatchTracker,
-                workDir
-            )
+        shell = ShellExecutor(appliedPatchTracker, appliedPatchTracker, workDir)
 
         patchers = defaultPatchers(STRIP)
-        repoManager = VariantRepoManager(sourceVariantV0, sourceVariantV1, targetVariantV0, targetVariantV1, gitHubRepoPath)
+        repoManager =
+                VariantRepoManager(
+                        sourceVariantV0,
+                        sourceVariantV1,
+                        targetVariantV0,
+                        targetVariantV1,
+                        gitHubRepoPath
+                )
     }
 
     fun debugDir(directory: String): Path {
@@ -132,3 +133,4 @@ class EvalOperations(mainDir: Path, gitHubRepoPath: Path) : Operations() {
         return STRIP
     }
 }
+

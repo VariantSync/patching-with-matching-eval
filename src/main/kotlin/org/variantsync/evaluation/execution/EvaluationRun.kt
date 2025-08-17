@@ -1,6 +1,11 @@
 package org.variantsync.evaluation.execution
 
-class EvaluationRun(val repetition: Int, val datasetName: String, val cherry: String, val pick: String) {
+class EvaluationRun(
+        val repetition: Int,
+        val datasetName: String,
+        val cherry: String,
+        val pick: String
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -23,3 +28,4 @@ class EvaluationRun(val repetition: Int, val datasetName: String, val cherry: St
         return result
     }
 }
+

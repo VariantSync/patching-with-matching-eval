@@ -1,19 +1,19 @@
 package org.variantsync.evaluation.analysis
 
-import org.variantsync.evaluation.execution.*
 import java.io.File
 import java.nio.file.Path
 import java.text.NumberFormat
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.system.exitProcess
+import org.variantsync.evaluation.execution.*
 
 val n = 100
 
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
         System.err.println(
-            "The first argument should provide the path to the configuration file that is to be used"
+                "The first argument should provide the path to the configuration file that is to be used"
         )
     }
     val config = EvalConfig(File(args[0]))
@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
             mergedResults[key] = mergedResults.getOrDefault(key, 0) + entry.value
         }
     }
-   // val mergedResults = mergeMaps(compositionResults.map { r -> r.fileMap })
+    // val mergedResults = mergeMaps(compositionResults.map { r -> r.fileMap })
 
     // How often are the patches of the top-10 most-patched pure?
     val numberFormatter = NumberFormat.getNumberInstance(Locale.US)
@@ -44,8 +44,10 @@ fun main(args: Array<String>) {
     val maxKeyLength = topN.maxOf { it.first.length }
     val maxValLength = topN.maxOf { numberFormatter.format(it.second).length }
     for (t in topN) {
-        val percentage =  (t.second.toDouble() / mergedResults.values.sum().toDouble())
-    println("${t.first.padEnd(maxKeyLength)} : ${numberFormatter.format(t.second).padStart(maxValLength)}   ${percentageFormatter.format(percentage)}")
+        val percentage = (t.second.toDouble() / mergedResults.values.sum().toDouble())
+        println(
+                "${t.first.padEnd(maxKeyLength)} : ${numberFormatter.format(t.second).padStart(maxValLength)}   ${percentageFormatter.format(percentage)}"
+        )
     }
     println("-------------------------------")
     println()
@@ -70,15 +72,17 @@ fun main(args: Array<String>) {
     println(" There are " + numberFormatter.format(compositionResults.size) + " patches")
     println(" There are $impurePatches impure patches")
     println("+++++ TOP $n PURE PATCHES +++++")
-    for (pure in topNpure.entries
-        .sortedByDescending { it.value }) {
-        val percentage =  pure.value.toDouble() / compositionResults.size.toDouble()
-        println("${pure.key.padEnd(maxKeyLength)} : ${numberFormatter.format(pure.value).padStart(maxValLength)}   ${percentageFormatter.format(percentage)}")
+    for (pure in topNpure.entries.sortedByDescending { it.value }) {
+        val percentage = pure.value.toDouble() / compositionResults.size.toDouble()
+        println(
+                "${pure.key.padEnd(maxKeyLength)} : ${numberFormatter.format(pure.value).padStart(maxValLength)}   ${percentageFormatter.format(percentage)}"
+        )
     }
     println("-------------------------------")
     println()
 
-    val languageRelatedFiles = listOf("java", "py", "go", "js", "cpp", "hpp", "c", "h", "ts", "cs", "php", "rs")
+    val languageRelatedFiles =
+            listOf("java", "py", "go", "js", "cpp", "hpp", "c", "h", "ts", "cs", "php", "rs")
     var numLangRelPatches = 0
     var numLangRelFilePatches = 0
     for (l in languageRelatedFiles) {
@@ -86,19 +90,34 @@ fun main(args: Array<String>) {
         numLangRelPatches += topNpure[l]!!
     }
     val relPatchesPercentage = 100.0 * (numLangRelPatches.toDouble() / compositionResults.size)
-    val relFilePatchesPercentage = 100.0 * (numLangRelFilePatches.toDouble() / mergedResults.values.sum())
+    val relFilePatchesPercentage =
+            100.0 * (numLangRelFilePatches.toDouble() / mergedResults.values.sum())
     println("+++++ LANG RELATED PATCHES +++++")
-    println("There are " + numberFormatter.format(numLangRelFilePatches) + " patched files related to the top langs. (" + relFilePatchesPercentage + "%)")
-    println("There are " + numberFormatter.format(numLangRelPatches) + " pure patches related to the top langs. (" + relPatchesPercentage + "%)")
+    println(
+            "There are " +
+                    numberFormatter.format(numLangRelFilePatches) +
+                    " patched files related to the top langs. (" +
+                    relFilePatchesPercentage +
+                    "%)"
+    )
+    println(
+            "There are " +
+                    numberFormatter.format(numLangRelPatches) +
+                    " pure patches related to the top langs. (" +
+                    relPatchesPercentage +
+                    "%)"
+    )
     println("-------------------------------")
     println()
     exitProcess(0)
 }
 
 fun findFilesByPostfix(directoryPath: Path, postfix: String): List<Path> {
-    return directoryPath.toFile().listFiles { file -> file.isFile && file.name.endsWith(postfix) }
-        ?.map { it.toPath() }
-        ?: emptyList()
+    return directoryPath
+            .toFile()
+            .listFiles { file -> file.isFile && file.name.endsWith(postfix) }
+            ?.map { it.toPath() }
+            ?: emptyList()
 }
 
 fun findResults(directoryPath: Path): List<Path> {
@@ -108,16 +127,11 @@ fun findResults(directoryPath: Path): List<Path> {
 
 fun mergeMaps(maps: List<Map<String, Int>>): Map<String, Int> {
     return maps.fold(mutableMapOf()) { acc, map ->
-        map.forEach { (key, value) ->
-            acc.merge(key, value, Int::plus)
-        }
+        map.forEach { (key, value) -> acc.merge(key, value, Int::plus) }
         acc
     }
 }
 
 fun topNValues(map: Map<String, Int>, n: Int): List<Pair<String, Int>> {
-    return map.entries
-        .sortedByDescending { it.value }
-        .take(n)
-        .map { it.key to it.value }
+    return map.entries.sortedByDescending { it.value }.take(n).map { it.key to it.value }
 }

@@ -1,18 +1,18 @@
 package org.variantsync.evaluation.analysis
 
 import org.variantsync.diffdetective.util.Assert
-import org.variantsync.evaluation.util.diff.lines.ChangedLine
 import org.variantsync.evaluation.patching.Change
+import org.variantsync.evaluation.util.diff.lines.ChangedLine
 
 class EvaluationScenario(
-    private val required: CountingMap<Change>,
-    private val undesired: CountingMap<Change>,
-    private val unPatchable: CountingMap<ChangedLine>
+        private val required: CountingMap<Change>,
+        private val undesired: CountingMap<Change>,
+        private val unPatchable: CountingMap<ChangedLine>
 ) {
     fun evaluate(
-        patch: CountingMap<Change>,
-        rejects: CountingMap<Change>,
-        observedDifference: CountingMap<ChangedLine>
+            patch: CountingMap<Change>,
+            rejects: CountingMap<Change>,
+            observedDifference: CountingMap<ChangedLine>
     ): EvaluationResult {
         var correct = 0L
         var invalid = 0L
@@ -58,7 +58,7 @@ class EvaluationScenario(
                     wrongLocation++
                 } else {
                     // It is just missing
-                    missing++;
+                    missing++
                 }
                 continue
             }
@@ -97,17 +97,16 @@ class EvaluationScenario(
             mitigatedInvalid++
         }
 
-
         return EvaluationResult(
-            Applied(correct),
-            Invalid(invalid),
-            WrongLocation(wrongLocation),
-            Missing(missing),
-            FilteredCorrectly(filteredCorrectly),
-            FilteredIncorrectly(filteredIncorrectly),
-            MitigatedInvalid(mitigatedInvalid),
-            MitigatedMissing(mitigatedMissing),
-            EditDistance(editDistance),
+                Applied(correct),
+                Invalid(invalid),
+                WrongLocation(wrongLocation),
+                Missing(missing),
+                FilteredCorrectly(filteredCorrectly),
+                FilteredIncorrectly(filteredIncorrectly),
+                MitigatedInvalid(mitigatedInvalid),
+                MitigatedMissing(mitigatedMissing),
+                EditDistance(editDistance),
         )
     }
 }

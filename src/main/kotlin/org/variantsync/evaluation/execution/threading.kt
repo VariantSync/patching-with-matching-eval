@@ -1,18 +1,16 @@
 package org.variantsync.evaluation.execution
 
-import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.analysis.TaskOutcome
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
+import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.analysis.TaskOutcome
 
-class FutureAndEvalRun (val future: Future<TaskOutcome>, val evaluationRun: EvaluationRun)
+class FutureAndEvalRun(val future: Future<TaskOutcome>, val evaluationRun: EvaluationRun)
 
 fun waitForShutdown(
-    threadPool: ExecutorService,
-    futuresAndRuns: MutableList<FutureAndEvalRun>,
-    config: EvalConfig,
+        threadPool: ExecutorService,
+        futuresAndRuns: MutableList<FutureAndEvalRun>,
+        config: EvalConfig,
 ) {
     var processed = 0uL
     for (fAndE in futuresAndRuns) {
@@ -25,12 +23,12 @@ fun waitForShutdown(
             runID = taskOutCome.runID
             if (processed == 1uL || processed % 25uL == 0uL) {
                 Logger.info(
-                    String.format(
-                        "Running task %s of %s with ID %s.",
-                        processed.toString(),
-                        futuresAndRuns.size.toString(),
-                        runID,
-                    )
+                        String.format(
+                                "Running task %s of %s with ID %s.",
+                                processed.toString(),
+                                futuresAndRuns.size.toString(),
+                                runID,
+                        )
                 )
             }
 
@@ -50,10 +48,5 @@ fun waitForShutdown(
     Logger.info("Waiting for thread pool shutdown")
     threadPool.shutdownNow()
 
-    Logger.info(
-        String.format(
-            "Finished %s tasks.",
-            futuresAndRuns.size.toString()
-        )
-    )
+    Logger.info(String.format("Finished %s tasks.", futuresAndRuns.size.toString()))
 }

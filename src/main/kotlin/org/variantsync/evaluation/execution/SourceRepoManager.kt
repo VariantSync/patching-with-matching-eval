@@ -1,13 +1,14 @@
 package org.variantsync.evaluation.execution
 
+import java.nio.file.Path
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.util.shell.GitCheckoutCommand
 import org.variantsync.evaluation.util.shell.ShellExecutor
-import java.nio.file.Path
 
 class SourceRepoManager(
-    sourceVariantV0: Path, sourceVariantV1: Path,
-    private val githubRepoPath: Path
+        sourceVariantV0: Path,
+        sourceVariantV1: Path,
+        private val githubRepoPath: Path
 ) {
     var lastCherry: CherryPick? = null
 
@@ -40,3 +41,4 @@ class SourceRepoManager(
         return true
     }
 }
+

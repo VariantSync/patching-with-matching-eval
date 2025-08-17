@@ -1,18 +1,17 @@
 package org.variantsync.evaluation.execution
 
-import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.util.shell.AppliedPatchTracker
-import org.variantsync.evaluation.util.shell.ShellExecutor
-import org.variantsync.evaluation.patching.Patcher
 import java.io.IOException
 import java.io.UncheckedIOException
 import java.nio.file.Files
 import java.nio.file.Path
+import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.patching.Patcher
+import org.variantsync.evaluation.util.shell.AppliedPatchTracker
+import org.variantsync.evaluation.util.shell.ShellExecutor
 
 class CompositionAnalysisOperations(mainDir: Path, gitHubRepoPath: Path) : Operations() {
     // Working directory
-    @JvmField
-    var workDir: Path
+    @JvmField var workDir: Path
 
     // Debug directory
     private val debugBaseDir: Path
@@ -50,12 +49,7 @@ class CompositionAnalysisOperations(mainDir: Path, gitHubRepoPath: Path) : Opera
         debugBaseDir = workDir.resolve("DEBUG")
         patchFile = workDir.resolve("patch.diff")
         appliedPatchTracker = AppliedPatchTracker()
-        shell =
-            ShellExecutor(
-                {_ -> },
-                Logger::error,
-                workDir
-            )
+        shell = ShellExecutor({ _ -> }, Logger::error, workDir)
 
         patchers = defaultPatchers(STRIP)
         repoManager = SourceRepoManager(sourceVariantV0, sourceVariantV1, gitHubRepoPath)
@@ -117,3 +111,4 @@ class CompositionAnalysisOperations(mainDir: Path, gitHubRepoPath: Path) : Opera
         return STRIP
     }
 }
+

@@ -1,19 +1,5 @@
 package org.variantsync.evaluation.execution
 
-import org.prop4j.Node
-import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.analysis.ResultAnalysis
-import org.variantsync.evaluation.analysis.TaskResult
-import org.variantsync.evaluation.analysis.TaskOutcome
-import org.variantsync.evaluation.util.diff.components.OriginalDiff
-import org.variantsync.evaluation.util.shell.CpCommand
-import org.variantsync.evaluation.util.shell.RmCommand
-import org.variantsync.evaluation.error.Panic
-import org.variantsync.evaluation.patching.Patcher
-import org.variantsync.evaluation.patching.Rejects
-import org.variantsync.evaluation.patching.UTF8Exception
-import org.variantsync.vevos.simulation.feature.Variant
-import org.variantsync.vevos.simulation.feature.config.IConfiguration
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -21,17 +7,30 @@ import java.time.Duration
 import java.time.Instant
 import java.util.*
 import kotlin.collections.ArrayList
-
+import org.prop4j.Node
+import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.analysis.ResultAnalysis
+import org.variantsync.evaluation.analysis.TaskOutcome
+import org.variantsync.evaluation.analysis.TaskResult
+import org.variantsync.evaluation.error.Panic
+import org.variantsync.evaluation.patching.Patcher
+import org.variantsync.evaluation.patching.Rejects
+import org.variantsync.evaluation.patching.UTF8Exception
+import org.variantsync.evaluation.util.diff.components.OriginalDiff
+import org.variantsync.evaluation.util.shell.CpCommand
+import org.variantsync.evaluation.util.shell.RmCommand
+import org.variantsync.vevos.simulation.feature.Variant
+import org.variantsync.vevos.simulation.feature.config.IConfiguration
 
 class CherryPickEvalTask(
-    private val repetition: Int,
-    private val config: EvalConfig,
-    private val datasetName: String,
-    private val cherryPick: CherryPick,
-    private val evalSetup: EvalOperations,
-    private val runID: ULong,
-    val evalRun: EvaluationRun,
-)  {
+        private val repetition: Int,
+        private val config: EvalConfig,
+        private val datasetName: String,
+        private val cherryPick: CherryPick,
+        private val evalSetup: EvalOperations,
+        private val runID: ULong,
+        val evalRun: EvaluationRun,
+) {
 
     fun execute(): TaskOutcome {
         var experimentResult = Optional.empty<List<TaskResult>>()
@@ -48,7 +47,9 @@ class CherryPickEvalTask(
     private fun callExecution(): List<TaskResult> {
         try {
             if (!evalSetup.repoManager.prepareCherryPick(cherryPick)) {
-                Logger.info("Not all commits of the cherry pick could be found... skipping cherry pick ${cherryPick.id} of $datasetName")
+                Logger.info(
+                        "Not all commits of the cherry pick could be found... skipping cherry pick ${cherryPick.id} of $datasetName"
+                )
                 return ArrayList()
             }
         } catch (e: Exception) {
@@ -72,25 +73,21 @@ class CherryPickEvalTask(
 
         // Apply diff to both versions of source variant
         Logger.debug("Diffing source...")
-        val originalPatch = getOriginalDiff(
-            evalSetup,
-            evalSetup.sourceVariantV0,
-            evalSetup.sourceVariantV1
-        )
+        val originalPatch =
+                getOriginalDiff(evalSetup, evalSetup.sourceVariantV0, evalSetup.sourceVariantV1)
 
         if (originalPatch.isEmpty) {
             // There was no change to this variant, so we can skip it as source
             Logger.info(
-                "Skipping cherry pick " + cherryPick.id + " because there are no changes to code. Diff of code files is empty."
+                    "Skipping cherry pick " +
+                            cherryPick.id +
+                            " because there are no changes to code. Diff of code files is empty."
             )
             return ArrayList()
         }
 
         if (config.EXPERIMENT_DEBUG()) {
-            saveDiff(
-                originalPatch,
-                evalSetup.debugDir(cherryPick).resolve("original.diff")
-            )
+            saveDiff(originalPatch, evalSetup.debugDir(cherryPick).resolve("original.diff"))
         }
 
         saveDiff(originalPatch, evalSetup.patchFile)
@@ -100,11 +97,12 @@ class CherryPickEvalTask(
         try {
             Logger.debug("Starting patch application for cherry-pick " + cherryPick.id)
             var evolutionDiff =
-                getOriginalDiff(evalSetup, evalSetup.targetVariantV0, evalSetup.targetVariantV1)
+                    getOriginalDiff(evalSetup, evalSetup.targetVariantV0, evalSetup.targetVariantV1)
 
             val patchIsTrivial = originalPatch.partiallyEquals(evolutionDiff, evalSetup.STRIP)
             if (patchIsTrivial) {
-                // We only focus on variability, which is expressed by differences in the patch and evolution
+                // We only focus on variability, which is expressed by differences in the patch and
+                // evolution
                 Logger.debug("Patch is trivial")
             } else {
                 Logger.debug("Patch is not trivial")
@@ -118,7 +116,7 @@ class CherryPickEvalTask(
                 val start = Instant.now()
                 var rejectsNormal: Rejects
                 try {
-                     rejectsNormal = patcher.applyPatch(evalSetup, source, target, false)
+                    rejectsNormal = patcher.applyPatch(evalSetup, source, target, false)
                 } catch (e: UTF8Exception) {
                     Logger.debug(e)
                     patcher.clean(evalSetup)
@@ -133,42 +131,54 @@ class CherryPickEvalTask(
 
                 // Gather the patch result
                 var actualVsExpectedNormal =
-                    getActualVsExpected(evalSetup, evalSetup.targetVariantV1, target, cherryPick)
-                actualVsExpectedNormal = filterUnpatchedFiles(originalPatch, actualVsExpectedNormal, evalSetup.STRIP)
+                        getActualVsExpected(
+                                evalSetup,
+                                evalSetup.targetVariantV1,
+                                target,
+                                cherryPick
+                        )
+                actualVsExpectedNormal =
+                        filterUnpatchedFiles(originalPatch, actualVsExpectedNormal, evalSetup.STRIP)
 
                 if (config.EXPERIMENT_DEBUG()) {
                     patchFilesDebug(
-                        evalSetup,
-                        patcher,
-                        originalPatch,
-                        cherryPick,
-                        source,
-                        target,
-                        rejectsNormal,
-                        evolutionDiff
+                            evalSetup,
+                            patcher,
+                            originalPatch,
+                            cherryPick,
+                            source,
+                            target,
+                            rejectsNormal,
+                            evolutionDiff
                     )
                 }
 
                 /* Result Evaluation */
-                val patchOutcome = ResultAnalysis.processCherriesOutcome(
-                    evalSetup,
-                    cherryPick,
-                    datasetName,
-                    runID,
-                    originalPatch,
-                    actualVsExpectedNormal,
-                    rejectsNormal,
-                    evolutionDiff,
-                    patchDuration,
-                    patchIsTrivial,
-                )
+                val patchOutcome =
+                        ResultAnalysis.processCherriesOutcome(
+                                evalSetup,
+                                cherryPick,
+                                datasetName,
+                                runID,
+                                originalPatch,
+                                actualVsExpectedNormal,
+                                rejectsNormal,
+                                evolutionDiff,
+                                patchDuration,
+                                patchIsTrivial,
+                        )
 
-                val resultFile = config.EXPERIMENT_DIR_RESULTS().resolve("rep-${repetition}").resolve("${datasetName}_${patcher.name()}.results")
+                val resultFile =
+                        config.EXPERIMENT_DIR_RESULTS()
+                                .resolve("rep-${repetition}")
+                                .resolve("${datasetName}_${patcher.name()}.results")
                 results.add(TaskResult(patchOutcome, resultFile))
 
                 Logger.debug(
-                    "Finished patching for cherry " + cherryPick.cherryCommit + " and target "
-                            + cherryPick.targetCommit
+                        "Finished patching for cherry " +
+                                cherryPick.cherryCommit +
+                                " and target " +
+                                cherryPick.targetCommit
                 )
 
                 patcher.clean(evalSetup)
@@ -180,24 +190,27 @@ class CherryPickEvalTask(
         return results
     }
 
-
     /**
      * Get the difference between the target variant after patching and the target variant in the
      * next de.variantsync.studies.evolution step. Then, filter all differences that do not belong
      * to the source variant and could have therefore not been synchronized in any case.
      */
     private fun getActualVsExpected(
-        operations: EvalOperations,
-        pathToExpectedResult: Path,
-        target: Variant,
-        currentPR: CherryPick
+            operations: EvalOperations,
+            pathToExpectedResult: Path,
+            target: Variant,
+            currentPR: CherryPick
     ): OriginalDiff {
-        val resultDiff = getOriginalDiff(operations, operations.patchDir(), pathToExpectedResult, true)
+        val resultDiff =
+                getOriginalDiff(operations, operations.patchDir(), pathToExpectedResult, true)
         if (config.EXPERIMENT_DEBUG() && !resultDiff.isEmpty) {
             try {
                 saveDiff(
-                    resultDiff, operations.debugDir(currentPR).resolve(target.name)
-                        .resolve(target.name + "_actual_expected.diff")
+                        resultDiff,
+                        operations
+                                .debugDir(currentPR)
+                                .resolve(target.name)
+                                .resolve(target.name + "_actual_expected.diff")
                 )
             } catch (e: IOException) {
                 Logger.error("Was not able to save resultDiffOriginal:\n{}", e)
@@ -229,39 +242,45 @@ class CherryPickEvalTask(
     }
 
     private fun patchFilesDebug(
-        operations: EvalOperations,
-        patcher: Patcher,
-        originalPatch: OriginalDiff,
-        currentPR: CherryPick,
-        source: Variant,
-        target: Variant,
-        rejectsNormal: Rejects,
-        evolutionDiff: OriginalDiff
+            operations: EvalOperations,
+            patcher: Patcher,
+            originalPatch: OriginalDiff,
+            currentPR: CherryPick,
+            source: Variant,
+            target: Variant,
+            rejectsNormal: Rejects,
+            evolutionDiff: OriginalDiff
     ) {
-        saveDiff(
-            originalPatch,
-            operations.debugDir(currentPR).resolve(source.name + ".diff")
-        )
+        saveDiff(originalPatch, operations.debugDir(currentPR).resolve(source.name + ".diff"))
         saveRejects(
-            rejectsNormal,
-            operations.debugDir(currentPR).resolve(target.name)
-                .resolve(target.name + "_rejects_normal_${patcher.name()}.diff")
+                rejectsNormal,
+                operations
+                        .debugDir(currentPR)
+                        .resolve(target.name)
+                        .resolve(target.name + "_rejects_normal_${patcher.name()}.diff")
         )
         operations.debugDir(currentPR).resolve(target.name).toFile().mkdirs()
         saveDiff(
-            evolutionDiff,
-            operations.debugDir(currentPR).resolve(target.name)
-                .resolve(target.name + "_evolution.diff")
+                evolutionDiff,
+                operations
+                        .debugDir(currentPR)
+                        .resolve(target.name)
+                        .resolve(target.name + "_evolution.diff")
         )
-        operations.shell.execute(
-            CpCommand(
-                operations.patchDir(),
-                operations.debugDir(currentPR).resolve(target.name).resolve("patched_filtered")
-            ).recursive()
-        )
-            .expect("Was not able to copy variant $target.name")
+        operations
+                .shell
+                .execute(
+                        CpCommand(
+                                        operations.patchDir(),
+                                        operations
+                                                .debugDir(currentPR)
+                                                .resolve(target.name)
+                                                .resolve("patched_filtered")
+                                )
+                                .recursive()
+                )
+                .expect("Was not able to copy variant $target.name")
     }
-
 }
 
 class AllTrueConfiguration : IConfiguration {

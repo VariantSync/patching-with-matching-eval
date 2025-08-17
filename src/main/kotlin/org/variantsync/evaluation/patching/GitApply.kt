@@ -152,4 +152,3 @@ class GitApply(private val name: String, private val strip: Int) : Patcher {
         }
     }
 }
-

@@ -1,8 +1,8 @@
 package org.variantsync.evaluation.execution
 
+import java.nio.file.Path
 import org.variantsync.evaluation.util.shell.AppliedPatchTracker
 import org.variantsync.evaluation.util.shell.ShellExecutor
-import java.nio.file.Path
 
 abstract class Operations {
     abstract fun rejectsFile(): Path
@@ -17,3 +17,4 @@ abstract class Operations {
     abstract fun patchFile(): Path
     abstract fun sourceV0Path(name: String): Path
 }
+
