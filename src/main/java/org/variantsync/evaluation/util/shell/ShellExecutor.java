@@ -87,6 +87,7 @@ public class ShellExecutor {
         };
 
         final int exitCode;
+        // TODO: Make configurable
         long timeout = 60;
         TimeUnit timeoutUnit = TimeUnit.SECONDS;
         try {
