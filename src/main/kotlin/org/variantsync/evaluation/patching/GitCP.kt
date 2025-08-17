@@ -57,6 +57,7 @@ class GitCP(private val name: String, private val strip: Int, private val strate
             }
             lastResult = result
         }
+        // TODO: now handled differently
         applyMergeStrategy(operations, cherry, conflictingFiles)
         return rejects
     }
