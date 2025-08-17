@@ -13,6 +13,10 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -34,7 +38,8 @@ public class ShellExecutor {
     }
 
     /**
-     * Initialize a new ShellExecutor that executes all commands in the given working directory
+     * Initialize a new ShellExecutor that executes all commands in the given
+     * working directory
      *
      * @param outputReader Consumer for shell's normal output
      * @param errorReader  Consumer for shell's error output
@@ -74,7 +79,7 @@ public class ShellExecutor {
         Logger.debug("Executing '" + command + "' in directory " + builder.directory());
         builder.command(command.parts());
 
-        Process process = null;
+        Process process;
         final List<String> output = new ArrayList<>();
         final Consumer<String> shareOutput = s -> {
             output.add(s);
@@ -82,24 +87,38 @@ public class ShellExecutor {
         };
 
         final int exitCode;
+        long timeout = 60;
+        TimeUnit timeoutUnit = TimeUnit.SECONDS;
         try {
             process = builder.start();
-            collectOutput(process.getInputStream(), shareOutput);
-            collectOutput(process.getErrorStream(), errorReader);
-            exitCode = process.waitFor();
         } catch (final IOException e) {
             Logger.error("Was not able to execute " + command, e);
             e.printStackTrace();
             return Result.Failure(new ShellException(e));
+        }
+        try(ExecutorService executor = Executors.newFixedThreadPool(2)) {
+            executor.submit(() -> collectOutput(process.getInputStream(), shareOutput));
+            executor.submit(() -> collectOutput(process.getErrorStream(), errorReader));
+            boolean completed = process.waitFor(timeout, timeoutUnit);
+            if (!completed) {
+                Logger.warn("Command timed out after 60 seconds:");
+                Logger.warn(command.toString());
+            }
+            process.destroy();
+            executor.shutdownNow();
+            // wait for the process to terminate fully
+            exitCode = process.waitFor();
         } catch (final InterruptedException e) {
             Logger.error("Interrupted while waiting for process to end.", e);
             return Result.Failure(new ShellException(e));
         } finally {
-            if (process != null) {
+            if (process.isAlive()) {
+                // Make sure the process is killed in case of an error
                 process.destroy();
             }
         }
 
+        Logger.debug("Command '" + command + "' returned with exit code " + exitCode);
         return command.interpretResult(exitCode, output);
     }
 
@@ -110,7 +129,7 @@ private void collectOutput(final InputStream inputStream, final Consumer<String>
                 consumer.accept(line);
             }
         } catch (final IOException e) {
-            Logger.error("Exception thrown while reading stream of Shell command.", e);
+            Logger.warn("Exception thrown while reading stream of Shell command.", e);
         }
-}
+    }
 }
