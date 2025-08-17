@@ -51,26 +51,11 @@ class GitApply(private val name: String, private val strip: Int) : Patcher {
             result.failure.output.forEach(Consumer { message: String? -> Logger.debug(message) })
         }
 
-        // TODO: Parsing of rejects might not work as intended, check execution without it
-        // rejects.rejects.addAll(readRejectsFromFile(operations, withFiler).rejects)
-
         return rejects
     }
 
     override fun name(): String {
         return this.name
-    }
-
-    // Read a rejects file
-    private fun readRejectsFromFile(operations: Operations, withFiler: Boolean): Rejects {
-        val rejectFiles = findRejects(operations)
-        val rejects = ArrayList<Change>()
-        for (rejectFile in rejectFiles) {
-            if (Files.exists(rejectFile.toPath())) {
-                rejects.addAll(parseRejects(operations, rejectFile.toPath()))
-            }
-        }
-        return Rejects(rejects)
     }
 
     private fun findRejects(operations: Operations): Collection<File> {
@@ -94,54 +79,6 @@ class GitApply(private val name: String, private val strip: Int) : Patcher {
                         // search
                         )
         return rejectFiles
-    }
-
-    private fun parseRejects(operations: Operations, rejectFile: Path): List<Change> {
-        try {
-            val rejectContent = readContentSafely(rejectFile)
-            var rejectedFileDir = rejectFile.parent
-            var rejectedFileName = rejectFile.fileName.toString()
-            rejectedFileName = rejectedFileName.substring(0, rejectedFileName.length - 4)
-            var rejectedFile = rejectedFileDir.resolve(rejectedFileName)
-            rejectedFile = operations.patchDir().relativize(rejectedFile)
-            return parseRejects(rejectContent, rejectedFile)
-        } catch (e: IOException) {
-            panic("Was not able to read rejects file.", e)
-        }
-        return ArrayList()
-    }
-
-    private fun parseRejects(lines: List<String>, path: Path): List<Change> {
-        var index = 1
-        val hunkStart = "@@ -"
-        var nextLine: String = lines[index]
-
-        // Parse the hunks
-        val hunks = ArrayList<Hunk>()
-        var hunkLines: MutableList<String?> = java.util.ArrayList()
-        hunkLines.add(nextLine)
-        index += 1
-        while (index < lines.size) {
-            nextLine = lines[index]
-            if (nextLine.startsWith(hunkStart)) {
-                hunks.add(DiffParser.parseHunk(hunkLines))
-                hunkLines = java.util.ArrayList()
-            }
-            hunkLines.add(nextLine)
-            index++
-        }
-        // Parse the content of the last hunk
-        hunks.add(DiffParser.parseHunk(hunkLines))
-
-        // Filter the hunks of each patch to extract changed lines
-        val rejects = ArrayList<Change>()
-        for (hunk in hunks) {
-            for (changedLine in hunk.changedLines()) {
-                rejects.add(Change(changedLine, hunk, path))
-            }
-        }
-
-        return rejects
     }
 
     override fun clean(operations: Operations) {

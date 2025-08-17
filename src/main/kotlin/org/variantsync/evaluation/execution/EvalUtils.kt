@@ -111,7 +111,7 @@ fun cloneDatasets(allSamples: ArrayList<ArrayList<CherryDataset>>, config: EvalC
 
     Logger.info("There are ${datasetsToClone.size} to check.")
     val threadPool = Executors.newFixedThreadPool(config.EXPERIMENT_THREAD_COUNT())
-    var i = AtomicInteger(0)
+    val i = AtomicInteger(0)
     for (dataset in datasetsToClone) {
         threadPool.submit {
             try {
@@ -154,7 +154,7 @@ fun createOrLoadSamples(
     for (i in config.EXPERIMENT_REPEATS_START()..config.EXPERIMENT_REPEATS_END()) {
         allSamples.add(ArrayList())
     }
-    val langs = ArrayList<String>(datasetsPerLanguage.keys)
+    val langs = ArrayList(datasetsPerLanguage.keys)
     langs.sort()
     for (language in langs) {
         val datasets = datasetsPerLanguage[language]!!
@@ -260,7 +260,7 @@ class YamlFileVisitor : SimpleFileVisitor<Path>() {
         return FileVisitResult.CONTINUE
     }
 
-    override fun visitFileFailed(file: Path?, exc: IOException?): FileVisitResult {
+    override fun visitFileFailed(file: Path, exc: IOException): FileVisitResult {
         return FileVisitResult.CONTINUE
     }
 }

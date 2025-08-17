@@ -110,14 +110,6 @@ object ResultAnalysis {
         return EvaluationScenario(requiredChanges, undesiredChanges, unpatchableChanges)
     }
 
-    data class AccumulatedOutcome(
-            val normalResult: AccumulatedResult,
-            val commitPatches: Long,
-            val commitSuccessNormal: Long,
-            val lineNormal: Long,
-            val lineSuccessNormal: Long,
-    )
-
     fun percentage(x: Long, y: Long): String {
         val percentage: Double =
                 if (y == 0L) {

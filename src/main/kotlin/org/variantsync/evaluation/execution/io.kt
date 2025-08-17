@@ -49,7 +49,7 @@ fun writeAsJSON(obj: Any, pathToFile: Path, append: Boolean) {
         try {
             Files.createDirectories(pathToFile.parent)
             Files.createFile(pathToFile)
-        } catch (e: java.nio.file.FileAlreadyExistsException) {
+        } catch (_: java.nio.file.FileAlreadyExistsException) {
             // Ignore if the file already exists
         }
 
@@ -73,8 +73,9 @@ fun saveSample(path: Path, sample: ArrayList<ArrayList<CherryDataset>>) {
 }
 
 fun loadSample(path: Path): ArrayList<ArrayList<CherryDataset>> {
-    ObjectInputStream(FileInputStream(path.toFile())).use {
-        return it.readObject() as ArrayList<ArrayList<CherryDataset>>
+    ObjectInputStream(FileInputStream(path.toFile())).use { it ->
+        val obj = it.readObject()
+        @Suppress("UNCHECKED_CAST") return obj as ArrayList<ArrayList<CherryDataset>>
     }
 }
 
@@ -138,33 +139,3 @@ private fun parseResult(lines: List<String>): PatchComposition {
     mapper.registerModule(JavaTimeModule())
     return mapper.readValue(sb.toString(), PatchComposition::class.java)
 }
-
-fun listResultFiles(resultsDir: Path): HashMap<Int, ArrayList<Path>> {
-    val runDirs = ArrayList<Path>()
-    Files.list(resultsDir).use { files ->
-        files
-                .filter { f: Path ->
-                    val fileName = f.getName(f.nameCount - 1).toString()
-                    fileName.startsWith("rep")
-                }
-                .forEach { f: Path -> runDirs.add(f) }
-    }
-    val resultFiles = HashMap<Int, ArrayList<Path>>()
-
-    for (runDir in runDirs) {
-        Files.list(runDir).use { files ->
-            files
-                    .filter { f: Path ->
-                        val fileName = f.fileName.toString()
-                        fileName.endsWith(".results")
-                    }
-                    .forEach { f: Path ->
-                        val runId = f.getName(f.nameCount - 1).toString().split("-")[1].toInt()
-                        resultFiles.getOrPut(runId) { ArrayList() }.add(f)
-                    }
-        }
-    }
-
-    return resultFiles
-}
-

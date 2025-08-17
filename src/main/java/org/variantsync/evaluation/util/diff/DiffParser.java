@@ -87,8 +87,11 @@ public class DiffParser {
             }
             fileDiffContent.add(line);
         }
+
         // Parse the content of the last file diff
-        fileDiffs.add(parseFileDiff(fileDiffContent));
+        if (fileDiffContent != null) {
+            fileDiffs.add(parseFileDiff(fileDiffContent));
+        }
 
         return new OriginalDiff(fileDiffs);
     }

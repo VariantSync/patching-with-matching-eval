@@ -1,7 +1,5 @@
 package org.variantsync.evaluation.util.shell;
 
-import org.tinylog.Logger;
-
 import java.util.ArrayList;
 
 public class GitConfigCommand extends ShellCommand {
