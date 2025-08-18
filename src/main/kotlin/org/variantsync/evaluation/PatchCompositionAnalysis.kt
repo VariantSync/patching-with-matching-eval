@@ -192,7 +192,7 @@ fun main(args: Array<String>) {
         ) {
             // Skip this dataset, it was already processed
             Logger.info("Skipping evaluation of cherry picks from ${dataset.datasetName}")
-            printProgress(completed, numCherryPicks, 0, 0uL)
+            printProgress(completed, numCherryPicks, 0)
             continue
         }
         threadPool.submit {
@@ -212,7 +212,7 @@ fun main(args: Array<String>) {
                 Logger.error(e)
             }
             completed += dataset.cherryPicks.size
-            printProgress(completed, numCherryPicks, 0, i)
+            printProgress(completed, numCherryPicks, 0)
         }
     }
     threadPool.awaitTermination(10, TimeUnit.DAYS)

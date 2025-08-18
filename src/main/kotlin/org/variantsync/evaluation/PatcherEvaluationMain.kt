@@ -90,7 +90,7 @@ class CherryPickStudy(
             var processed = 0uL
             for (task in evalTasks) {
                 processed++
-                if (processed == 1uL || processed % 25uL == 0uL) {
+                if (processed % 25uL == 0uL) {
                     Logger.info(
                             String.format(
                                     "Running task %s of %s.",
@@ -214,7 +214,7 @@ fun main(args: Array<String>) {
                 Logger.info(
                         "Skipping evaluation of cherry picks from ${dataset.datasetName} (rep.: $repetition): Already processed."
                 )
-                printProgress(completed, numCherryPicks, repetition, 0uL)
+                printProgress(completed, numCherryPicks, repetition)
                 continue
             }
             val study =
@@ -232,7 +232,7 @@ fun main(args: Array<String>) {
         for (future in futures) {
             val dataset = future.get()
             completed += dataset.cherryPicks.size
-            printProgress(completed, numCherryPicks, repetition, id)
+            printProgress(completed, numCherryPicks, repetition)
         }
         threadPool.awaitTermination(10, TimeUnit.DAYS)
     }

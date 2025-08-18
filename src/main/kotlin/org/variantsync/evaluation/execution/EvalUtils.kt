@@ -85,12 +85,12 @@ fun cloneGitHubRepo(config: EvalConfig, repoId: String): Path {
     return cloneDir
 }
 
-fun printProgress(completed: Int, numCherryPicks: Int, repetition: Int, i: ULong) {
+fun printProgress(completed: Int, numCherryPicks: Int, repetition: Int) {
     val completionPercentage = 100 * (completed.toDouble() / numCherryPicks.toDouble())
     val df = DecimalFormat("#.##")
     df.roundingMode = RoundingMode.DOWN
     Logger.info(
-            "(Rep.: $repetition, ID: $i) Finished $completed of $numCherryPicks cherry picks (${
+            "(Rep.: $repetition) Finished $completed of $numCherryPicks cherry picks (${
             df.format(
                 completionPercentage
             )
