@@ -52,14 +52,14 @@ class MPatch(private val name: String, private val strip: Int, private val maxMa
                         .maxMatchDistance(this.maxMatchDistance)
 
         // apply patch to target variant
-        val customShell = ShellExecutor(Logger::debug, Logger::warn, operations.workDir())
+        val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir())
         val result = customShell.execute(patchCommand, operations.patchDir())
 
         val rejects = Rejects(ArrayList())
         if (result.isSuccess) {
             result.success.forEach(Consumer { message: String? -> Logger.debug(message) })
         } else {
-            Logger.error("mpatch failed")
+            Logger.debug("mpatch failed to apply patch")
             throw UTF8Exception()
         }
 

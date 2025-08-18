@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -93,7 +92,7 @@ public class ShellExecutor {
         try {
             process = builder.start();
         } catch (final IOException e) {
-            Logger.error("Was not able to execute " + command, e);
+            Logger.warn("Was not able to execute " + command, e);
             e.printStackTrace();
             return Result.Failure(new ShellException(e));
         }
@@ -102,15 +101,15 @@ public class ShellExecutor {
             executor.submit(() -> collectOutput(process.getErrorStream(), errorReader));
             boolean completed = process.waitFor(timeout, timeoutUnit);
             if (!completed) {
-                Logger.warn("Command timed out after 60 seconds:");
-                Logger.warn(command.toString());
+                Logger.debug("Command timed out after 60 seconds:");
+                Logger.debug(command.toString());
             }
             process.destroy();
             executor.shutdownNow();
             // wait for the process to terminate fully
             exitCode = process.waitFor();
         } catch (final InterruptedException e) {
-            Logger.error("Interrupted while waiting for process to end.", e);
+            Logger.warn("Interrupted while waiting for process to end.", e);
             return Result.Failure(new ShellException(e));
         } finally {
             if (process.isAlive()) {
@@ -130,7 +129,7 @@ private void collectOutput(final InputStream inputStream, final Consumer<String>
                 consumer.accept(line);
             }
         } catch (final IOException e) {
-            Logger.warn("Exception thrown while reading stream of Shell command.", e);
+            Logger.debug("Could not read output stream of Shell command. Command probably reached the configured timeout.", e);
         }
     }
 }
