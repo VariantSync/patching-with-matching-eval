@@ -49,12 +49,12 @@ fun filterUnpatchedFiles(
     return OriginalDiff(filteredDiffs)
 }
 
-fun defaultPatchers(strip: Int): List<Patcher> {
+fun defaultPatchers(config: EvalConfig, strip: Int): List<Patcher> {
     val patchers = ArrayList<Patcher>()
-    patchers.add(GNUPatch("unix_patch", strip))
-    patchers.add(MPatch("pwm_f2", strip, 2))
-    patchers.add(GitApply("git_apply", strip))
-    patchers.add(GitCP("git_cherry", strip, MergeStrategy.Ours))
+    patchers.add(GNUPatch(config,"unix_patch", strip))
+    patchers.add(MPatch(config, "pwm_f2", strip, 2))
+    patchers.add(GitApply(config, "git_apply", strip))
+    patchers.add(GitCP(config, "git_cherry", strip, MergeStrategy.Ours))
     return patchers
 }
 

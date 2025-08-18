@@ -61,7 +61,7 @@ class PatchCompositionAnalysis(
         for (i in 1..numThreads) {
             // Add one operations instance for each thread; each instance defines its own working
             // directory
-            val operations = CompositionAnalysisOperations(config.EXPERIMENT_DIR_MAIN(), repoPath)
+            val operations = CompositionAnalysisOperations(config, repoPath)
             // Clean old variant files
             cleanVariantDirectories(operations)
             // Copy the source and target variant to the respective variant directories

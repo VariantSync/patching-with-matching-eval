@@ -4,6 +4,7 @@ import java.nio.file.Files
 import java.util.function.Consumer
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.error.ShellException
+import org.variantsync.evaluation.execution.EvalConfig
 import org.variantsync.evaluation.execution.EvalOperations
 import org.variantsync.evaluation.execution.Operations
 import org.variantsync.evaluation.execution.readContentSafely
@@ -12,7 +13,7 @@ import org.variantsync.evaluation.util.shell.GitCherryPickCommand
 import org.variantsync.evaluation.util.shell.ShellExecutor
 import org.variantsync.vevos.simulation.feature.Variant
 
-class GitCP(private val name: String, private val strip: Int, private val strategy: MergeStrategy) :
+class GitCP(private val config: EvalConfig, private val name: String, private val strip: Int, private val strategy: MergeStrategy) :
         Patcher {
     private var lastResult: org.variantsync.functjonal.Result<List<String>, ShellException>? = null
     private val conflictDetectionText = "CONFLICT (content): Merge conflict in "
@@ -41,7 +42,7 @@ class GitCP(private val name: String, private val strip: Int, private val strate
         val patchCommand = GitCherryPickCommand.Recommended(cherry)
 
         // apply patch to target variant
-        val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir())
+        val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir(),config.EXPERIMENT_TIMEOUT_LENGTH(), config.EXPERIMENT_TIMEOUT_UNIT())
         val result = customShell.execute(patchCommand, operations.patchDir())
         val rejects = Rejects(ArrayList())
         val conflictingFiles = ArrayList<String>()

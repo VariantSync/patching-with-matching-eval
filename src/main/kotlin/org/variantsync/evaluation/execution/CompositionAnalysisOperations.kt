@@ -9,7 +9,7 @@ import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.util.shell.AppliedPatchTracker
 import org.variantsync.evaluation.util.shell.ShellExecutor
 
-class CompositionAnalysisOperations(mainDir: Path, gitHubRepoPath: Path) : Operations() {
+class CompositionAnalysisOperations(config: EvalConfig, gitHubRepoPath: Path) : Operations() {
     // Working directory
     @JvmField var workDir: Path
 
@@ -35,6 +35,7 @@ class CompositionAnalysisOperations(mainDir: Path, gitHubRepoPath: Path) : Opera
     val STRIP = 1
 
     init {
+        val mainDir = config.EXPERIMENT_DIR_MAIN()
         try {
             if (mainDir.toFile().mkdirs()) {
                 Logger.info("Created main directory $mainDir")
@@ -51,7 +52,7 @@ class CompositionAnalysisOperations(mainDir: Path, gitHubRepoPath: Path) : Opera
         appliedPatchTracker = AppliedPatchTracker()
         shell = ShellExecutor({ _ -> }, Logger::error, workDir)
 
-        patchers = defaultPatchers(STRIP)
+        patchers = defaultPatchers(config,STRIP)
         repoManager = SourceRepoManager(sourceVariantV0, sourceVariantV1, gitHubRepoPath)
     }
 

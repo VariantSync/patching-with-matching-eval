@@ -73,7 +73,7 @@ class CherryPickStudy(
             }
 
             val repoPath: Path = cloneGitHubRepo(config, dataset.repositoryId)
-            evalSetup = EvalOperations(config.EXPERIMENT_DIR_MAIN(), repoPath)
+            evalSetup = EvalOperations(config, repoPath)
 
             // Clean old variant files
             cleanVariantDirectories(evalSetup)

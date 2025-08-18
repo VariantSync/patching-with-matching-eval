@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.IOFileFilter
 import org.apache.commons.io.filefilter.TrueFileFilter
 import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.execution.EvalConfig
 import org.variantsync.evaluation.execution.Operations
 import org.variantsync.evaluation.execution.panic
 import org.variantsync.evaluation.execution.readContentSafely
@@ -18,7 +19,7 @@ import org.variantsync.evaluation.util.shell.GitApplyCommand
 import org.variantsync.evaluation.util.shell.ShellExecutor
 import org.variantsync.vevos.simulation.feature.Variant
 
-class GitApply(private val name: String, private val strip: Int) : Patcher {
+class GitApply(private val config: EvalConfig, private val name: String, private val strip: Int) : Patcher {
     override fun applyPatch(
             operations: Operations,
             sourceVariant: Variant,
@@ -40,7 +41,7 @@ class GitApply(private val name: String, private val strip: Int) : Patcher {
         val patchCommand = GitApplyCommand.Recommended(pathToPatchFile).strip(strip).reject()
 
         // apply patch to target variant
-        val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir())
+        val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir(),config.EXPERIMENT_TIMEOUT_LENGTH(), config.EXPERIMENT_TIMEOUT_UNIT())
         val result = customShell.execute(patchCommand, operations.patchDir())
 
         val rejects = Rejects(ArrayList())

@@ -8,6 +8,7 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder
 import org.apache.commons.configuration2.builder.fluent.Parameters
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler
 import org.apache.commons.configuration2.ex.ConfigurationException
+import java.util.concurrent.TimeUnit
 
 /** Determines the configuration of our study. */
 class EvalConfig(propertiesFile: File) {
@@ -172,7 +173,21 @@ class EvalConfig(propertiesFile: File) {
         return config!!.getEnum(EXPERIMENT_CHERRY_TYPE, CherryType::class.java)
     }
 
+    fun EXPERIMENT_TIMEOUT_LENGTH(): Long {
+        return config!!.getLong(EXPERIMENT_TIMEOUT_LENGTH,0)
+    }
+
+    fun EXPERIMENT_TIMEOUT_UNIT(): TimeUnit {
+        return config!!.getEnum(EXPERIMENT_TIMEOUT_UNIT, TimeUnit::class.java, null)
+    }
+
     companion object {
+        // The number of EXPERIMENT_TIMEOUT_UNIT to wait for a patcher to finish patching (long)
+        private const val EXPERIMENT_TIMEOUT_LENGTH = "experiment.timeout.length"
+
+        // The time unit for the timeout, e.g., SECONDS, MINUTES, ...
+        private const val EXPERIMENT_TIMEOUT_UNIT = "experiment.timeout.unit"
+
         // The first id of repetitions for each commit and source target combination
         private const val EXPERIMENT_REPEATS_START = "experiment.repeats.start"
 

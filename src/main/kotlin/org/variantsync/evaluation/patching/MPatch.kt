@@ -5,6 +5,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
 import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.execution.EvalConfig
 import org.variantsync.evaluation.execution.Operations
 import org.variantsync.evaluation.execution.panic
 import org.variantsync.evaluation.execution.readContentSafely
@@ -14,7 +15,7 @@ import org.variantsync.evaluation.util.shell.MPatchCommand
 import org.variantsync.evaluation.util.shell.ShellExecutor
 import org.variantsync.vevos.simulation.feature.Variant
 
-class MPatch(private val name: String, private val strip: Int, private val maxMatchDistance: Int) :
+class MPatch(private val config: EvalConfig, val name: String, private val strip: Int, private val maxMatchDistance: Int) :
         Patcher {
 
     override fun applyPatch(
@@ -52,7 +53,7 @@ class MPatch(private val name: String, private val strip: Int, private val maxMa
                         .maxMatchDistance(this.maxMatchDistance)
 
         // apply patch to target variant
-        val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir())
+        val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir(),config.EXPERIMENT_TIMEOUT_LENGTH(), config.EXPERIMENT_TIMEOUT_UNIT())
         val result = customShell.execute(patchCommand, operations.patchDir())
 
         val rejects = Rejects(ArrayList())

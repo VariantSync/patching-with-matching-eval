@@ -9,7 +9,7 @@ import org.variantsync.evaluation.patching.Patcher
 import org.variantsync.evaluation.util.shell.AppliedPatchTracker
 import org.variantsync.evaluation.util.shell.ShellExecutor
 
-class EvalOperations(mainDir: Path, gitHubRepoPath: Path) : Operations() {
+class EvalOperations(config: EvalConfig, gitHubRepoPath: Path) : Operations() {
     // Working directory
     @JvmField var workDir: Path
 
@@ -45,6 +45,7 @@ class EvalOperations(mainDir: Path, gitHubRepoPath: Path) : Operations() {
     val STRIP = 1
 
     init {
+        val mainDir = config.EXPERIMENT_DIR_MAIN()
         try {
             var mainDir = mainDir.toAbsolutePath()
             if (mainDir.toFile().mkdirs()) {
@@ -66,7 +67,7 @@ class EvalOperations(mainDir: Path, gitHubRepoPath: Path) : Operations() {
         appliedPatchTracker = AppliedPatchTracker()
         shell = ShellExecutor(appliedPatchTracker, appliedPatchTracker, workDir)
 
-        patchers = defaultPatchers(STRIP)
+        patchers = defaultPatchers(config,STRIP)
         repoManager =
                 VariantRepoManager(
                         sourceVariantV0,

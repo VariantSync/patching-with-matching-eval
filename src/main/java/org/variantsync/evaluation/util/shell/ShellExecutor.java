@@ -25,6 +25,8 @@ public class ShellExecutor {
     private final Consumer<String> outputReader;
     private final Consumer<String> errorReader;
     private final Path workDir;
+    private final long timeout;
+    private final TimeUnit timeoutUnit;
 
     /**
      * Initialize a new ShellExecutor
@@ -48,6 +50,34 @@ public class ShellExecutor {
         this.workDir = workDir;
         this.outputReader = outputReader;
         this.errorReader = errorReader;
+        this.timeout = 0;
+        this.timeoutUnit = null;
+    }
+
+    /**
+     * Initialize a new ShellExecutor
+     *
+     * @param outputReader Consumer for shell's normal output
+     * @param errorReader  Consumer for shell's error output
+     */
+    public ShellExecutor(final Consumer<String> outputReader, final Consumer<String> errorReader, long timeout, TimeUnit timeoutUnit) {
+        this(outputReader, errorReader, null, timeout, timeoutUnit);
+    }
+
+    /**
+     * Initialize a new ShellExecutor that executes all commands in the given
+     * working directory
+     *
+     * @param outputReader Consumer for shell's normal output
+     * @param errorReader  Consumer for shell's error output
+     * @param workDir      The working directory
+     */
+    public ShellExecutor(final Consumer<String> outputReader, final Consumer<String> errorReader, final Path workDir, long timeout, TimeUnit timeoutUnit) {
+        this.workDir = workDir;
+        this.outputReader = outputReader;
+        this.errorReader = errorReader;
+        this.timeout = timeout;
+        this.timeoutUnit = timeoutUnit;
     }
 
     /**
@@ -86,9 +116,6 @@ public class ShellExecutor {
         };
 
         final int exitCode;
-        // TODO: Make configurable
-        long timeout = 60;
-        TimeUnit timeoutUnit = TimeUnit.SECONDS;
         try {
             process = builder.start();
         } catch (final IOException e) {
@@ -99,13 +126,15 @@ public class ShellExecutor {
         try(ExecutorService executor = Executors.newFixedThreadPool(2)) {
             executor.submit(() -> collectOutput(process.getInputStream(), shareOutput));
             executor.submit(() -> collectOutput(process.getErrorStream(), errorReader));
-            boolean completed = process.waitFor(timeout, timeoutUnit);
-            if (!completed) {
-                Logger.debug("Command timed out after 60 seconds:");
-                Logger.debug(command.toString());
+            if (timeout > 0 && timeoutUnit != null) {
+                boolean completed = process.waitFor(timeout, timeoutUnit);
+                if (!completed) {
+                    Logger.debug("Command timed out after 60 seconds:");
+                    Logger.debug(command.toString());
+                }
+                process.destroy();
+                executor.shutdownNow();
             }
-            process.destroy();
-            executor.shutdownNow();
             // wait for the process to terminate fully
             exitCode = process.waitFor();
         } catch (final InterruptedException e) {

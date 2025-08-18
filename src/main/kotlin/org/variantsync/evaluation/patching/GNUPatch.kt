@@ -6,15 +6,17 @@ import java.nio.file.Path
 import java.util.function.Consumer
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.error.ShellException
+import org.variantsync.evaluation.execution.EvalConfig
 import org.variantsync.evaluation.execution.Operations
 import org.variantsync.evaluation.execution.panic
 import org.variantsync.evaluation.execution.readContentSafely
 import org.variantsync.evaluation.util.diff.DiffParser
 import org.variantsync.evaluation.util.diff.components.OriginalDiff
 import org.variantsync.evaluation.util.shell.PatchCommand
+import org.variantsync.evaluation.util.shell.ShellExecutor
 import org.variantsync.vevos.simulation.feature.Variant
 
-class GNUPatch(private val name: String, private val strip: Int) : Patcher {
+class GNUPatch(private val config: EvalConfig, private val name: String, private val strip: Int) : Patcher {
     override fun applyPatch(
             operations: Operations,
             sourceVariant: Variant,
@@ -49,7 +51,9 @@ class GNUPatch(private val name: String, private val strip: Int) : Patcher {
                         .rejectFile(rejectFile)
                         .force()
                         .ignoreWhitespace()
-        val result = operations.shell().execute(patchCommand, operations.patchDir())
+
+        val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir(),config.EXPERIMENT_TIMEOUT_LENGTH(), config.EXPERIMENT_TIMEOUT_UNIT())
+        val result = customShell.execute(patchCommand, operations.patchDir())
 
         val rejects = Rejects(ArrayList())
         if (result.isSuccess) {
