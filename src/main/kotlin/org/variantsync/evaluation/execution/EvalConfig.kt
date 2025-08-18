@@ -50,19 +50,9 @@ class EvalConfig(propertiesFile: File) {
         return EXPERIMENT_REPEATS_END() - EXPERIMENT_REPEATS_START() + 1
     }
 
-    /** @return The number of variants that are to be generated */
-    fun EXPERIMENT_VARIANT_COUNT(): Int {
-        return config!!.getInt(EXPERIMENT_VARIANT_COUNT)
-    }
-
     /** @return The working directory */
     fun EXPERIMENT_DIR_MAIN(): Path {
         return Path.of(config!!.getString(EXPERIMENT_DIR_MAIN))
-    }
-
-    /** @return The root directory of the ground truth */
-    fun EXPERIMENT_DIR_GROUND_TRUTH(): Path {
-        return Path.of(config!!.getString(EXPERIMENT_DIR_GROUND_TRUTH))
     }
 
     /**
@@ -194,14 +184,8 @@ class EvalConfig(propertiesFile: File) {
         // The last id of repetitions for each commit and source target combination
         private const val EXPERIMENT_REPEATS_END = "experiment.repeats.end"
 
-        // The number of generated variants
-        private const val EXPERIMENT_VARIANT_COUNT = "experiment.variant.count"
-
         // The working directory
         private const val EXPERIMENT_DIR_MAIN = "experiment.dir.main"
-
-        // The directory containing the ground truth
-        private const val EXPERIMENT_DIR_GROUND_TRUTH = "experiment.dir.ground-truths"
 
         // The directory to which the repositories are cloned to
         private const val EXPERIMENT_DIR_REPOS = "experiment.dir.repos"

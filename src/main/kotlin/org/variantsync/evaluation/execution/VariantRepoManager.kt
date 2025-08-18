@@ -23,7 +23,7 @@ class VariantRepoManager(
         Logger.debug("Checking out commits of next cherry pick")
         try {
             val command = GitCheckoutCommand.Recommended(cherryPick.cherryParentCommit)
-            if (this.shellSourceV0.execute(command).isFailure()) {
+            if (this.shellSourceV0.execute(command).isFailure) {
                 Logger.debug("Was not able to find source variant V0 (source before changes)")
                 return false
             }

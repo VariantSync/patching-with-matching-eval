@@ -431,18 +431,6 @@ fun prepareVariantDirectories(operations: EvalOperations, gitHubRepoPath: Path) 
             .expect("Was not able to configure git")
 }
 
-fun prepareVariantDirectories(operations: CompositionAnalysisOperations, gitHubRepoPath: Path) {
-    Logger.debug("Creating new source and target variant copies.")
-    operations
-            .shell
-            .execute(CpCommand(gitHubRepoPath, operations.sourceVariantV0).recursive())
-            .expect("Was not able to copy source variant V0.")
-    operations
-            .shell
-            .execute(CpCommand(gitHubRepoPath, operations.sourceVariantV1).recursive())
-            .expect("Was not able to copy source variant V1.")
-}
-
 fun cleanVariantDirectories(operations: EvalOperations) {
     Logger.debug("Cleaning old variant files.")
     if (Files.exists(operations.sourceVariantV0)) {
@@ -468,22 +456,6 @@ fun cleanVariantDirectories(operations: EvalOperations) {
                 .shell
                 .execute(RmCommand(operations.sourceVariantV1).recursive().force())
                 .expect("Was not able to remove target variant V1.")
-    }
-}
-
-fun cleanVariantDirectories(operations: CompositionAnalysisOperations) {
-    Logger.debug("Cleaning old variant files.")
-    if (Files.exists(operations.sourceVariantV0)) {
-        operations
-                .shell
-                .execute(RmCommand(operations.sourceVariantV0).recursive().force())
-                .expect("Was not able to remove source variant V0.")
-    }
-    if (Files.exists(operations.sourceVariantV1)) {
-        operations
-                .shell
-                .execute(RmCommand(operations.sourceVariantV1).recursive().force())
-                .expect("Was not able to remove source variant V1.")
     }
 }
 

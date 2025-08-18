@@ -80,28 +80,6 @@ fun loadSample(path: Path): ArrayList<ArrayList<CherryDataset>> {
 }
 
 @Throws(IOException::class)
-fun loadCompositionResults(paths: List<Path>): List<PatchComposition> {
-    val outcomes = ArrayList<PatchComposition>()
-    for (path in paths) {
-        Files.newBufferedReader(path).use { reader ->
-            val outcomeLines: MutableList<String> = ArrayList()
-            var line = reader.readLine()
-            while (line != null) {
-                if (line.isEmpty()) {
-                    val outcome = parseResult(outcomeLines)
-                    outcomes.add(outcome)
-                    outcomeLines.clear()
-                } else {
-                    outcomeLines.add(line)
-                }
-                line = reader.readLine()
-            }
-        }
-    }
-    return outcomes
-}
-
-@Throws(IOException::class)
 fun loadProcessedRuns(config: EvalConfig): MutableList<EvaluationRun> {
     val runs = ArrayList<EvaluationRun>()
     if (!Files.exists(config.EXPERIMENT_PROCESSED_FILE())) {
@@ -130,12 +108,4 @@ private fun parseEvalRun(lines: List<String>): EvaluationRun {
     val mapper = jacksonObjectMapper()
     mapper.registerModule(JavaTimeModule())
     return mapper.readValue(sb.toString(), EvaluationRun::class.java)
-}
-
-private fun parseResult(lines: List<String>): PatchComposition {
-    val sb = StringBuilder()
-    lines.forEach(Consumer { l: String? -> sb.append(l).append("\n") })
-    val mapper = jacksonObjectMapper()
-    mapper.registerModule(JavaTimeModule())
-    return mapper.readValue(sb.toString(), PatchComposition::class.java)
 }
