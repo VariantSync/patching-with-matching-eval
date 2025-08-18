@@ -124,18 +124,17 @@ public class ShellExecutor {
             return Result.Failure(new ShellException(e));
         }
         try(ExecutorService executor = Executors.newFixedThreadPool(2)) {
-            executor.submit(() -> collectOutput(process.getInputStream(), shareOutput));
-            executor.submit(() -> collectOutput(process.getErrorStream(), errorReader));
+            executor.submit(() -> collectOutput(process.inputReader(), shareOutput));
+            executor.submit(() -> collectOutput(process.errorReader(), errorReader));
             if (timeout > 0 && timeoutUnit != null) {
                 boolean completed = process.waitFor(timeout, timeoutUnit);
                 if (!completed) {
                     Logger.debug("Command timed out after 60 seconds:");
                     Logger.debug(command.toString());
+                    process.destroy();
+                    executor.shutdown();
                 }
-                process.destroy();
-                executor.shutdownNow();
             }
-            // wait for the process to terminate fully
             exitCode = process.waitFor();
         } catch (final InterruptedException e) {
             Logger.warn("Interrupted while waiting for process to end.", e);
@@ -151,14 +150,14 @@ public class ShellExecutor {
         return command.interpretResult(exitCode, output);
     }
 
-private void collectOutput(final InputStream inputStream, final Consumer<String> consumer) {
-        try (inputStream; final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, Charsets.UTF_8))) {
+private void collectOutput(final BufferedReader reader, final Consumer<String> consumer) {
+        try (reader) {
             String line;
             while ((line = reader.readLine()) != null) {
                 consumer.accept(line);
             }
         } catch (final IOException e) {
-            Logger.debug("Could not read output stream of Shell command. Command probably reached the configured timeout.", e);
+            Logger.debug("Could not read output stream of Shell command. Command probably reached the configured timeout of %s %s.".formatted(timeout, timeoutUnit), e);
         }
     }
 }
