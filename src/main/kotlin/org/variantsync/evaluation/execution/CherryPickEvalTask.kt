@@ -78,10 +78,10 @@ class CherryPickEvalTask(
 
         if (originalPatch.isEmpty) {
             // There was no change to this variant, so we can skip it as source
-            Logger.info(
+            Logger.debug(
                     "Skipping cherry pick " +
                             cherryPick.id +
-                            " because there are no changes to code. Diff of code files is empty."
+                            " because there are no changes to text files. Diff of text files is empty."
             )
             return ArrayList()
         }

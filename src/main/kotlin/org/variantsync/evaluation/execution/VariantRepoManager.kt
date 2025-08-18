@@ -24,7 +24,7 @@ class VariantRepoManager(
         try {
             val command = GitCheckoutCommand.Recommended(cherryPick.cherryParentCommit)
             if (this.shellSourceV0.execute(command).isFailure()) {
-                Logger.info("Was not able to find source variant V0 (source before changes)")
+                Logger.debug("Was not able to find source variant V0 (source before changes)")
                 return false
             }
         } catch (e: Exception) {
@@ -34,7 +34,7 @@ class VariantRepoManager(
         try {
             val command = GitCheckoutCommand.Recommended(cherryPick.cherryCommit)
             if (this.shellSourceV1.execute(command).isFailure) {
-                Logger.info("Was not able to find source variant V1 (source after changes)")
+                Logger.debug("Was not able to find source variant V1 (source after changes)")
                 return false
             }
         } catch (e: Exception) {
