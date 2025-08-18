@@ -13,8 +13,12 @@ import org.variantsync.evaluation.util.shell.GitCherryPickCommand
 import org.variantsync.evaluation.util.shell.ShellExecutor
 import org.variantsync.vevos.simulation.feature.Variant
 
-class GitCP(private val config: EvalConfig, private val name: String, private val strip: Int, private val strategy: MergeStrategy) :
-        Patcher {
+class GitCP(
+        private val config: EvalConfig,
+        private val name: String,
+        private val strip: Int,
+        private val strategy: MergeStrategy
+) : Patcher {
     private var lastResult: org.variantsync.functjonal.Result<List<String>, ShellException>? = null
     private val conflictDetectionText = "CONFLICT (content): Merge conflict in "
 
@@ -42,7 +46,14 @@ class GitCP(private val config: EvalConfig, private val name: String, private va
         val patchCommand = GitCherryPickCommand.Recommended(cherry)
 
         // apply patch to target variant
-        val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir(),config.EXPERIMENT_TIMEOUT_LENGTH(), config.EXPERIMENT_TIMEOUT_UNIT())
+        val customShell =
+                ShellExecutor(
+                        Logger::debug,
+                        Logger::debug,
+                        operations.workDir(),
+                        config.EXPERIMENT_TIMEOUT_LENGTH(),
+                        config.EXPERIMENT_TIMEOUT_UNIT()
+                )
         val result = customShell.execute(patchCommand, operations.patchDir())
         val rejects = Rejects(ArrayList())
         val conflictingFiles = ArrayList<String>()
@@ -58,7 +69,6 @@ class GitCP(private val config: EvalConfig, private val name: String, private va
             }
             lastResult = result
         }
-        // TODO: now handled differently
         applyMergeStrategy(operations, cherry, conflictingFiles)
         return rejects
     }
@@ -141,4 +151,3 @@ enum class MergeStrategy {
     Ours,
     Theirs,
 }
-
