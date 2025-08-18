@@ -67,7 +67,7 @@ class EvalOperations(config: EvalConfig, gitHubRepoPath: Path) : Operations() {
         appliedPatchTracker = AppliedPatchTracker()
         shell = ShellExecutor(appliedPatchTracker, appliedPatchTracker, workDir)
 
-        patchers = defaultPatchers(config,STRIP)
+        patchers = initializePatchers(config, STRIP)
         repoManager =
                 VariantRepoManager(
                         sourceVariantV0,
@@ -134,4 +134,3 @@ class EvalOperations(config: EvalConfig, gitHubRepoPath: Path) : Operations() {
         return STRIP
     }
 }
-

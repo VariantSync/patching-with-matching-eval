@@ -3,7 +3,7 @@ import numpy as np
 
 
 class Patcher(Enum):
-    MPatch = "pwm_f2"
+    MPatch = "mpatch"
     UnixPatch = "unix_patch"
     GitApply = "git_apply"
     GitCherry = "git_cherry"

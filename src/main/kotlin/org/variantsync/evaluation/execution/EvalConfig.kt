@@ -2,13 +2,13 @@ package org.variantsync.evaluation.execution
 
 import java.io.File
 import java.nio.file.Path
+import java.util.concurrent.TimeUnit
 import org.apache.commons.configuration2.Configuration
 import org.apache.commons.configuration2.PropertiesConfiguration
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder
 import org.apache.commons.configuration2.builder.fluent.Parameters
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler
 import org.apache.commons.configuration2.ex.ConfigurationException
-import java.util.concurrent.TimeUnit
 
 /** Determines the configuration of our study. */
 class EvalConfig(propertiesFile: File) {
@@ -164,14 +164,36 @@ class EvalConfig(propertiesFile: File) {
     }
 
     fun EXPERIMENT_TIMEOUT_LENGTH(): Long {
-        return config!!.getLong(EXPERIMENT_TIMEOUT_LENGTH,0)
+        return config!!.getLong(EXPERIMENT_TIMEOUT_LENGTH, 0)
     }
 
     fun EXPERIMENT_TIMEOUT_UNIT(): TimeUnit {
         return config!!.getEnum(EXPERIMENT_TIMEOUT_UNIT, TimeUnit::class.java, null)
     }
 
+    fun EXPERIMENT_PATCHER_GNU_PATCH(): Boolean {
+        return config!!.getBoolean(EXPERIMENT_PATCHER_GNU_PATCH)
+    }
+
+    fun EXPERIMENT_PATCHER_GIT_APPLY(): Boolean {
+        return config!!.getBoolean(EXPERIMENT_PATCHER_GIT_APPLY)
+    }
+
+    fun EXPERIMENT_PATCHER_GIT_CP(): Boolean {
+        return config!!.getBoolean(EXPERIMENT_PATCHER_GIT_CP)
+    }
+
+    fun EXPERIMENT_PATCHER_MPATCH(): Boolean {
+        return config!!.getBoolean(EXPERIMENT_PATCHER_MPATCH)
+    }
+
     companion object {
+        // Which patchers should be enabled?
+        private const val EXPERIMENT_PATCHER_GNU_PATCH = "experiment.patcher.gnu-patch"
+        private const val EXPERIMENT_PATCHER_GIT_APPLY = "experiment.patcher.git-apply"
+        private const val EXPERIMENT_PATCHER_GIT_CP = "experiment.patcher.git-cp"
+        private const val EXPERIMENT_PATCHER_MPATCH = "experiment.patcher.mpatch"
+
         // The number of EXPERIMENT_TIMEOUT_UNIT to wait for a patcher to finish patching (long)
         private const val EXPERIMENT_TIMEOUT_LENGTH = "experiment.timeout.length"
 

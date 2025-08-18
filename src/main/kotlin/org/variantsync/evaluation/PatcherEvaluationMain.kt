@@ -136,7 +136,7 @@ fun executeTask(config: EvalConfig, task: CherryPickEvalTask) {
 }
 
 fun clean(evalSetup: EvalOperations) {
-    Logger.info("Running clean up.")
+    Logger.debug("Running clean up.")
     try {
         FileUtils.deleteDirectory(evalSetup.workDir.toFile())
     } catch (e: Exception) {

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pwm_eval"
+name = "mpatch_eval"
 version = "0.1.0"
 description = "Result analysis scripts for patching with matching"
 authors = ["anonymous"]

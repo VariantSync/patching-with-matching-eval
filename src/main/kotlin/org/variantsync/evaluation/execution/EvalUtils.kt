@@ -49,12 +49,25 @@ fun filterUnpatchedFiles(
     return OriginalDiff(filteredDiffs)
 }
 
-fun defaultPatchers(config: EvalConfig, strip: Int): List<Patcher> {
+fun initializePatchers(config: EvalConfig, strip: Int): List<Patcher> {
     val patchers = ArrayList<Patcher>()
-    patchers.add(GNUPatch(config,"unix_patch", strip))
-    patchers.add(MPatch(config, "pwm_f2", strip, 2))
-    patchers.add(GitApply(config, "git_apply", strip))
-    patchers.add(GitCP(config, "git_cherry", strip, MergeStrategy.Ours))
+    if (config.EXPERIMENT_PATCHER_GNU_PATCH()) {
+        patchers.add(GNUPatch(config, "unix_patch", strip))
+        Logger.info("Initialized GNU patch.")
+    }
+    if (config.EXPERIMENT_PATCHER_GIT_APPLY()) {
+        patchers.add(GitApply(config, "git_apply", strip))
+        Logger.info("Initialized git apply.")
+    }
+    if (config.EXPERIMENT_PATCHER_GIT_CP()) {
+        patchers.add(GitCP(config, "git_cherry", strip, MergeStrategy.Ours))
+        Logger.info("Initialized git cherry-pick.")
+    }
+    if (config.EXPERIMENT_PATCHER_MPATCH()) {
+        patchers.add(MPatch(config, "mpatch", strip, 2))
+        Logger.info("Initialized mpatch.")
+    }
+    Thread.sleep(3000)
     return patchers
 }
 

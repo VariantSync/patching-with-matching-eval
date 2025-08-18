@@ -52,9 +52,9 @@ sampled_cherry_list = [9227, 1405, 11215, 5522, 8375, 698, 2533, 5840, 1979, 353
 table_names = {
     c_repo_name: "repository",
     "rq_git_cherry": "{\mymakecell{required \\\\ fixes \\\\ \\gitcherrypickshort}}",
-    "rq_pwm_f2": "{\mymakecell{required \\\\ fixes \\\\ \\approach}}",
+    "rq_mpatch": "{\mymakecell{required \\\\ fixes \\\\ \\approach}}",
     "ap_git_cherry": "{\mymakecell{fully \\\\ automatable \\\\ \\gitcherrypickshort{} \%}}",
-    "ap_pwm_f2": "{\mymakecell{fully \\\\ automatable \\\\ \\approach{} \%}}",
+    "ap_mpatch": "{\mymakecell{fully \\\\ automatable \\\\ \\approach{} \%}}",
     c_projects_with_cherries: "{\mymakecell{projects \\\\ with \\\\ cherry \\\\ picks}}",
     c_language: "{\mymakecell[l]{main \\\\ repository \\\\ language}}",
     c_sampled_projects_per_language: "{\mymakecell[l]{sampled \\\\ projects}}",
@@ -278,13 +278,13 @@ def report_projects(pr_df):
 
     repos_with_cherries = len(pr_df[pr_df[c_cherries] > 0])
     print(
-        f"{lang}, number of repositories with cherries: {repos_with_cherries}, and without cherries: {num_languages*sample_per_language - repos_with_cherries}, ratio: {repos_with_cherries/(num_languages*sample_per_language)}."
+        f"{lang}, number of repositories with cherries: {repos_with_cherries}, and without cherries: {num_languages * sample_per_language - repos_with_cherries}, ratio: {repos_with_cherries / (num_languages * sample_per_language)}."
     )
     print(
-        f"{lang}, total number of commits, within all projects {'' if num_languages > 1 else 'of '+lang}: {sum(pr_df[c_commits])}"
+        f"{lang}, total number of commits, within all projects {'' if num_languages > 1 else 'of ' + lang}: {sum(pr_df[c_commits])}"
     )
     print(
-        f"{lang}, total number of cherries, within all projects {'' if num_languages > 1 else 'of '+lang}: {sum(pr_df[c_cherries])}, mean cherry to commit ratio: {sum(pr_df[c_cherries])/sum(pr_df[c_commits]):.3g}"
+        f"{lang}, total number of cherries, within all projects {'' if num_languages > 1 else 'of ' + lang}: {sum(pr_df[c_cherries])}, mean cherry to commit ratio: {sum(pr_df[c_cherries]) / sum(pr_df[c_commits]):.3g}"
     )
     column_report(lang, c_commits, c_commits, pr_df)
     column_report(lang, c_cherries, c_cherries, pr_df)
@@ -388,7 +388,7 @@ def impact_file(file):
 
 
 def impact_analysis(pr_df):
-    approaches = ["git_cherry", "pwm_f2"]
+    approaches = ["git_cherry", "mpatch"]
     prefix = "C:\\work\\patching-with-matching-eval\\evaluation-workdir\\results\\cherries\\rep-1\\"
 
     df = pr_df.sort_values(by=c_cherry_ratio)[-5:].append(

@@ -71,7 +71,7 @@ TODO
 
 `Fix:` You can fix this problem by either following the [post-installation instructions](https://docs.docker.com/engine/install/linux-postinstall/), or by executing the scripts in the replication package with elevated permissions (i.e., `sudo`).
 
-### 'Unable to find image 'pwm-reproduction:latest' locally'
+### 'Unable to find image 'mpatch-reproduction:latest' locally'
 `Problem:` The Docker container could not be found. This either means that the name of the container that was built does not fit the name of the container that is being executed (this only happens if you changed the provided scripts), or that the Docker container was not built yet.
 
 `Fix:` Follow the instructions described above in the section `Build the Docker Container`.
