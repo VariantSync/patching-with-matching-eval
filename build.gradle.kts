@@ -7,6 +7,7 @@ plugins {
 }
 
 group = "org.variantsync.core"
+
 version = "0.2.0"
 
 repositories {
@@ -56,9 +57,7 @@ tasks.create<ShadowJar>("Cherries") {
 
     configurations = listOf(project.configurations.runtimeClasspath.get())
 
-    manifest {
-        attributes["Main-Class"] = "org.variantsync.evaluation.PatcherEvaluationMainKt"
-    }
+    manifest { attributes["Main-Class"] = "org.variantsync.evaluation.PatcherEvaluationMainKt" }
 }
 
 tasks.create<ShadowJar>("Composition") {
@@ -75,15 +74,9 @@ tasks.create<ShadowJar>("Composition") {
 
     configurations = listOf(project.configurations.runtimeClasspath.get())
 
-    manifest {
-        attributes["Main-Class"] = "org.variantsync.evaluation.PatchCompositionAnalysisKt"
-    }
+    manifest { attributes["Main-Class"] = "org.variantsync.evaluation.PatchCompositionAnalysisKt" }
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
+tasks.test { useJUnitPlatform() }
 
-application {
-    mainClass.set("Main")
-}
+application { mainClass.set("Main") }

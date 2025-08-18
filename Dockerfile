@@ -1,5 +1,7 @@
-FROM openjdk:19-alpine
+FROM alpine:latest
 
+RUN apk update
+RUN apk add --no-cache --upgrade openjdk21
 # Build the jar files
 WORKDIR /home/user
 COPY src ./src
@@ -13,11 +15,11 @@ WORKDIR /home/user
 RUN ./gradlew Cherries || exit
 RUN ./gradlew Composition || exit
 
-FROM openjdk:19-alpine
+FROM alpine:latest
 
 RUN apk update
 # Install dependencies for unix patch
-RUN apk add --no-cache --upgrade bash diffutils patch git python3 py3-matplotlib unzip
+RUN apk add --no-cache --upgrade bash diffutils patch git python3 py3-matplotlib unzip openjdk21
 
 # Install dependencies for patching with matching
 RUN apk add --no-cache curl bash gcc musl-dev
