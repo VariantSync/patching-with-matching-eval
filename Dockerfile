@@ -34,6 +34,8 @@ RUN unzip unsplit-mined-cherries
 RUN unzip repo-sample.zip
 WORKDIR /home/user
 
+RUN apk add --no-cache texlive-full
+
 COPY src/main/python ./analysis
 WORKDIR /home/user/analysis
 

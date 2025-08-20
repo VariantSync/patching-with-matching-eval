@@ -12,6 +12,23 @@ def generate_metrics_result_table(
     mpatch_over_t = 0
 
     with open(file, "w") as file:
+        file.write("\\documentclass{article}")
+        file.write("\\usepackage{booktabs}")
+        file.write("\\usepackage{multirow}")
+        file.write("\\usepackage{siunitx}")
+        file.write("\\usepackage[table]{xcolor}")
+        file.write("\\usepackage{geometry}")
+        file.write("\\usepackage{graphicx}")
+        file.write("\\geometry{margin=1in}")
+        file.write("\\newcommand{\\mpatch}{\\textit{mpatch}}")
+        file.write("\\newcommand{\\patch}{\\textit{GNU patch}}")
+        file.write("\\newcommand{\\gitapply}{\\textit{Git apply}}")
+        file.write("\\newcommand{\\gitcherrypickshort}{\\textit{Git cp}}")
+        file.write("\\begin{document}")
+        file.write("\\begin{table}")
+        file.write("	\\centering")
+        file.write("	\\resizebox{\\textwidth}{!}{")
+
         fmt = "S[table-format=2.2]" * (4 + len(languages))
         # Begin the tabular environment
         file.write("\\begin{tabular}{lc" + fmt + "}\n")
@@ -109,6 +126,9 @@ def generate_metrics_result_table(
         # End the tabular environment
         file.write("\\bottomrule\n")
         file.write("\\end{tabular}")
+        file.write("}")
+        file.write("\\end{table}")
+        file.write("\\end{document}")
         print(f"mpatch over t: {mpatch_over_t} / {total_vals}")
 
 
