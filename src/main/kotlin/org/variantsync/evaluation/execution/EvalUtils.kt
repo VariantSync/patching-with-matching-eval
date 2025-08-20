@@ -53,19 +53,19 @@ fun initializePatchers(config: EvalConfig, strip: Int): List<Patcher> {
     val patchers = ArrayList<Patcher>()
     if (config.EXPERIMENT_PATCHER_GNU_PATCH()) {
         patchers.add(GNUPatch(config, "unix_patch", strip))
-        Logger.info("Initialized GNU patch.")
+        Logger.debug("Initialized GNU patch.")
     }
     if (config.EXPERIMENT_PATCHER_GIT_APPLY()) {
         patchers.add(GitApply(config, "git_apply", strip))
-        Logger.info("Initialized git apply.")
+        Logger.debug("Initialized git apply.")
     }
     if (config.EXPERIMENT_PATCHER_GIT_CP()) {
         patchers.add(GitCP(config, "git_cherry", strip, MergeStrategy.Ours))
-        Logger.info("Initialized git cherry-pick.")
+        Logger.debug("Initialized git cherry-pick.")
     }
     if (config.EXPERIMENT_PATCHER_MPATCH()) {
         patchers.add(MPatch(config, "mpatch", strip, 2))
-        Logger.info("Initialized mpatch.")
+        Logger.debug("Initialized mpatch.")
     }
     Thread.sleep(3000)
     return patchers

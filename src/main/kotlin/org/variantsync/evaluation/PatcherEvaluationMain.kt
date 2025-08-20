@@ -104,9 +104,8 @@ class CherryPickStudy(
 
             Logger.info(String.format("Finished %s tasks.", evalTasks.size.toString()))
         } catch (e: Exception) {
-            Logger.error { "Was not able to " }
-            Logger.error(e)
-            e.printStackTrace()
+            Logger.debug { "Was not able to evaluate patchers on " + dataset.datasetName }
+            Logger.debug(e)
         } finally {
             if (evalSetup != null) {
                 clean(evalSetup)
