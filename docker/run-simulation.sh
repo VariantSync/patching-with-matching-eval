@@ -4,7 +4,7 @@ start() {
     echo "User id: $(id -u)"
     echo "Group id: $(id -g)"
 
-    mkdir /home/user/evaluation-workdir/tables
+    mkdir -p /home/user/evaluation-workdir/tables
 
     if [ "$1" == 'reproduction' ]; then
         echo "Running full reproduction of evaluation on the entire patch dataset."
@@ -59,5 +59,5 @@ if [ "$1" == '' ]; then
     echo "./execute.sh cleanup        # Clean the evaluation files"
     exit
 else
-    start $1
+    start $1 $2
 fi
