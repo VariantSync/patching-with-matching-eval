@@ -1,0 +1,462 @@
+- total_number_of_committers: '461'
+  repo_name: RasaHQ/rasa
+  total_number_of_commits: '29523'
+  total_number_of_branches: '568'
+  total_number_of_results: '18'
+  language: Python
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: db0f81d6d009f17a715f56972da45537d25d35ee
+        parent_ids:
+        - 67eca350eb9e25967806711e368591e989be4b12
+        message: "Run custom form validation on form activation (#12467)\n\n* run custom form validation on form activation\r\n\r\n* add changelog entry\r\n\r\n* update tests, rename var"
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1686151836, offset: 60, sign: 43 } }'
+      target:
+        id: 2f8a9a403de496814e19f0f557cdfd23263937b8
+        parent_ids:
+        - 6bfc268d88651b3ee8c37a0a6ade921a25a73895
+        message: |
+          Run custom form validation on form activation (#12467)
+
+          * run custom form validation on form activation
+
+          * add changelog entry
+
+          * update tests, rename var
+
+          (cherry picked from commit db0f81d6d009f17a715f56972da45537d25d35ee)
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        time: 'Time { raw: git_time { time: 1686152831, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e8957525b090c69f009275f7c666771a1f0fd165
+        parent_ids:
+        - ad17246c7e479d64f5d3b7605afd81fd05fdc8b5
+        message: "Fix retrieving a conversation tracker from HTTP API endpoint dependent on query params (#12139)\n\n* implement fix\r\n\r\n* update fix\r\n\r\n* add unit tests for tracker store update\r\n\r\n* add tests for processor and server updates\r\n\r\n* implement fix for story endpoint bug, add tests, implement retrieve_full_tracker for InMemoryTrackerStore\r\n\r\n* fix failing tests\r\n\r\n* add retrieve_full_tracker implementation to redis and dynamodb + tests for InMemoryTS\r\n\r\n* simplify tracker store new tests, add tests for mongodb\r\n\r\n* fix redis tracker saving mechanism, add tests\r\n\r\n* correct dynamodb update to retrieve method\r\n\r\n* address review feedback\r\n\r\n* add integration testing for postgres, redis, mongodb\r\n\r\n* add changelog entry"
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1680011720, offset: 60, sign: 43 } }'
+      target:
+        id: 0057bf4e3de8a9670623b21b271c9108da791bc9
+        parent_ids:
+        - 427ebad41be54ba2d4ed5920fafa665c5c599ff9
+        message: |
+          Fix retrieving a conversation tracker from HTTP API endpoint dependent on query params (#12139)
+
+          * implement fix
+
+          * update fix
+
+          * add unit tests for tracker store update
+
+          * add tests for processor and server updates
+
+          * implement fix for story endpoint bug, add tests, implement retrieve_full_tracker for InMemoryTrackerStore
+
+          * fix failing tests
+
+          * add retrieve_full_tracker implementation to redis and dynamodb + tests for InMemoryTS
+
+          * simplify tracker store new tests, add tests for mongodb
+
+          * fix redis tracker saving mechanism, add tests
+
+          * correct dynamodb update to retrieve method
+
+          * address review feedback
+
+          * add integration testing for postgres, redis, mongodb
+
+          * add changelog entry
+
+          (cherry picked from commit e8957525b090c69f009275f7c666771a1f0fd165)
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        time: 'Time { raw: git_time { time: 1680016445, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 59e1aa28c74703cdeb8d62393a9e7c5e4768d6aa
+        parent_ids:
+        - c46abfc7b77cd288b10037fbc1bb63fc7d129645
+        message: |
+          make sure explicit code is equivalent to bool
+        author: Vova Vv <mr.voov@gmail.com>
+        committer: Vova Vv <mr.voov@gmail.com>
+        time: 'Time { raw: git_time { time: 1606135681, offset: 60, sign: 43 } }'
+      target:
+        id: b6c646d72fc6d194936c4d0c1851d77d4d40a50c
+        parent_ids:
+        - 3d4e89d7180d85d0745d1e9c56c03000952cc5be
+        message: |
+          make sure explicit code is equivalent to bool
+
+          (cherry picked from commit 59e1aa28c74703cdeb8d62393a9e7c5e4768d6aa)
+        author: Vova Vv <mr.voov@gmail.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1606487621, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b6268c3a2610f87e23746b8e8c2056ae8a8804c5
+        parent_ids:
+        - 319811f5fec69fd754d0ae25b3ac8a2bfe856867
+        message: "Fix RabbitMQ url parsing  (#12325)\n\n* fix url parsing of path and query params, add integration test\r\n\r\n* add changelog entry, fix regression bug to allow credentials in URL\r\n\r\n* fix issue with pruning conflict when tests were run in parallel\r\n\r\n* apply review suggestion\r\n\r\n* make method private"
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1682602462, offset: 60, sign: 43 } }'
+      target:
+        id: 4f4df442b23411a7c692e8a291d22b616603ad76
+        parent_ids:
+        - e836639c0a1bfeb6ebaf235d79d5ea2ca8420a0d
+        message: |
+          Fix RabbitMQ url parsing  (#12325)
+
+          * fix url parsing of path and query params, add integration test
+
+          * add changelog entry, fix regression bug to allow credentials in URL
+
+          * fix issue with pruning conflict when tests were run in parallel
+
+          * apply review suggestion
+
+          * make method private
+
+          (cherry picked from commit b6268c3a2610f87e23746b8e8c2056ae8a8804c5)
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        time: 'Time { raw: git_time { time: 1682665384, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1bf16cd76d02592f3c3d2472feecc3bc7e780b7b
+        parent_ids:
+        - 02ad4f8717f5db79187f47d3d2847b9f50479f2a
+        message: "Fix bug in from_intent slot mapping without intent specified (#12096)\n\n* implement fix + some small logging and docstring improvement\r\n\r\n* add unit test and changelog entry"
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1678104018, offset: 0, sign: 43 } }'
+      target:
+        id: 628af32108134fe8f855145975693eaffa459c65
+        parent_ids:
+        - 57ab5d61f22419e417fb72f477b173f632731aa3
+        message: |
+          Fix bug in from_intent slot mapping without intent specified (#12096)
+
+          * implement fix + some small logging and docstring improvement
+
+          * add unit test and changelog entry
+
+          (cherry picked from commit 1bf16cd76d02592f3c3d2472feecc3bc7e780b7b)
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        time: 'Time { raw: git_time { time: 1678106903, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b8b4fa647b438f275b6ed914795836413bf6a070
+        parent_ids:
+        - cc86f8d75083b3412121901e49599c143ef4d931
+        message: |
+          Write tests for #7235 (conversation start rules not working with initial slot values).
+        author: samsucik <s.sucik@rasa.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1605606701, offset: 0, sign: 43 } }'
+      target:
+        id: 8caef99b05156bbf25ad0bb0098da501d78ea79f
+        parent_ids:
+        - 8c58fc5a44c2f7a0ae2f59a63a9c09f3b526394b
+        message: |
+          Write tests for #7234 (conversation start rules not working with initial slot values).
+
+          (cherry picked from commit b8b4fa647b438f275b6ed914795836413bf6a070)
+        author: samsucik <s.sucik@rasa.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1606487288, offset: 0, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 566040ed6f9baea27ca09e6813f299c6108621ae
+        parent_ids:
+        - 1ef9aa3b59a00cb976d53401b41f6d760e0e804d
+        message: |
+          remove blank lines after docstrings
+        author: Vova Vv <mr.voov@gmail.com>
+        committer: Vova Vv <mr.voov@gmail.com>
+        time: 'Time { raw: git_time { time: 1606148732, offset: 60, sign: 43 } }'
+      target:
+        id: 46f74a79e9e2eba4ca7060d473521d2657095ccd
+        parent_ids:
+        - e84d09a387807dd24beb9481aa6f7f464489b77f
+        message: |
+          remove blank lines after docstrings
+
+          (cherry picked from commit 566040ed6f9baea27ca09e6813f299c6108621ae)
+        author: Vova Vv <mr.voov@gmail.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1606487757, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e8957525b090c69f009275f7c666771a1f0fd165
+        parent_ids:
+        - ad17246c7e479d64f5d3b7605afd81fd05fdc8b5
+        message: "Fix retrieving a conversation tracker from HTTP API endpoint dependent on query params (#12139)\n\n* implement fix\r\n\r\n* update fix\r\n\r\n* add unit tests for tracker store update\r\n\r\n* add tests for processor and server updates\r\n\r\n* implement fix for story endpoint bug, add tests, implement retrieve_full_tracker for InMemoryTrackerStore\r\n\r\n* fix failing tests\r\n\r\n* add retrieve_full_tracker implementation to redis and dynamodb + tests for InMemoryTS\r\n\r\n* simplify tracker store new tests, add tests for mongodb\r\n\r\n* fix redis tracker saving mechanism, add tests\r\n\r\n* correct dynamodb update to retrieve method\r\n\r\n* address review feedback\r\n\r\n* add integration testing for postgres, redis, mongodb\r\n\r\n* add changelog entry"
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1680011720, offset: 60, sign: 43 } }'
+      target:
+        id: 874dc2de1974352db5480adbd2f10432ae541a61
+        parent_ids:
+        - 141ed9785dd0c1a9fa9172c4c8459c57e6c4e0b9
+        message: "Fix retrieving a conversation tracker from HTTP API endpoint dependent on query params (3.3.x) (#12192)\n\n* Fix retrieving a conversation tracker from HTTP API endpoint dependent on query params (#12139)\r\n\r\n* implement fix\r\n\r\n* update fix\r\n\r\n* add unit tests for tracker store update\r\n\r\n* add tests for processor and server updates\r\n\r\n* implement fix for story endpoint bug, add tests, implement retrieve_full_tracker for InMemoryTrackerStore\r\n\r\n* fix failing tests\r\n\r\n* add retrieve_full_tracker implementation to redis and dynamodb + tests for InMemoryTS\r\n\r\n* simplify tracker store new tests, add tests for mongodb\r\n\r\n* fix redis tracker saving mechanism, add tests\r\n\r\n* correct dynamodb update to retrieve method\r\n\r\n* address review feedback\r\n\r\n* add integration testing for postgres, redis, mongodb\r\n\r\n* add changelog entry\r\n\r\n(cherry picked from commit e8957525b090c69f009275f7c666771a1f0fd165)\r\n\r\n* rename changelog entry ID, remove code added by mistake from 3.4.x"
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1680017473, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0c27b802624cb1ab828a3c428e55b9b49c8ec559
+        parent_ids:
+        - 89eb526110a3e5eb824ed0cf4477617d71c792eb
+        message: |
+          Fix the 'incomplete rule' error being thrown whenever initial_value is set for some slot + reformat code.
+        author: samsucik <s.sucik@rasa.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1605708884, offset: 0, sign: 43 } }'
+      target:
+        id: 4340da2eae0fbd1df74b1100c9c41e7e6e96aee3
+        parent_ids:
+        - 9e792ff2f068893364d9f314a1ea261d51ea13fd
+        message: |
+          Fix the 'incomplete rule' error being thrown whenever initial_value is set for some slot + reformat code.
+
+          (cherry picked from commit 0c27b802624cb1ab828a3c428e55b9b49c8ec559)
+        author: samsucik <s.sucik@rasa.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1606487503, offset: 0, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1bf16cd76d02592f3c3d2472feecc3bc7e780b7b
+        parent_ids:
+        - 02ad4f8717f5db79187f47d3d2847b9f50479f2a
+        message: "Fix bug in from_intent slot mapping without intent specified (#12096)\n\n* implement fix + some small logging and docstring improvement\r\n\r\n* add unit test and changelog entry"
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1678104018, offset: 0, sign: 43 } }'
+      target:
+        id: f78c19dda12db23579941dab62835a9b3e30ebca
+        parent_ids:
+        - ac2b11a0ea05c8a8aa98f516268d08c94adcf315
+        message: |
+          Fix bug in from_intent slot mapping without intent specified (#12096)
+
+          * implement fix + some small logging and docstring improvement
+
+          * add unit test and changelog entry
+
+          (cherry picked from commit 1bf16cd76d02592f3c3d2472feecc3bc7e780b7b)
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        time: 'Time { raw: git_time { time: 1678106422, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 613c15be9df37b86b2d7a1b239966f84e0b33884
+        parent_ids:
+        - 0c27b802624cb1ab828a3c428e55b9b49c8ec559
+        message: |
+          Add a test to check that slots set before a rule starts don't trigger incomplete rule errors.
+        author: samsucik <s.sucik@rasa.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1605714076, offset: 0, sign: 43 } }'
+      target:
+        id: 30eb959de0b701d3e7fac7f92b6a7d2440d0cda6
+        parent_ids:
+        - 4340da2eae0fbd1df74b1100c9c41e7e6e96aee3
+        message: |
+          Add a test to check that slots set before a rule starts don't trigger incomplete rule errors.
+
+          (cherry picked from commit 613c15be9df37b86b2d7a1b239966f84e0b33884)
+        author: samsucik <s.sucik@rasa.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1606487530, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: db0f81d6d009f17a715f56972da45537d25d35ee
+        parent_ids:
+        - 67eca350eb9e25967806711e368591e989be4b12
+        message: "Run custom form validation on form activation (#12467)\n\n* run custom form validation on form activation\r\n\r\n* add changelog entry\r\n\r\n* update tests, rename var"
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1686151836, offset: 60, sign: 43 } }'
+      target:
+        id: e583704815a284f7f95a180174970fe96358867b
+        parent_ids:
+        - 1ed293ac6cd7130359d3b86b8f37db88ed8b081a
+        message: |
+          Run custom form validation on form activation (#12467)
+
+          * run custom form validation on form activation
+
+          * add changelog entry
+
+          * update tests, rename var
+
+          (cherry picked from commit db0f81d6d009f17a715f56972da45537d25d35ee)
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        time: 'Time { raw: git_time { time: 1686152103, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0a3faa16480548467764052f4ae56615a4558775
+        parent_ids:
+        - 64a997eabd7ede0535ca0291718159c9a265dca0
+        message: |
+          emulate loop rejection only of it is active
+        author: Vova Vv <mr.voov@gmail.com>
+        committer: Vova Vv <mr.voov@gmail.com>
+        time: 'Time { raw: git_time { time: 1606318866, offset: 60, sign: 43 } }'
+      target:
+        id: 5f6ac466f5bfc342cb5931265cef6176e6277aa2
+        parent_ids:
+        - 46f74a79e9e2eba4ca7060d473521d2657095ccd
+        message: |
+          emulate loop rejection only of it is active
+
+          (cherry picked from commit 0a3faa16480548467764052f4ae56615a4558775)
+        author: Vova Vv <mr.voov@gmail.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1606487780, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c46abfc7b77cd288b10037fbc1bb63fc7d129645
+        parent_ids:
+        - 6f621bf93a331bc72c5a515478f00a8ebc3d7fec
+        message: |
+          Include review comments: make code & tests more readable + separate 2 tests.
+        author: samsucik <s.sucik@rasa.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1606131462, offset: 0, sign: 43 } }'
+      target:
+        id: 3d4e89d7180d85d0745d1e9c56c03000952cc5be
+        parent_ids:
+        - 30eb959de0b701d3e7fac7f92b6a7d2440d0cda6
+        message: |
+          Include review comments: make code & tests more readable + separate 2 tests.
+
+          (cherry picked from commit c46abfc7b77cd288b10037fbc1bb63fc7d129645)
+        author: samsucik <s.sucik@rasa.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1606487602, offset: 0, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 33b7560e378fc32216e7b4c52299de97805b06a0
+        parent_ids:
+        - 67073749498e65821a04a48fabc88af75608091e
+        message: |
+          fix conversation starts with slots initial value
+        author: Vova Vv <mr.voov@gmail.com>
+        committer: Vova Vv <mr.voov@gmail.com>
+        time: 'Time { raw: git_time { time: 1605028357, offset: 60, sign: 43 } }'
+      target:
+        id: 8c58fc5a44c2f7a0ae2f59a63a9c09f3b526394b
+        parent_ids:
+        - 19ff9560302a2c99467266ae07fb2f72bc61b0f8
+        message: |
+          fix conversation starts with slots initial value
+
+          (cherry picked from commit 33b7560e378fc32216e7b4c52299de97805b06a0)
+        author: Vova Vv <mr.voov@gmail.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1606487206, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3a993be51354a66453131acee84d50597fddf642
+        parent_ids:
+        - 59e1aa28c74703cdeb8d62393a9e7c5e4768d6aa
+        message: |
+          fix docstring
+        author: Vova Vv <mr.voov@gmail.com>
+        committer: Vova Vv <mr.voov@gmail.com>
+        time: 'Time { raw: git_time { time: 1606137585, offset: 60, sign: 43 } }'
+      target:
+        id: e84d09a387807dd24beb9481aa6f7f464489b77f
+        parent_ids:
+        - b6c646d72fc6d194936c4d0c1851d77d4d40a50c
+        message: |
+          fix docstring
+
+          (cherry picked from commit 3a993be51354a66453131acee84d50597fddf642)
+        author: Vova Vv <mr.voov@gmail.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1606487739, offset: 0, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b6268c3a2610f87e23746b8e8c2056ae8a8804c5
+        parent_ids:
+        - 319811f5fec69fd754d0ae25b3ac8a2bfe856867
+        message: "Fix RabbitMQ url parsing  (#12325)\n\n* fix url parsing of path and query params, add integration test\r\n\r\n* add changelog entry, fix regression bug to allow credentials in URL\r\n\r\n* fix issue with pruning conflict when tests were run in parallel\r\n\r\n* apply review suggestion\r\n\r\n* make method private"
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1682602462, offset: 60, sign: 43 } }'
+      target:
+        id: 4ff8ae071172db78b0306b698d9885170f90c651
+        parent_ids:
+        - 84ee8808c4f14f0a89cafbd26c9f14b6d8b79d73
+        message: "Fix RabbitMQ url parsing  (#12325) (#12337)\n\n* fix url parsing of path and query params, add integration test\r\n\r\n* add changelog entry, fix regression bug to allow credentials in URL\r\n\r\n* fix issue with pruning conflict when tests were run in parallel\r\n\r\n* apply review suggestion\r\n\r\n* make method private\r\n\r\n(cherry picked from commit b6268c3a2610f87e23746b8e8c2056ae8a8804c5)"
+        author: Anca Lita <27920906+ancalita@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1682678216, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 89eb526110a3e5eb824ed0cf4477617d71c792eb
+        parent_ids:
+        - b8b4fa647b438f275b6ed914795836413bf6a070
+        message: |
+          Include review comments.
+        author: samsucik <s.sucik@rasa.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1605621964, offset: 0, sign: 43 } }'
+      target:
+        id: 9e792ff2f068893364d9f314a1ea261d51ea13fd
+        parent_ids:
+        - 8caef99b05156bbf25ad0bb0098da501d78ea79f
+        message: |
+          Include review comments.
+
+          (cherry picked from commit 89eb526110a3e5eb824ed0cf4477617d71c792eb)
+        author: samsucik <s.sucik@rasa.com>
+        committer: samsucik <s.sucik@rasa.com>
+        time: 'Time { raw: git_time { time: 1606487418, offset: 0, sign: 43 } }'
+    is_trivial: true

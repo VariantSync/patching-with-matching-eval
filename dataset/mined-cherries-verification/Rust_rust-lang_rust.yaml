@@ -1,0 +1,1023 @@
+- total_number_of_committers: '6299'
+  total_number_of_branches: '6'
+  language: Rust
+  repo_name: rust-lang/rust
+  total_number_of_commits: '181305'
+  total_number_of_results: '41'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 21c688af86a52cf5d44c69c274179e7410e01a49
+        parent_ids:
+        - e27af2917b80487e9c0de00118fdcb9ccb1177f9
+        message: |
+          Consider inner modules to be local in the `non_local_definitions` lint
+        author: Urgau <urgau@numericable.fr>
+        committer: Urgau <urgau@numericable.fr>
+        time: 'Time { raw: git_time { time: 1714424044, offset: 120, sign: 43 } }'
+      target:
+        id: 4b8149f481aadf26593288effc424f65a5adecf7
+        parent_ids:
+        - f5d04caa74a1dfa5ffc4082c2c8f621f25336bbc
+        message: |
+          Consider inner modules to be local in the `non_local_definitions` lint
+
+          (cherry picked from commit 21c688af86a52cf5d44c69c274179e7410e01a49)
+        author: Urgau <urgau@numericable.fr>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1715290872, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3a21fb5cec07052cb664b6a051e233cd4776283a
+        parent_ids:
+        - 39e02f1bd1e53d009da382654139f7c0639172a8
+        message: |
+          Wrap Context.ext in AssertUnwindSafe
+        author: Jubilee Young <workingjubilee@gmail.com>
+        committer: Jubilee Young <workingjubilee@gmail.com>
+        time: 'Time { raw: git_time { time: 1716343537, offset: -420, sign: 45 } }'
+      target:
+        id: b8fb165d41a9bd78d80fc9a2f5fff2ec8bb4ebf3
+        parent_ids:
+        - 3c5120646e2fa220a3cad6133d9da4a9f51f5dc7
+        message: |
+          Wrap Context.ext in AssertUnwindSafe
+
+          (cherry picked from commit 3a21fb5cec07052cb664b6a051e233cd4776283a)
+        author: Jubilee Young <workingjubilee@gmail.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1717699295, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1653a2d34a7f841f15b0704c7ce07c74dee2bada
+        parent_ids:
+        - e3c3ce62d7a8328120aa2abf60a34576f3862fde
+        message: |
+          Failing test
+        author: Michael Goulet <michael@errs.io>
+        committer: Michael Goulet <michael@errs.io>
+        time: 'Time { raw: git_time { time: 1717786778, offset: -240, sign: 45 } }'
+      target:
+        id: 319b8c14818ed28f41017b00635c73362db48a2f
+        parent_ids:
+        - 105fc5ccc942631c367a53a902c57f45ea534d35
+        message: |
+          Failing test
+
+          (cherry picked from commit 1653a2d34a7f841f15b0704c7ce07c74dee2bada)
+        author: Michael Goulet <michael@errs.io>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1718930693, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 6d6f67a98cbc399ac14a3f9a8ddf6ed30bb7fb83
+        parent_ids:
+        - faefc618cf48bd794cbc808448df1bf3f59f36af
+        message: |
+          rustdoc: use stability, instead of features, to decide what to show
+
+          To decide if internal items should be inlined in a doc page,
+          check if the crate is itself internal, rather than if it has
+          the rustc_private feature flag. The standard library uses
+          internal items, but is not itself internal and should not show
+          internal items on its docs pages.
+        author: Michael Howell <michael@notriddle.com>
+        committer: Michael Howell <michael@notriddle.com>
+        time: 'Time { raw: git_time { time: 1715140039, offset: -420, sign: 45 } }'
+      target:
+        id: 75e17c96a80dad1f497f8b6c24fd9456c83da1c5
+        parent_ids:
+        - 716c563528c08c189021252e3792adf74bd8bb69
+        message: |
+          rustdoc: use stability, instead of features, to decide what to show
+
+          To decide if internal items should be inlined in a doc page,
+          check if the crate is itself internal, rather than if it has
+          the rustc_private feature flag. The standard library uses
+          internal items, but is not itself internal and should not show
+          internal items on its docs pages.
+
+          (cherry picked from commit 6d6f67a98cbc399ac14a3f9a8ddf6ed30bb7fb83)
+        author: Michael Howell <michael@notriddle.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1715875614, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4847f2249f03b249956d2daa90a12f4ee66543a8
+        parent_ids:
+        - 0d7b2fb797f214ea7514cfeaf2caef8178d8e3fc
+        message: |
+          Do not ICE on foreign malformed `diagnostic::on_unimplemented`
+
+          Fix #124651.
+        author: Esteban Küber <esteban@kuber.com.ar>
+        committer: Esteban Küber <esteban@kuber.com.ar>
+        time: 'Time { raw: git_time { time: 1714773199, offset: 0, sign: 43 } }'
+      target:
+        id: 6af338d14fd73002728ab914d7c31c38ed2feff3
+        parent_ids:
+        - a26981974230110fa8fb15e1cf04d05b9a2103f9
+        message: |
+          Do not ICE on foreign malformed `diagnostic::on_unimplemented`
+
+          Fix #124651.
+
+          (cherry picked from commit 4847f2249f03b249956d2daa90a12f4ee66543a8)
+        author: Esteban Küber <esteban@kuber.com.ar>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1715875614, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0c0dfb88eeefbbaa4c10cfa4a7f0e16541e086eb
+        parent_ids:
+        - d929a42a664c026167800801b26d734db925314f
+        message: |
+          Switch back `non_local_definitions` lint to allow-by-default
+
+          as request T-lang is requesting some major changes in the lint inner
+          workings in #126768#issuecomment-2192634762
+        author: Urgau <urgau@numericable.fr>
+        committer: Urgau <urgau@numericable.fr>
+        time: 'Time { raw: git_time { time: 1719468307, offset: 120, sign: 43 } }'
+      target:
+        id: aa82d2e49246ee4ca2baa6f4989dea1267af39fd
+        parent_ids:
+        - 00583a64ee03bb38ac91095285916d8b997c4711
+        message: |
+          Switch back `non_local_definitions` lint to allow-by-default
+
+          as request T-lang is requesting some major changes in the lint inner
+          workings in #126768#issuecomment-2192634762
+
+          (cherry picked from commit 0c0dfb88eeefbbaa4c10cfa4a7f0e16541e086eb)
+        author: Urgau <urgau@numericable.fr>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1720197289, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 758e459427946d89a3d900973923e504f712babc
+        parent_ids:
+        - 4847f2249f03b249956d2daa90a12f4ee66543a8
+        message: |
+          Add test for #124651
+        author: Esteban Küber <esteban@kuber.com.ar>
+        committer: Esteban Küber <esteban@kuber.com.ar>
+        time: 'Time { raw: git_time { time: 1715121082, offset: 0, sign: 43 } }'
+      target:
+        id: 4054780318282b44590fa4d82f5ce338af834d5f
+        parent_ids:
+        - 6af338d14fd73002728ab914d7c31c38ed2feff3
+        message: |
+          Add test for #124651
+
+          (cherry picked from commit 758e459427946d89a3d900973923e504f712babc)
+        author: Esteban Küber <esteban@kuber.com.ar>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1715875614, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7dbdbaaa8e4ce77f9b2f1428c82f7166fe6f02fb
+        parent_ids:
+        - a8f2e33eec57d56477c45396e4860f92247f353a
+        message: |
+          Fix ICEs in diagnostic::on_unimplemented
+        author: Michael Goulet <michael@errs.io>
+        committer: Michael Goulet <michael@errs.io>
+        time: 'Time { raw: git_time { time: 1715138024, offset: -240, sign: 45 } }'
+      target:
+        id: 716c563528c08c189021252e3792adf74bd8bb69
+        parent_ids:
+        - 5d77c79b5b3ffd0b13b5ae96f6319b03ffae1ba2
+        message: |
+          Fix ICEs in diagnostic::on_unimplemented
+
+          (cherry picked from commit 7dbdbaaa8e4ce77f9b2f1428c82f7166fe6f02fb)
+        author: Michael Goulet <michael@errs.io>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1715875614, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 8f97a2588caa808b4d46dc3224de5d40bbbcd94b
+        parent_ids:
+        - 2e4c90c3f7c11c745a5d787809ad36c49970a25b
+        message: |
+          Add test to make sure suggestions are still quick
+        author: Michael Goulet <michael@errs.io>
+        committer: Michael Goulet <michael@errs.io>
+        time: 'Time { raw: git_time { time: 1715657911, offset: -240, sign: 45 } }'
+      target:
+        id: d4e19af3868981b0ae221be29a5e9e6e6a8e8067
+        parent_ids:
+        - 37301f52bce580d32989e9d8fb334f6f5a0acdce
+        message: |
+          Add test to make sure suggestions are still quick
+
+          (cherry picked from commit 8f97a2588caa808b4d46dc3224de5d40bbbcd94b)
+        author: Michael Goulet <michael@errs.io>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1715875614, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f77394fdf3f45188d3f110f72f31c4233d4d38eb
+        parent_ids:
+        - 0fdfb61795b40037955154638fe35f20b16c8e55
+        message: |
+          instantiate higher ranked goals in candidate selection
+
+          reverts #119820
+        author: lcnr <rust@lcnr.de>
+        committer: lcnr <rust@lcnr.de>
+        time: 'Time { raw: git_time { time: 1720613596, offset: 120, sign: 43 } }'
+      target:
+        id: 26c00553bf4a44564659832166b352b1a586cad5
+        parent_ids:
+        - 7ecb7f6aec4e50983789d15da7b1c133f8b64050
+        message: |
+          instantiate higher ranked goals in candidate selection
+
+          reverts #119820
+
+          (cherry picked from commit f77394fdf3f45188d3f110f72f31c4233d4d38eb)
+        author: lcnr <rust@lcnr.de>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1720718384, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f13edeb4514368b4b3748e8f437fd6a166d95aff
+        parent_ids:
+        - 561b5dea1e7e5c21f0fb550ca579229ceb878297
+        message: |
+          Fix bootstrap panic when build from tarball
+        author: 12101111 <w12101111@gmail.com>
+        committer: 12101111 <w12101111@gmail.com>
+        time: 'Time { raw: git_time { time: 1714748033, offset: 480, sign: 43 } }'
+      target:
+        id: 6c68ae64dfe66e9e495a64f6f3b19cd48c92a7ad
+        parent_ids:
+        - 4b8149f481aadf26593288effc424f65a5adecf7
+        message: |
+          Fix bootstrap panic when build from tarball
+
+          (cherry picked from commit f13edeb4514368b4b3748e8f437fd6a166d95aff)
+        author: 12101111 <w12101111@gmail.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1715290887, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 03fa9b807379dbce92b346b489acecff6082e283
+        parent_ids:
+        - 6cca6da1265b9bede368f34da6be42057adc9834
+        message: |
+          Also test under next solver
+        author: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        committer: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        time: 'Time { raw: git_time { time: 1718093959, offset: 0, sign: 43 } }'
+      target:
+        id: f1dd0974dc5b7e2d0086d9f31d426a00398dc172
+        parent_ids:
+        - 85ca09b7c21a2d64a69955438add9b0d06200384
+        message: |
+          Also test under next solver
+
+          (cherry picked from commit 03fa9b807379dbce92b346b489acecff6082e283)
+        author: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1718327652, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 56c135c9253563f92755b0a9cd54ec67f7c17fc7
+        parent_ids:
+        - 464987730ab36e3456ba57c53965372989382deb
+        message: |
+          Revert "Rollup merge of #123979 - oli-obk:define_opaque_types7, r=compiler-errors"
+
+          This reverts commit f939d1ff4820844595d0f50f94038869f1445d08, reversing
+          changes made to 183c706305d8c4e0ccb0967932381baf7e0c3611.
+        author: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        committer: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        time: 'Time { raw: git_time { time: 1716556919, offset: 0, sign: 43 } }'
+      target:
+        id: 97e94c19921c6940d5da602384276ee1270268a2
+        parent_ids:
+        - b8fb165d41a9bd78d80fc9a2f5fff2ec8bb4ebf3
+        message: |
+          Revert "Rollup merge of #123979 - oli-obk:define_opaque_types7, r=compiler-errors"
+
+          This reverts commit f939d1ff4820844595d0f50f94038869f1445d08, reversing
+          changes made to 183c706305d8c4e0ccb0967932381baf7e0c3611.
+
+          (cherry picked from commit 56c135c9253563f92755b0a9cd54ec67f7c17fc7)
+        author: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1717699295, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 6d2493bf5d6c97bc52aa109944a7f27ee456192e
+        parent_ids:
+        - 1d43fbbc7348f2bd9260d8532bffa02f5bd2c9ac
+        message: |
+          ci: Update centos:7 to use vault repos
+
+          CentOS 7 is going EOL on June 30, after which its package repos will no
+          longer exist on the regular mirrors. We'll still be able to access
+          packages from the vault server though, and can start doing so now. This
+          affects `dist-i686-linux` and `dist-x86_64-linux`.
+
+          I also removed `epel-release` because we were only using that for its
+          `cmake3`, but we've been building our own version for a while.
+        author: Josh Stone <jistone@redhat.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1718221715, offset: -420, sign: 45 } }'
+      target:
+        id: c67b09538de2d5155d73e45ad9a0f357cbddf9c7
+        parent_ids:
+        - 303ab0fac481259dab0da7b492534e33fa9940af
+        message: |
+          ci: Update centos:7 to use vault repos
+
+          CentOS 7 is going EOL on June 30, after which its package repos will no
+          longer exist on the regular mirrors. We'll still be able to access
+          packages from the vault server though, and can start doing so now. This
+          affects `dist-i686-linux` and `dist-x86_64-linux`.
+
+          I also removed `epel-release` because we were only using that for its
+          `cmake3`, but we've been building our own version for a while.
+
+          (cherry picked from commit 6d2493bf5d6c97bc52aa109944a7f27ee456192e)
+        author: Josh Stone <jistone@redhat.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1718988686, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f60f2e8cb07d21b7d5b0fa7f96dacd2e806b98e4
+        parent_ids:
+        - 4a78c00e227124ff9d5ece2d493472e7325c87d3
+        message: |
+          Fix ICE in non-operand `aggregate_raw_ptr` instrinsic codegen
+        author: Scott McMurray <scottmcm@users.noreply.github.com>
+        committer: Scott McMurray <scottmcm@users.noreply.github.com>
+        time: 'Time { raw: git_time { time: 1715877822, offset: -420, sign: 45 } }'
+      target:
+        id: 3c5120646e2fa220a3cad6133d9da4a9f51f5dc7
+        parent_ids:
+        - 900f1b7b1995267fbaa3d722f780cd379d263b80
+        message: |
+          Fix ICE in non-operand `aggregate_raw_ptr` instrinsic codegen
+
+          (cherry picked from commit f60f2e8cb07d21b7d5b0fa7f96dacd2e806b98e4)
+        author: Scott McMurray <scottmcm@users.noreply.github.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1717699295, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 42ac903f4fe4e9894f8c6e97538696bdbae848dc
+        parent_ids:
+        - 7d97c59438e933e86f557ed999da3b8dfc6855a7
+        message: |
+          Change to the NetBSD archive URL rather than the CDN
+
+          The CDN has been down for a few hours. Switch to an alternative for the
+          time being so we can unblock CI.
+
+          It appears that the CDN is quite a bit faster, so we will likely want to
+          switch back when available.
+        author: Trevor Gross <tmgross@umich.edu>
+        committer: Trevor Gross <tmgross@umich.edu>
+        time: 'Time { raw: git_time { time: 1719910569, offset: -240, sign: 45 } }'
+      target:
+        id: c822bf2486496b410b828f8c68778af8839074f3
+        parent_ids:
+        - cd1d94b574399df3d39db8c4308373842b2c21e6
+        message: |
+          Change to the NetBSD archive URL rather than the CDN
+
+          The CDN has been down for a few hours. Switch to an alternative for the
+          time being so we can unblock CI.
+
+          It appears that the CDN is quite a bit faster, so we will likely want to
+          switch back when available.
+
+          (cherry picked from commit 42ac903f4fe4e9894f8c6e97538696bdbae848dc)
+        author: Trevor Gross <tmgross@umich.edu>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1720245606, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f17b27b3014adea0c40df55b31bd2fbbd72e76c4
+        parent_ids:
+        - 90c2b238e6a38e3309a7ffc1162e6361db14ffdd
+        message: |
+          Don't inline drop shims with unsubstituted generic consts in MIR inliner
+        author: Michael Goulet <michael@errs.io>
+        committer: Michael Goulet <michael@errs.io>
+        time: 'Time { raw: git_time { time: 1719584300, offset: -240, sign: 45 } }'
+      target:
+        id: bb458674f0510e29fe9bf7de67c0c5769031393b
+        parent_ids:
+        - e1f26a62602e27f5c9f5e0005f286523a16b0ce3
+        message: |
+          Don't inline drop shims with unsubstituted generic consts in MIR inliner
+
+          (cherry picked from commit f17b27b3014adea0c40df55b31bd2fbbd72e76c4)
+        author: Michael Goulet <michael@errs.io>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1720198125, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ada0d2c54831a904a53ff4106e0ebb6a0f06a687
+        parent_ids:
+        - 41ea14dda8da6fb3a6e6f83bcba257a5f8d6fa2c
+        message: 'Document map_clone known problems #498'
+        author: Vlad-Shcherbina <vlad.shcherbina@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1516214447, offset: 180, sign: 43 } }'
+      target:
+        id: d2c069de1e85cf6d236d040a5be4021092bfdb57
+        parent_ids:
+        - d3c747c752ba6255848f29826bd8d46d4a075f18
+        message: |
+          Document map_clone known problems #498
+
+          (cherry picked from commit ada0d2c54831a904a53ff4106e0ebb6a0f06a687)
+        author: Vlad-Shcherbina <vlad.shcherbina@gmail.com>
+        committer: Vlad Shcherbina <vlad.shcherbina@gmail.com>
+        time: 'Time { raw: git_time { time: 1545475475, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2e4c90c3f7c11c745a5d787809ad36c49970a25b
+        parent_ids:
+        - 34582118afaf00b0eb2d209a90b181c7156b501c
+        message: |
+          Don't do post-method-probe error reporting steps if we're in a suggestion
+        author: Michael Goulet <michael@errs.io>
+        committer: Michael Goulet <michael@errs.io>
+        time: 'Time { raw: git_time { time: 1715652311, offset: -240, sign: 45 } }'
+      target:
+        id: 37301f52bce580d32989e9d8fb334f6f5a0acdce
+        parent_ids:
+        - 75e17c96a80dad1f497f8b6c24fd9456c83da1c5
+        message: |
+          Don't do post-method-probe error reporting steps if we're in a suggestion
+
+          (cherry picked from commit 2e4c90c3f7c11c745a5d787809ad36c49970a25b)
+        author: Michael Goulet <michael@errs.io>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1715875614, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: cd6a0c8c77575056f95d79ae1f5c460794e1388f
+        parent_ids:
+        - 02f7806ecd641d67c8f046b073323c7e176ee6d2
+        message: |
+          Fix insufficient logic when searching for the underlying allocation
+
+          in the `invalid_reference_casting` lint, when trying to lint on
+          bigger memory layout casts.
+        author: Urgau <urgau@numericable.fr>
+        committer: Urgau <urgau@numericable.fr>
+        time: 'Time { raw: git_time { time: 1714929260, offset: 120, sign: 43 } }'
+      target:
+        id: bd642edd4959c48f2076da28c2b83912a95f928a
+        parent_ids:
+        - 81ed1ceb38e9a4bc01b6c84a92c87b34f7abe18d
+        message: |
+          Fix insufficient logic when searching for the underlying allocation
+
+          in the `invalid_reference_casting` lint, when trying to lint on
+          bigger memory layout casts.
+
+          (cherry picked from commit cd6a0c8c77575056f95d79ae1f5c460794e1388f)
+        author: Urgau <urgau@numericable.fr>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1717699295, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3c4066d1126b7c0ed13da96639ca86ffc42ceea6
+        parent_ids:
+        - a83f933a9da258cf037e3cab37cd486bfd861a7d
+        message: |
+          Add a test for resolving `macro_rules` calls inside attributes
+        author: Vadim Petrochenkov <vadim.petrochenkov@gmail.com>
+        committer: Vadim Petrochenkov <vadim.petrochenkov@gmail.com>
+        time: 'Time { raw: git_time { time: 1717006340, offset: 180, sign: 43 } }'
+      target:
+        id: d0b047410d18c8c370df72d6b1ba2da89958a67b
+        parent_ids:
+        - 4fa46ffbe4744a79e08ba47c6aea5fef89a882ef
+        message: |
+          Add a test for resolving `macro_rules` calls inside attributes
+
+          (cherry picked from commit 3c4066d1126b7c0ed13da96639ca86ffc42ceea6)
+        author: Vadim Petrochenkov <vadim.petrochenkov@gmail.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1717699295, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9e466d33613105b678fcb461df01b6dbc7cb179e
+        parent_ids:
+        - f1586001ace26df7cafeb6534eaf76fb2c5513e5
+        message: |
+          Remove failing GUI test to stop blocking CI until it is fixed
+        author: Guillaume Gomez <guillaume.gomez@huawei.com>
+        committer: Guillaume Gomez <guillaume.gomez@huawei.com>
+        time: 'Time { raw: git_time { time: 1718318945, offset: 120, sign: 43 } }'
+      target:
+        id: b78497cf7af14d76497efb1c3f3848cceb09b4e4
+        parent_ids:
+        - f1dd0974dc5b7e2d0086d9f31d426a00398dc172
+        message: |
+          Remove failing GUI test to stop blocking CI until it is fixed
+
+          (cherry picked from commit 9e466d33613105b678fcb461df01b6dbc7cb179e)
+        author: Guillaume Gomez <guillaume.gomez@huawei.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1718382127, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 46b31e6630f4ceb5c5ecb1c85758685196e2ab06
+        parent_ids:
+        - 003a9027927a51de770a1cf22fccade616a5f0e3
+        message: |
+          Update to LLVM 18.1.7
+        author: Nikita Popov <npopov@redhat.com>
+        committer: Nikita Popov <npopov@redhat.com>
+        time: 'Time { raw: git_time { time: 1717655847, offset: 120, sign: 43 } }'
+      target:
+        id: ac45caabc1fea7e53dd84a4f0ea814cbb55604bc
+        parent_ids:
+        - 619e9abc7d44fcafa57eca90e6fef56cf490d617
+        message: |
+          Update to LLVM 18.1.7
+
+          (cherry picked from commit 46b31e6630f4ceb5c5ecb1c85758685196e2ab06)
+        author: Nikita Popov <npopov@redhat.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1717699295, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 90c2b238e6a38e3309a7ffc1162e6361db14ffdd
+        parent_ids:
+        - 99f77a2eda555b50b518f74823ab636a20efb87f
+        message: |
+          Failing test for computing drop shim that has const param
+        author: Michael Goulet <michael@errs.io>
+        committer: Michael Goulet <michael@errs.io>
+        time: 'Time { raw: git_time { time: 1719584300, offset: -240, sign: 45 } }'
+      target:
+        id: e1f26a62602e27f5c9f5e0005f286523a16b0ce3
+        parent_ids:
+        - aa82d2e49246ee4ca2baa6f4989dea1267af39fd
+        message: |
+          Failing test for computing drop shim that has const param
+
+          (cherry picked from commit 90c2b238e6a38e3309a7ffc1162e6361db14ffdd)
+        author: Michael Goulet <michael@errs.io>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1720197292, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 809b84edba988408071630b1e89a8c06be07aeed
+        parent_ids:
+        - c45e831d8fcd33d656047ba97d263c4b91a00735
+        message: |
+          Add v0 symbol mangling for `f16` and `f128`
+
+          As discussed at <https://github.com/rust-lang/rust/pull/122106>, use the
+          crate encoding to represent new primitives.
+        author: Trevor Gross <tmgross@umich.edu>
+        committer: Trevor Gross <tmgross@umich.edu>
+        time: 'Time { raw: git_time { time: 1715681485, offset: -240, sign: 45 } }'
+      target:
+        id: 66bac3a967650401f4ff2b5b320f69cf430b23b2
+        parent_ids:
+        - 60c5b73b6da149f5365f526d5d213e6cad94cd39
+        message: |
+          Add v0 symbol mangling for `f16` and `f128`
+
+          As discussed at <https://github.com/rust-lang/rust/pull/122106>, use the
+          crate encoding to represent new primitives.
+
+          (cherry picked from commit 809b84edba988408071630b1e89a8c06be07aeed)
+        author: Trevor Gross <tmgross@umich.edu>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1716597095, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 108b3f214a7e160ecb7ac2ec05bbb41aedd05a95
+        parent_ids:
+        - 1aaab8b9f8dc488cadc4f083b3a11fb11b45cb77
+        message: |
+          Properly gate `safe` keyword in pre-expansion
+        author: Michael Goulet <michael@errs.io>
+        committer: Michael Goulet <michael@errs.io>
+        time: 'Time { raw: git_time { time: 1718907289, offset: -240, sign: 45 } }'
+      target:
+        id: 00583a64ee03bb38ac91095285916d8b997c4711
+        parent_ids:
+        - 64a1fe67112931359c7c9a222f08fd206255c2b5
+        message: |
+          Properly gate `safe` keyword in pre-expansion
+
+          (cherry picked from commit 108b3f214a7e160ecb7ac2ec05bbb41aedd05a95)
+        author: Michael Goulet <michael@errs.io>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1720197285, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 827711d0879dabfc9df4cb6a76d2925391e61423
+        parent_ids:
+        - 685a80f7a0935c8e5016d8c9cd491937af155dd0
+        message: Add `#[inline]` to float `Debug` fallback used by `cfg(no_fp_fmt_parse)`
+        author: beetrees <b@beetr.ee>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1716045955, offset: 60, sign: 43 } }'
+      target:
+        id: 60c5b73b6da149f5365f526d5d213e6cad94cd39
+        parent_ids:
+        - 66eb3e404b81e916f5e6d4755fce73800b0cb4c2
+        message: |
+          Add `#[inline]` to float `Debug` fallback used by `cfg(no_fp_fmt_parse)`
+
+          (cherry picked from commit 827711d0879dabfc9df4cb6a76d2925391e61423)
+        author: beetrees <b@beetr.ee>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1716597095, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2bb25d3f4ac8796a50f45409f3ef461ce83295f3
+        parent_ids:
+        - 8f9080db423ca0fb6bef0686ce9a93940cdf1f13
+        message: |
+          Handle Deref expressions in invalid_reference_casting
+        author: Ben Kimock <kimockb@gmail.com>
+        committer: Ben Kimock <kimockb@gmail.com>
+        time: 'Time { raw: git_time { time: 1715358787, offset: -240, sign: 45 } }'
+      target:
+        id: 900f1b7b1995267fbaa3d722f780cd379d263b80
+        parent_ids:
+        - eb89434323c04ef1d424d8779f6ebb9721cf5f06
+        message: |
+          Handle Deref expressions in invalid_reference_casting
+
+          (cherry picked from commit 2bb25d3f4ac8796a50f45409f3ef461ce83295f3)
+        author: Ben Kimock <kimockb@gmail.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1717699295, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: fa829feb2f7a3fee5890f3acf57b66029b123d18
+        parent_ids:
+        - ddba1dc97e83f22165b36dd6158477c49bbbd019
+        message: |
+          Only make GAT ambiguous in match_projection_projections considering shallow resolvability
+        author: Michael Goulet <michael@errs.io>
+        committer: Michael Goulet <michael@errs.io>
+        time: 'Time { raw: git_time { time: 1715964681, offset: -240, sign: 45 } }'
+      target:
+        id: 7e941a7c10fed496749ca20ca5af61791389474f
+        parent_ids:
+        - 66bac3a967650401f4ff2b5b320f69cf430b23b2
+        message: |
+          Only make GAT ambiguous in match_projection_projections considering shallow resolvability
+
+          (cherry picked from commit fa829feb2f7a3fee5890f3acf57b66029b123d18)
+        author: Michael Goulet <michael@errs.io>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1716597095, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: da81d0d940481827fb2bdd164ea0038832e3779e
+        parent_ids:
+        - ef3d6fd7002500af0a985f70d3ac5152623c1396
+        message: |
+          Update LLVM submodule
+        author: DianQK <dianqk@dianqk.net>
+        committer: DianQK <dianqk@dianqk.net>
+        time: 'Time { raw: git_time { time: 1719784988, offset: 480, sign: 43 } }'
+      target:
+        id: cd1d94b574399df3d39db8c4308373842b2c21e6
+        parent_ids:
+        - bb458674f0510e29fe9bf7de67c0c5769031393b
+        message: |
+          Update LLVM submodule
+
+          (cherry picked from commit da81d0d940481827fb2bdd164ea0038832e3779e)
+        author: DianQK <dianqk@dianqk.net>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1720198125, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 526090b901cbedcef7e1eec132e217917606a54d
+        parent_ids:
+        - 56c135c9253563f92755b0a9cd54ec67f7c17fc7
+        message: |
+          Add regression tests
+        author: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        committer: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        time: 'Time { raw: git_time { time: 1716559309, offset: 0, sign: 43 } }'
+      target:
+        id: 4fa46ffbe4744a79e08ba47c6aea5fef89a882ef
+        parent_ids:
+        - 97e94c19921c6940d5da602384276ee1270268a2
+        message: |
+          Add regression tests
+
+          (cherry picked from commit 526090b901cbedcef7e1eec132e217917606a54d)
+        author: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1717699295, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e57f9ac3a04848da107047238d33528956121e03
+        parent_ids:
+        - 7d2a95b143272062b8a5722910f6e9945f131751
+        message: |
+          Update to LLVM 18.1.6
+        author: Nikita Popov <nikita.ppv@gmail.com>
+        committer: Nikita Popov <nikita.ppv@gmail.com>
+        time: 'Time { raw: git_time { time: 1716135870, offset: 120, sign: 43 } }'
+      target:
+        id: 16f4a2b2f96967d6f5c5512d5cc561a066883546
+        parent_ids:
+        - 7e941a7c10fed496749ca20ca5af61791389474f
+        message: |
+          Update to LLVM 18.1.6
+
+          (cherry picked from commit e57f9ac3a04848da107047238d33528956121e03)
+        author: Nikita Popov <nikita.ppv@gmail.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1716597095, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a8f2e33eec57d56477c45396e4860f92247f353a
+        parent_ids:
+        - a60f077c38fe66d05449919842d3d73e3299bbab
+        message: |
+          Add more ICEs due to malformed diagnostic::on_unimplemented
+        author: Michael Goulet <michael@errs.io>
+        committer: Michael Goulet <michael@errs.io>
+        time: 'Time { raw: git_time { time: 1715138024, offset: -240, sign: 45 } }'
+      target:
+        id: 5d77c79b5b3ffd0b13b5ae96f6319b03ffae1ba2
+        parent_ids:
+        - 4054780318282b44590fa4d82f5ce338af834d5f
+        message: |
+          Add more ICEs due to malformed diagnostic::on_unimplemented
+
+          (cherry picked from commit a8f2e33eec57d56477c45396e4860f92247f353a)
+        author: Michael Goulet <michael@errs.io>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1715875614, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3d699a4fa1eee76a8d8951e449d5df37061af658
+        parent_ids:
+        - 11dd90f7613a4b160ed8398a3f1c7c129ad1a372
+        message: |
+          Update LLVM submodule
+        author: DianQK <dianqk@dianqk.net>
+        committer: DianQK <dianqk@dianqk.net>
+        time: 'Time { raw: git_time { time: 1720188417, offset: 480, sign: 43 } }'
+      target:
+        id: 7ecb7f6aec4e50983789d15da7b1c133f8b64050
+        parent_ids:
+        - e5da71fca9bed167576232912271d7366e29bbc6
+        message: |
+          Update LLVM submodule
+
+          (cherry picked from commit 3d699a4fa1eee76a8d8951e449d5df37061af658)
+        author: DianQK <dianqk@dianqk.net>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1720718378, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: fe55c0091db4654ad0185831aa3dd110e5e6cd73
+        parent_ids:
+        - aec67e238d366c4c41373b272f19dd79ff5ec0f0
+        message: |
+          Add regression test
+        author: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        committer: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        time: 'Time { raw: git_time { time: 1718093305, offset: 0, sign: 43 } }'
+      target:
+        id: 11495decd53fe5a11f376475e92c75df97ea8cbb
+        parent_ids:
+        - f0a3643af13d5381c1cc971f043be96fa430cd62
+        message: |
+          Add regression test
+
+          (cherry picked from commit fe55c0091db4654ad0185831aa3dd110e5e6cd73)
+        author: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1718327652, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0ca1a94b2bd58d19a1bd492300abd5bffe5263fb
+        parent_ids:
+        - c3202afa2865ad26ef407544c3768070bfed7bfe
+        message: |
+          Handle field projections like slice indexing in invalid_reference_casting
+        author: Ben Kimock <kimockb@gmail.com>
+        committer: Ben Kimock <kimockb@gmail.com>
+        time: 'Time { raw: git_time { time: 1715203266, offset: -240, sign: 45 } }'
+      target:
+        id: eb89434323c04ef1d424d8779f6ebb9721cf5f06
+        parent_ids:
+        - bd642edd4959c48f2076da28c2b83912a95f928a
+        message: |
+          Handle field projections like slice indexing in invalid_reference_casting
+
+          (cherry picked from commit 0ca1a94b2bd58d19a1bd492300abd5bffe5263fb)
+        author: Ben Kimock <kimockb@gmail.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1717699295, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 40291bce5f93afe25825709d7782e86445086e2f
+        parent_ids:
+        - a330e49593ee890f9197727a3a558b6e6b37f843
+        message: |
+          Silence double-symlink errors while building solaris toolchain
+        author: Jubilee Young <workingjubilee@gmail.com>
+        committer: Jubilee Young <workingjubilee@gmail.com>
+        time: 'Time { raw: git_time { time: 1717569156, offset: -420, sign: 45 } }'
+      target:
+        id: c689624a0eee5c0d03eb7b7851a014ff74d39ac4
+        parent_ids:
+        - 7a24e8b204b0a29af3b122f3c43d02b9ab341f74
+        message: |
+          Silence double-symlink errors while building solaris toolchain
+
+          (cherry picked from commit 40291bce5f93afe25825709d7782e86445086e2f)
+        author: Jubilee Young <workingjubilee@gmail.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1717722804, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 6cca6da1265b9bede368f34da6be42057adc9834
+        parent_ids:
+        - fe55c0091db4654ad0185831aa3dd110e5e6cd73
+        message: |
+          Revert "When checking whether an impl applies, constrain hidden types of opaque types."
+
+          This reverts commit 29a630eb72ffb94c3708947afae1e948ad3cb189.
+        author: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        committer: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        time: 'Time { raw: git_time { time: 1718093305, offset: 0, sign: 43 } }'
+      target:
+        id: 85ca09b7c21a2d64a69955438add9b0d06200384
+        parent_ids:
+        - 11495decd53fe5a11f376475e92c75df97ea8cbb
+        message: |
+          Revert "When checking whether an impl applies, constrain hidden types of opaque types."
+
+          This reverts commit 29a630eb72ffb94c3708947afae1e948ad3cb189.
+
+          (cherry picked from commit 6cca6da1265b9bede368f34da6be42057adc9834)
+        author: Oli Scherer <git-spam-no-reply9815368754983@oli-obk.de>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1718327652, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4b188d9d667dfcc7ba4caf95e56cbb3a6697f292
+        parent_ids:
+        - 1653a2d34a7f841f15b0704c7ce07c74dee2bada
+        message: |
+          Only compute specializes query if specialization is enabled in the crate of the specialized impl
+        author: Michael Goulet <michael@errs.io>
+        committer: Michael Goulet <michael@errs.io>
+        time: 'Time { raw: git_time { time: 1717790330, offset: -240, sign: 45 } }'
+      target:
+        id: 24c34cb31534a9308a2afc31893cf5c95b6744e0
+        parent_ids:
+        - 319b8c14818ed28f41017b00635c73362db48a2f
+        message: |
+          Only compute specializes query if specialization is enabled in the crate of the specialized impl
+
+          (cherry picked from commit 4b188d9d667dfcc7ba4caf95e56cbb3a6697f292)
+        author: Michael Goulet <michael@errs.io>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1718930693, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 64450732be8c3111360589e9f8c44eab83f449e0
+        parent_ids:
+        - 336e6ab3b396e1d1eb9b5a2f0bbc1744f4a68244
+        message: |
+          Add pub struct with allow(dead_code) into worklist
+        author: r0cky <mu001999@outlook.com>
+        committer: r0cky <mu001999@outlook.com>
+        time: 'Time { raw: git_time { time: 1718186300, offset: 480, sign: 43 } }'
+      target:
+        id: 303ab0fac481259dab0da7b492534e33fa9940af
+        parent_ids:
+        - 24c34cb31534a9308a2afc31893cf5c95b6744e0
+        message: |
+          Add pub struct with allow(dead_code) into worklist
+
+          (cherry picked from commit 64450732be8c3111360589e9f8c44eab83f449e0)
+        author: r0cky <mu001999@outlook.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1718931091, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 6e67eaa311c8e2992ccc64cf6a9e8f311a02a5d4
+        parent_ids:
+        - 3c4066d1126b7c0ed13da96639ca86ffc42ceea6
+        message: |
+          ast: Revert a breaking attribute visiting order change
+        author: Vadim Petrochenkov <vadim.petrochenkov@gmail.com>
+        committer: Vadim Petrochenkov <vadim.petrochenkov@gmail.com>
+        time: 'Time { raw: git_time { time: 1717008924, offset: 180, sign: 43 } }'
+      target:
+        id: 619e9abc7d44fcafa57eca90e6fef56cf490d617
+        parent_ids:
+        - d0b047410d18c8c370df72d6b1ba2da89958a67b
+        message: |
+          ast: Revert a breaking attribute visiting order change
+
+          (cherry picked from commit 6e67eaa311c8e2992ccc64cf6a9e8f311a02a5d4)
+        author: Vadim Petrochenkov <vadim.petrochenkov@gmail.com>
+        committer: Josh Stone <jistone@redhat.com>
+        time: 'Time { raw: git_time { time: 1717699295, offset: -420, sign: 45 } }'
+    is_trivial: true

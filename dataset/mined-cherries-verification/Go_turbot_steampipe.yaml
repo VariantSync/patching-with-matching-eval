@@ -1,0 +1,1115 @@
+- repo_name: turbot/steampipe
+  total_number_of_branches: '179'
+  language: Go
+  total_number_of_committers: '8'
+  total_number_of_results: '35'
+  total_number_of_commits: '4062'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 85c7d2d75811f0b9a5e6ecb08c717f94c9be08e0
+        parent_ids:
+        - 6cb04c6b5eb90641331e0435f62c6a5c54f67e01
+        message: "Bump @babel/traverse from 7.12.13 to 7.23.2 in /ui/dashboard (#3964)\n\nBumps [@babel/traverse](https://github.com/babel/babel/tree/HEAD/packages/babel-traverse) from 7.12.13 to 7.23.2.\r\n- [Release notes](https://github.com/babel/babel/releases)\r\n- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)\r\n- [Commits](https://github.com/babel/babel/commits/v7.23.2/packages/babel-traverse)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: \"@babel/traverse\"\r\n  dependency-type: indirect\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1698137663, offset: 60, sign: 43 } }'
+      target:
+        id: ef3eaf28d1ac310f7142e68040e0bb383b37df98
+        parent_ids:
+        - a4457be5c89b29bd32bcf51b1b8320c34bceb1f7
+        message: |
+          Bump @babel/traverse from 7.12.13 to 7.23.2 in /ui/dashboard (#3964)
+
+          Bumps [@babel/traverse](https://github.com/babel/babel/tree/HEAD/packages/babel-traverse) from 7.12.13 to 7.23.2.
+          - [Release notes](https://github.com/babel/babel/releases)
+          - [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
+          - [Commits](https://github.com/babel/babel/commits/v7.23.2/packages/babel-traverse)
+
+          ---
+          updated-dependencies:
+          - dependency-name: "@babel/traverse"
+            dependency-type: indirect
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 85c7d2d75811f0b9a5e6ecb08c717f94c9be08e0)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262514, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 427815b29ea5852d1591b70bb74e0d2d791b23fe
+        parent_ids:
+        - 85c7d2d75811f0b9a5e6ecb08c717f94c9be08e0
+        message: "[dep][go](deps): Bump golang.org/x/sync from 0.3.0 to 0.4.0 (#3949)\n\nBumps [golang.org/x/sync](https://github.com/golang/sync) from 0.3.0 to 0.4.0.\r\n- [Commits](https://github.com/golang/sync/compare/v0.3.0...v0.4.0)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: golang.org/x/sync\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-minor\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1698137726, offset: 60, sign: 43 } }'
+      target:
+        id: d27273f95f20b69be19f06489bb3ed09ffa805b4
+        parent_ids:
+        - ef3eaf28d1ac310f7142e68040e0bb383b37df98
+        message: |
+          [dep][go](deps): Bump golang.org/x/sync from 0.3.0 to 0.4.0 (#3949)
+
+          Bumps [golang.org/x/sync](https://github.com/golang/sync) from 0.3.0 to 0.4.0.
+          - [Commits](https://github.com/golang/sync/compare/v0.3.0...v0.4.0)
+
+          ---
+          updated-dependencies:
+          - dependency-name: golang.org/x/sync
+            dependency-type: direct:production
+            update-type: version-update:semver-minor
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 427815b29ea5852d1591b70bb74e0d2d791b23fe)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262514, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 41e8ce4adf05be4cb5185903b871a947d0650952
+        parent_ids:
+        - 7dd26f1cccbb1a83d57e2bb557483904aba87053
+        message: "[dep][go](deps): Bump github.com/jedib0t/go-pretty/v6 (#3950)\n\nBumps [github.com/jedib0t/go-pretty/v6](https://github.com/jedib0t/go-pretty) from 6.4.7 to 6.4.8.\r\n- [Release notes](https://github.com/jedib0t/go-pretty/releases)\r\n- [Commits](https://github.com/jedib0t/go-pretty/compare/v6.4.7...v6.4.8)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/jedib0t/go-pretty/v6\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-patch\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1697425558, offset: 60, sign: 43 } }'
+      target:
+        id: 57f16cd206e49ab04be147558a8a4d07bd0c370e
+        parent_ids:
+        - 6422086df63a1cc40110c7e33baf375d790805df
+        message: |
+          [dep][go](deps): Bump github.com/jedib0t/go-pretty/v6 (#3950)
+
+          Bumps [github.com/jedib0t/go-pretty/v6](https://github.com/jedib0t/go-pretty) from 6.4.7 to 6.4.8.
+          - [Release notes](https://github.com/jedib0t/go-pretty/releases)
+          - [Commits](https://github.com/jedib0t/go-pretty/compare/v6.4.7...v6.4.8)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/jedib0t/go-pretty/v6
+            dependency-type: direct:production
+            update-type: version-update:semver-patch
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 41e8ce4adf05be4cb5185903b871a947d0650952)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262513, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b1a57a9fe669bd0a5ee0de848be62a819015930e
+        parent_ids:
+        - 77e82a9ffd0cf2f9aa63f7b9016796d0813c4229
+        message: "[dep][go](deps): Bump github.com/turbot/steampipe-plugin-sdk/v5 (#3946)\n\nBumps [github.com/turbot/steampipe-plugin-sdk/v5](https://github.com/turbot/steampipe-plugin-sdk) from 5.6.1 to 5.6.2.\r\n- [Changelog](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md)\r\n- [Commits](https://github.com/turbot/steampipe-plugin-sdk/compare/v5.6.1...v5.6.2)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/turbot/steampipe-plugin-sdk/v5\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-patch\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1697425843, offset: 60, sign: 43 } }'
+      target:
+        id: 64ef4446b7f8f1b501f7a923fa1f3616db3c7d74
+        parent_ids:
+        - 88eae740197d8b2f8f45b9a2d66b5acd1202985e
+        message: |
+          [dep][go](deps): Bump github.com/turbot/steampipe-plugin-sdk/v5 (#3946)
+
+          Bumps [github.com/turbot/steampipe-plugin-sdk/v5](https://github.com/turbot/steampipe-plugin-sdk) from 5.6.1 to 5.6.2.
+          - [Changelog](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md)
+          - [Commits](https://github.com/turbot/steampipe-plugin-sdk/compare/v5.6.1...v5.6.2)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/turbot/steampipe-plugin-sdk/v5
+            dependency-type: direct:production
+            update-type: version-update:semver-patch
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit b1a57a9fe669bd0a5ee0de848be62a819015930e)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262513, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7102a1b917491640db5d2759053a43fa28c859e1
+        parent_ids:
+        - ca6cac5f7508bb84ab1d1837ea9dcda5a6511f85
+        message: "[dep][go](deps): Bump github.com/jackc/pgx/v5 from 5.4.3 to 5.5.0 (#3992)\n\nBumps [github.com/jackc/pgx/v5](https://github.com/jackc/pgx) from 5.4.3 to 5.5.0.\r\n- [Changelog](https://github.com/jackc/pgx/blob/master/CHANGELOG.md)\r\n- [Commits](https://github.com/jackc/pgx/compare/v5.4.3...v5.5.0)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/jackc/pgx/v5\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-minor\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1701253868, offset: 0, sign: 43 } }'
+      target:
+        id: d3bb82cb5a4ace0b693bc4b0b87e6c16e4411dc9
+        parent_ids:
+        - 0ed5bc9961dae0b17066280f21de7bdbbda8286f
+        message: |
+          [dep][go](deps): Bump github.com/jackc/pgx/v5 from 5.4.3 to 5.5.0 (#3992)
+
+          Bumps [github.com/jackc/pgx/v5](https://github.com/jackc/pgx) from 5.4.3 to 5.5.0.
+          - [Changelog](https://github.com/jackc/pgx/blob/master/CHANGELOG.md)
+          - [Commits](https://github.com/jackc/pgx/compare/v5.4.3...v5.5.0)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/jackc/pgx/v5
+            dependency-type: direct:production
+            update-type: version-update:semver-minor
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 7102a1b917491640db5d2759053a43fa28c859e1)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262519, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 337fa964fcd8d122913adb8db8d20ef39ead998d
+        parent_ids:
+        - 1046f47b8628e8b523dd702b58ff8ab29b80e058
+        message: "[dep][go](deps): Bump github.com/jedib0t/go-pretty/v6 (#3993)\n\nBumps [github.com/jedib0t/go-pretty/v6](https://github.com/jedib0t/go-pretty) from 6.4.8 to 6.4.9.\r\n- [Release notes](https://github.com/jedib0t/go-pretty/releases)\r\n- [Commits](https://github.com/jedib0t/go-pretty/compare/v6.4.8...v6.4.9)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/jedib0t/go-pretty/v6\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-patch\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1701192623, offset: 0, sign: 43 } }'
+      target:
+        id: 7b54b261c02762c2e2442b68e0a127d24e8bb19e
+        parent_ids:
+        - 8cfc176786a4e8c7a0603224b6aa71712f74b131
+        message: |
+          [dep][go](deps): Bump github.com/jedib0t/go-pretty/v6 (#3993)
+
+          Bumps [github.com/jedib0t/go-pretty/v6](https://github.com/jedib0t/go-pretty) from 6.4.8 to 6.4.9.
+          - [Release notes](https://github.com/jedib0t/go-pretty/releases)
+          - [Commits](https://github.com/jedib0t/go-pretty/compare/v6.4.8...v6.4.9)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/jedib0t/go-pretty/v6
+            dependency-type: direct:production
+            update-type: version-update:semver-patch
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 337fa964fcd8d122913adb8db8d20ef39ead998d)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262518, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 6a024894b54c83c5dd725e9ba234a4100744631d
+        parent_ids:
+        - 0fd34a632c24b103e737bcafe5fb9faedeb0393f
+        message: "Bump decode-uri-component from 0.2.0 to 0.2.2 in /ui/dashboard (#3876)\n\nBumps [decode-uri-component](https://github.com/SamVerschueren/decode-uri-component) from 0.2.0 to 0.2.2.\r\n- [Release notes](https://github.com/SamVerschueren/decode-uri-component/releases)\r\n- [Commits](https://github.com/SamVerschueren/decode-uri-component/compare/v0.2.0...v0.2.2)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: decode-uri-component\r\n  dependency-type: indirect\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700218242, offset: 0, sign: 43 } }'
+      target:
+        id: 628fce0a0dfdc0733bd73180bf29a021a4f8cffc
+        parent_ids:
+        - 9829c39c6e0f723943a269016eefe5c4b819fe13
+        message: |
+          Bump decode-uri-component from 0.2.0 to 0.2.2 in /ui/dashboard (#3876)
+
+          Bumps [decode-uri-component](https://github.com/SamVerschueren/decode-uri-component) from 0.2.0 to 0.2.2.
+          - [Release notes](https://github.com/SamVerschueren/decode-uri-component/releases)
+          - [Commits](https://github.com/SamVerschueren/decode-uri-component/compare/v0.2.0...v0.2.2)
+
+          ---
+          updated-dependencies:
+          - dependency-name: decode-uri-component
+            dependency-type: indirect
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 6a024894b54c83c5dd725e9ba234a4100744631d)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262515, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 93ac63ead8c2b32a8958b2f09a20cccb6058bef5
+        parent_ids:
+        - 427815b29ea5852d1591b70bb74e0d2d791b23fe
+        message: "[dep][go](deps): Bump github.com/containerd/containerd (#3967)\n\nBumps [github.com/containerd/containerd](https://github.com/containerd/containerd) from 1.7.6 to 1.7.7.\r\n- [Release notes](https://github.com/containerd/containerd/releases)\r\n- [Changelog](https://github.com/containerd/containerd/blob/main/RELEASES.md)\r\n- [Commits](https://github.com/containerd/containerd/compare/v1.7.6...v1.7.7)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/containerd/containerd\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-patch\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1698138119, offset: 60, sign: 43 } }'
+      target:
+        id: cfeb55610fd9a7679ff32c77a76bcaa8da1824f9
+        parent_ids:
+        - d27273f95f20b69be19f06489bb3ed09ffa805b4
+        message: |
+          [dep][go](deps): Bump github.com/containerd/containerd (#3967)
+
+          Bumps [github.com/containerd/containerd](https://github.com/containerd/containerd) from 1.7.6 to 1.7.7.
+          - [Release notes](https://github.com/containerd/containerd/releases)
+          - [Changelog](https://github.com/containerd/containerd/blob/main/RELEASES.md)
+          - [Commits](https://github.com/containerd/containerd/compare/v1.7.6...v1.7.7)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/containerd/containerd
+            dependency-type: direct:production
+            update-type: version-update:semver-patch
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 93ac63ead8c2b32a8958b2f09a20cccb6058bef5)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262514, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 737efa381b17f7b39122db144443bcb2c44372a1
+        parent_ids:
+        - b1a57a9fe669bd0a5ee0de848be62a819015930e
+        message: |+
+          Move hcl_helpers and type_conversion package to go-kit. Closes #3962
+
+        author: kaidaguerre <kai@turbot.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1697432505, offset: 60, sign: 43 } }'
+      target:
+        id: 79b66fb9fa253ac6a12163b08b5c0346e2cebcce
+        parent_ids:
+        - 64ef4446b7f8f1b501f7a923fa1f3616db3c7d74
+        message: |
+          Move hcl_helpers and type_conversion package to go-kit. Closes #3962
+
+          (cherry picked from commit 737efa381b17f7b39122db144443bcb2c44372a1)
+        author: kaidaguerre <kai@turbot.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262513, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9120777ee5e5b56a136a0038351670dc5a3f3bd2
+        parent_ids:
+        - 493831d4a36fa81960bfc9b5cbff0b99d5ac26bc
+        message: "[dep][go](deps): Bump google.golang.org/grpc from 1.58.2 to 1.59.0 (#3970)\n\nBumps [google.golang.org/grpc](https://github.com/grpc/grpc-go) from 1.58.2 to 1.59.0.\r\n- [Release notes](https://github.com/grpc/grpc-go/releases)\r\n- [Commits](https://github.com/grpc/grpc-go/compare/v1.58.2...v1.59.0)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: google.golang.org/grpc\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-minor\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700218621, offset: 0, sign: 43 } }'
+      target:
+        id: 1dc85e41355dffc5f3927d5242d779f9b0b37bbb
+        parent_ids:
+        - d8b88ba0bfa44f05e08d26213d5fe538053bfdd1
+        message: |
+          [dep][go](deps): Bump google.golang.org/grpc from 1.58.2 to 1.59.0 (#3970)
+
+          Bumps [google.golang.org/grpc](https://github.com/grpc/grpc-go) from 1.58.2 to 1.59.0.
+          - [Release notes](https://github.com/grpc/grpc-go/releases)
+          - [Commits](https://github.com/grpc/grpc-go/compare/v1.58.2...v1.59.0)
+
+          ---
+          updated-dependencies:
+          - dependency-name: google.golang.org/grpc
+            dependency-type: direct:production
+            update-type: version-update:semver-minor
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 9120777ee5e5b56a136a0038351670dc5a3f3bd2)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262517, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3116dce9fcf838e3d875600fad892b131cf2117f
+        parent_ids:
+        - 4fa11a424eefd37ec340f95dd63ceb71d7462ff1
+        message: |+
+          Fix plugin list empty table
+
+        author: Meet Rajesh Gor <40317114+Mr-Destructive@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1696013341, offset: 60, sign: 43 } }'
+      target:
+        id: 347fccc71e8296a0bf76afe787e0d80ec6cace82
+        parent_ids:
+        - 0199aaceca89d2be2259386d8c8ae3d0cb7001e8
+        message: |
+          Fix plugin list empty table
+
+          (cherry picked from commit 3116dce9fcf838e3d875600fad892b131cf2117f)
+        author: Meet Rajesh Gor <40317114+Mr-Destructive@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1696015208, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: aa993b1c9c5d121a2f16c7b6d29fe96832fcc8bd
+        parent_ids:
+        - 7102a1b917491640db5d2759053a43fa28c859e1
+        message: "[dep][actions](deps): Bump google-github-actions/auth from 1 to 2 (#4001)\n\nBumps [google-github-actions/auth](https://github.com/google-github-actions/auth) from 1 to 2.\r\n- [Release notes](https://github.com/google-github-actions/auth/releases)\r\n- [Changelog](https://github.com/google-github-actions/auth/blob/main/CHANGELOG.md)\r\n- [Commits](https://github.com/google-github-actions/auth/compare/v1...v2)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: google-github-actions/auth\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-major\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1701253930, offset: 0, sign: 43 } }'
+      target:
+        id: ec453ca5825927e8c1cd1ce8f8196ff20a691adb
+        parent_ids:
+        - d3bb82cb5a4ace0b693bc4b0b87e6c16e4411dc9
+        message: |
+          [dep][actions](deps): Bump google-github-actions/auth from 1 to 2 (#4001)
+
+          Bumps [google-github-actions/auth](https://github.com/google-github-actions/auth) from 1 to 2.
+          - [Release notes](https://github.com/google-github-actions/auth/releases)
+          - [Changelog](https://github.com/google-github-actions/auth/blob/main/CHANGELOG.md)
+          - [Commits](https://github.com/google-github-actions/auth/compare/v1...v2)
+
+          ---
+          updated-dependencies:
+          - dependency-name: google-github-actions/auth
+            dependency-type: direct:production
+            update-type: version-update:semver-major
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit aa993b1c9c5d121a2f16c7b6d29fe96832fcc8bd)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262519, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0fd34a632c24b103e737bcafe5fb9faedeb0393f
+        parent_ids:
+        - 31591fda08862f9f4df6daf17f16c76e14f834c3
+        message: "[dep][go](deps): Bump github.com/spf13/viper from 1.16.0 to 1.17.0 (#3966)\n\nBumps [github.com/spf13/viper](https://github.com/spf13/viper) from 1.16.0 to 1.17.0.\r\n- [Release notes](https://github.com/spf13/viper/releases)\r\n- [Commits](https://github.com/spf13/viper/compare/v1.16.0...v1.17.0)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/spf13/viper\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-minor\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1698139091, offset: 60, sign: 43 } }'
+      target:
+        id: 9829c39c6e0f723943a269016eefe5c4b819fe13
+        parent_ids:
+        - 0a2f43ea3105de67fd56e613b99cf031fcd3b96f
+        message: |
+          [dep][go](deps): Bump github.com/spf13/viper from 1.16.0 to 1.17.0 (#3966)
+
+          Bumps [github.com/spf13/viper](https://github.com/spf13/viper) from 1.16.0 to 1.17.0.
+          - [Release notes](https://github.com/spf13/viper/releases)
+          - [Commits](https://github.com/spf13/viper/compare/v1.16.0...v1.17.0)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/spf13/viper
+            dependency-type: direct:production
+            update-type: version-update:semver-minor
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 0fd34a632c24b103e737bcafe5fb9faedeb0393f)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262515, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ca6cac5f7508bb84ab1d1837ea9dcda5a6511f85
+        parent_ids:
+        - f4e118f6be0152765e9b9ac8911d965f86c55260
+        message: "[dep][go](deps): Bump oras.land/oras-go/v2 from 2.3.0 to 2.3.1 (#3999)\n\nBumps [oras.land/oras-go/v2](https://github.com/oras-project/oras-go) from 2.3.0 to 2.3.1.\r\n- [Release notes](https://github.com/oras-project/oras-go/releases)\r\n- [Commits](https://github.com/oras-project/oras-go/compare/v2.3.0...v2.3.1)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: oras.land/oras-go/v2\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-patch\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1701253856, offset: 0, sign: 43 } }'
+      target:
+        id: 0ed5bc9961dae0b17066280f21de7bdbbda8286f
+        parent_ids:
+        - ab60ed63fd901ab334b963792af40336b69a27d4
+        message: |
+          [dep][go](deps): Bump oras.land/oras-go/v2 from 2.3.0 to 2.3.1 (#3999)
+
+          Bumps [oras.land/oras-go/v2](https://github.com/oras-project/oras-go) from 2.3.0 to 2.3.1.
+          - [Release notes](https://github.com/oras-project/oras-go/releases)
+          - [Commits](https://github.com/oras-project/oras-go/compare/v2.3.0...v2.3.1)
+
+          ---
+          updated-dependencies:
+          - dependency-name: oras.land/oras-go/v2
+            dependency-type: direct:production
+            update-type: version-update:semver-patch
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit ca6cac5f7508bb84ab1d1837ea9dcda5a6511f85)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262519, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d26699b33285186dc9df3f82b1b7af3b3e06f818
+        parent_ids:
+        - 8ddf26db60cd414597a90a911627739a1450f14d
+        message: "[dep][go](deps): Bump golang.org/x/net from 0.15.0 to 0.17.0 (#3957)\n\nBumps [golang.org/x/net](https://github.com/golang/net) from 0.15.0 to 0.17.0.\r\n- [Commits](https://github.com/golang/net/compare/v0.15.0...v0.17.0)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: golang.org/x/net\r\n  dependency-type: indirect\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1697425482, offset: 60, sign: 43 } }'
+      target:
+        id: 89ac5c6c221aaaac6838f406002878e6d2ed4476
+        parent_ids:
+        - d1917fa6959e13eac470dee6b1b93da9cba35369
+        message: |
+          [dep][go](deps): Bump golang.org/x/net from 0.15.0 to 0.17.0 (#3957)
+
+          Bumps [golang.org/x/net](https://github.com/golang/net) from 0.15.0 to 0.17.0.
+          - [Commits](https://github.com/golang/net/compare/v0.15.0...v0.17.0)
+
+          ---
+          updated-dependencies:
+          - dependency-name: golang.org/x/net
+            dependency-type: indirect
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit d26699b33285186dc9df3f82b1b7af3b3e06f818)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262513, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 493831d4a36fa81960bfc9b5cbff0b99d5ac26bc
+        parent_ids:
+        - 2f758a0a677494645b2c6a4cda3105df7c7cf8f7
+        message: "[dep][go](deps): Bump github.com/oras-project/oras-credentials-go (#3978)\n\nBumps [github.com/oras-project/oras-credentials-go](https://github.com/oras-project/oras-credentials-go) from 0.3.0 to 0.3.1.\r\n- [Release notes](https://github.com/oras-project/oras-credentials-go/releases)\r\n- [Commits](https://github.com/oras-project/oras-credentials-go/compare/v0.3.0...v0.3.1)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/oras-project/oras-credentials-go\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-patch\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700218599, offset: 0, sign: 43 } }'
+      target:
+        id: d8b88ba0bfa44f05e08d26213d5fe538053bfdd1
+        parent_ids:
+        - b1785a6fad530149836d6bb2b78a7e5031deba16
+        message: |
+          [dep][go](deps): Bump github.com/oras-project/oras-credentials-go (#3978)
+
+          Bumps [github.com/oras-project/oras-credentials-go](https://github.com/oras-project/oras-credentials-go) from 0.3.0 to 0.3.1.
+          - [Release notes](https://github.com/oras-project/oras-credentials-go/releases)
+          - [Commits](https://github.com/oras-project/oras-credentials-go/compare/v0.3.0...v0.3.1)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/oras-project/oras-credentials-go
+            dependency-type: direct:production
+            update-type: version-update:semver-patch
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 493831d4a36fa81960bfc9b5cbff0b99d5ac26bc)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262517, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: be2f04e0edcdcad08f83a29b39ff62b93b77f64e
+        parent_ids:
+        - 337fa964fcd8d122913adb8db8d20ef39ead998d
+        message: "[dep][go](deps): Bump github.com/fatih/color from 1.15.0 to 1.16.0 (#4000)\n\nBumps [github.com/fatih/color](https://github.com/fatih/color) from 1.15.0 to 1.16.0.\r\n- [Release notes](https://github.com/fatih/color/releases)\r\n- [Commits](https://github.com/fatih/color/compare/v1.15.0...v1.16.0)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/fatih/color\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-minor\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1701252913, offset: 0, sign: 43 } }'
+      target:
+        id: ab60ed63fd901ab334b963792af40336b69a27d4
+        parent_ids:
+        - 7b54b261c02762c2e2442b68e0a127d24e8bb19e
+        message: |
+          [dep][go](deps): Bump github.com/fatih/color from 1.15.0 to 1.16.0 (#4000)
+
+          Bumps [github.com/fatih/color](https://github.com/fatih/color) from 1.15.0 to 1.16.0.
+          - [Release notes](https://github.com/fatih/color/releases)
+          - [Commits](https://github.com/fatih/color/compare/v1.15.0...v1.16.0)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/fatih/color
+            dependency-type: direct:production
+            update-type: version-update:semver-minor
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit be2f04e0edcdcad08f83a29b39ff62b93b77f64e)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262519, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 77e82a9ffd0cf2f9aa63f7b9016796d0813c4229
+        parent_ids:
+        - 2c6493589ae12d479ed43aaf16d396e9daf9a4ac
+        message: "[dep][go](deps): Bump github.com/otiai10/copy from 1.12.0 to 1.14.0 (#3940)\n\nBumps [github.com/otiai10/copy](https://github.com/otiai10/copy) from 1.12.0 to 1.14.0.\r\n- [Release notes](https://github.com/otiai10/copy/releases)\r\n- [Commits](https://github.com/otiai10/copy/compare/v1.12.0...v1.14.0)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/otiai10/copy\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-minor\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1697425733, offset: 60, sign: 43 } }'
+      target:
+        id: 88eae740197d8b2f8f45b9a2d66b5acd1202985e
+        parent_ids:
+        - 72fba5ff60e6485e17e015d92d165dd71be9adfe
+        message: |
+          [dep][go](deps): Bump github.com/otiai10/copy from 1.12.0 to 1.14.0 (#3940)
+
+          Bumps [github.com/otiai10/copy](https://github.com/otiai10/copy) from 1.12.0 to 1.14.0.
+          - [Release notes](https://github.com/otiai10/copy/releases)
+          - [Commits](https://github.com/otiai10/copy/compare/v1.12.0...v1.14.0)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/otiai10/copy
+            dependency-type: direct:production
+            update-type: version-update:semver-minor
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 77e82a9ffd0cf2f9aa63f7b9016796d0813c4229)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262513, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 31591fda08862f9f4df6daf17f16c76e14f834c3
+        parent_ids:
+        - 93ac63ead8c2b32a8958b2f09a20cccb6058bef5
+        message: "[dep][go](deps): Bump github.com/hashicorp/hcl/v2 from 2.18.1 to 2.19.1 (#3971)\n\nBumps [github.com/hashicorp/hcl/v2](https://github.com/hashicorp/hcl) from 2.18.1 to 2.19.1.\r\n- [Release notes](https://github.com/hashicorp/hcl/releases)\r\n- [Changelog](https://github.com/hashicorp/hcl/blob/main/CHANGELOG.md)\r\n- [Commits](https://github.com/hashicorp/hcl/compare/v2.18.1...v2.19.1)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/hashicorp/hcl/v2\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-minor\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1698138156, offset: 60, sign: 43 } }'
+      target:
+        id: 0a2f43ea3105de67fd56e613b99cf031fcd3b96f
+        parent_ids:
+        - cfeb55610fd9a7679ff32c77a76bcaa8da1824f9
+        message: |
+          [dep][go](deps): Bump github.com/hashicorp/hcl/v2 from 2.18.1 to 2.19.1 (#3971)
+
+          Bumps [github.com/hashicorp/hcl/v2](https://github.com/hashicorp/hcl) from 2.18.1 to 2.19.1.
+          - [Release notes](https://github.com/hashicorp/hcl/releases)
+          - [Changelog](https://github.com/hashicorp/hcl/blob/main/CHANGELOG.md)
+          - [Commits](https://github.com/hashicorp/hcl/compare/v2.18.1...v2.19.1)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/hashicorp/hcl/v2
+            dependency-type: direct:production
+            update-type: version-update:semver-minor
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 31591fda08862f9f4df6daf17f16c76e14f834c3)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262514, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4fa11a424eefd37ec340f95dd63ceb71d7462ff1
+        parent_ids:
+        - e9b0a0a2b84376869f2230aba8b2e948ef481ba8
+        message: "Add function to clear connection cache. Closes #3937 \n\n* Add function to clear connection cache. \r\n* Update FDW to v1.9.0 - Add ability to clear connection cache by inserting into settings table.\r\n* Update plugin sdk to v5.6.1\r\n* fix listen unit tests"
+        author: kaidaguerre <kai@turbot.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1696013297, offset: 60, sign: 43 } }'
+      target:
+        id: 0199aaceca89d2be2259386d8c8ae3d0cb7001e8
+        parent_ids:
+        - 8c3005a269c7eb6ad636b7c38f8e3e61b2775967
+        message: |
+          Add function to clear connection cache. Closes #3937
+
+          * Add function to clear connection cache.
+          * Update FDW to v1.9.0 - Add ability to clear connection cache by inserting into settings table.
+          * Update plugin sdk to v5.6.1
+          * fix listen unit tests
+
+          (cherry picked from commit 4fa11a424eefd37ec340f95dd63ceb71d7462ff1)
+        author: kaidaguerre <kai@turbot.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1696015208, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0bd6e341b47a88f550f8f6772cf02f5e5e5d6e65
+        parent_ids:
+        - 7ee38cf616ce4a3ae47b15dc0b0054240d211faf
+        message: "[dep][go](deps): Bump sigs.k8s.io/yaml from 1.3.0 to 1.4.0 (#3977)\n\nBumps [sigs.k8s.io/yaml](https://github.com/kubernetes-sigs/yaml) from 1.3.0 to 1.4.0.\r\n- [Release notes](https://github.com/kubernetes-sigs/yaml/releases)\r\n- [Changelog](https://github.com/kubernetes-sigs/yaml/blob/master/RELEASE.md)\r\n- [Commits](https://github.com/kubernetes-sigs/yaml/compare/v1.3.0...v1.4.0)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: sigs.k8s.io/yaml\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-minor\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700218555, offset: 0, sign: 43 } }'
+      target:
+        id: 1787ae2c46e01f3457b0ce5a2fc511d5001ba69d
+        parent_ids:
+        - b154dca51eea2beb8783869ac455a4fffdd2dbee
+        message: |
+          [dep][go](deps): Bump sigs.k8s.io/yaml from 1.3.0 to 1.4.0 (#3977)
+
+          Bumps [sigs.k8s.io/yaml](https://github.com/kubernetes-sigs/yaml) from 1.3.0 to 1.4.0.
+          - [Release notes](https://github.com/kubernetes-sigs/yaml/releases)
+          - [Changelog](https://github.com/kubernetes-sigs/yaml/blob/master/RELEASE.md)
+          - [Commits](https://github.com/kubernetes-sigs/yaml/compare/v1.3.0...v1.4.0)
+
+          ---
+          updated-dependencies:
+          - dependency-name: sigs.k8s.io/yaml
+            dependency-type: direct:production
+            update-type: version-update:semver-minor
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 0bd6e341b47a88f550f8f6772cf02f5e5e5d6e65)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262516, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1079ba7083cfeaf3b07b5a0236d42989d418c542
+        parent_ids:
+        - f63ff547412218c94c8e8a1369b6936644112457
+        message: "Fix growing memory usage following file watching events when running dashboard server. Closes #4150 \n\n"
+        author: kaidaguerre <kai@turbot.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1708694355, offset: 0, sign: 43 } }'
+      target:
+        id: 559f420a14c96bd29821c28a2c4e51de39d0a463
+        parent_ids:
+        - 952ff4c6744a8402f3576644d57705843080cb7e
+        message: |
+          Fix growing memory usage following file watching events when running dashboard server. Closes #4150
+
+          (cherry picked from commit 1079ba7083cfeaf3b07b5a0236d42989d418c542)
+        author: kaidaguerre <kai@turbot.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1708694454, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 12079986d5f6b6abc7141a72fddc359615089e2a
+        parent_ids:
+        - b777d1e11c497fc12970d82e673115c738371d45
+        message: |+
+          Add `steampipe_plugin_column` introspection table to internal schema. Closes #4003
+
+        author: kaidaguerre <kai@turbot.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1701262152, offset: 0, sign: 43 } }'
+      target:
+        id: 46ef6ec90a3cba951b9654cd52c1035f4d7b87f2
+        parent_ids:
+        - 88f6eff30ee0f63f11e2f4348c66b6cf970e9c93
+        message: |
+          Add `steampipe_plugin_column` introspection table to internal schema. Closes #4003
+
+          (cherry picked from commit 12079986d5f6b6abc7141a72fddc359615089e2a)
+        author: kaidaguerre <kai@turbot.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262521, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7ee38cf616ce4a3ae47b15dc0b0054240d211faf
+        parent_ids:
+        - e55a9c23f6293174de8247971607c6f64d4c51e8
+        message: "[dep][go](deps): Bump github.com/fsnotify/fsnotify from 1.6.0 to 1.7.0 (#3975)\n\nBumps [github.com/fsnotify/fsnotify](https://github.com/fsnotify/fsnotify) from 1.6.0 to 1.7.0.\r\n- [Release notes](https://github.com/fsnotify/fsnotify/releases)\r\n- [Changelog](https://github.com/fsnotify/fsnotify/blob/main/CHANGELOG.md)\r\n- [Commits](https://github.com/fsnotify/fsnotify/compare/v1.6.0...v1.7.0)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/fsnotify/fsnotify\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-minor\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700218534, offset: 0, sign: 43 } }'
+      target:
+        id: b154dca51eea2beb8783869ac455a4fffdd2dbee
+        parent_ids:
+        - 9f16178c33ab4f3115f889955f5ebc556290df58
+        message: |
+          [dep][go](deps): Bump github.com/fsnotify/fsnotify from 1.6.0 to 1.7.0 (#3975)
+
+          Bumps [github.com/fsnotify/fsnotify](https://github.com/fsnotify/fsnotify) from 1.6.0 to 1.7.0.
+          - [Release notes](https://github.com/fsnotify/fsnotify/releases)
+          - [Changelog](https://github.com/fsnotify/fsnotify/blob/main/CHANGELOG.md)
+          - [Commits](https://github.com/fsnotify/fsnotify/compare/v1.6.0...v1.7.0)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/fsnotify/fsnotify
+            dependency-type: direct:production
+            update-type: version-update:semver-minor
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 7ee38cf616ce4a3ae47b15dc0b0054240d211faf)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262516, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b777d1e11c497fc12970d82e673115c738371d45
+        parent_ids:
+        - aa993b1c9c5d121a2f16c7b6d29fe96832fcc8bd
+        message: "[dep][go](deps): Bump golang.org/x/sync from 0.4.0 to 0.5.0 (#3990)\n\nBumps [golang.org/x/sync](https://github.com/golang/sync) from 0.4.0 to 0.5.0.\r\n- [Commits](https://github.com/golang/sync/compare/v0.4.0...v0.5.0)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: golang.org/x/sync\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-minor\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1701253953, offset: 0, sign: 43 } }'
+      target:
+        id: 88f6eff30ee0f63f11e2f4348c66b6cf970e9c93
+        parent_ids:
+        - ec453ca5825927e8c1cd1ce8f8196ff20a691adb
+        message: |
+          [dep][go](deps): Bump golang.org/x/sync from 0.4.0 to 0.5.0 (#3990)
+
+          Bumps [golang.org/x/sync](https://github.com/golang/sync) from 0.4.0 to 0.5.0.
+          - [Commits](https://github.com/golang/sync/compare/v0.4.0...v0.5.0)
+
+          ---
+          updated-dependencies:
+          - dependency-name: golang.org/x/sync
+            dependency-type: direct:production
+            update-type: version-update:semver-minor
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit b777d1e11c497fc12970d82e673115c738371d45)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262520, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e55a9c23f6293174de8247971607c6f64d4c51e8
+        parent_ids:
+        - b00ef4e770a7c599da6f89a9f08807a6397ba283
+        message: "Fix custom registries bugs (#3960)\n\n* Add tests on TestGetOrgNameAndStream\r\n\r\n* Fix multiple bugs related to plugins installed from other registries\r\n\r\n- the documentation link was not correct\r\n- the uninstall message was not correct\r\n- checking requirements on mods was always failing"
+        author: François de Metz <francois@2metz.fr>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700218489, offset: 0, sign: 43 } }'
+      target:
+        id: 9f16178c33ab4f3115f889955f5ebc556290df58
+        parent_ids:
+        - f13eaf4e42a65f087e5a8d786f214ba7c6cdef35
+        message: |
+          Fix custom registries bugs (#3960)
+
+          * Add tests on TestGetOrgNameAndStream
+
+          * Fix multiple bugs related to plugins installed from other registries
+
+          - the documentation link was not correct
+          - the uninstall message was not correct
+          - checking requirements on mods was always failing
+
+          (cherry picked from commit e55a9c23f6293174de8247971607c6f64d4c51e8)
+        author: François de Metz <francois@2metz.fr>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262515, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 34b089d42792d5800523a3160f8419e8a4856944
+        parent_ids:
+        - 9120777ee5e5b56a136a0038351670dc5a3f3bd2
+        message: |+
+          Clean up apt temporary files in Dockerfile (#3982)
+
+        author: Peter Dave Hello <hsu@peterdavehello.org>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700220141, offset: 0, sign: 43 } }'
+      target:
+        id: 7089a86249aad08139898ae2bfc49b4f9b25b60f
+        parent_ids:
+        - 1dc85e41355dffc5f3927d5242d779f9b0b37bbb
+        message: |
+          Clean up apt temporary files in Dockerfile (#3982)
+
+          (cherry picked from commit 34b089d42792d5800523a3160f8419e8a4856944)
+        author: Peter Dave Hello <hsu@peterdavehello.org>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262518, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b00ef4e770a7c599da6f89a9f08807a6397ba283
+        parent_ids:
+        - 6a024894b54c83c5dd725e9ba234a4100744631d
+        message: "Bump terser from 4.8.0 to 4.8.1 in /ui/dashboard (#3877)\n\nBumps [terser](https://github.com/terser/terser) from 4.8.0 to 4.8.1.\r\n- [Changelog](https://github.com/terser/terser/blob/master/CHANGELOG.md)\r\n- [Commits](https://github.com/terser/terser/compare/v4.8.0...v4.8.1)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: terser\r\n  dependency-type: indirect\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700218259, offset: 0, sign: 43 } }'
+      target:
+        id: f13eaf4e42a65f087e5a8d786f214ba7c6cdef35
+        parent_ids:
+        - 628fce0a0dfdc0733bd73180bf29a021a4f8cffc
+        message: |
+          Bump terser from 4.8.0 to 4.8.1 in /ui/dashboard (#3877)
+
+          Bumps [terser](https://github.com/terser/terser) from 4.8.0 to 4.8.1.
+          - [Changelog](https://github.com/terser/terser/blob/master/CHANGELOG.md)
+          - [Commits](https://github.com/terser/terser/compare/v4.8.0...v4.8.1)
+
+          ---
+          updated-dependencies:
+          - dependency-name: terser
+            dependency-type: indirect
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit b00ef4e770a7c599da6f89a9f08807a6397ba283)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262515, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2c6493589ae12d479ed43aaf16d396e9daf9a4ac
+        parent_ids:
+        - 41e8ce4adf05be4cb5185903b871a947d0650952
+        message: "[dep][go](deps): Bump github.com/hashicorp/hcl/v2 from 2.18.0 to 2.18.1 (#3948)\n\nBumps [github.com/hashicorp/hcl/v2](https://github.com/hashicorp/hcl) from 2.18.0 to 2.18.1.\r\n- [Release notes](https://github.com/hashicorp/hcl/releases)\r\n- [Changelog](https://github.com/hashicorp/hcl/blob/main/CHANGELOG.md)\r\n- [Commits](https://github.com/hashicorp/hcl/compare/v2.18.0...v2.18.1)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/hashicorp/hcl/v2\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-patch\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1697425580, offset: 60, sign: 43 } }'
+      target:
+        id: 72fba5ff60e6485e17e015d92d165dd71be9adfe
+        parent_ids:
+        - 57f16cd206e49ab04be147558a8a4d07bd0c370e
+        message: |
+          [dep][go](deps): Bump github.com/hashicorp/hcl/v2 from 2.18.0 to 2.18.1 (#3948)
+
+          Bumps [github.com/hashicorp/hcl/v2](https://github.com/hashicorp/hcl) from 2.18.0 to 2.18.1.
+          - [Release notes](https://github.com/hashicorp/hcl/releases)
+          - [Changelog](https://github.com/hashicorp/hcl/blob/main/CHANGELOG.md)
+          - [Commits](https://github.com/hashicorp/hcl/compare/v2.18.0...v2.18.1)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/hashicorp/hcl/v2
+            dependency-type: direct:production
+            update-type: version-update:semver-patch
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 2c6493589ae12d479ed43aaf16d396e9daf9a4ac)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262513, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: fa693b86d9cb04033fb256531777606a56b4d726
+        parent_ids:
+        - 12079986d5f6b6abc7141a72fddc359615089e2a
+        message: |
+          v0.21.2-rc.0
+        author: kai <kai@turbot.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262306, offset: 0, sign: 43 } }'
+      target:
+        id: dfa3b67951fc75f270b09b73d70cb65b435fa920
+        parent_ids:
+        - 46ef6ec90a3cba951b9654cd52c1035f4d7b87f2
+        message: |
+          v0.21.2-rc.0
+
+          (cherry picked from commit fa693b86d9cb04033fb256531777606a56b4d726)
+        author: kai <kai@turbot.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262521, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 8ddf26db60cd414597a90a911627739a1450f14d
+        parent_ids:
+        - fd45e101f9b1bb626a60263b58ebff7019ed83c3
+        message: |+
+          chore: slice loop replace (#3958)
+
+        author: guangwu <guoguangwu@magic-shield.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1697425370, offset: 60, sign: 43 } }'
+      target:
+        id: d1917fa6959e13eac470dee6b1b93da9cba35369
+        parent_ids:
+        - 77e6bd2d7c616854e6f3646664157ca9a3359093
+        message: |
+          chore: slice loop replace (#3958)
+
+          (cherry picked from commit 8ddf26db60cd414597a90a911627739a1450f14d)
+        author: guangwu <guoguangwu@magic-shield.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262513, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7dd26f1cccbb1a83d57e2bb557483904aba87053
+        parent_ids:
+        - d26699b33285186dc9df3f82b1b7af3b3e06f818
+        message: |+
+          Fix  typo in errors.go, `--all` is a flag in the update command.
+
+        author: Antonio Maradiaga <antonio@maradiaga.es>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1697425540, offset: 60, sign: 43 } }'
+      target:
+        id: 6422086df63a1cc40110c7e33baf375d790805df
+        parent_ids:
+        - 89ac5c6c221aaaac6838f406002878e6d2ed4476
+        message: |
+          Fix  typo in errors.go, `--all` is a flag in the update command.
+
+          (cherry picked from commit 7dd26f1cccbb1a83d57e2bb557483904aba87053)
+        author: Antonio Maradiaga <antonio@maradiaga.es>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262513, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2f758a0a677494645b2c6a4cda3105df7c7cf8f7
+        parent_ids:
+        - 0bd6e341b47a88f550f8f6772cf02f5e5e5d6e65
+        message: "Bump browserify-sign from 4.2.1 to 4.2.2 in /ui/dashboard (#3981)\n\nBumps [browserify-sign](https://github.com/crypto-browserify/browserify-sign) from 4.2.1 to 4.2.2.\r\n- [Changelog](https://github.com/browserify/browserify-sign/blob/main/CHANGELOG.md)\r\n- [Commits](https://github.com/crypto-browserify/browserify-sign/compare/v4.2.1...v4.2.2)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: browserify-sign\r\n  dependency-type: indirect\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700218580, offset: 0, sign: 43 } }'
+      target:
+        id: b1785a6fad530149836d6bb2b78a7e5031deba16
+        parent_ids:
+        - 1787ae2c46e01f3457b0ce5a2fc511d5001ba69d
+        message: |
+          Bump browserify-sign from 4.2.1 to 4.2.2 in /ui/dashboard (#3981)
+
+          Bumps [browserify-sign](https://github.com/crypto-browserify/browserify-sign) from 4.2.1 to 4.2.2.
+          - [Changelog](https://github.com/browserify/browserify-sign/blob/main/CHANGELOG.md)
+          - [Commits](https://github.com/crypto-browserify/browserify-sign/compare/v4.2.1...v4.2.2)
+
+          ---
+          updated-dependencies:
+          - dependency-name: browserify-sign
+            dependency-type: indirect
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 2f758a0a677494645b2c6a4cda3105df7c7cf8f7)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262516, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 6cb04c6b5eb90641331e0435f62c6a5c54f67e01
+        parent_ids:
+        - 737efa381b17f7b39122db144443bcb2c44372a1
+        message: |+
+          Fixes issue where a query would return 'null' for an empty resultset when output is set to json in 'query'. Closes #3955 (#3959)
+
+        author: Meet Rajesh Gor <40317114+Mr-Destructive@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1697536533, offset: 330, sign: 43 } }'
+      target:
+        id: a4457be5c89b29bd32bcf51b1b8320c34bceb1f7
+        parent_ids:
+        - 79b66fb9fa253ac6a12163b08b5c0346e2cebcce
+        message: |
+          Fixes issue where a query would return 'null' for an empty resultset when output is set to json in 'query'. Closes #3955 (#3959)
+
+          (cherry picked from commit 6cb04c6b5eb90641331e0435f62c6a5c54f67e01)
+        author: Meet Rajesh Gor <40317114+Mr-Destructive@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262513, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1046f47b8628e8b523dd702b58ff8ab29b80e058
+        parent_ids:
+        - 34b089d42792d5800523a3160f8419e8a4856944
+        message: "[dep][go](deps): Bump github.com/go-git/go-git/v5 from 5.9.0 to 5.10.1 (#3998)\n\nBumps [github.com/go-git/go-git/v5](https://github.com/go-git/go-git) from 5.9.0 to 5.10.1.\r\n- [Release notes](https://github.com/go-git/go-git/releases)\r\n- [Commits](https://github.com/go-git/go-git/compare/v5.9.0...v5.10.1)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: github.com/go-git/go-git/v5\r\n  dependency-type: direct:production\r\n  update-type: version-update:semver-minor\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1701166437, offset: 0, sign: 43 } }'
+      target:
+        id: 8cfc176786a4e8c7a0603224b6aa71712f74b131
+        parent_ids:
+        - 7089a86249aad08139898ae2bfc49b4f9b25b60f
+        message: |
+          [dep][go](deps): Bump github.com/go-git/go-git/v5 from 5.9.0 to 5.10.1 (#3998)
+
+          Bumps [github.com/go-git/go-git/v5](https://github.com/go-git/go-git) from 5.9.0 to 5.10.1.
+          - [Release notes](https://github.com/go-git/go-git/releases)
+          - [Commits](https://github.com/go-git/go-git/compare/v5.9.0...v5.10.1)
+
+          ---
+          updated-dependencies:
+          - dependency-name: github.com/go-git/go-git/v5
+            dependency-type: direct:production
+            update-type: version-update:semver-minor
+          ...
+
+          Signed-off-by: dependabot[bot] <support@github.com>
+          Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+          (cherry picked from commit 1046f47b8628e8b523dd702b58ff8ab29b80e058)
+        author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+        committer: kai <kai@turbot.com>
+        time: 'Time { raw: git_time { time: 1701262518, offset: 0, sign: 43 } }'
+    is_trivial: true

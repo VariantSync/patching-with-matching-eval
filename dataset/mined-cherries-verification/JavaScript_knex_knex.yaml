@@ -1,0 +1,465 @@
+- total_number_of_results: '19'
+  language: JavaScript
+  total_number_of_branches: '31'
+  repo_name: knex/knex
+  total_number_of_committers: '182'
+  total_number_of_commits: '2787'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a8a074bed46cf5c3779e7e08885355ec2ffa70a7
+        parent_ids:
+        - 82361d12c1383fdb5ecd8ff9fe72d2b9f1d8763c
+        message: |+
+          Add types for `.distinctOn` (#3784)
+
+        author: Victor Andrée <victor.andree@advinans.se>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1586970102, offset: 120, sign: 43 } }'
+      target:
+        id: ef3ba0170403795fe93abf3a5fa386fe1b7f6aaa
+        parent_ids:
+        - ce20afdf18e30eb8fea998dda44e56b6d69020b5
+        message: |
+          Add types for `.distinctOn` (#3784)
+
+          (cherry picked from commit a8a074bed46cf5c3779e7e08885355ec2ffa70a7)
+        author: Victor Andrée <victor.andree@advinans.se>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586990911, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e552fbda78ba9e84c58ca15e5901f0941a15b087
+        parent_ids:
+        - 078b749892f30d445292257bc6ecc61ae6abf7fc
+        message: |+
+          Make protocol length check more defensive (#3744)
+
+        author: Igor Savin <iselwin@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1584917502, offset: 60, sign: 43 } }'
+      target:
+        id: 7c38d2be7d2451cd84b5b0e251149f30e47966d4
+        parent_ids:
+        - 73cd4344c6a3d5f166934701c9997937b6486de9
+        message: |
+          Make protocol length check more defensive (#3744)
+
+          (cherry picked from commit e552fbda78ba9e84c58ca15e5901f0941a15b087)
+        author: Igor Savin <iselwin@gmail.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1584917647, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 540ab8c020e572581b1db9898b1e21ba1da32923
+        parent_ids:
+        - f2f858111c6f5641ee2cc5e94d380454e418a1aa
+        message: |+
+          Insert lock row fix during migration (#4865)
+
+        author: Olivier Cavadenti <olivier.cavadenti@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1638315678, offset: 60, sign: 43 } }'
+      target:
+        id: 6ef46450f69b291eff6b26bca1427f8f4c12f817
+        parent_ids:
+        - 54934babbee0031485d8c7543080b9bfb6b46500
+        message: |-
+          Insert lock row fix during migration (#4865)
+
+          (cherry picked from commit 540ab8c020e572581b1db9898b1e21ba1da32923)
+        author: Olivier Cavadenti <olivier.cavadenti@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1638523326, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1fcc40d86860844075408622bde7bac07af437bd
+        parent_ids:
+        - 7568ab51c4d6cc176cc9dcf86ae616545f705ac6
+        message: |+
+          `interface Knex` and `function Knex` should have the same types (#3787)
+
+        author: Tanguy Krotoff <tkrotoff@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1586715147, offset: 120, sign: 43 } }'
+      target:
+        id: 142807c973390f581f136e74f8d883a32c1d31eb
+        parent_ids:
+        - 8961b21b0598bfc35ac3d8cf19bd348411ba8c26
+        message: |
+          `interface Knex` and `function Knex` should have the same types (#3787)
+
+          (cherry picked from commit 1fcc40d86860844075408622bde7bac07af437bd)
+        author: Tanguy Krotoff <tkrotoff@gmail.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586792209, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 336b41e148c07174b68c2f2d81097628872ab400
+        parent_ids:
+        - ea92e94f023e27cb8674ad8aaa4d13687277c011
+        message: |+
+          Add clearGroup method (#3771)
+
+        author: Edvaldo Szymonek <edvaldoszy@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1586732991, offset: 120, sign: 43 } }'
+      target:
+        id: 6111ccccce7bb4caaa045d266d4e31840594f404
+        parent_ids:
+        - 142807c973390f581f136e74f8d883a32c1d31eb
+        message: |
+          Add clearGroup method (#3771)
+
+          (cherry picked from commit 336b41e148c07174b68c2f2d81097628872ab400)
+        author: Edvaldo Szymonek <edvaldoszy@gmail.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586792209, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 89bd0a034fc22413a1f8328bb09193d0a1b5d113
+        parent_ids:
+        - fdad316f01b15a25276effb30c304abdbd4e88ee
+        message: |+
+          Mysql2 validate connection fix #4794 (#4812)
+
+        author: Olivier Cavadenti <olivier.cavadenti@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1636405954, offset: 60, sign: 43 } }'
+      target:
+        id: 337178fbff78bfd8a138138a93266d88edab6c5e
+        parent_ids:
+        - 29ac476b2bfe7593118da2884fae23a2e6004414
+        message: |
+          Mysql2 validate connection fix #4794 (#4812)
+
+          (cherry picked from commit 89bd0a034fc22413a1f8328bb09193d0a1b5d113)
+        author: Olivier Cavadenti <olivier.cavadenti@gmail.com>
+        committer: Olivier Cavadenti <olivier.cavadenti@gmail.com>
+        time: 'Time { raw: git_time { time: 1636406208, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 82361d12c1383fdb5ecd8ff9fe72d2b9f1d8763c
+        parent_ids:
+        - 336b41e148c07174b68c2f2d81097628872ab400
+        message: |+
+          Fix minor issues around typings (#3765)
+
+        author: Lorefnon <lorefnon@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1586733096, offset: 120, sign: 43 } }'
+      target:
+        id: c4c527a4408d0716c5a32c004b0b9605b646154b
+        parent_ids:
+        - 6111ccccce7bb4caaa045d266d4e31840594f404
+        message: |
+          Fix minor issues around typings (#3765)
+
+          (cherry picked from commit 82361d12c1383fdb5ecd8ff9fe72d2b9f1d8763c)
+        author: Lorefnon <lorefnon@gmail.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586792209, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ec2351b7a89ec39e8ff2112bc608ccc84d186a7a
+        parent_ids:
+        - 74501e612ad7434cc4e6020a07e71a74f75ec155
+        message: |+
+          Minor test internal enhancements (#3747)
+
+        author: Kabir Baidhya <kabirbaidhya@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1584997741, offset: 60, sign: 43 } }'
+      target:
+        id: f2d513edba19f9b74ac8dfded045e79a2b48416d
+        parent_ids:
+        - a81f40af83737df40ea3bed8d54e0e47bf4e4464
+        message: |
+          Minor test internal enhancements (#3747)
+
+          (cherry picked from commit ec2351b7a89ec39e8ff2112bc608ccc84d186a7a)
+        author: Kabir Baidhya <kabirbaidhya@gmail.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586732941, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 078b749892f30d445292257bc6ecc61ae6abf7fc
+        parent_ids:
+        - a7031c3cef8910daa7e7f2ae03ae6ce527f76057
+        message: |+
+          Add unit tests for escape utility functions (#3742)
+
+        author: Kabir Baidhya <kabirbaidhya@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1584899091, offset: 60, sign: 43 } }'
+      target:
+        id: 73cd4344c6a3d5f166934701c9997937b6486de9
+        parent_ids:
+        - 935687ef65f05075e974f8cd599df67e88ac59d8
+        message: |
+          Add unit tests for escape utility functions (#3742)
+
+          (cherry picked from commit 078b749892f30d445292257bc6ecc61ae6abf7fc)
+        author: Kabir Baidhya <kabirbaidhya@gmail.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1584917647, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c35a66d31bcd32e301b3a15d55a1f38e5fc7d0aa
+        parent_ids:
+        - 2fbe91da1a12c2db89def8a223ab59f06b3a33f3
+        message: |-
+          Update signature of orderBy to support QueryBuilder inside array (#3757)
+
+          Fixes #3738
+        author: Lorefnon <lorefnon@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1585170758, offset: 60, sign: 43 } }'
+      target:
+        id: 1888a7c40cb0bf6b8bee7fc1c1577fbdc6593697
+        parent_ids:
+        - 474968bfb7437e8ae6f7dafb01afb2315fb4f63e
+        message: |
+          Update signature of orderBy to support QueryBuilder inside array (#3757)
+
+          Fixes #3738
+
+          (cherry picked from commit c35a66d31bcd32e301b3a15d55a1f38e5fc7d0aa)
+        author: Lorefnon <lorefnon@gmail.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586732941, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 998c92ca97c323c7e7c1cb8788dd4c5e4ac3e6bd
+        parent_ids:
+        - e7e7a07ce90f73a29faabc6c094cd0b114c32622
+        message: |+
+          Typescript: Makes the ChainableInterface conform to Promise<T> (#3724)
+
+        author: Florent Vilmart <364568+flovilmart@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1584656397, offset: 60, sign: 43 } }'
+      target:
+        id: 935687ef65f05075e974f8cd599df67e88ac59d8
+        parent_ids:
+        - 90eac8f0da1e71041b9bf98fa1a3c6bba852d521
+        message: |
+          Typescript: Makes the ChainableInterface conform to Promise<T> (#3724)
+
+          (cherry picked from commit 998c92ca97c323c7e7c1cb8788dd4c5e4ac3e6bd)
+        author: Florent Vilmart <364568+flovilmart@users.noreply.github.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1584917646, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 8d5715a03accdd9331584c336663eb6489f1cdf4
+        parent_ids:
+        - a8a074bed46cf5c3779e7e08885355ec2ffa70a7
+        message: |+
+          Fix: Support for `.finally(..)` on knex's Promise-alikes (#3800)
+
+        author: Brian Lauber <blauber@arclia.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1586977540, offset: 120, sign: 43 } }'
+      target:
+        id: 46b6f5c5d46df7a10bdbe7bd498cde8dc9c6ab79
+        parent_ids:
+        - ef3ba0170403795fe93abf3a5fa386fe1b7f6aaa
+        message: |
+          Fix: Support for `.finally(..)` on knex's Promise-alikes (#3800)
+
+          (cherry picked from commit 8d5715a03accdd9331584c336663eb6489f1cdf4)
+        author: Brian Lauber <blauber@arclia.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586990911, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2fbe91da1a12c2db89def8a223ab59f06b3a33f3
+        parent_ids:
+        - 3df39aa48ecf7f3e0cf1d70838735d7fefd2dbad
+        message: |+
+          Add typings for MigrationSource (#3756)
+
+        author: Lorefnon <lorefnon@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1585156958, offset: 60, sign: 43 } }'
+      target:
+        id: 474968bfb7437e8ae6f7dafb01afb2315fb4f63e
+        parent_ids:
+        - efca60515474bc8d6d9ea2ea5c74f3ddbd5ce7a0
+        message: |
+          Add typings for MigrationSource (#3756)
+
+          (cherry picked from commit 2fbe91da1a12c2db89def8a223ab59f06b3a33f3)
+        author: Lorefnon <lorefnon@gmail.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586732941, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 74501e612ad7434cc4e6020a07e71a74f75ec155
+        parent_ids:
+        - e552fbda78ba9e84c58ca15e5901f0941a15b087
+        message: |+
+          typings: support Raw types for insert, where, update (#3730)
+
+        author: maximelkin <maxelkin@list.ru>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1584995174, offset: 60, sign: 43 } }'
+      target:
+        id: a81f40af83737df40ea3bed8d54e0e47bf4e4464
+        parent_ids:
+        - 707749851bccbeaf4d24eed95198f093b970a93b
+        message: |
+          typings: support Raw types for insert, where, update (#3730)
+
+          (cherry picked from commit 74501e612ad7434cc4e6020a07e71a74f75ec155)
+        author: maximelkin <maxelkin@list.ru>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586732941, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 41d02ba5c1a3cde7eebb9442e30d4a75abe2df34
+        parent_ids:
+        - a6551559f07bcb91be7a66fd8d3ae3ede3ba15bf
+        message: |+
+          CLI: adds support for asynchronous knexfile loading (#3748)
+
+        author: Florent Vilmart <364568+flovilmart@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1585066025, offset: 60, sign: 43 } }'
+      target:
+        id: efca60515474bc8d6d9ea2ea5c74f3ddbd5ce7a0
+        parent_ids:
+        - 7575946a1066f71c5a4d84cb983cc07b05407394
+        message: |
+          CLI: adds support for asynchronous knexfile loading (#3748)
+
+          (cherry picked from commit 41d02ba5c1a3cde7eebb9442e30d4a75abe2df34)
+        author: Florent Vilmart <364568+flovilmart@users.noreply.github.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586732941, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 72aaf6c6e176e74cf445c722364a23d9f255569e
+        parent_ids:
+        - c35a66d31bcd32e301b3a15d55a1f38e5fc7d0aa
+        message: |-
+          Add toSQL and toString to SchemaBuilder (#3758)
+
+          Fixes #3751
+        author: Lorefnon <lorefnon@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1585170816, offset: 60, sign: 43 } }'
+      target:
+        id: 9e9d3c5162d041e43b3f0290b0a70158fb5bfafc
+        parent_ids:
+        - 1888a7c40cb0bf6b8bee7fc1c1577fbdc6593697
+        message: |
+          Add toSQL and toString to SchemaBuilder (#3758)
+
+          Fixes #3751
+
+          (cherry picked from commit 72aaf6c6e176e74cf445c722364a23d9f255569e)
+        author: Lorefnon <lorefnon@gmail.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586732941, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a6551559f07bcb91be7a66fd8d3ae3ede3ba15bf
+        parent_ids:
+        - ec2351b7a89ec39e8ff2112bc608ccc84d186a7a
+        message: |+
+          Minor improvements on the usage of fs utilities - unify all the fs functions into the same util/fs to simplify things (#3749)
+
+        author: Kabir Baidhya <kabirbaidhya@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1585061447, offset: 60, sign: 43 } }'
+      target:
+        id: 7575946a1066f71c5a4d84cb983cc07b05407394
+        parent_ids:
+        - f2d513edba19f9b74ac8dfded045e79a2b48416d
+        message: |
+          Minor improvements on the usage of fs utilities - unify all the fs functions into the same util/fs to simplify things (#3749)
+
+          (cherry picked from commit a6551559f07bcb91be7a66fd8d3ae3ede3ba15bf)
+        author: Kabir Baidhya <kabirbaidhya@gmail.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586732941, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7568ab51c4d6cc176cc9dcf86ae616545f705ac6
+        parent_ids:
+        - 72aaf6c6e176e74cf445c722364a23d9f255569e
+        message: |+
+          Split tests in groups (#3785)
+
+        author: Igor Savin <iselwin@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1586287660, offset: 120, sign: 43 } }'
+      target:
+        id: 8961b21b0598bfc35ac3d8cf19bd348411ba8c26
+        parent_ids:
+        - 9e9d3c5162d041e43b3f0290b0a70158fb5bfafc
+        message: |
+          Split tests in groups (#3785)
+
+          (cherry picked from commit 7568ab51c4d6cc176cc9dcf86ae616545f705ac6)
+        author: Igor Savin <iselwin@gmail.com>
+        committer: Igor Savin <iselwin@gmail.com>
+        time: 'Time { raw: git_time { time: 1586792209, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 998c92ca97c323c7e7c1cb8788dd4c5e4ac3e6bd
+        parent_ids:
+        - e7e7a07ce90f73a29faabc6c094cd0b114c32622
+        message: |+
+          Typescript: Makes the ChainableInterface conform to Promise<T> (#3724)
+
+        author: Florent Vilmart <364568+flovilmart@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1584656397, offset: 60, sign: 43 } }'
+      target:
+        id: 0d775cff2980257fe3419545ec81d80355214e0a
+        parent_ids:
+        - 90eac8f0da1e71041b9bf98fa1a3c6bba852d521
+        message: "Cherry-pick fixes from master (#3745)\n\n* Typescript: Makes the ChainableInterface conform to Promise<T> (#3724)\r\n\r\n(cherry picked from commit 998c92ca97c323c7e7c1cb8788dd4c5e4ac3e6bd)\r\n\r\n* Add unit tests for escape utility functions (#3742)\r\n\r\n(cherry picked from commit 078b749892f30d445292257bc6ecc61ae6abf7fc)\r\n\r\n* Make protocol length check more defensive (#3744)\r\n\r\n(cherry picked from commit e552fbda78ba9e84c58ca15e5901f0941a15b087)\r\n\r\nCo-authored-by: Florent Vilmart <364568+flovilmart@users.noreply.github.com>\r\nCo-authored-by: Kabir Baidhya <kabirbaidhya@gmail.com>"
+        author: Igor Savin <iselwin@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1584921238, offset: 60, sign: 43 } }'
+    is_trivial: false

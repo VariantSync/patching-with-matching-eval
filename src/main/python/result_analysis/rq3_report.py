@@ -15,8 +15,8 @@ except ImportError:
 pd.set_option("display.expand_frame_repr", False)  # Avoid line breaks in long columns
 pd.set_option("display.max_columns", None)  # Display all columns
 
-yaml_folder = "../../evaluation-workdir/data/cherries/"
-repo_sample_yaml = "../../evaluation-workdir/data/repo-sample.yaml"
+yaml_folder = "/home/user/dataset/mined-cherries"
+repo_sample_yaml = "/home/user/dataset/repo-sample.yaml"
 language_count = 10
 sample_per_language = 500
 

@@ -1,0 +1,861 @@
+- repo_name: webonyx/graphql-php
+  total_number_of_commits: '1846'
+  total_number_of_branches: '13'
+  total_number_of_results: '36'
+  language: PHP
+  total_number_of_committers: '68'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ccc4746b516699cf8bfce3bfed5d13eaba946802
+        parent_ids:
+        - 5bc702b6f24369402d91cdaf61fdf253438fbf49
+        message: |+
+          Add support for type config decorator in SchemaExtender (#871)
+
+        author: Adrien Poupa <adrien@poupa.fr>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1623773452, offset: 120, sign: 43 } }'
+      target:
+        id: f304483ba01def42b41855aa9a15b8d257d174ed
+        parent_ids:
+        - 578d0875f6c5140085b19bfb82167bed3fb23e1b
+        message: |
+          Add support for type config decorator in SchemaExtender (#871)
+
+          (cherry picked from commit ccc4746b516699cf8bfce3bfed5d13eaba946802)
+        author: Adrien Poupa <adrien@poupa.fr>
+        committer: Benedikt Franke <benedikt.franke@mll.com>
+        time: 'Time { raw: git_time { time: 1623773598, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 77448ba6239f7a8bd413c2dfc4ef6d2c3d040009
+        parent_ids:
+        - 7d59811c4ff3134d1e4fd79652f8601e9bd37d36
+        message: |
+          Fix incorrect array type of rootValue in PHPDocs
+        author: Petr Skoda <petr.skoda@totaralearning.com>
+        committer: Petr Skoda <petr.skoda@totaralearning.com>
+        time: 'Time { raw: git_time { time: 1549828404, offset: 780, sign: 43 } }'
+      target:
+        id: 7405ddc85206b647e9ca0ea35ec543fb78d0e75b
+        parent_ids:
+        - 0cbc1c9c0702668a759110d7aa12471819bbf456
+        message: |
+          Fix incorrect array type of rootValue in PHPDocs
+
+          (cherry picked from commit 77448ba6239f7a8bd413c2dfc4ef6d2c3d040009)
+        author: Petr Skoda <petr.skoda@totaralearning.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552145250, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 31d89acfae5a27b772cd0ebec992d0e564796cf5
+        parent_ids:
+        - f96bd2740df01dccc682eebe3e02215acea1b374
+        message: |
+          Failing test for CoroutineExecutor removes associative array when using custom scalar producing JSON
+        author: Jan Bukva <jan@bukva.cz>
+        committer: Jan Bukva <jan@bukva.cz>
+        time: 'Time { raw: git_time { time: 1545922887, offset: 60, sign: 43 } }'
+      target:
+        id: 42b20e76517167c056848069a96ed2dcad27a826
+        parent_ids:
+        - 08992de960e831329303982eb8cb5611ee024a35
+        message: |
+          Failing test for CoroutineExecutor removes associative array when using custom scalar producing JSON
+
+          (cherry picked from commit 31d89acfae5a27b772cd0ebec992d0e564796cf5)
+        author: Jan Bukva <jan@bukva.cz>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552145057, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 828a9fb002e975ddf5945d3f4af91e4e4e8f23e2
+        parent_ids:
+        - f96bd2740df01dccc682eebe3e02215acea1b374
+        message: |
+          Fix Deferred
+        author: Simon Podlipsky <simon@podlipsky.net>
+        committer: Simon Podlipsky <simon@podlipsky.net>
+        time: 'Time { raw: git_time { time: 1545947412, offset: 60, sign: 43 } }'
+      target:
+        id: ababa18157048547a6b6adf3c16e1d28df6ea7b1
+        parent_ids:
+        - f52dfcfaef1ab566fb30ba63c6c5cc9e2e1564ca
+        message: |
+          Fix Deferred
+
+          (cherry picked from commit 828a9fb002e975ddf5945d3f4af91e4e4e8f23e2)
+        author: Simon Podlipsky <simon@podlipsky.net>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552145147, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 93ccd7351d2acceae23e4abffd1d4196d0d849d3
+        parent_ids:
+        - ed1746e800637eebf8529530ab208fcafb7214ac
+        message: |
+          Array in variables in place of object shouldn't cause fatal error (fixes #467)
+        author: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1560947343, offset: 420, sign: 43 } }'
+      target:
+        id: 27340a18182999a423bc48c17d84fc9229ab24e0
+        parent_ids:
+        - 9fcf29302f2c5a1b762d1bf91026a06304f46f43
+        message: |
+          Array in variables in place of object shouldn't cause fatal error (fixes #467)
+
+          (cherry picked from commit 93ccd7351d2acceae23e4abffd1d4196d0d849d3)
+        author: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1565163656, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: dcb3a7e88d49a4c876badda045b7b7ab272b9c13
+        parent_ids:
+        - b5f0a8b65dfde9113e9411c2a8860d39ec4afd10
+        message: |+
+          Support non-JSON ServerRequestInterface (#1004)
+
+        author: Dorian Savina <d.savina@thecodingmachine.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1636119127, offset: 60, sign: 43 } }'
+      target:
+        id: adff4080c6b7fea71dc148d5a1da0257b79f2b2a
+        parent_ids:
+        - 31165d49be8673d9464e0bfc8b39369cbbf9c2d8
+        message: |
+          Support non-JSON ServerRequestInterface (#1004)
+
+          (cherry picked from commit dcb3a7e88d49a4c876badda045b7b7ab272b9c13)
+        author: Dorian Savina <d.savina@thecodingmachine.com>
+        committer: Benedikt Franke <benedikt.franke@mll.com>
+        time: 'Time { raw: git_time { time: 1637228638, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2abac8cdd9cdbc892dd09d05eae15b1431eb3b7c
+        parent_ids:
+        - cf5e6fdbb2e146290890b0a7d552048811a2dee7
+        message: |+
+          Fix `extend()` to preserve `repeatable` (#931)
+
+        author: Vašek Henzl <vasek.henzl@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1630948102, offset: 120, sign: 43 } }'
+      target:
+        id: 7a8ae9e0d304853a196302c9f8708ca5f066297f
+        parent_ids:
+        - 814e286a68dad8ea04f3b3cc84c24a79906bff41
+        message: |
+          Fix `extend()` to preserve `repeatable` (#931)
+
+          (cherry picked from commit 2abac8cdd9cdbc892dd09d05eae15b1431eb3b7c)
+        author: Vašek Henzl <vasek.henzl@gmail.com>
+        committer: Benedikt Franke <benedikt.franke@mll.com>
+        time: 'Time { raw: git_time { time: 1643022678, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: dfefdf24cb482e0551147aeae5eda4fe1364105e
+        parent_ids:
+        - 20e98aefa4784b16164e758198062d06f4f7de98
+        message: |
+          Test against PHP 7.4
+        author: Simon Podlipsky <simon@podlipsky.net>
+        committer: Simon Podlipsky <simon@podlipsky.net>
+        time: 'Time { raw: git_time { time: 1549870625, offset: 60, sign: 43 } }'
+      target:
+        id: 255ecbd709315bb7aff857264f344b7469b31a68
+        parent_ids:
+        - 8c66fa8d1ee381c19012e0e456bf4e738bb36027
+        message: |
+          Test against PHP 7.4
+
+          (cherry picked from commit dfefdf24cb482e0551147aeae5eda4fe1364105e)
+        author: Simon Podlipsky <simon@podlipsky.net>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552145274, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: adff917e83671bc2c1f849fe28aa38c247c6879f
+        parent_ids:
+        - 4754e67b4bb7a17de4f79f2b4f8444777bb082a8
+        message: |
+          Make IntType constants public
+        author: Benedikt Franke <benedikt.franke@mll.com>
+        committer: Benedikt Franke <benedikt.franke@mll.com>
+        time: 'Time { raw: git_time { time: 1635429594, offset: 120, sign: 43 } }'
+      target:
+        id: cfb0b56d5dac561e934eb5a33ec7b53d54b35362
+        parent_ids:
+        - 8df24df72f719cd34a2ccd0c6dde1c5e4695cc81
+        message: |
+          Make IntType constants public
+
+          (cherry picked from commit adff917e83671bc2c1f849fe28aa38c247c6879f)
+        author: Benedikt Franke <benedikt.franke@mll.com>
+        committer: Benedikt Franke <benedikt.franke@mll.com>
+        time: 'Time { raw: git_time { time: 1635429608, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f95d1e81eabfae0b83bba19f2b260b5d04640d4f
+        parent_ids:
+        - b2cea8b538b16f6df9fa047a4451cdf05345c9a2
+        message: |
+          Add PHP 7.3 to Travis
+        author: Simon Podlipsky <simon@podlipsky.net>
+        committer: Simon Podlipsky <simon@podlipsky.net>
+        time: 'Time { raw: git_time { time: 1543486251, offset: 60, sign: 43 } }'
+      target:
+        id: b005803bf62055be04e982813fb8b4f57dd6b0ba
+        parent_ids:
+        - 21dc3fe664fe56f803ad2be4e1a284ad26910bb3
+        message: |
+          Add PHP 7.3 to Travis
+
+          (cherry picked from commit f95d1e81eabfae0b83bba19f2b260b5d04640d4f)
+        author: Simon Podlipsky <simon@podlipsky.net>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552144526, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: bc637414e5158f5b2b8144be19f4baf8b4c7abc2
+        parent_ids:
+        - 6544197ef898343b409a82c7f6008aa4a109d95b
+        message: |
+          Support PHP 8
+        author: Simon Podlipsky <simon@podlipsky.net>
+        committer: Simon Podlipsky <simon@podlipsky.net>
+        time: 'Time { raw: git_time { time: 1549634891, offset: 60, sign: 43 } }'
+      target:
+        id: 0cbc1c9c0702668a759110d7aa12471819bbf456
+        parent_ids:
+        - c628fa39a1b7b61e8b30c8b502d22a30769a74ed
+        message: |
+          Support PHP 8
+
+          (cherry picked from commit bc637414e5158f5b2b8144be19f4baf8b4c7abc2)
+        author: Simon Podlipsky <simon@podlipsky.net>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552145237, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 376e9275054f9b63a27b8fa2215553f050898602
+        parent_ids:
+        - b2cea8b538b16f6df9fa047a4451cdf05345c9a2
+        message: |
+          Document BC and fix types in ResolveInfo
+        author: Simon Podlipsky <simon@podlipsky.net>
+        committer: Simon Podlipsky <simon@podlipsky.net>
+        time: 'Time { raw: git_time { time: 1543323955, offset: 60, sign: 43 } }'
+      target:
+        id: 16d42dead3ae990bdd03d01c17dca6db3a8d23cc
+        parent_ids:
+        - bf471838ae6a423ef5f2f170595070d5ed579b21
+        message: |
+          Document BC and fix types in ResolveInfo
+
+          (cherry picked from commit 376e9275054f9b63a27b8fa2215553f050898602)
+        author: Simon Podlipsky <simon@podlipsky.net>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552144475, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 33e3c9c338b3c77edcdc009d546015e8d74ae049
+        parent_ids:
+        - b2cea8b538b16f6df9fa047a4451cdf05345c9a2
+        message: Error handling improvements
+        author: Yury <yura3d@tut.by>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1543415721, offset: 180, sign: 43 } }'
+      target:
+        id: 21dc3fe664fe56f803ad2be4e1a284ad26910bb3
+        parent_ids:
+        - 16d42dead3ae990bdd03d01c17dca6db3a8d23cc
+        message: |
+          Error handling improvements
+
+          (cherry picked from commit 33e3c9c338b3c77edcdc009d546015e8d74ae049)
+        author: Yury <yura3d@tut.by>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552144511, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9609d2ac84623291c76c4c72b61235799ad07f5e
+        parent_ids:
+        - d5fddfd504d438d92a32be28546a615cc49f3c6f
+        message: |
+          TASK: Code style
+        author: Torsten Blindert <info@by-torsten.com>
+        committer: Torsten Blindert <info@by-torsten.com>
+        time: 'Time { raw: git_time { time: 1544034187, offset: 60, sign: 43 } }'
+      target:
+        id: 1d8f526d91e7ed0929867e14f81b6e6a933e6958
+        parent_ids:
+        - fda73f321221e54446238a4499aa477f392aff64
+        message: |
+          TASK: Code style
+
+          (cherry picked from commit 9609d2ac84623291c76c4c72b61235799ad07f5e)
+        author: Torsten Blindert <info@by-torsten.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552144734, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d20a6a9d56fd02639e6cf0750b1b441f98e639f8
+        parent_ids:
+        - 77448ba6239f7a8bd413c2dfc4ef6d2c3d040009
+        message: |
+          Standardise whitespace
+        author: Petr Skoda <petr.skoda@totaralearning.com>
+        committer: Petr Skoda <petr.skoda@totaralearning.com>
+        time: 'Time { raw: git_time { time: 1549828416, offset: 780, sign: 43 } }'
+      target:
+        id: 8c66fa8d1ee381c19012e0e456bf4e738bb36027
+        parent_ids:
+        - 7405ddc85206b647e9ca0ea35ec543fb78d0e75b
+        message: |
+          Standardise whitespace
+
+          (cherry picked from commit d20a6a9d56fd02639e6cf0750b1b441f98e639f8)
+        author: Petr Skoda <petr.skoda@totaralearning.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552145260, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7d59811c4ff3134d1e4fd79652f8601e9bd37d36
+        parent_ids:
+        - 31bbc416a545c304212564e0cf46db6a9280be3e
+        message: |
+          Fix incorrect array type of contextValue in PHPDocs
+        author: Petr Skoda <petr.skoda@totaralearning.com>
+        committer: Petr Skoda <petr.skoda@totaralearning.com>
+        time: 'Time { raw: git_time { time: 1549484297, offset: 780, sign: 43 } }'
+      target:
+        id: c628fa39a1b7b61e8b30c8b502d22a30769a74ed
+        parent_ids:
+        - a0f214a9f98762a706f5126d91204aa90318f356
+        message: |
+          Fix incorrect array type of contextValue in PHPDocs
+
+          (cherry picked from commit 7d59811c4ff3134d1e4fd79652f8601e9bd37d36)
+        author: Petr Skoda <petr.skoda@totaralearning.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552145223, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 244ec66ecc0677d25ad2d958baed7de50e551043
+        parent_ids:
+        - f644c1a837890e4ca854d16371c0730bc32b9314
+        message: |
+          Allow extensions to be provided in GET request.
+        author: chriszarate <chris@zarate.org>
+        committer: chriszarate <chris@zarate.org>
+        time: 'Time { raw: git_time { time: 1544587137, offset: -300, sign: 45 } }'
+      target:
+        id: 08992de960e831329303982eb8cb5611ee024a35
+        parent_ids:
+        - 1d8f526d91e7ed0929867e14f81b6e6a933e6958
+        message: |
+          Allow extensions to be provided in GET request.
+
+          (cherry picked from commit 244ec66ecc0677d25ad2d958baed7de50e551043)
+        author: chriszarate <chris@zarate.org>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552144814, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 51ad17c3af192e34bc2e368a3c645a5a668f3e15
+        parent_ids:
+        - 2bac02f3291fde9186eb192ee4520c6b0c1fcab9
+        message: |+
+          Fix compatiblity of methods with native return type in PHP 8.1 (#1011)
+
+        author: Mykola Silin <silin.nickolay@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1636971785, offset: 60, sign: 43 } }'
+      target:
+        id: 527bdee2747dca166db9a51a952eba450bbd0d96
+        parent_ids:
+        - d191b0c34365c025c6cd953b5a63aa62946c7060
+        message: |
+          Fix compatibility of methods with native return type in PHP 8.1 (#1011)
+
+          (cherry picked from commit 51ad17c3af192e34bc2e368a3c645a5a668f3e15)
+        author: Mykola Silin <silin.nickolay@gmail.com>
+        committer: Benedikt Franke <benedikt.franke@mll.com>
+        time: 'Time { raw: git_time { time: 1636971938, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b1ab1820b684ac659dbdfd04ae2b0f502dbc0696
+        parent_ids:
+        - 1dc291b073cd0fe17da5e943664a59ca2acd49ec
+        message: |-
+          Update docs intro verbiage
+
+          Just throwing my 2 cents: I don't think it's fair to say that "it's intended to be a replacement", given that multiple API paradigms can coexist in the same system and each of them have their trade-offs.
+        author: Stefano Torresi <stefano@torresi.io>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1549280311, offset: 60, sign: 43 } }'
+      target:
+        id: a0f214a9f98762a706f5126d91204aa90318f356
+        parent_ids:
+        - 153f6f862e7f31ea11026eaff3907869319a9ae1
+        message: |
+          Update docs intro verbiage
+
+          Just throwing my 2 cents: I don't think it's fair to say that "it's intended to be a replacement", given that multiple API paradigms can coexist in the same system and each of them have their trade-offs.
+
+          (cherry picked from commit b1ab1820b684ac659dbdfd04ae2b0f502dbc0696)
+        author: Stefano Torresi <stefano@torresi.io>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552145204, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5fa2dffa1b3d0b42d535f18db1f88a821d7c7811
+        parent_ids:
+        - acdbd501fdeb8d27cde7dec451ee0b3b0a9af6b2
+        message: |
+          Code style fix
+        author: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1566642418, offset: 420, sign: 43 } }'
+      target:
+        id: bc44bcd7aed403d4f61f40494523618601968b54
+        parent_ids:
+        - 3141f0cbf4e39763fbbf7435fb681d3f9fc7054a
+        message: |
+          Code style fix
+
+          (cherry picked from commit 5fa2dffa1b3d0b42d535f18db1f88a821d7c7811)
+        author: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1566729040, offset: 420, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d5fddfd504d438d92a32be28546a615cc49f3c6f
+        parent_ids:
+        - 62b003643779246403c0fd71d7e7486d94c50835
+        message: |
+          TASK: Added test
+        author: Torsten Blindert <info@by-torsten.com>
+        committer: Torsten Blindert <info@by-torsten.com>
+        time: 'Time { raw: git_time { time: 1544033612, offset: 60, sign: 43 } }'
+      target:
+        id: fda73f321221e54446238a4499aa477f392aff64
+        parent_ids:
+        - 22cee4974765e91218f786fe07eb0a520e355dee
+        message: |
+          TASK: Added test
+
+          (cherry picked from commit d5fddfd504d438d92a32be28546a615cc49f3c6f)
+        author: Torsten Blindert <info@by-torsten.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552144725, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: fb52ab0d9ba12aeec0217f8e0714265edccf663c
+        parent_ids:
+        - 39bfaa40c113d5be8e8707e047d8b306b3c74d0f
+        message: |
+          Added ability to retrieve the query complexity once the query has been completed
+        author: Nicholas Clark <nick@shopfront.com.au>
+        committer: Nicholas Clark <nick@shopfront.com.au>
+        time: 'Time { raw: git_time { time: 1565246721, offset: 600, sign: 43 } }'
+      target:
+        id: 97cbe4093074917fc487e95034e25ccca483fd52
+        parent_ids:
+        - 4dfaf9a39c7bff8c95be5e5f7a5fa4994bdb8a4a
+        message: |
+          Added ability to retrieve the query complexity once the query has been completed
+
+          (cherry picked from commit fb52ab0d9ba12aeec0217f8e0714265edccf663c)
+        author: Nicholas Clark <nick@shopfront.com.au>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1566547794, offset: 420, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: edb52685839c12db3b50e51df035ee6ab5c6a67f
+        parent_ids:
+        - 6544197ef898343b409a82c7f6008aa4a109d95b
+        message: |
+          Fix return annotation of resolveType() in InterfaceType
+        author: Jan Bukva <jan@bukva.cz>
+        committer: Jan Bukva <jan@bukva.cz>
+        time: 'Time { raw: git_time { time: 1548711980, offset: 60, sign: 43 } }'
+      target:
+        id: 153f6f862e7f31ea11026eaff3907869319a9ae1
+        parent_ids:
+        - 610979555d590e0d5379cb92eeef7f5314226512
+        message: |
+          Fix return annotation of resolveType() in InterfaceType
+
+          (cherry picked from commit edb52685839c12db3b50e51df035ee6ab5c6a67f)
+        author: Jan Bukva <jan@bukva.cz>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552145189, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 62b003643779246403c0fd71d7e7486d94c50835
+        parent_ids:
+        - e22b4003737c272a43ff6867e9d1cac5a260ae75
+        message: |
+          BUGFIX: expect ->getType() to throw
+        author: Torsten Blindert <info@by-torsten.com>
+        committer: Torsten Blindert <info@by-torsten.com>
+        time: 'Time { raw: git_time { time: 1544032514, offset: 60, sign: 43 } }'
+      target:
+        id: 22cee4974765e91218f786fe07eb0a520e355dee
+        parent_ids:
+        - 59c128c54a22060b5899f91ed07dc841afb5d6da
+        message: |
+          BUGFIX: expect ->getType() to throw
+
+          (cherry picked from commit 62b003643779246403c0fd71d7e7486d94c50835)
+        author: Torsten Blindert <info@by-torsten.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552144715, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 07c9ad67e29461f820a46daaa965e5ff21e99b88
+        parent_ids:
+        - 9e787e4f916a765c67dac94743b52a619278bab8
+        message: |+
+          Allow \stdClass for input types
+
+        author: Adam <adam.james.rich@me.com>
+        committer: Adam <adam.james.rich@me.com>
+        time: 'Time { raw: git_time { time: 1565698595, offset: 600, sign: 43 } }'
+      target:
+        id: 4dfaf9a39c7bff8c95be5e5f7a5fa4994bdb8a4a
+        parent_ids:
+        - 123af49e46d26b0cd2e7a71a387253aa01ea9a6b
+        message: |
+          Allow \stdClass for input types
+
+          (cherry picked from commit 07c9ad67e29461f820a46daaa965e5ff21e99b88)
+        author: Adam <adam.james.rich@me.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1566547635, offset: 420, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ead1b864bc82e4ede561ede0d3e9085d4fac3ca0
+        parent_ids:
+        - b2cea8b538b16f6df9fa047a4451cdf05345c9a2
+        message: |
+          Added all possible scalar types to Node constructor
+        author: Simon Podlipsky <simon@podlipsky.net>
+        committer: Simon Podlipsky <simon@podlipsky.net>
+        time: 'Time { raw: git_time { time: 1543317721, offset: 60, sign: 43 } }'
+      target:
+        id: bf471838ae6a423ef5f2f170595070d5ed579b21
+        parent_ids:
+        - 012082d1d9bb767b2296ab3f9efb44fdae1ff796
+        message: |
+          Added all possible scalar types to Node constructor
+
+          (cherry picked from commit ead1b864bc82e4ede561ede0d3e9085d4fac3ca0)
+        author: Simon Podlipsky <simon@podlipsky.net>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552144464, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f644c1a837890e4ca854d16371c0730bc32b9314
+        parent_ids:
+        - c33e41f2bf44b20b3d79b00d335c3a5ea5975116
+        message: |
+          Add extensions to OperationParams instance.
+        author: chriszarate <chris@zarate.org>
+        committer: chriszarate <chris@zarate.org>
+        time: 'Time { raw: git_time { time: 1543781409, offset: -300, sign: 45 } }'
+      target:
+        id: a116127436bc533d3d1cf33c567f4fdc06eb31c7
+        parent_ids:
+        - 9ada6069193c7f2ffd63435d283b42590ac2333a
+        message: |
+          Add extensions to OperationParams instance.
+
+          (cherry picked from commit f644c1a837890e4ca854d16371c0730bc32b9314)
+        author: chriszarate <chris@zarate.org>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552144605, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9a0dbff26b72cca1528ba4fac536fafc7ba3f624
+        parent_ids:
+        - e22b4003737c272a43ff6867e9d1cac5a260ae75
+        message: |
+          Add NullableType interface
+        author: Erik Gaal <me@erikgaal.nl>
+        committer: Erik Gaal <me@erikgaal.nl>
+        time: 'Time { raw: git_time { time: 1544006607, offset: 60, sign: 43 } }'
+      target:
+        id: 59c128c54a22060b5899f91ed07dc841afb5d6da
+        parent_ids:
+        - a116127436bc533d3d1cf33c567f4fdc06eb31c7
+        message: |
+          Add NullableType interface
+
+          (cherry picked from commit 9a0dbff26b72cca1528ba4fac536fafc7ba3f624)
+        author: Erik Gaal <me@erikgaal.nl>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552144642, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 8b2b4d5443c538500375ae23c5a4b5ae5038c348
+        parent_ids:
+        - cf6eddfd0f57657483e87c71dc07669e4c014f13
+        message: |+
+          Implement Utils::getOperationAST (#755)
+
+        author: Alexander Varwijk <Kingdutch@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1622542835, offset: 120, sign: 43 } }'
+      target:
+        id: ea24c733c93275ba95f4dceddd0a5c385ae77bc3
+        parent_ids:
+        - 6b0ba9a4688b2ef74ea4d52b27477dd80fa67f31
+        message: |
+          Implement Utils::getOperationAST (#755)
+
+
+          (cherry picked from commit 8b2b4d5443c538500375ae23c5a4b5ae5038c348)
+        author: Alexander Varwijk <Kingdutch@users.noreply.github.com>
+        committer: Benedikt Franke <benedikt.franke@mll.com>
+        time: 'Time { raw: git_time { time: 1622542955, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 89a7a7e362535dffd020fcab1736912f68b3c7d8
+        parent_ids:
+        - cca8fd658767313c63d151b8dec2193e1a9e3c19
+        message: |
+          Don't call global fieldResolver on introspection fields (#481)
+        author: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1566642250, offset: 420, sign: 43 } }'
+      target:
+        id: 3141f0cbf4e39763fbbf7435fb681d3f9fc7054a
+        parent_ids:
+        - b7a03cd847ad930d884f354d4e4c7e538c289061
+        message: |
+          Don't call global fieldResolver on introspection fields (#481)
+
+          (cherry picked from commit 89a7a7e362535dffd020fcab1736912f68b3c7d8)
+        author: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1566729032, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 00490d289c0a858842e08cead45635016f147921
+        parent_ids:
+        - 2295b96a493b9ce6528abd8e1a644e1164bb9fbe
+        message: |
+          Use key-value foreach
+        author: Jan Bukva <jan@bukva.cz>
+        committer: Jan Bukva <jan@bukva.cz>
+        time: 'Time { raw: git_time { time: 1545943996, offset: 60, sign: 43 } }'
+      target:
+        id: f52dfcfaef1ab566fb30ba63c6c5cc9e2e1564ca
+        parent_ids:
+        - 8b8ea0d4a387aca74489d8093d1ee5f2062e4508
+        message: |
+          Use key-value foreach
+
+          (cherry picked from commit 00490d289c0a858842e08cead45635016f147921)
+        author: Jan Bukva <jan@bukva.cz>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552145086, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e01b6e0a93fa2dd8a2cdedd8a26ddbd19bad8bdb
+        parent_ids:
+        - 76c229b8ad22f4a7d83d755296b989504ea95b9c
+        message: "Scalar type ResolverInfo::getFieldSelection support (#529)\n\n* Scalar type ResolveInfo::getFieldSelection support\r\n\r\nCo-Authored-By: Šimon Podlipský <simon@podlipsky.net>\r\n"
+        author: Steve Lacey <steve@steve.ly>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1565107996, offset: 420, sign: 43 } }'
+      target:
+        id: 991187f3b8697571bfcec3ec4a8a74547f77049d
+        parent_ids:
+        - 27340a18182999a423bc48c17d84fc9229ab24e0
+        message: |
+          Scalar type ResolverInfo::getFieldSelection support (#529)
+
+          Co-Authored-By: Šimon Podlipský <simon@podlipsky.net>
+
+          (cherry picked from commit e01b6e0a93fa2dd8a2cdedd8a26ddbd19bad8bdb)
+        author: Steve Lacey <steve@steve.ly>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1565164114, offset: 420, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2295b96a493b9ce6528abd8e1a644e1164bb9fbe
+        parent_ids:
+        - 31d89acfae5a27b772cd0ebec992d0e564796cf5
+        message: |
+          Fix CoroutineExecutor::resultToArray for associative arrays
+        author: Jan Bukva <jan@bukva.cz>
+        committer: Jan Bukva <jan@bukva.cz>
+        time: 'Time { raw: git_time { time: 1545925120, offset: 60, sign: 43 } }'
+      target:
+        id: 8b8ea0d4a387aca74489d8093d1ee5f2062e4508
+        parent_ids:
+        - 42b20e76517167c056848069a96ed2dcad27a826
+        message: |
+          Fix CoroutineExecutor::resultToArray for associative arrays
+
+          (cherry picked from commit 2295b96a493b9ce6528abd8e1a644e1164bb9fbe)
+        author: Jan Bukva <jan@bukva.cz>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552145079, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e87460880c49393fa8bb823409a0e65233f6d873
+        parent_ids:
+        - 6f6a39468c822267f47c3c15d382afe8eec7cbeb
+        message: |
+          QueryPlan can now be used on interfaces not only objects.
+
+          It's often the case to use interfaces in queries:
+
+          interface Pet { name: String! }
+
+          Query {
+           pets: [Pet]
+          }
+        author: Aurélien David <spyl94@gmail.com>
+        committer: Aurélien David <spyl94@gmail.com>
+        time: 'Time { raw: git_time { time: 1560333582, offset: 120, sign: 43 } }'
+      target:
+        id: 9fcf29302f2c5a1b762d1bf91026a06304f46f43
+        parent_ids:
+        - cdcf5b44737ee743358f5ed25b19a39ad7daf777
+        message: |
+          QueryPlan can now be used on interfaces not only objects.
+
+          It's often the case to use interfaces in queries:
+
+          interface Pet { name: String! }
+
+          Query {
+           pets: [Pet]
+          }
+
+          (cherry picked from commit e87460880c49393fa8bb823409a0e65233f6d873)
+        author: Aurélien David <spyl94@gmail.com>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1565163456, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c33e41f2bf44b20b3d79b00d335c3a5ea5975116
+        parent_ids:
+        - 63b4e3f0a4527c491f51e37bbda99169a47690f1
+        message: |
+          Fix linting issue and typos.
+        author: chriszarate <chris@zarate.org>
+        committer: chriszarate <chris@zarate.org>
+        time: 'Time { raw: git_time { time: 1543711431, offset: -300, sign: 45 } }'
+      target:
+        id: 9ada6069193c7f2ffd63435d283b42590ac2333a
+        parent_ids:
+        - 1e778d259e0dcdf50be629f972fcdd089b8432ee
+        message: |
+          Fix linting issue and typos.
+
+          (cherry picked from commit c33e41f2bf44b20b3d79b00d335c3a5ea5975116)
+        author: chriszarate <chris@zarate.org>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552144590, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 63b4e3f0a4527c491f51e37bbda99169a47690f1
+        parent_ids:
+        - b2cea8b538b16f6df9fa047a4451cdf05345c9a2
+        message: |
+          Apollo server/client compatibility. Look for queryid in extensions.
+        author: chriszarate <chris@zarate.org>
+        committer: chriszarate <chris@zarate.org>
+        time: 'Time { raw: git_time { time: 1543709219, offset: -300, sign: 45 } }'
+      target:
+        id: 1e778d259e0dcdf50be629f972fcdd089b8432ee
+        parent_ids:
+        - b005803bf62055be04e982813fb8b4f57dd6b0ba
+        message: |
+          Apollo server/client compatibility. Look for queryid in extensions.
+
+          (cherry picked from commit 63b4e3f0a4527c491f51e37bbda99169a47690f1)
+        author: chriszarate <chris@zarate.org>
+        committer: Vladimir Razuvaev <vladimir.razuvaev@gmail.com>
+        time: 'Time { raw: git_time { time: 1552144555, offset: 420, sign: 43 } }'
+    is_trivial: true

@@ -1,0 +1,419 @@
+- total_number_of_branches: '932'
+  language: Rust
+  total_number_of_committers: '99'
+  repo_name: neondatabase/neon
+  total_number_of_results: '10'
+  total_number_of_commits: '11751'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1b2663350cc36dfb1ef41131836c9273b7a0de22
+        parent_ids:
+        - e8ae409bdc95ae41a8d4551063ab7c790078139f
+        message: |
+          basebackup import: pre-lock the layer map for the `flush()` calls
+
+          The checkpointer loop isn't running anyway, so, there's no risk of
+          blocking it through the pre-lock.
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1683903089, offset: 120, sign: 43 } }'
+      target:
+        id: a1680b185f1bcd3f9b893568f27af591d7454995
+        parent_ids:
+        - a1ae23b827ad2de80fda216f732ee0e7aef18253
+        message: |
+          basebackup import: pre-lock the layer map for the `flush()` calls
+
+          The checkpointer loop isn't running anyway, so, there's no risk of
+          blocking it through the pre-lock.
+
+          (cherry picked from commit 1b2663350cc36dfb1ef41131836c9273b7a0de22)
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1685120380, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1b2663350cc36dfb1ef41131836c9273b7a0de22
+        parent_ids:
+        - e8ae409bdc95ae41a8d4551063ab7c790078139f
+        message: |
+          basebackup import: pre-lock the layer map for the `flush()` calls
+
+          The checkpointer loop isn't running anyway, so, there's no risk of
+          blocking it through the pre-lock.
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1683903089, offset: 120, sign: 43 } }'
+      target:
+        id: 163ec3ccd184e28095d95c16601c06d822cb1331
+        parent_ids:
+        - eba6c00de4ccb3b882909688f89496a03b764905
+        message: |
+          basebackup import: pre-lock the layer map for the `flush()` calls
+
+          The checkpointer loop isn't running anyway, so, there's no risk of
+          blocking it through the pre-lock.
+
+          (cherry picked from commit 1b2663350cc36dfb1ef41131836c9273b7a0de22)
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1685122510, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9256788273d5661ced0b2661a8751e2aa86fbb59
+        parent_ids:
+        - 9e1449353da1a5def821a35fec800f39946e5925
+        message: "limit imitate accesses concurrency, using same semaphore as compactions (#5578)\n\nBefore this PR, when we restarted pageserver, we'd see a rush of\r\n`$number_of_tenants` concurrent eviction tasks starting to do imitate\r\naccesses building up in the period of `[init_order allows activations,\r\n$random_access_delay + EvictionPolicyLayerAccessThreshold::period]`.\r\n\r\nWe simply cannot handle that degree of concurrent IO.\r\n\r\nWe already solved the problem for compactions by adding a semaphore.\r\nSo, this PR shares that semaphore for use by evictions.\r\n\r\nPart of https://github.com/neondatabase/neon/issues/5479\r\n\r\nWhich is again part of https://github.com/neondatabase/neon/issues/4743\r\n\r\nRisks / Changes In System Behavior\r\n==================================\r\n\r\n* we don't do evictions as timely as we currently do\r\n* we log a bunch of warnings about eviction taking too long\r\n* imitate accesses and compactions compete for the same concurrency\r\nlimit, so, they'll slow each other down through this shares semaphore\r\n\r\n\r\nChanges\r\n=======\r\n\r\n- Move the `CONCURRENT_COMPACTIONS` semaphore into `tasks.rs`\r\n- Rename it to `CONCURRENT_BACKGROUND_TASKS`\r\n- Use it also for the eviction imitate accesses:\r\n    - Imitate acceses are both per-TIMELINE and per-TENANT\r\n    - The per-TENANT is done through coalescing all the per-TIMELINE\r\n      tasks via a tokio mutex `eviction_task_tenant_state`.\r\n    - We acquire the CONCURRENT_BACKGROUND_TASKS permit early, at the\r\n      beginning of the eviction iteration, much before the imitate\r\n      acesses start (and they may not even start at all in the given\r\n      iteration, as they happen only every $threshold).\r\n    - Acquiring early is **sub-optimal** because when the per-timline\r\n      tasks coalesce on the `eviction_task_tenant_state` mutex,\r\n      they are already holding a CONCURRENT_BACKGROUND_TASKS permit.\r\n    - It's also unfair because tenants with many timelines win\r\n      the CONCURRENT_BACKGROUND_TASKS more often.\r\n    - I don't think there's another way though, without refactoring\r\n      more of the imitate accesses logic, e.g, making it all per-tenant.\r\n- Add metrics for queue depth behind the semaphore.\r\nI found these very useful to understand what work is queued in the\r\nsystem.\r\n\r\n    - The metrics are tagged by the new `BackgroundLoopKind`.\r\n    - On a green slate, I would have used `TaskKind`, but we already had\r\n      pre-existing labels whose names didn't map exactly to task kind.\r\n      Also the task kind is kind of a lower-level detail, so, I think\r\nit's fine to have a separate enum to identify background work kinds.\r\n\r\n\r\nFuture Work\r\n===========\r\n\r\nI guess I could move the eviction tasks from a ticker to \"sleep for\r\n$period\".\r\nThe benefit would be that the semaphore automatically \"smears\" the\r\neviction task scheduling over time, so, we only have the rush on restart\r\nbut a smeared-out rush afterward.\r\n\r\nThe downside is that this perverts the meaning of \"$period\", as we'd\r\nactually not run the eviction at a fixed period. It also means the the\r\n\"took to long\" warning & metric becomes meaningless.\r\n\r\nThen again, that is already the case for the compaction and gc tasks,\r\nwhich do sleep for `$period` instead of using a ticker."
+        author: Christian Schwarz <christian@neon.tech>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1697534988, offset: 120, sign: 43 } }'
+      target:
+        id: a6b2f4e54ef97333c35834788bf555fc10e3f4bb
+        parent_ids:
+        - 3666df6342b59efa235cba994aaaba19ec85e71b
+        message: |
+          limit imitate accesses concurrency, using same semaphore as compactions (#5578)
+
+          Before this PR, when we restarted pageserver, we'd see a rush of
+          `$number_of_tenants` concurrent eviction tasks starting to do imitate
+          accesses building up in the period of `[init_order allows activations,
+          $random_access_delay + EvictionPolicyLayerAccessThreshold::period]`.
+
+          We simply cannot handle that degree of concurrent IO.
+
+          We already solved the problem for compactions by adding a semaphore.
+          So, this PR shares that semaphore for use by evictions.
+
+          Part of https://github.com/neondatabase/neon/issues/5479
+
+          Which is again part of https://github.com/neondatabase/neon/issues/4743
+
+          Risks / Changes In System Behavior
+          ==================================
+
+          * we don't do evictions as timely as we currently do
+          * we log a bunch of warnings about eviction taking too long
+          * imitate accesses and compactions compete for the same concurrency
+          limit, so, they'll slow each other down through this shares semaphore
+
+          Changes
+          =======
+
+          - Move the `CONCURRENT_COMPACTIONS` semaphore into `tasks.rs`
+          - Rename it to `CONCURRENT_BACKGROUND_TASKS`
+          - Use it also for the eviction imitate accesses:
+              - Imitate acceses are both per-TIMELINE and per-TENANT
+              - The per-TENANT is done through coalescing all the per-TIMELINE
+                tasks via a tokio mutex `eviction_task_tenant_state`.
+              - We acquire the CONCURRENT_BACKGROUND_TASKS permit early, at the
+                beginning of the eviction iteration, much before the imitate
+                acesses start (and they may not even start at all in the given
+                iteration, as they happen only every $threshold).
+              - Acquiring early is **sub-optimal** because when the per-timline
+                tasks coalesce on the `eviction_task_tenant_state` mutex,
+                they are already holding a CONCURRENT_BACKGROUND_TASKS permit.
+              - It's also unfair because tenants with many timelines win
+                the CONCURRENT_BACKGROUND_TASKS more often.
+              - I don't think there's another way though, without refactoring
+                more of the imitate accesses logic, e.g, making it all per-tenant.
+          - Add metrics for queue depth behind the semaphore.
+          I found these very useful to understand what work is queued in the
+          system.
+
+              - The metrics are tagged by the new `BackgroundLoopKind`.
+              - On a green slate, I would have used `TaskKind`, but we already had
+                pre-existing labels whose names didn't map exactly to task kind.
+                Also the task kind is kind of a lower-level detail, so, I think
+          it's fine to have a separate enum to identify background work kinds.
+
+          Future Work
+          ===========
+
+          I guess I could move the eviction tasks from a ticker to "sleep for
+          $period".
+          The benefit would be that the semaphore automatically "smears" the
+          eviction task scheduling over time, so, we only have the rush on restart
+          but a smeared-out rush afterward.
+
+          The downside is that this perverts the meaning of "$period", as we'd
+          actually not run the eviction at a fixed period. It also means the the
+          "took to long" warning & metric becomes meaningless.
+
+          Then again, that is already the case for the compaction and gc tasks,
+          which do sleep for `$period` instead of using a ticker.
+
+          (cherry picked from commit 9256788273d5661ced0b2661a8751e2aa86fbb59)
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1697537786, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7de3799e66946556e5ea3d2ac77fe594a4964316
+        parent_ids:
+        - a1680b185f1bcd3f9b893568f27af591d7454995
+        message: |
+          (does not compile): make TimelineWriter `Send` by using tokio::sync Mutex internally
+
+          fails with
+
+          cs@devvm:[~/src/neon]: cargo check -p pageserver  --features testing
+              Checking pageserver v0.1.0 (/home/cs/src/neon/pageserver)
+          error: future cannot be sent between threads safely
+             --> pageserver/src/tenant/timeline/walreceiver/connection_manager.rs:426:33
+              |
+          426 |         let connection_handle = TaskHandle::spawn(move |events_sender, cancellation| {
+              |                                 ^^^^^^^^^^^^^^^^^ future created by async block is not `Send`
+              |
+              = help: within `Instrumented<[async block@pageserver/src/tenant/timeline/walreceiver/connection_manager.rs:427:13: 439:14]>`, the trait `std::marker::Send` is not implemented for `std::sync::RwLockReadGuard<'_, LayerMap<dyn PersistentLayer>>`
+          note: future is not `Send` as this value is used across an await
+             --> pageserver/src/tenant/timeline.rs:872:46
+              |
+          850 |         let layers = self.layers.read().unwrap();
+              |             ------ has type `std::sync::RwLockReadGuard<'_, LayerMap<dyn PersistentLayer>>` which is not `Send`
+          ...
+          872 |                 self.freeze_inmem_layer(true).await;
+              |                                              ^^^^^^ await occurs here, with `layers` maybe used later
+          ...
+          881 |     }
+              |     - `layers` is later dropped here
+          note: required by a bound in `TaskHandle::<E>::spawn`
+             --> pageserver/src/tenant/timeline/walreceiver.rs:196:52
+              |
+          192 |     fn spawn<Fut>(
+              |        ----- required by a bound in this
+          ...
+          196 |         Fut: Future<Output = anyhow::Result<()>> + Send,
+              |                                                    ^^^^ required by this bound in `TaskHandle::<E>::spawn`
+
+          error: could not compile `pageserver` due to previous error
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1685120381, offset: 120, sign: 43 } }'
+      target:
+        id: 4d03689d9a7e9c74158e2f549731827755801869
+        parent_ids:
+        - 47647433c34ae8d0b83f270d450d817cb79ce4a1
+        message: |
+          (does not compile): make TimelineWriter `Send` by using tokio::sync Mutex internally
+
+          fails with
+
+          cs@devvm:[~/src/neon]: cargo check -p pageserver  --features testing
+              Checking pageserver v0.1.0 (/home/cs/src/neon/pageserver)
+          error: future cannot be sent between threads safely
+             --> pageserver/src/tenant/timeline/walreceiver/connection_manager.rs:426:33
+              |
+          426 |         let connection_handle = TaskHandle::spawn(move |events_sender, cancellation| {
+              |                                 ^^^^^^^^^^^^^^^^^ future created by async block is not `Send`
+              |
+              = help: within `Instrumented<[async block@pageserver/src/tenant/timeline/walreceiver/connection_manager.rs:427:13: 439:14]>`, the trait `std::marker::Send` is not implemented for `std::sync::RwLockReadGuard<'_, LayerMap<dyn PersistentLayer>>`
+          note: future is not `Send` as this value is used across an await
+             --> pageserver/src/tenant/timeline.rs:872:46
+              |
+          850 |         let layers = self.layers.read().unwrap();
+              |             ------ has type `std::sync::RwLockReadGuard<'_, LayerMap<dyn PersistentLayer>>` which is not `Send`
+          ...
+          872 |                 self.freeze_inmem_layer(true).await;
+              |                                              ^^^^^^ await occurs here, with `layers` maybe used later
+          ...
+          881 |     }
+              |     - `layers` is later dropped here
+          note: required by a bound in `TaskHandle::<E>::spawn`
+             --> pageserver/src/tenant/timeline/walreceiver.rs:196:52
+              |
+          192 |     fn spawn<Fut>(
+              |        ----- required by a bound in this
+          ...
+          196 |         Fut: Future<Output = anyhow::Result<()>> + Send,
+              |                                                    ^^^^ required by this bound in `TaskHandle::<E>::spawn`
+
+          error: could not compile `pageserver` due to previous error
+          (cherry picked from commit 7de3799e66946556e5ea3d2ac77fe594a4964316)
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1685124193, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5559b169535b67850129173e694e5297a5a1a960
+        parent_ids:
+        - 1aea65eb9da46030f2b9740f3694b821663e0a90
+        message: "bump shlex (#6421)\n\n## Problem\r\n\r\nhttps://rustsec.org/advisories/RUSTSEC-2024-0006\r\n\r\n## Summary of changes\r\n\r\n`cargo update -p shlex`"
+        author: Conrad Ludgate <conrad@neon.tech>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1705914870, offset: 0, sign: 43 } }'
+      target:
+        id: 7234208b36fea736ee1204c5a69a34db8160825e
+        parent_ids:
+        - 1aea65eb9da46030f2b9740f3694b821663e0a90
+        message: |
+          bump shlex (#6421)
+
+          ## Problem
+
+          https://rustsec.org/advisories/RUSTSEC-2024-0006
+
+          ## Summary of changes
+
+          `cargo update -p shlex`
+
+          (cherry picked from commit 5559b169535b67850129173e694e5297a5a1a960)
+        author: Conrad Ludgate <conrad@neon.tech>
+        committer: John Spray <john@neon.tech>
+        time: 'Time { raw: git_time { time: 1705916973, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 15c0df4de7ee71b43526d9850b47c9107efe303e
+        parent_ids:
+        - 3290fb09bfacc3fca21a9a8d6be8a0237f8671bf
+        message: "fixup(#6037): actually fix the issue, #6388 failed to do so (#6429)\n\nBefore this patch, the select! still retured immediately if `futs` was\r\nempty. Must have tested a stale build in my manual testing of #6388."
+        author: Christian Schwarz <christian@neon.tech>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1705933649, offset: 0, sign: 43 } }'
+      target:
+        id: f0b2d4b0535fae693af1a7a18b2bb03e7ce243fb
+        parent_ids:
+        - 299d9474c9e3abc67297d81ad301ca46aaf97535
+        message: |
+          fixup(#6037): actually fix the issue, #6388 failed to do so (#6429)
+
+          Before this patch, the select! still retured immediately if `futs` was
+          empty. Must have tested a stale build in my manual testing of #6388.
+
+          (cherry picked from commit 15c0df4de7ee71b43526d9850b47c9107efe303e)
+        author: Christian Schwarz <christian@neon.tech>
+        committer: John Spray <john@neon.tech>
+        time: 'Time { raw: git_time { time: 1705936992, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a1ae23b827ad2de80fda216f732ee0e7aef18253
+        parent_ids:
+        - 1ebe92bcf9b30495d9484eb357bc12ca6dfc981a
+        message: |
+          controversial but necessary: keep holding layer map lock inside compact_level0_phase1
+
+          Without this, the seocnd read().unwrap() becomes an await point,
+          which makes the future not-Send, but, we require it to be Send
+          because it runs inside task_mgr::spawn, which requires the Fut's to be Send
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1685120370, offset: 120, sign: 43 } }'
+      target:
+        id: 24df184a4eb0c4f2c3a87bf5f2ec058ebfedf90e
+        parent_ids:
+        - 223aba4c095ed272822f969909e3043c45059e36
+        message: |
+          controversial but necessary: keep holding layer map lock inside compact_level0_phase1
+
+          Without this, the seocnd read().unwrap() becomes an await point,
+          which makes the future not-Send, but, we require it to be Send
+          because it runs inside task_mgr::spawn, which requires the Fut's to be Send
+
+          (cherry picked from commit a1ae23b827ad2de80fda216f732ee0e7aef18253)
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1685124034, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1b2663350cc36dfb1ef41131836c9273b7a0de22
+        parent_ids:
+        - e8ae409bdc95ae41a8d4551063ab7c790078139f
+        message: |
+          basebackup import: pre-lock the layer map for the `flush()` calls
+
+          The checkpointer loop isn't running anyway, so, there's no risk of
+          blocking it through the pre-lock.
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1683903089, offset: 120, sign: 43 } }'
+      target:
+        id: 47647433c34ae8d0b83f270d450d817cb79ce4a1
+        parent_ids:
+        - 24df184a4eb0c4f2c3a87bf5f2ec058ebfedf90e
+        message: |
+          basebackup import: pre-lock the layer map for the `flush()` calls
+
+          The checkpointer loop isn't running anyway, so, there's no risk of
+          blocking it through the pre-lock.
+
+          (cherry picked from commit 1b2663350cc36dfb1ef41131836c9273b7a0de22)
+          (cherry picked from commit a1680b185f1bcd3f9b893568f27af591d7454995)
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1685124040, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 93572a3e99f572f51529b3fbb3b11dafa88f7f5c
+        parent_ids:
+        - 15c0df4de7ee71b43526d9850b47c9107efe303e
+        message: "pageserver: mark tenant broken when cancelling attach (#6430)\n\n## Problem\r\n\r\nWhen a tenant is in Attaching state, and waiting for the\r\n`concurrent_tenant_warmup` semaphore, it also listens for the tenant\r\ncancellation token. When that token fires, Tenant::attach drops out.\r\nMeanwhile, Tenant::set_stopping waits forever for the tenant to exit\r\nAttaching state.\r\n\r\nFixes: https://github.com/neondatabase/neon/issues/6423\r\n\r\n## Summary of changes\r\n\r\n- In the absence of a valid state for the tenant, it is set to Broken in\r\nthis path. A more elegant solution will require more refactoring, beyond\r\nthis minimal fix."
+        author: John Spray <john@neon.tech>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1705938632, offset: 0, sign: 43 } }'
+      target:
+        id: 90e689addae554d7f79899379d3b84ff414404da
+        parent_ids:
+        - f0b2d4b0535fae693af1a7a18b2bb03e7ce243fb
+        message: |
+          pageserver: mark tenant broken when cancelling attach (#6430)
+
+          ## Problem
+
+          When a tenant is in Attaching state, and waiting for the
+          `concurrent_tenant_warmup` semaphore, it also listens for the tenant
+          cancellation token. When that token fires, Tenant::attach drops out.
+          Meanwhile, Tenant::set_stopping waits forever for the tenant to exit
+          Attaching state.
+
+          Fixes: https://github.com/neondatabase/neon/issues/6423
+
+          ## Summary of changes
+
+          - In the absence of a valid state for the tenant, it is set to Broken in
+          this path. A more elegant solution will require more refactoring, beyond
+          this minimal fix.
+
+          (cherry picked from commit 93572a3e99f572f51529b3fbb3b11dafa88f7f5c)
+        author: John Spray <john@neon.tech>
+        committer: John Spray <john@neon.tech>
+        time: 'Time { raw: git_time { time: 1705940457, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2001c31a14e723c25afef3afe00ba0111eb708a9
+        parent_ids:
+        - 7de3799e66946556e5ea3d2ac77fe594a4964316
+        message: |
+          turn Timeline::layers into tokio::sync::RwLock
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1685120381, offset: 120, sign: 43 } }'
+      target:
+        id: 218af17c2949dde4d35c8b29045ca543249887e5
+        parent_ids:
+        - 4d03689d9a7e9c74158e2f549731827755801869
+        message: |
+          turn Timeline::layers into tokio::sync::RwLock
+
+          (cherry picked from commit 2001c31a14e723c25afef3afe00ba0111eb708a9)
+        author: Christian Schwarz <christian@neon.tech>
+        committer: Christian Schwarz <christian@neon.tech>
+        time: 'Time { raw: git_time { time: 1685124665, offset: 120, sign: 43 } }'
+    is_trivial: false

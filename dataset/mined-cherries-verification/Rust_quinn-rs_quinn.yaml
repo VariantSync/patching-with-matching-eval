@@ -1,0 +1,715 @@
+- total_number_of_committers: '8'
+  repo_name: quinn-rs/quinn
+  total_number_of_commits: '3894'
+  language: Rust
+  total_number_of_results: '28'
+  total_number_of_branches: '32'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7ba3e3d3d3329768734b26b63cf26524bdcb772e
+        parent_ids:
+        - e4c3d9f89f24d1a59465d0d9ef75ad9db19b0cd1
+        message: |
+          Fix transmit prediction false negative regarding stream ID credit
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: 4ca6b1401710be24f68b545375b9099edcf9a3f7
+        parent_ids:
+        - d3a3e655a8edb3c987b9cf354328437864cfd4b4
+        message: |
+          Fix transmit prediction false negative regarding stream ID credit
+
+          (cherry picked from commit 7ba3e3d3d3329768734b26b63cf26524bdcb772e)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 817a57d281d5958c968fa9ce652b42bddae8f3f4
+        parent_ids:
+        - 2a6c0afaf199182cfa4d68c68096dbc1aee57ea0
+        message: |
+          Increase type_length_limit to 2121396
+
+          Previously rustc would fail with
+          error: reached the type-length limit while instantiating
+          `<std::vec::IntoIter<Peer> as std...rs:216:58: 220:6 keylog:&bool]]>`
+        author: Thomas de Zeeuw <thomasdezeeuw@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1616333951, offset: 60, sign: 43 } }'
+      target:
+        id: a78e643f268992a07f10fff222133d929eebfcb7
+        parent_ids:
+        - 858fc91846e07db1fca5fd8d5424e3c7c0e1b2b3
+        message: |
+          Increase type_length_limit to 2121396
+
+          Previously rustc would fail with
+          error: reached the type-length limit while instantiating
+          `<std::vec::IntoIter<Peer> as std...rs:216:58: 220:6 keylog:&bool]]>`
+
+          (cherry picked from commit 817a57d281d5958c968fa9ce652b42bddae8f3f4)
+        author: Thomas de Zeeuw <thomasdezeeuw@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e4c3d9f89f24d1a59465d0d9ef75ad9db19b0cd1
+        parent_ids:
+        - 9d0d10ca6fead4f37b1b6415159521addfe9378d
+        message: |
+          Inline Retransmits::post_read
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: d3a3e655a8edb3c987b9cf354328437864cfd4b4
+        parent_ids:
+        - 7d75679f21e15876e9ccf7649632c9c0c8759f4d
+        message: |
+          Inline Retransmits::post_read
+
+          (cherry picked from commit e4c3d9f89f24d1a59465d0d9ef75ad9db19b0cd1)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 08996a36763bd11eea40f47155991d2bddbbeaab
+        parent_ids:
+        - 4b2909ac1a469133c48ce4fcc98a8dd01530dd84
+        message: |
+          Simplify state inspection
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: 0517fb7ff68dd82c0104515b9cb78d2ca6af3182
+        parent_ids:
+        - 54419f6ef385dbe4bd881aa41cdd0ae1b450ebca
+        message: |
+          Simplify state inspection
+
+          (cherry picked from commit 08996a36763bd11eea40f47155991d2bddbbeaab)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ab61ef89f534e0c9ce82379c0b954591e5f2d99a
+        parent_ids:
+        - ff79550cd8bcfbce86e52ad0130c3edf12d4ce63
+        message: |+
+          Replace deprecated collections::Bound with ops::Bound
+
+        author: bstrie <865233+bstrie@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1616105167, offset: -420, sign: 45 } }'
+      target:
+        id: c30d8e687e13a281d114317243fa16742067f422
+        parent_ids:
+        - 2c1c50ae3db7fcd165cd3088365da73875546b02
+        message: |
+          Replace deprecated collections::Bound with ops::Bound
+
+          (cherry picked from commit ab61ef89f534e0c9ce82379c0b954591e5f2d99a)
+        author: bstrie <865233+bstrie@users.noreply.github.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1616264660, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ca0fae889605c78355d4f604a6ff2ee537e58006
+        parent_ids:
+        - ab280e467acb3f6fe7af1f611ed315014d4110f5
+        message: Downgrade duplicate packet message to debug level
+        author: Nazar Mokrynskyi <nazar@mokrynskyi.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1699345074, offset: 60, sign: 43 } }'
+      target:
+        id: 8d07b88df7c8fbfd6d3fc933a20e1fc6340054ae
+        parent_ids:
+        - bd171f823d69210751f711ccaae0c7afa4ae2fa7
+        message: |
+          Downgrade duplicate packet message to debug level
+
+          (cherry picked from commit ca0fae889605c78355d4f604a6ff2ee537e58006)
+        author: Nazar Mokrynskyi <nazar@mokrynskyi.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1699348499, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 92ab452e1b573e5f9bf7736060b0318b8f07a813
+        parent_ids:
+        - 7b4b4c31e5878bdbce56ab2737dd8cfbafe1c4db
+        message: |
+          bbr: apply clippy suggestions to avoid unnecessary late initialization
+        author: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1645988575, offset: -480, sign: 45 } }'
+      target:
+        id: 50aa79af9bd62688ae28812877262cd84a6f3229
+        parent_ids:
+        - cc1fed350016afe7987792b7d3ff95a4fef85d7c
+        message: |
+          bbr: apply clippy suggestions to avoid unnecessary late initialization
+
+          (cherry picked from commit 92ab452e1b573e5f9bf7736060b0318b8f07a813)
+        author: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1648457775, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5bd1ba570bb1fde3b1d2e0e72e09d343f14006cb
+        parent_ids:
+        - 6616bc958ab536f29552ff60951dd200b2d3cd6e
+        message: |
+          Simplify state juggling
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: 5478002dda7edfd56a6f91d57fba7269115bbff7
+        parent_ids:
+        - cb684d41fde835324bb2534a7e73d81676d0a28d
+        message: |
+          Simplify state juggling
+
+          (cherry picked from commit 5bd1ba570bb1fde3b1d2e0e72e09d343f14006cb)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7248b126ba00d2b4a31bcc947c4883357b1b3185
+        parent_ids:
+        - c1bd43f3a6d4f583912ace35a05c4352d5fd730f
+        message: |
+          remove mio dependency
+        author: Yureka <yuka@yuka.dev>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1650046171, offset: -420, sign: 45 } }'
+      target:
+        id: 20f7cc0f786eb70e6a7f721effd0035f99f78db7
+        parent_ids:
+        - 3ed456b85bb7157f4c61cb2805603758430fe52c
+        message: |
+          remove mio dependency
+
+          (cherry picked from commit 7248b126ba00d2b4a31bcc947c4883357b1b3185)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1653464737, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f79b31babf572d25890bd9583f43de9579d6a91d
+        parent_ids:
+        - ec7a459174b7476cde3bbb1f9551319024bc9210
+        message: |
+          Bump MSRV to 1.63
+
+          More than six months old, and required by time 0.3.20.
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1682315922, offset: 120, sign: 43 } }'
+      target:
+        id: 24b893eda13cbd3e2849c5d3624c0a3c05092fd5
+        parent_ids:
+        - 7d1b280f550ac3a494fe3c2d92a539cec6d0b3b8
+        message: |
+          Bump MSRV to 1.63
+
+          More than six months old, and required by time 0.3.20.
+
+          (cherry picked from commit f79b31babf572d25890bd9583f43de9579d6a91d)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1689451439, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c1bd43f3a6d4f583912ace35a05c4352d5fd730f
+        parent_ids:
+        - 6fc46aefc65aeb3dd2d059ea6aabaf7a6c2f5bdb
+        message: |
+          Satisfy clippy
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1649433082, offset: 120, sign: 43 } }'
+      target:
+        id: 05c6b5b143c99909dc8f79fb7c2036b5b878b370
+        parent_ids:
+        - 11eafce4df833d9c9766b92998c3d34b69d6ce17
+        message: |
+          Satisfy clippy
+
+          (cherry picked from commit c1bd43f3a6d4f583912ace35a05c4352d5fd730f)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1653464737, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 6616bc958ab536f29552ff60951dd200b2d3cd6e
+        parent_ids:
+        - 7ba3e3d3d3329768734b26b63cf26524bdcb772e
+        message: |
+          Don't unconditionally predict transmits on reset
+
+          The exact logic should handle this case just fine.
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: cb684d41fde835324bb2534a7e73d81676d0a28d
+        parent_ids:
+        - 4ca6b1401710be24f68b545375b9099edcf9a3f7
+        message: |
+          Don't unconditionally predict transmits on reset
+
+          The exact logic should handle this case just fine.
+
+          (cherry picked from commit 6616bc958ab536f29552ff60951dd200b2d3cd6e)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3d3a0aa8490d588ea274dfb78395e12aa054e82e
+        parent_ids:
+        - ed6ddd46bdb0fdc82c65afddd90bf850e86dfd7e
+        message: |
+          Deduplicate asserts
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: 1f1143cfa49ac3de851ff5a8a360d2246dfa039a
+        parent_ids:
+        - 4dd270af35fd5d5f2de1c7c1a7ef32569b8dea73
+        message: |
+          Deduplicate asserts
+
+          (cherry picked from commit 3d3a0aa8490d588ea274dfb78395e12aa054e82e)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e703d9d64310245616aa4873be61f4e1a3f2128a
+        parent_ids:
+        - 2cb44d06e4dd3c704262e7602fa663c9c397bb00
+        message: |
+          Fix missing flow control credit when reading a stream's tail
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: 1544b3bd6c94dfcd17a56202ffd3ed5d6ca7b5df
+        parent_ids:
+        - 857bd78fb52b6ab854658c6ac6fac516296d0c21
+        message: |
+          Fix missing flow control credit when reading a stream's tail
+
+          (cherry picked from commit e703d9d64310245616aa4873be61f4e1a3f2128a)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9287a34d63889a3a45023e5f54b3951fe371e59f
+        parent_ids:
+        - 5d4352a40d0e283c5a862ab39526d864238e6455
+        message: |
+          Remove obsolete safety asserts
+
+          These will cause spurious panics once
+          https://github.com/rust-lang/rust/pull/78802 is merged.
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1614754161, offset: 60, sign: 43 } }'
+      target:
+        id: 811a28e01ff9cfbb4324676ebb429ec208f148e8
+        parent_ids:
+        - d799cbed6115ca66f940e10e4e0f9fec0e9df498
+        message: |
+          Remove obsolete safety asserts
+
+          These will cause spurious panics once
+          https://github.com/rust-lang/rust/pull/78802 is merged.
+
+          (cherry picked from commit 9287a34d63889a3a45023e5f54b3951fe371e59f)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1615486720, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 8538ff31c1ad98c138614b36d886fb9ed43452fd
+        parent_ids:
+        - e703d9d64310245616aa4873be61f4e1a3f2128a
+        message: |
+          Improve test log readability
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: 1a294e4f83481e108a51ee09a2483fc7153a6876
+        parent_ids:
+        - 1544b3bd6c94dfcd17a56202ffd3ed5d6ca7b5df
+        message: |
+          Improve test log readability
+
+          (cherry picked from commit 8538ff31c1ad98c138614b36d886fb9ed43452fd)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4b2909ac1a469133c48ce4fcc98a8dd01530dd84
+        parent_ids:
+        - 3d3a0aa8490d588ea274dfb78395e12aa054e82e
+        message: |
+          Decouple state from connection-level flow control issuing
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: 54419f6ef385dbe4bd881aa41cdd0ae1b450ebca
+        parent_ids:
+        - 1f1143cfa49ac3de851ff5a8a360d2246dfa039a
+        message: |
+          Decouple state from connection-level flow control issuing
+
+          (cherry picked from commit 4b2909ac1a469133c48ce4fcc98a8dd01530dd84)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 64b660a8c28311f09084c32bc6a77f9c5b39fb58
+        parent_ids:
+        - 8820f6fd5dc1d0182620799d9b00108aa86b743b
+        message: |
+          fix: don't bail if setting IP_RECVTOS fails
+
+          old macOS versions don't support it
+        author: Jeremy Knope <jeremy@astropad.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1669167075, offset: -480, sign: 45 } }'
+      target:
+        id: b8b9bffe3c3e914c2f72dd5b815d113e093217ac
+        parent_ids:
+        - e03f0f13c810fb10cda5bb9eadced36e538103d7
+        message: |
+          fix: don't bail if setting IP_RECVTOS fails
+
+          old macOS versions don't support it
+
+          (cherry picked from commit 64b660a8c28311f09084c32bc6a77f9c5b39fb58)
+        author: Jeremy Knope <jeremy@astropad.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1669168822, offset: -480, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7f260292848a93d615eb43e6e88114a97e64daf1
+        parent_ids:
+        - 394ac8c2b84497bb490659683ffd2f922ced8a0a
+        message: |
+          proto: detect stateless resets in authed and unprotected packets
+
+          RFC9000 says: endpoints MUST treat any packet ending in a valid
+          stateless reset token as a Stateless Reset
+
+          Previously, we did not detect stateless resets that appeared to be
+          unprotected packets (e.g. Retry or Version Negotiation) or which were
+          successfully decrypted (astronomically unlikely with TLS, but possible
+          with custom cryptographic layers).
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1692825542, offset: -420, sign: 45 } }'
+      target:
+        id: dfe9176b3c9a5320b52ae034da0c79cae0cccfb2
+        parent_ids:
+        - 487bae6ef27924b2ff04a5e897e20240dfdb671d
+        message: |
+          proto: detect stateless resets in authed and unprotected packets
+
+          RFC9000 says: endpoints MUST treat any packet ending in a valid
+          stateless reset token as a Stateless Reset
+
+          Previously, we did not detect stateless resets that appeared to be
+          unprotected packets (e.g. Retry or Version Negotiation) or which were
+          successfully decrypted (astronomically unlikely with TLS, but possible
+          with custom cryptographic layers).
+
+          (cherry picked from commit 7f260292848a93d615eb43e6e88114a97e64daf1)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1692853915, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b7e95fdba758e4def6a202fb5c718bf61415cf72
+        parent_ids:
+        - 9287a34d63889a3a45023e5f54b3951fe371e59f
+        message: |
+          Pad ack-eliciting initial-bearing datagrams from servers
+
+          Quoth the spec: a server MUST expand the payload of all UDP datagrams
+          carrying ack-eliciting Initial packets to at least the smallest
+          allowed maximum datagram size of 1200 bytes.
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1614765870, offset: 60, sign: 43 } }'
+      target:
+        id: 2c1c50ae3db7fcd165cd3088365da73875546b02
+        parent_ids:
+        - 811a28e01ff9cfbb4324676ebb429ec208f148e8
+        message: |
+          Pad ack-eliciting initial-bearing datagrams from servers
+
+          Quoth the spec: a server MUST expand the payload of all UDP datagrams
+          carrying ack-eliciting Initial packets to at least the smallest
+          allowed maximum datagram size of 1200 bytes.
+
+          (cherry picked from commit b7e95fdba758e4def6a202fb5c718bf61415cf72)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1615486720, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2a6c0afaf199182cfa4d68c68096dbc1aee57ea0
+        parent_ids:
+        - 49475c22b2a07c19bf7e6d3247a23ba1e9eb30dc
+        message: |
+          Increase MSRV to 1.46
+        author: Thomas de Zeeuw <thomasdezeeuw@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1616333951, offset: 60, sign: 43 } }'
+      target:
+        id: ac6b8947c86a09b76277fce3ef01890638d60560
+        parent_ids:
+        - 5478002dda7edfd56a6f91d57fba7269115bbff7
+        message: |
+          Increase MSRV to 1.46
+
+          (cherry picked from commit 2a6c0afaf199182cfa4d68c68096dbc1aee57ea0)
+        author: Thomas de Zeeuw <thomasdezeeuw@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 63b0586a2d8df1f710cbf4e5de98f90c484922e7
+        parent_ids:
+        - 8538ff31c1ad98c138614b36d886fb9ed43452fd
+        message: |
+          Fold Blocked state into Readable
+
+          Because the only remaining possible error is Reset, we rename and
+          specialize the error state for clarity.
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: c64278271d035b819003dd2e269983225aabe9e9
+        parent_ids:
+        - 1a294e4f83481e108a51ee09a2483fc7153a6876
+        message: |
+          Fold Blocked state into Readable
+
+          Because the only remaining possible error is Reset, we rename and
+          specialize the error state for clarity.
+
+          (cherry picked from commit 63b0586a2d8df1f710cbf4e5de98f90c484922e7)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a5667774f874b7ba15285d8fa8a85ad6685bbeab
+        parent_ids:
+        - e801527c9bec4a6e2d50835599c961754866e3b0
+        message: |
+          Import assert_matches explicitly
+
+          Fixes test build on rust beta.
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1616786013, offset: 60, sign: 43 } }'
+      target:
+        id: 858fc91846e07db1fca5fd8d5424e3c7c0e1b2b3
+        parent_ids:
+        - ac6b8947c86a09b76277fce3ef01890638d60560
+        message: |
+          Import assert_matches explicitly
+
+          Fixes test build on rust beta.
+
+          (cherry picked from commit a5667774f874b7ba15285d8fa8a85ad6685bbeab)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9d0d10ca6fead4f37b1b6415159521addfe9378d
+        parent_ids:
+        - 08996a36763bd11eea40f47155991d2bddbbeaab
+        message: |
+          Centralize post_read calls
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: 7d75679f21e15876e9ccf7649632c9c0c8759f4d
+        parent_ids:
+        - 0517fb7ff68dd82c0104515b9cb78d2ca6af3182
+        message: |
+          Centralize post_read calls
+
+          (cherry picked from commit 9d0d10ca6fead4f37b1b6415159521addfe9378d)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 88f65bd2a8a2a02d581e27f7c3a23a13c6777213
+        parent_ids:
+        - 214b34a7ec0af1dd237552427f2a8c1a69a3558d
+        message: |
+          Allow adjustment of per-connection concurrent stream limits
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1647627171, offset: -420, sign: 45 } }'
+      target:
+        id: 11eafce4df833d9c9766b92998c3d34b69d6ce17
+        parent_ids:
+        - 20f7cc0f786eb70e6a7f721effd0035f99f78db7
+        message: |
+          Allow adjustment of per-connection concurrent stream limits
+
+          (cherry picked from commit 88f65bd2a8a2a02d581e27f7c3a23a13c6777213)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1653464737, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ed6ddd46bdb0fdc82c65afddd90bf850e86dfd7e
+        parent_ids:
+        - 63b0586a2d8df1f710cbf4e5de98f90c484922e7
+        message: |
+          Inline Chunks::done
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: 4dd270af35fd5d5f2de1c7c1a7ef32569b8dea73
+        parent_ids:
+        - c64278271d035b819003dd2e269983225aabe9e9
+        message: |
+          Inline Chunks::done
+
+          (cherry picked from commit ed6ddd46bdb0fdc82c65afddd90bf850e86dfd7e)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f731019c8341105117016af9d4a5134f8146053e
+        parent_ids:
+        - 0730f11acaa47731b051779a6a9da15d5e4ef4f5
+        message: |+
+          Clean up a few Option/Result patterns that fit an std combinator
+
+        author: François Garillot <4142+huitseeker@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1643490048, offset: -480, sign: 45 } }'
+      target:
+        id: add7e4cca54ecc7ae0c70e3fece7099e6a3523de
+        parent_ids:
+        - 50aa79af9bd62688ae28812877262cd84a6f3229
+        message: |
+          Clean up a few Option/Result patterns that fit an std combinator
+
+          (cherry picked from commit f731019c8341105117016af9d4a5134f8146053e)
+        author: François Garillot <4142+huitseeker@users.noreply.github.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1648457775, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2cb44d06e4dd3c704262e7602fa663c9c397bb00
+        parent_ids:
+        - ed164fc4589470f1baee0f7c88d9d97fe20d985f
+        message: |
+          Remove dead state
+
+          This field was always `true`.
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Dirkjan Ochtman <dirkjan@ochtman.nl>
+        time: 'Time { raw: git_time { time: 1617174026, offset: 120, sign: 43 } }'
+      target:
+        id: 857bd78fb52b6ab854658c6ac6fac516296d0c21
+        parent_ids:
+        - 1056297a725a0877e1f4313953dcd69706dd26bc
+        message: |
+          Remove dead state
+
+          This field was always `true`.
+
+          (cherry picked from commit 2cb44d06e4dd3c704262e7602fa663c9c397bb00)
+        author: Benjamin Saunders <ben.e.saunders@gmail.com>
+        committer: Benjamin Saunders <ben.e.saunders@gmail.com>
+        time: 'Time { raw: git_time { time: 1617568906, offset: -420, sign: 45 } }'
+    is_trivial: false

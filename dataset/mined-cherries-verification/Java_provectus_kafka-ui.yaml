@@ -1,0 +1,841 @@
+- language: Java
+  repo_name: provectus/kafka-ui
+  total_number_of_branches: '52'
+  total_number_of_commits: '2144'
+  total_number_of_committers: '38'
+  total_number_of_results: '30'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ee1cd72dd5b6b74f8d856e4ed9135850ebc12e10
+        parent_ids:
+        - 7a47e6e8ba918d33f08180749980bb939226cb1d
+        message: "ISSUE-3144: CVE fixes, Springboot upd (#3624)\n\n* ISSUE-3144: Spring boot version bump to 3.0.5, snakeyaml upd\r\n* explicit spring security dependency removed\r\n* openapi plugin updated to 6.5\r\n* Some javax.annotation imports migrated to jakarta.annotation\r\n* base container sha specified\r\n* Update CognitoAuthorityExtractor\r\n"
+        author: Ilya Kuramshin <iliax@proton.me>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1680874264, offset: 240, sign: 43 } }'
+      target:
+        id: b991fb35606f57f7e695e2864e8b6e2ca202fa08
+        parent_ids:
+        - ef0dacb0c36a1a180ef8fda670c82854658aab00
+        message: |
+          ISSUE-3144: CVE fixes, Springboot upd (#3624)
+
+          * ISSUE-3144: Spring boot version bump to 3.0.5, snakeyaml upd
+          * explicit spring security dependency removed
+          * openapi plugin updated to 6.5
+          * Some javax.annotation imports migrated to jakarta.annotation
+          * base container sha specified
+          * Update CognitoAuthorityExtractor
+
+          (cherry picked from commit ee1cd72dd5b6b74f8d856e4ed9135850ebc12e10)
+        author: Ilya Kuramshin <iliax@proton.me>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1681402176, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c13440b65d602399d27d7110580fe18856ad0603
+        parent_ids:
+        - 53fb641220aaa86c6f3bf0a4521748e039ca7a4e
+        message: "[e2e] Create method with common steps inside test classes (#3045)\n\n* [e2e] Create method with common steps inside test classes. Connectors, Schema, Brokers are done.\r\n\r\n* [e2e] Create method with common steps inside test classes. Topics are done.\r\n\r\n* [e2e] First Fix. Create method with common steps inside test classes.\r\n\r\n* [e2e]TopicName in redirectToConsumerFromTopic changed.\r\n\r\n* [e2e]TopicName in redirectToConsumerFromTopic returned.\r\n\r\n* [e2e]Broker tests fix.\r\n\r\n* [e2e]Topic tests fix. .setNumberOfPartitions(1) and setTimeToRetainDataInMs(\"604800000\") added.\r\n\r\n* [e2e]Topic tests fix. verifyVisibleElements() and verifyEnabledElements added.\r\n\r\n* [e2e]Topic tests fix. verifyVisibleElements() and verifyEnabledElements added.\r\n\r\n* [e2e]Fix with verifyElementsCondition()\r\n\r\n* [e2e]Fix SmokeTests.\r\n\r\n* [e2e]Fix2 SmokeTests."
+        author: Arthur <79512124+ArthurNiedial@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1671193940, offset: 120, sign: 43 } }'
+      target:
+        id: da456727b705a6a66018591414eb837320b5e760
+        parent_ids:
+        - b5c87e047fa53f9480ad095e0763c9426ef14613
+        message: |
+          [e2e] Create method with common steps inside test classes (#3045)
+
+          * [e2e] Create method with common steps inside test classes. Connectors, Schema, Brokers are done.
+
+          * [e2e] Create method with common steps inside test classes. Topics are done.
+
+          * [e2e] First Fix. Create method with common steps inside test classes.
+
+          * [e2e]TopicName in redirectToConsumerFromTopic changed.
+
+          * [e2e]TopicName in redirectToConsumerFromTopic returned.
+
+          * [e2e]Broker tests fix.
+
+          * [e2e]Topic tests fix. .setNumberOfPartitions(1) and setTimeToRetainDataInMs("604800000") added.
+
+          * [e2e]Topic tests fix. verifyVisibleElements() and verifyEnabledElements added.
+
+          * [e2e]Topic tests fix. verifyVisibleElements() and verifyEnabledElements added.
+
+          * [e2e]Fix with verifyElementsCondition()
+
+          * [e2e]Fix SmokeTests.
+
+          * [e2e]Fix2 SmokeTests.
+
+          (cherry picked from commit c13440b65d602399d27d7110580fe18856ad0603)
+        author: Arthur <79512124+ArthurNiedial@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1671808027, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 6fe61654271fe74d595180fc29615b155fb66182
+        parent_ids:
+        - 2ac8646769d10e69d972928b943c5bcc708ddc61
+        message: |+
+          BE: RBAC: Fix viewable topics filter (#3946)
+
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1687233110, offset: 240, sign: 43 } }'
+      target:
+        id: b0c0e06f1945c7d24e519234abc5aeccfefb48b9
+        parent_ids:
+        - 556ec290eb03f174dfde3b29497c14d883b850dc
+        message: |
+          BE: RBAC: Fix viewable topics filter (#3946)
+
+          (cherry picked from commit 6fe61654271fe74d595180fc29615b155fb66182)
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1687869754, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 83f94325691554ec783e84fb3fb0c912fd936719
+        parent_ids:
+        - a2741291bfd5bff2283e9361adebf30b2db56cca
+        message: |+
+          [FE] Messages filtering by offset & timestamp doesn't work (#3582)
+
+        author: Nail Badiullin <nbadiullin@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1681117706, offset: 240, sign: 43 } }'
+      target:
+        id: d10996ed60250099a25db22814c21a9fb5353140
+        parent_ids:
+        - 8e781e5d80275e5578da6c421e04550a2151d6cd
+        message: |
+          [FE] Messages filtering by offset & timestamp doesn't work (#3582)
+
+          (cherry picked from commit 83f94325691554ec783e84fb3fb0c912fd936719)
+        author: Nail Badiullin <nbadiullin@provectus.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1681402331, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 71a7a1ec84442e2d797d867fa5222c5a9e2f4393
+        parent_ids:
+        - 0099169a2be914ccbb8e9d8f0c7e308fbb7446dc
+        message: |+
+          FE: Fix permissions check for cluster edit (#3862)
+
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1684993018, offset: 240, sign: 43 } }'
+      target:
+        id: 59f03200f486582331d7098f587d7ed1447aa47d
+        parent_ids:
+        - aa633f424c4a04360e4831558cf2c72dde119d73
+        message: |
+          FE: Fix permissions check for cluster edit (#3862)
+
+          (cherry picked from commit 71a7a1ec84442e2d797d867fa5222c5a9e2f4393)
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1687869691, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4b730eb288b1d157a2867105c6f693d117bcf1cc
+        parent_ids:
+        - 816e30d6b2a2328edd541c6a74bf197edff9fcc2
+        message: "[ISSUE 1046] UI allows to submit message with empty key & value (#1264)\n\n* [ISSUE 1046] UI allows to submit message with empty key & value\r\n\r\n* Update Contract"
+        author: Oleg Shur <workshur@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1639763053, offset: 180, sign: 43 } }'
+      target:
+        id: 32a2e753b07b1741cbc338ca6391d9549082793b
+        parent_ids:
+        - 5a487e437d9e8eb0865353da98a31e85bd3c1e00
+        message: "Allow producing messages with an empty key/value\n\n* [ISSUE 1046] UI allows to submit message with empty key & value (#1264)\r\n\r\n* [ISSUE 1046] UI allows to submit message with empty key & value\r\n\r\n* Update Contract\r\n\r\n(cherry picked from commit 4b730eb288b1d157a2867105c6f693d117bcf1cc)\r\n\r\n* Backend fix\r\n\r\n* Refactoring\r\n\r\n* Fix nullable & checkstyle\r\n\r\n* Fix jsonnullable get\r\n\r\n* Remove unnecessary check and add a test\r\n\r\nCo-authored-by: Oleg Shur <workshur@gmail.com>"
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1640361627, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b700ac3991dc5106b3d996b4dcfef92004e81521
+        parent_ids:
+        - b9bbb1a8235037c9a4810bd4d586fb42408cb67b
+        message: |-
+          BE: RBAC: Implement an authorities extractor to support subject-level role matching (#3979)
+
+          Co-authored-by: Ilya Kuramshin <iliax@proton.me>
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1687869040, offset: 240, sign: 43 } }'
+      target:
+        id: 56fa824510d8a35b08e3b42bf6625c846e2ed5a0
+        parent_ids:
+        - b0c0e06f1945c7d24e519234abc5aeccfefb48b9
+        message: |
+          BE: RBAC: Implement an authorities extractor to support subject-level role matching (#3979)
+
+          Co-authored-by: Ilya Kuramshin <iliax@proton.me>
+          (cherry picked from commit b700ac3991dc5106b3d996b4dcfef92004e81521)
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1687869761, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 8a68ba0778b7709f553a5987ddde505c5ebe42bb
+        parent_ids:
+        - e118aaba3d2ebc0f2a09e6fb2ca43b555254637e
+        message: |-
+          RBAC: Fix KC restart permissions (#3891)
+
+          Co-authored-by: David Bejanyan <58771979+David-DB88@users.noreply.github.com>
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1685716500, offset: 240, sign: 43 } }'
+      target:
+        id: 4ae1da6ebf21dbdc71f3aea03aadab2739fb251a
+        parent_ids:
+        - 3377289517abe2ae5ce72a8a18faaed74d218595
+        message: |
+          RBAC: Fix KC restart permissions (#3891)
+
+          Co-authored-by: David Bejanyan <58771979+David-DB88@users.noreply.github.com>
+          (cherry picked from commit 8a68ba0778b7709f553a5987ddde505c5ebe42bb)
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1687869590, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0a24b2d7658a2fd9cfe5cb7af6961edb2c8fe1f6
+        parent_ids:
+        - a503c29472bbfc8f4c57680fd71ba7bfb007d6f9
+        message: "[e2e]Checking the Brokers overview (#3014)\n\n* [e2e]Checking the Brokers overview\r\n\r\n* [e2e]FirstUpdate Checking the Brokers overview\r\n\r\n* [e2e]SecondUpdate Checking the Brokers overview\r\n\r\n* [e2e]FirstFix Checking the Brokers overview\r\n\r\n* [e2e]FirstFix Checking the Brokers overview"
+        author: Arthur <79512124+ArthurNiedial@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1670241414, offset: 120, sign: 43 } }'
+      target:
+        id: 1f44abf1b68b36805a848869073649d45b9b3dda
+        parent_ids:
+        - 141111ae920ea62846d83191feb0cf9da81ae1af
+        message: |
+          [e2e]Checking the Brokers overview (#3014)
+
+          * [e2e]Checking the Brokers overview
+
+          * [e2e]FirstUpdate Checking the Brokers overview
+
+          * [e2e]SecondUpdate Checking the Brokers overview
+
+          * [e2e]FirstFix Checking the Brokers overview
+
+          * [e2e]FirstFix Checking the Brokers overview
+
+          (cherry picked from commit 0a24b2d7658a2fd9cfe5cb7af6961edb2c8fe1f6)
+        author: Arthur <79512124+ArthurNiedial@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1671808026, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c148f112a404815d6645fa97209199eced054728
+        parent_ids:
+        - 98f1f6ebcd5412e8d09a4ea6f72eec4f9cdf9e4e
+        message: |+
+          FE: Fix config param source nullability (#3661)
+
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1681372660, offset: 240, sign: 43 } }'
+      target:
+        id: fcd88240baa83add262cd23586812575520036a3
+        parent_ids:
+        - b991fb35606f57f7e695e2864e8b6e2ca202fa08
+        message: |
+          FE: Fix config param source nullability (#3661)
+
+          (cherry picked from commit c148f112a404815d6645fa97209199eced054728)
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1681402296, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d2d039e36c7e78343e4b0d98632a891982660695
+        parent_ids:
+        - 25d34e11e4a6e6b472a2a60d3c103be444a319eb
+        message: "[e2e]Checking 'Time to retain data (in ms)' custom value with editing… (#3023)\n\n* [e2e]Checking 'Time to retain data (in ms)' custom value with editing Topic's settings\r\n\r\n* resolve conversations\r\n\r\n* resolve conversation and refactored test addingNewFilterWithinTopic() with randomAlphabetic()\r\n\r\n* resolve conversation and refactored test checkFilterSavingWithinSavedFilters() with randomAlphabetic()"
+        author: Alexandr Nezboretskiy <88882353+anezboretskiy@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1670321616, offset: 120, sign: 43 } }'
+      target:
+        id: 7170493ad1700235966efe40b4e0661b010bd285
+        parent_ids:
+        - 1f44abf1b68b36805a848869073649d45b9b3dda
+        message: |
+          [e2e]Checking 'Time to retain data (in ms)' custom value with editing… (#3023)
+
+          * [e2e]Checking 'Time to retain data (in ms)' custom value with editing Topic's settings
+
+          * resolve conversations
+
+          * resolve conversation and refactored test addingNewFilterWithinTopic() with randomAlphabetic()
+
+          * resolve conversation and refactored test checkFilterSavingWithinSavedFilters() with randomAlphabetic()
+
+          (cherry picked from commit d2d039e36c7e78343e4b0d98632a891982660695)
+        author: Alexandr Nezboretskiy <88882353+anezboretskiy@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1671808026, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: dbdced5babfc5787c4e242348b8142f8b9a03252
+        parent_ids:
+        - 94da2f4e7f98f969df7a3509bfff41850fef71e3
+        message: "BE: Fix loading freezes in case one of the brokers is down (#3618)\n\nCo-authored-by: iliax <ikuramshin@provectus.com>\r\nCo-authored-by: Roman Zabaluev <rzabaluev@provectus.com>"
+        author: Ilya Kuramshin <iliax@proton.me>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1681130415, offset: 240, sign: 43 } }'
+      target:
+        id: 183317c7815388383beb33f07d1bb7063bb0abdc
+        parent_ids:
+        - fcd88240baa83add262cd23586812575520036a3
+        message: |
+          BE: Fix loading freezes in case one of the brokers is down (#3618)
+
+          Co-authored-by: iliax <ikuramshin@provectus.com>
+          Co-authored-by: Roman Zabaluev <rzabaluev@provectus.com>
+          (cherry picked from commit dbdced5babfc5787c4e242348b8142f8b9a03252)
+        author: Ilya Kuramshin <iliax@proton.me>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1681402313, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ca3916aae01494a890ba021535400ff148df0fcb
+        parent_ids:
+        - f8417e6eaaf29f1fe0dbbb09da55dc4e701020ec
+        message: "[e2e] Update case \"Checking the information of used Broker in a cluster\" (#3094)\n\n* [e2e] Update case \"Checking the information of used Broker in a cluster\"\r\n\r\n* [e2e] Update case \"Checking the information of used Broker in a cluster\"\r\n\r\n* [e2e] Update case \"Checking the information of used Broker in a cluster\"\r\n\r\n* [e2e]First Fix Update case \"Checking the information of used Broker in a cluster\"\r\n\r\n* [e2e]Second Fix Update case \"Checking the information of used Broker in a cluster\"\r\n\r\n* [e2e]Third Fix Update case \"Checking the information of used Broker in a cluster\"\r\n\r\n* [e2e]Third Fix Update case \"Checking the information of used Broker in a cluster\"\r\n\r\nCo-authored-by: Vlad Senyuta <66071557+VladSenyuta@users.noreply.github.com>"
+        author: Arthur <79512124+ArthurNiedial@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1671553171, offset: 120, sign: 43 } }'
+      target:
+        id: c0598a99ed259082c888d59dd4c39eb16b7c7f94
+        parent_ids:
+        - f4e6afed2b2f996920c9f588275bf5666aecbed8
+        message: |
+          [e2e] Update case "Checking the information of used Broker in a cluster" (#3094)
+
+          * [e2e] Update case "Checking the information of used Broker in a cluster"
+
+          * [e2e] Update case "Checking the information of used Broker in a cluster"
+
+          * [e2e] Update case "Checking the information of used Broker in a cluster"
+
+          * [e2e]First Fix Update case "Checking the information of used Broker in a cluster"
+
+          * [e2e]Second Fix Update case "Checking the information of used Broker in a cluster"
+
+          * [e2e]Third Fix Update case "Checking the information of used Broker in a cluster"
+
+          * [e2e]Third Fix Update case "Checking the information of used Broker in a cluster"
+
+          Co-authored-by: Vlad Senyuta <66071557+VladSenyuta@users.noreply.github.com>
+          (cherry picked from commit ca3916aae01494a890ba021535400ff148df0fcb)
+        author: Arthur <79512124+ArthurNiedial@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1672130716, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 22439f30e803f4090489ded783055c0728bff6a2
+        parent_ids:
+        - a9d7d6c5153ea63999f69f0b0433362a0b5a9c74
+        message: "[e2e] TopicTests.recreateTopicFromTopicProfile : Recreate topic from topic profile (#3125)\n\n* [e2e] TopicTests.recreateTopicFromTopicProfile : Recreate topic from topic profile\r\n\r\n* [e2e] TopicTests.recreateTopicFromTopicProfile : Recreate topic from topic profile\r\n\r\n* [e2e] Final Fix. add topicSettingsTab.waitUntilScreenReady();\r\n\r\n* [e2e] Final Fix.\r\n\r\n* [e2e] Final Fix 2."
+        author: Arthur <79512124+ArthurNiedial@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1671803285, offset: 120, sign: 43 } }'
+      target:
+        id: 5f4bb43afd3a516176db481944fb5adb3178a40e
+        parent_ids:
+        - 49daf27898c848c8d2fee380f60d1243a4286ba3
+        message: |
+          [e2e] TopicTests.recreateTopicFromTopicProfile : Recreate topic from topic profile (#3125)
+
+          * [e2e] TopicTests.recreateTopicFromTopicProfile : Recreate topic from topic profile
+
+          * [e2e] TopicTests.recreateTopicFromTopicProfile : Recreate topic from topic profile
+
+          * [e2e] Final Fix. add topicSettingsTab.waitUntilScreenReady();
+
+          * [e2e] Final Fix.
+
+          * [e2e] Final Fix 2.
+
+          (cherry picked from commit 22439f30e803f4090489ded783055c0728bff6a2)
+        author: Arthur <79512124+ArthurNiedial@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1672130717, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f22c910f5cb19dffc74d997cb7b668d4ab4be65e
+        parent_ids:
+        - 1b9c189bfad318c6beea5ade4c7c2abc969db98d
+        message: |-
+          FE: Fix latest version is null (#3833)
+
+          Co-authored-by: Roman Zabaluev <rzabaluev@provectus.com>
+        author: David Bejanyan <58771979+David-DB88@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1684750150, offset: 240, sign: 43 } }'
+      target:
+        id: aa633f424c4a04360e4831558cf2c72dde119d73
+        parent_ids:
+        - f7aaea85f49124d3dbc655cd43ad92aac0185464
+        message: |
+          FE: Fix latest version is null (#3833)
+
+          Co-authored-by: Roman Zabaluev <rzabaluev@provectus.com>
+          (cherry picked from commit f22c910f5cb19dffc74d997cb7b668d4ab4be65e)
+        author: David Bejanyan <58771979+David-DB88@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1687869680, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b9bbb1a8235037c9a4810bd4d586fb42408cb67b
+        parent_ids:
+        - 81805703c855b3ea5ffde6ab022b207780b485bb
+        message: |+
+          FE: Ignore expected 404 on topic statistics page (#3964)
+
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1687771941, offset: 0, sign: 43 } }'
+      target:
+        id: 3377289517abe2ae5ce72a8a18faaed74d218595
+        parent_ids:
+        - 8727393501ca6789943240c9267ac442a0d649c2
+        message: |
+          FE: Ignore expected 404 on topic statistics page (#3964)
+
+          (cherry picked from commit b9bbb1a8235037c9a4810bd4d586fb42408cb67b)
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1687869503, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 86c72d7d8527e00aaa5ac45a04a8909e7a6a21fb
+        parent_ids:
+        - 27db304b1b3f779363891dccdaf365e17dbaf593
+        message: "[e2e]SchemasTests.updateSchemaAvro : Update schema avro ( REFACTORED WITH NEW ASSERTIONS) (#2992)\n\n* Added softAssertions and few methods for assert\r\n\r\n* Refactored softAssertions and few methods for assert"
+        author: Alexandr Nezboretskiy <88882353+anezboretskiy@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1669816869, offset: 120, sign: 43 } }'
+      target:
+        id: 51b5b3339f3f897f222aafb0b4f0aea2cec27349
+        parent_ids:
+        - 58e0cc8d49b2ff260f3d3e97b30e025a79140373
+        message: |
+          [e2e]SchemasTests.updateSchemaAvro : Update schema avro ( REFACTORED WITH NEW ASSERTIONS) (#2992)
+
+          * Added softAssertions and few methods for assert
+
+          * Refactored softAssertions and few methods for assert
+
+          (cherry picked from commit 86c72d7d8527e00aaa5ac45a04a8909e7a6a21fb)
+        author: Alexandr Nezboretskiy <88882353+anezboretskiy@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1671807984, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 27db304b1b3f779363891dccdaf365e17dbaf593
+        parent_ids:
+        - 20ecc74dd9aba38156e5cc88847e3a41fd663feb
+        message: "[e2e]Checking 'Show Internal Topics' toggle functionality within 'All Topics' page/Issue#2938 (#2983)\n\n* [e2e] Checking 'Show Internal Topics' toggle functionality within 'All Topics' page\r\n\r\n* [e2e] First Checking 'Show Internal Topics' toggle functionality within 'All Topics' page\r\n\r\n* [e2e] Second Checking 'Show Internal Topics' toggle functionality within 'All Topics' page\r\n\r\n* [e2e] selectItem locator is changed\r\n\r\n* [e2e] assertion added\r\n\r\n* [e2e] assertion added"
+        author: Arthur <79512124+ArthurNiedial@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1669734908, offset: 120, sign: 43 } }'
+      target:
+        id: 58e0cc8d49b2ff260f3d3e97b30e025a79140373
+        parent_ids:
+        - 2b790df989b996ae2ef4843847c63c5b4e046c41
+        message: |
+          [e2e]Checking 'Show Internal Topics' toggle functionality within 'All Topics' page/Issue#2938 (#2983)
+
+          * [e2e] Checking 'Show Internal Topics' toggle functionality within 'All Topics' page
+
+          * [e2e] First Checking 'Show Internal Topics' toggle functionality within 'All Topics' page
+
+          * [e2e] Second Checking 'Show Internal Topics' toggle functionality within 'All Topics' page
+
+          * [e2e] selectItem locator is changed
+
+          * [e2e] assertion added
+
+          * [e2e] assertion added
+
+          (cherry picked from commit 27db304b1b3f779363891dccdaf365e17dbaf593)
+        author: Arthur <79512124+ArthurNiedial@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1671807984, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: de7f7db26919e7c23d49ea2c3e38f455205dec5e
+        parent_ids:
+        - c13440b65d602399d27d7110580fe18856ad0603
+        message: "[e2e]Checking messages filtering by Offset within Topic/Messages (#3066)\n\n* Checking messages filtering by Offset within Topic/Messages\r\n\r\n* Fix test checkTimeToRetainDataCustomValueWithEditingTopic(), refactored assertions on topicCreateEditForm from \"604800000\" to \"\"\r\n\r\n* Fix test checkTimeToRetainDataCustomValueWithEditingTopic(),added setNumberOfPartitions as mandatory field\r\n\r\n* resolve conversations\r\n\r\n* resolve conversations\r\n\r\n* resolve conversations"
+        author: Alexandr Nezboretskiy <88882353+anezboretskiy@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1671466229, offset: 120, sign: 43 } }'
+      target:
+        id: 6375cc9afd390fa3574e021927d5866e2372af8b
+        parent_ids:
+        - da456727b705a6a66018591414eb837320b5e760
+        message: |
+          [e2e]Checking messages filtering by Offset within Topic/Messages (#3066)
+
+          * Checking messages filtering by Offset within Topic/Messages
+
+          * Fix test checkTimeToRetainDataCustomValueWithEditingTopic(), refactored assertions on topicCreateEditForm from "604800000" to ""
+
+          * Fix test checkTimeToRetainDataCustomValueWithEditingTopic(),added setNumberOfPartitions as mandatory field
+
+          * resolve conversations
+
+          * resolve conversations
+
+          * resolve conversations
+
+          (cherry picked from commit de7f7db26919e7c23d49ea2c3e38f455205dec5e)
+        author: Alexandr Nezboretskiy <88882353+anezboretskiy@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1671808027, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9549f68d7edcb0022687c8155010ba3c5b2cddac
+        parent_ids:
+        - 8337c9c183d632ea27b7c253d776fdfda4b19840
+        message: |+
+          BE: Fix CORS once again (#3957)
+
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1687509912, offset: 0, sign: 43 } }'
+      target:
+        id: 8727393501ca6789943240c9267ac442a0d649c2
+        parent_ids:
+        - 26464ba37d383b2e8f9a05cc53a8780eb371bf4e
+        message: |
+          BE: Fix CORS once again (#3957)
+
+          (cherry picked from commit 9549f68d7edcb0022687c8155010ba3c5b2cddac)
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1687869483, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b3240d9057d5470dda93d56bb3e0145a768662eb
+        parent_ids:
+        - 83f94325691554ec783e84fb3fb0c912fd936719
+        message: |+
+          BE: Exempt appconfig from rbac check (#3647)
+
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1681124775, offset: 240, sign: 43 } }'
+      target:
+        id: 8e781e5d80275e5578da6c421e04550a2151d6cd
+        parent_ids:
+        - 183317c7815388383beb33f07d1bb7063bb0abdc
+        message: |
+          BE: Exempt appconfig from rbac check (#3647)
+
+          (cherry picked from commit b3240d9057d5470dda93d56bb3e0145a768662eb)
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1681402323, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f19abb203624fbb30820605200e321745f869a0e
+        parent_ids:
+        - 61bf71f9b7a730180559cd23b321823e640bf128
+        message: |-
+          BE: Make webclients use system proxy (#3881)
+
+          Co-authored-by: Ilya Kuramshin <iliax@proton.me>
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1685449638, offset: 240, sign: 43 } }'
+      target:
+        id: 556ec290eb03f174dfde3b29497c14d883b850dc
+        parent_ids:
+        - 2b334d52098dcccf8b5d70670f506f48da550472
+        message: |
+          BE: Make webclients use system proxy (#3881)
+
+          Co-authored-by: Ilya Kuramshin <iliax@proton.me>
+          (cherry picked from commit f19abb203624fbb30820605200e321745f869a0e)
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1687869732, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f7d85d86e6016f284e0192eba2844c0a89190344
+        parent_ids:
+        - 62bee1ced8f8dc4184c22024fca77eae2de8a2b9
+        message: |-
+          BE: Chore: CVEs fixes, May 2023 (#3840)
+
+          Co-authored-by: iliax <ikuramshin@provectus.com>
+        author: Ilya Kuramshin <iliax@proton.me>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1684402838, offset: 0, sign: 43 } }'
+      target:
+        id: f7aaea85f49124d3dbc655cd43ad92aac0185464
+        parent_ids:
+        - 4ae1da6ebf21dbdc71f3aea03aadab2739fb251a
+        message: |
+          BE: Chore: CVEs fixes, May 2023 (#3840)
+
+          Co-authored-by: iliax <ikuramshin@provectus.com>
+          (cherry picked from commit f7d85d86e6016f284e0192eba2844c0a89190344)
+        author: Ilya Kuramshin <iliax@proton.me>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1687869666, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a503c29472bbfc8f4c57680fd71ba7bfb007d6f9
+        parent_ids:
+        - 86c72d7d8527e00aaa5ac45a04a8909e7a6a21fb
+        message: "[e2e]Checking filter saving within Messages/Topic profile/Saved Filters (#3003)\n\n* [e2e]Checking filter saving within Messages/Topic profile/Saved Filters\r\n\r\n* resolve conversation\r\n\r\n* resolve conversation\r\n\r\n* resolve conversation\r\n\r\n* resolve conversation\r\n\r\n* resolve conversation\r\n\r\n* resolve conversation"
+        author: Alexandr Nezboretskiy <88882353+anezboretskiy@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1669991410, offset: 120, sign: 43 } }'
+      target:
+        id: 141111ae920ea62846d83191feb0cf9da81ae1af
+        parent_ids:
+        - 51b5b3339f3f897f222aafb0b4f0aea2cec27349
+        message: |
+          [e2e]Checking filter saving within Messages/Topic profile/Saved Filters (#3003)
+
+          * [e2e]Checking filter saving within Messages/Topic profile/Saved Filters
+
+          * resolve conversation
+
+          * resolve conversation
+
+          * resolve conversation
+
+          * resolve conversation
+
+          * resolve conversation
+
+          * resolve conversation
+
+          (cherry picked from commit a503c29472bbfc8f4c57680fd71ba7bfb007d6f9)
+        author: Alexandr Nezboretskiy <88882353+anezboretskiy@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1671808025, offset: 480, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ab9d0e2b3f6fc54344ecb1912d974f139020ca48
+        parent_ids:
+        - f22c910f5cb19dffc74d997cb7b668d4ab4be65e
+        message: |+
+          FE: Fix version display with a tag (#3827)
+
+        author: David Bejanyan <58771979+David-DB88@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1684750227, offset: 240, sign: 43 } }'
+      target:
+        id: 023e8e3b3c0480cb6e0cc941dfe1e9744cfb3b9d
+        parent_ids:
+        - fdd9ad94c11d44259ef26bf4b2dc9a8bd139f607
+        message: |
+          FE: Fix version display with a tag (#3827)
+
+          (cherry picked from commit ab9d0e2b3f6fc54344ecb1912d974f139020ca48)
+        author: David Bejanyan <58771979+David-DB88@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1687869427, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ecc8db1948c260ec47a5bd1aba1c982f7be3bb9e
+        parent_ids:
+        - 866966a638e3a469dd1600c94268eaeaf10179b1
+        message: |+
+          FE: Fix HTTP 400 for clusters with special symbols (#3591)
+
+        author: Nail Badiullin <nbadiullin@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1680497259, offset: 240, sign: 43 } }'
+      target:
+        id: b0c367cac7211117e88a55517396764036ac0552
+        parent_ids:
+        - d10996ed60250099a25db22814c21a9fb5353140
+        message: |
+          FE: Fix HTTP 400 for clusters with special symbols (#3591)
+
+          (cherry picked from commit ecc8db1948c260ec47a5bd1aba1c982f7be3bb9e)
+        author: Nail Badiullin <nbadiullin@provectus.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1681402367, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2ac8646769d10e69d972928b943c5bcc708ddc61
+        parent_ids:
+        - af2cff20b6e127db02236fdf34b182b0720c62dc
+        message: |+
+          FE: Fix react query not initiating requests for local host (#3915)
+
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1686918306, offset: 240, sign: 43 } }'
+      target:
+        id: 2b334d52098dcccf8b5d70670f506f48da550472
+        parent_ids:
+        - 59f03200f486582331d7098f587d7ed1447aa47d
+        message: |
+          FE: Fix react query not initiating requests for local host (#3915)
+
+          (cherry picked from commit 2ac8646769d10e69d972928b943c5bcc708ddc61)
+        author: Roman Zabaluev <rzabaluev@provectus.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1687869708, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d0088490a48b7c45855a42cf1deb4bba465595c0
+        parent_ids:
+        - 6fe61654271fe74d595180fc29615b155fb66182
+        message: |-
+          FE: Messages: Reset timestamp value w/ Clear all filters (#3923)
+
+          Co-authored-by: Roman Zabaluev <rzabaluev@provectus.com>
+        author: Vikas Rajput <vkhaas.rajput1993@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1687234491, offset: 240, sign: 43 } }'
+      target:
+        id: 26464ba37d383b2e8f9a05cc53a8780eb371bf4e
+        parent_ids:
+        - 023e8e3b3c0480cb6e0cc941dfe1e9744cfb3b9d
+        message: |
+          FE: Messages: Reset timestamp value w/ Clear all filters (#3923)
+
+          Co-authored-by: Roman Zabaluev <rzabaluev@provectus.com>
+          (cherry picked from commit d0088490a48b7c45855a42cf1deb4bba465595c0)
+        author: Vikas Rajput <vkhaas.rajput1993@gmail.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1687869459, offset: 480, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b6b1b8bda58e1cf9a3478ccbdbcd7f3ec0b89102
+        parent_ids:
+        - d2d039e36c7e78343e4b0d98632a891982660695
+        message: "[e2e]Checking applying saved filter within Topic/Messages (#3029)\n\n* [e2e]Checking applying saved filter within Topic/Messages\r\n\r\n* resolve conversations\r\n\r\n* resolve conversation"
+        author: Alexandr Nezboretskiy <88882353+anezboretskiy@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1670347066, offset: 120, sign: 43 } }'
+      target:
+        id: b5c87e047fa53f9480ad095e0763c9426ef14613
+        parent_ids:
+        - 7170493ad1700235966efe40b4e0661b010bd285
+        message: |
+          [e2e]Checking applying saved filter within Topic/Messages (#3029)
+
+          * [e2e]Checking applying saved filter within Topic/Messages
+
+          * resolve conversations
+
+          * resolve conversation
+
+          (cherry picked from commit b6b1b8bda58e1cf9a3478ccbdbcd7f3ec0b89102)
+        author: Alexandr Nezboretskiy <88882353+anezboretskiy@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1671808026, offset: 480, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a9d7d6c5153ea63999f69f0b0433362a0b5a9c74
+        parent_ids:
+        - ca3916aae01494a890ba021535400ff148df0fcb
+        message: "[e2e] Checking Topics settings to make sure retention.bytes is right according to Max size on disk in GB selected value (#3118)\n\n* [e2e] Checking Topics settings to make sure retention.bytes is right according to Max size on disk in GB selected value. Created new class - SettingsPanel and inner class in SettingsPanel. Add new test to Topicstests.\r\n\r\n* First Update. Checking Topics settings to make sure retention.bytes is right according to Max size on disk in GB selected value\r\n\r\n* Second Update. Checking Topics settings to make sure retention.bytes is right according to Max size on disk in GB selected value\r\n\r\n* Second Update. Checking Topics settings to make sure retention.bytes is right according to Max size on disk in GB selected value\r\n\r\n* [e2e] Final Fix. add topicSettingsTab.waitUntilScreenReady();"
+        author: Arthur <79512124+ArthurNiedial@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1671725138, offset: 120, sign: 43 } }'
+      target:
+        id: 49daf27898c848c8d2fee380f60d1243a4286ba3
+        parent_ids:
+        - c0598a99ed259082c888d59dd4c39eb16b7c7f94
+        message: |
+          [e2e] Checking Topics settings to make sure retention.bytes is right according to Max size on disk in GB selected value (#3118)
+
+          * [e2e] Checking Topics settings to make sure retention.bytes is right according to Max size on disk in GB selected value. Created new class - SettingsPanel and inner class in SettingsPanel. Add new test to Topicstests.
+
+          * First Update. Checking Topics settings to make sure retention.bytes is right according to Max size on disk in GB selected value
+
+          * Second Update. Checking Topics settings to make sure retention.bytes is right according to Max size on disk in GB selected value
+
+          * Second Update. Checking Topics settings to make sure retention.bytes is right according to Max size on disk in GB selected value
+
+          * [e2e] Final Fix. add topicSettingsTab.waitUntilScreenReady();
+
+          (cherry picked from commit a9d7d6c5153ea63999f69f0b0433362a0b5a9c74)
+        author: Arthur <79512124+ArthurNiedial@users.noreply.github.com>
+        committer: Roman Zabaluev <rzabaluev@provectus.com>
+        time: 'Time { raw: git_time { time: 1672130717, offset: 480, sign: 43 } }'
+    is_trivial: true

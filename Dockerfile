@@ -9,6 +9,11 @@ COPY local-maven-repo local-maven-repo
 COPY *gradle.kts ./
 COPY gradlew ./
 COPY gradle gradle
+COPY dataset dataset
+WORKDIR /home/user/dataset
+RUN zip -s 0 mined-cherries.zip --out unsplit-mined-cherries.zip
+RUN unzip unsplit-mined-cherries
+RUN unzip repo-sample.zip
 
 # Build the evaluation
 WORKDIR /home/user

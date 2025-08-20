@@ -1,0 +1,1164 @@
+- total_number_of_branches: '126'
+  repo_name: vuetifyjs/vuetify
+  total_number_of_results: '41'
+  total_number_of_committers: '86'
+  language: TypeScript
+  total_number_of_commits: '16334'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 886167958ffb6410e6ecc87cfcccbe4d809d8bbc
+        parent_ids:
+        - e371b81df473f130d1cd7b4ef502e7e4fa2ea354
+        message: |-
+          Fixes #2544 (#2714)
+
+          Navigation Drawer does not react to touchable device
+        author: Jing <jingzhe.shan@gmail.com>
+        committer: John Leider <john@vuetifyjs.com>
+        time: 'Time { raw: git_time { time: 1512524345, offset: -300, sign: 45 } }'
+      target:
+        id: a6de4dabdd68baf4a0599fc296a9fda6c70b8e92
+        parent_ids:
+        - 210813fae4eaa16504db1140d1f00fcc8fe1f03d
+        message: |
+          Fixes #2544 (#2714)
+
+          Navigation Drawer does not react to touchable device
+          (cherry picked from commit 886167958ffb6410e6ecc87cfcccbe4d809d8bbc)
+        author: Jing <jingzhe.shan@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1513585677, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e824e282f82305fdda3d78407f403a3d5b8afecf
+        parent_ids:
+        - 633b127d675717d783e8c4e25ee4ddacbc81cf82
+        message: |
+          chore: use custom conventional-changelog preset
+
+          [skip ci]
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1645543959, offset: 660, sign: 43 } }'
+      target:
+        id: 6fa8e393a850c4684d79b72affe23215bf9edd84
+        parent_ids:
+        - 44348ac604317b93a9cb0fbab7aa770eaddb044b
+        message: |
+          chore: use custom conventional-changelog preset
+
+          [skip ci]
+
+          (cherry picked from commit e824e282f82305fdda3d78407f403a3d5b8afecf)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1645544094, offset: 660, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 56c02e9ab0d61f95349ac41f59f8caee3d9fd91f
+        parent_ids:
+        - 6287f58f635fbe6e47865cd29f38087037354785
+        message: |
+          chore: update jest-canvas-mock
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1682016577, offset: 600, sign: 43 } }'
+      target:
+        id: c0ecb0d0b926116898469b8a70096529145c5689
+        parent_ids:
+        - 4e2d539e4d24ed7ae841b9ab1abed35d6ae5a42f
+        message: |
+          chore: update jest-canvas-mock
+
+          (cherry picked from commit 56c02e9ab0d61f95349ac41f59f8caee3d9fd91f)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1682523327, offset: 600, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 68267f49437dc539ee0ccf2395b67abb55f6e643
+        parent_ids:
+        - 67342c7b6e463bc6aff35dc950d3ca20404026a6
+        message: |
+          ci(travis): fixed build process error
+
+          yarn 1.0 does not add itself to PATH, switching to npm global install for codecov
+        author: John Leider <john.j.leider@gmail.com>
+        committer: John Leider <john.j.leider@gmail.com>
+        time: 'Time { raw: git_time { time: 1513258804, offset: -300, sign: 45 } }'
+      target:
+        id: 6e68c82f91b820e1541d603829ad93859fdfe474
+        parent_ids:
+        - 41261a70cd260ad3a93c607c0e7cff40e4011d5c
+        message: |
+          ci(travis): fixed build process error
+
+          yarn 1.0 does not add itself to PATH, switching to npm global install for codecov
+
+          (cherry picked from commit 68267f49437dc539ee0ccf2395b67abb55f6e643)
+        author: John Leider <john.j.leider@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1513358238, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5c05519a8360966d24193d45f32db62f0d7bf2a7
+        parent_ids:
+        - fb9646a1f7a09b98daf2b26d181c72cff5572266
+        message: "fix: Fixed select blur in Edge (#2162)\n\n* fix: Fixed select blur in Edge\r\n\r\nFixed a bug where when trying to blur a `v-select` component it would immediately refocus when using\r\nthe Edge browser\r\n\r\nfixes #2152\r\n\r\n* fix: Use getText() in case the selected item is an object\r\n"
+        author: John Leider <john.j.leider@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508052588, offset: 660, sign: 43 } }'
+      target:
+        id: 2d32d3c8e5464ebabf18a50da0546b84ee9191e4
+        parent_ids:
+        - 1e2650b8d3b4c5cc2e41aea53812bad892e4078f
+        message: |
+          fix: Fixed select blur in Edge (#2162)
+
+          * fix: Fixed select blur in Edge
+
+          Fixed a bug where when trying to blur a `v-select` component it would immediately refocus when using
+          the Edge browser
+
+          fixes #2152
+
+          * fix: Use getText() in case the selected item is an object
+
+          (cherry picked from commit 5c05519a8360966d24193d45f32db62f0d7bf2a7)
+        author: John Leider <john.j.leider@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508052775, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: dbc0fbf76341fc649c660482e0f78164ad8109f5
+        parent_ids:
+        - 4e3be538aac4a660bf87596147d3d9198c5e935f
+        message: |
+          chore: tidy up release script
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1512992110, offset: 660, sign: 43 } }'
+      target:
+        id: 41261a70cd260ad3a93c607c0e7cff40e4011d5c
+        parent_ids:
+        - faaff75df784ac78f3ae03f1e93e1829d853ec37
+        message: |
+          chore: tidy up release script
+
+          (cherry picked from commit dbc0fbf76341fc649c660482e0f78164ad8109f5)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1513358223, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a2a35330169a8c7b9abbcfcbdacb91a0b995fcab
+        parent_ids:
+        - f146c49d1b0215c40c30cb28f87d68377833da13
+        message: |
+          fix(VSelect): check for addEventListener in isBooted watcher
+
+          Turns out IE11 doesn't know what an EventTarget is
+
+          Fixes #2213
+          Regression from #1821
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508298557, offset: 660, sign: 43 } }'
+      target:
+        id: 0c710b0bee18fccad9223312cab421ff7eb6dd09
+        parent_ids:
+        - 3592f5ef23f74b4ca7e0b2244530c467c6227639
+        message: |
+          fix(VSelect): check for addEventListener in isBooted watcher
+
+          Turns out IE11 doesn't know what an EventTarget is
+
+          Fixes #2213
+          Regression from #1821
+
+          (cherry picked from commit a2a35330169a8c7b9abbcfcbdacb91a0b995fcab)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508298853, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f5811774f8ec34c68eba40256600583a8a3311a7
+        parent_ids:
+        - 023d78ef42ef99155d003027e90913d6dc53c73d
+        message: |
+          fix: Don't show 'undefined' in empty v-selects with Vue 2.5.0
+
+          Vue 2.5.0 has a change that causes the string 'undefined' to be rendered
+          when using an empty array in the children array of createElement
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1507878261, offset: 660, sign: 43 } }'
+      target:
+        id: b7940c40794d726737453dc60c74ce30db9bf32d
+        parent_ids:
+        - c683b8978544e31b8b917f1cf20b0e98d76723a8
+        message: |
+          fix: Don't show 'undefined' in empty v-selects with Vue 2.5.0
+
+          Vue 2.5.0 has a change that causes the string 'undefined' to be rendered
+          when using an empty array in the children array of createElement
+
+          (cherry picked from commit f5811774f8ec34c68eba40256600583a8a3311a7)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508046425, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 20ab9b77ad7df22043ce700be2a3bd86171ca13a
+        parent_ids:
+        - d6317419f3e4ee4561475b6ee935f112ba52e506
+        message: |-
+          perf(menuable): Avoid layout trashing on menuable components mount (#3499)
+
+          fixes #3497
+        author: Rémi Alvergnat <toilal.dev@gmail.com>
+        committer: John Leider <john@vuetifyjs.com>
+        time: 'Time { raw: git_time { time: 1520556366, offset: -300, sign: 45 } }'
+      target:
+        id: 5ad15b758e2dce452d0ddf3a9a04b906169cb90a
+        parent_ids:
+        - dfa671a535e6408b1309027ecdc2d6e521439b0a
+        message: |
+          perf(menuable): Avoid layout trashing on menuable components mount (#3499)
+
+          fixes #3497
+          (cherry picked from commit 20ab9b77ad7df22043ce700be2a3bd86171ca13a)
+        author: Rémi Alvergnat <toilal.dev@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1520665501, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4695b21eeb8922866b74fe97266ac74dacc3e0ca
+        parent_ids:
+        - 4abf7eb4ec8f79fba523019da1f5cc44536baaa9
+        message: |
+          fix: prevent race condition when VSelect is destroyed after mount
+
+          See #2194
+          See 5cc9cfdc
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508163317, offset: 660, sign: 43 } }'
+      target:
+        id: bbdd41809005dde09a328416f511bcf9a85162aa
+        parent_ids:
+        - b84cbca797ff2be03383c58782460c4652a61b61
+        message: |
+          fix: prevent race condition when VSelect is destroyed after mount
+
+          See #2194
+          See 5cc9cfdc
+
+          (cherry picked from commit 4695b21eeb8922866b74fe97266ac74dacc3e0ca)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508164244, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2e9d6af4fabaee724c112837f8cc224bd53939ea
+        parent_ids:
+        - 7159ead1261262e106270699db564c751a2d1e8a
+        message: |
+          fix(date-picker): incorrect button styles
+
+          active and current dates (and months) in date-picker had incorrect styles
+
+          fixes #2812
+        author: nekosaur <albert@kaaman.nu>
+        committer: nekosaur <albert@kaaman.nu>
+        time: 'Time { raw: git_time { time: 1513891667, offset: 60, sign: 43 } }'
+      target:
+        id: e2dbf207b30a014c6abe8af40fe3904984cbe79f
+        parent_ids:
+        - 8b96ef9340af81da931587822fd359682c32de53
+        message: "pickers refactoring (#2664)\n\n* v-picker\r\n\r\n* v-time-picker-clock\r\n\r\n* v-time-picker-title\r\n\r\n* v-date-picker-title\r\n\r\n* v-date-picker-header\r\n\r\n* v-date-picker-years\r\n\r\n* v-date-picker-date-table, v-date-picker-month-table\r\n\r\n* v-time-picker\r\n\r\n* v-date-picker\r\n\r\n* misc, cleanup\r\n\r\n* test: touch usage in pickers\r\n\r\n* added transition prop to v-picker\r\n\r\n* fixes, codebeat improvements\r\n\r\n* fixes, codebeat improvements\r\n\r\n* fixes, codebeat improvements\r\n\r\n* codebeat improvements\r\n\r\n* fixed picker title background in dark mode\r\n\r\n* code style update\r\n\r\n* ampm computed prop\r\n\r\n* even more refactoring (picker-button mixin)\r\n\r\n* fixed test\r\n\r\n* fix(date-picker): incorrect button styles\r\n\r\nactive and current dates (and months) in date-picker had incorrect styles\r\n\r\nfixes #2812\r\n\r\n(cherry picked from commit 2e9d6af4fabaee724c112837f8cc224bd53939ea)\r\n\r\n* fix(date-picker): allow external switching between date and month view\r\n\r\nswitching between date and month view using type prop was not working\r\n\r\ncloses #2809\r\n\r\n(cherry picked from commit d6935aa52a35d0b02b247efb8214d9de0fcf4ed4)\r\n\r\n* fix: do not pad hours with 0 in am/pm mode\r\n\r\n* fix: time picker clock size\r\n\r\n* fix: time picker title colon size in landscape mode\r\n\r\n* fix: time picker active & disabled button text color\r\n\r\n* fix: do not emit input if hour/minute is not allowed\r\n\r\n* fix: restored firstAllowed\r\n"
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1515229104, offset: 420, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b35c446ebe8a254f62a6571ceab48a3663d8c8b0
+        parent_ids:
+        - 9a48309521f7b164e9da7419514166c8a758b4c2
+        message: |
+          fix: don't setSelectionRange if the input doesn't exist any more
+
+          Fixes #2219
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508298427, offset: 660, sign: 43 } }'
+      target:
+        id: 0a406e9751e395b1d092482eda4af6ad39d2f25f
+        parent_ids:
+        - fb77f5ce5425977a98b8e9f9a09ff4ac7752655c
+        message: |
+          fix: don't setSelectionRange if the input doesn't exist any more
+
+          Fixes #2219
+
+          (cherry picked from commit b35c446ebe8a254f62a6571ceab48a3663d8c8b0)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508298850, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9d8d9d676cdb6935d6d3970fe3e839758fb828d5
+        parent_ids:
+        - 646a48a2902eccc5a9cea041794e45252e0bddb9
+        message: |
+          fix(directives): fixed a memory leak
+
+          the created object to hold the callback information was not being removed during unbind
+
+          fixes #2779
+        author: John Leider <john.j.leider@gmail.com>
+        committer: John Leider <john.j.leider@gmail.com>
+        time: 'Time { raw: git_time { time: 1513642859, offset: -300, sign: 45 } }'
+      target:
+        id: 5b1ad97dc32c5dc36f53e7dd64839116df97ae03
+        parent_ids:
+        - d7aa97e4f42c4bfd40d27d102184a869439f3e38
+        message: |
+          fix(directives): fixed a memory leak
+
+          the created object to hold the callback information was not being removed during unbind
+
+          fixes #2779
+
+          (cherry picked from commit 9d8d9d676cdb6935d6d3970fe3e839758fb828d5)
+        author: John Leider <john.j.leider@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1513686481, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f146c49d1b0215c40c30cb28f87d68377833da13
+        parent_ids:
+        - b35c446ebe8a254f62a6571ceab48a3663d8c8b0
+        message: |
+          fix(VSelect): don't hide the text field when not dirty
+
+          Fixes #2214
+          Regression from #2172
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508298474, offset: 660, sign: 43 } }'
+      target:
+        id: 3592f5ef23f74b4ca7e0b2244530c467c6227639
+        parent_ids:
+        - 0a406e9751e395b1d092482eda4af6ad39d2f25f
+        message: |
+          fix(VSelect): don't hide the text field when not dirty
+
+          Fixes #2214
+          Regression from #2172
+
+          (cherry picked from commit f146c49d1b0215c40c30cb28f87d68377833da13)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508298851, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 061fd35c8386b31263fddad5887e39bc0f7bfe9f
+        parent_ids:
+        - 5c05519a8360966d24193d45f32db62f0d7bf2a7
+        message: |-
+          fix: set proper color for textarea placeholder (#2180)
+
+          fixes #2143
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508052676, offset: 660, sign: 43 } }'
+      target:
+        id: 1c77a5da5014fe1058d1e38e7e913739f273c02b
+        parent_ids:
+        - 2d32d3c8e5464ebabf18a50da0546b84ee9191e4
+        message: |
+          fix: set proper color for textarea placeholder (#2180)
+
+          fixes #2143
+          (cherry picked from commit 061fd35c8386b31263fddad5887e39bc0f7bfe9f)
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508052788, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5500c0bfe87b06e3ea7facae7b57c4d49be699b3
+        parent_ids:
+        - d3dddd8e626ca49619dbe42c24dffd51be2e2529
+        message: |-
+          fix: background color for segmented button (#2183)
+
+          fixes #2126
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1508167597, offset: 420, sign: 43 } }'
+      target:
+        id: 49f482381b2545d66e684f97e9ee4f52206a47d0
+        parent_ids:
+        - 9c4da4a9ff69fcc1d07b1926a95f2bec28d661b2
+        message: |
+          fix: background color for segmented button (#2183)
+
+          fixes #2126
+
+          (cherry picked from commit 5500c0bfe87b06e3ea7facae7b57c4d49be699b3)
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: Jacek Karczmarczyk <jk@drukcd.pl>
+        time: 'Time { raw: git_time { time: 1508167655, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 993bcb33ee3533e7d10d829a9c68c4603f27bbc8
+        parent_ids:
+        - 7ff30002860877607c1b5a35f77ccc97fc3928fa
+        message: |
+          fix(VDialog): don't create overlay on initially open fullscreen dialogs
+
+          See https://codepen.io/anon/pen/rGqXoP?editors=1010
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508160711, offset: 660, sign: 43 } }'
+      target:
+        id: b84cbca797ff2be03383c58782460c4652a61b61
+        parent_ids:
+        - 85462498aa6b99ee61691b0e316b9079ed6c97bf
+        message: |
+          fix(VDialog): don't create overlay on initially open fullscreen dialogs
+
+          See https://codepen.io/anon/pen/rGqXoP?editors=1010
+
+          (cherry picked from commit 993bcb33ee3533e7d10d829a9c68c4603f27bbc8)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508164233, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5acd07e2c8822f00eddd155eb557d0999309f613
+        parent_ids:
+        - 9f17ac0206f7ce39387f7b64ce4da8a3edd6e65f
+        message: |
+          fix: fixed bug where drawer would close on any touch event
+        author: John Leider <john.j.leider@gmail.com>
+        committer: John Leider <john.j.leider@gmail.com>
+        time: 'Time { raw: git_time { time: 1512654257, offset: -300, sign: 45 } }'
+      target:
+        id: d7aa97e4f42c4bfd40d27d102184a869439f3e38
+        parent_ids:
+        - a6de4dabdd68baf4a0599fc296a9fda6c70b8e92
+        message: |
+          fix: fixed bug where drawer would close on any touch event
+
+          (cherry picked from commit 5acd07e2c8822f00eddd155eb557d0999309f613)
+        author: John Leider <john.j.leider@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1513686470, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e8eb75297e3fe9eebd11a7b5944a18463123abf8
+        parent_ids:
+        - 5168d648d62e61265c133353936e4fb0695d9725
+        message: |
+          feat(v-select): removed entry label animation when dirty
+
+          the selected items for `v-select` were rendered after document ready state was complete, which
+          caused the label to float into position even if the select was dirty on mount.
+
+          resolves #1941
+        author: John Leider <john.j.leider@gmail.com>
+        committer: John Leider <john.j.leider@gmail.com>
+        time: 'Time { raw: git_time { time: 1508035389, offset: -240, sign: 45 } }'
+      target:
+        id: 1e2650b8d3b4c5cc2e41aea53812bad892e4078f
+        parent_ids:
+        - 00d04004e3a01cf73be995b35c5f0e61f4356dd2
+        message: |
+          feat(v-select): removed entry label animation when dirty
+
+          the selected items for `v-select` were rendered after document ready state was complete, which
+          caused the label to float into position even if the select was dirty on mount.
+
+          resolves #1941
+
+          (cherry picked from commit e8eb75297e3fe9eebd11a7b5944a18463123abf8)
+        author: John Leider <john.j.leider@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508047831, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 56fe5ea33b50134f0926d38c4b84557d9f0d60a1
+        parent_ids:
+        - 1c879a77f73aeebd540ac4861f491bc9263a1ea2
+        message: |+
+          fix(locale): update catalan translations (#15012)
+
+        author: Jaume Sala <jaumesala@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1652116710, offset: 600, sign: 43 } }'
+      target:
+        id: 2eab4f2a457aff794bbe9471d162f1e0bd6adee7
+        parent_ids:
+        - d41a32798da3d97d554b6f811f4f4a3199276119
+        message: |
+          fix(locale): update catalan translations (#15012)
+
+          (cherry picked from commit 56fe5ea33b50134f0926d38c4b84557d9f0d60a1)
+        author: Jaume Sala <jaumesala@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1652116895, offset: 600, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7d4b463827d1f8489401082b02c6f1ee4cee98c7
+        parent_ids:
+        - 50d3b8b8ee9ede65834e07eb767f9b4925987431
+        message: |-
+          fix: set proper expanded row height (#2220)
+
+          fixes #2215
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: John Leider <john.j.leider@gmail.com>
+        time: 'Time { raw: git_time { time: 1508459609, offset: -240, sign: 45 } }'
+      target:
+        id: 992bd59a483539a7eb2e492df82228268b9e5e1a
+        parent_ids:
+        - ce4e44c2b1fda75c9ccac4bf72c021536a9cf72d
+        message: |
+          fix: set proper expanded row height (#2220)
+
+          fixes #2215
+          (cherry picked from commit 7d4b463827d1f8489401082b02c6f1ee4cee98c7)
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508493269, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c43450512d45067ff301b9d3ba1055da8cf7f988
+        parent_ids:
+        - 10eb8e25af3e4df57d2c7d5efc28ba302a21784d
+        message: |
+          chore: always run tests in-band
+
+          Jest caching is currently broken on windows, causing tests to fail for no
+          reason.
+
+          See facebook/jest#4444
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508263633, offset: 660, sign: 43 } }'
+      target:
+        id: ed3b73bdc94e4811de390606052cc14a4df570f8
+        parent_ids:
+        - 992bd59a483539a7eb2e492df82228268b9e5e1a
+        message: |
+          chore: always run tests in-band
+
+          Jest caching is currently broken on windows, causing tests to fail for no
+          reason.
+
+          See facebook/jest#4444
+
+          (cherry picked from commit c43450512d45067ff301b9d3ba1055da8cf7f988)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508494044, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 574e0d634bbe16140fe0659b17643d78cb6e2227
+        parent_ids:
+        - 9db604a5f585b5c2b093ec73577274de5e96bc82
+        message: |
+          fix(v-tabs): slider not re-positioning
+
+          fixed a bug where the `v-tabs-slider` component was not being adjusted properly when the `v-content`
+          component was being altered from the `v-navigation-drawer` component
+
+          fixes #684
+        author: John Leider <john.j.leider@gmail.com>
+        committer: John Leider <john.j.leider@gmail.com>
+        time: 'Time { raw: git_time { time: 1507998354, offset: -240, sign: 45 } }'
+      target:
+        id: fc9c5df7f4f86baf21aabe7bf560545ae6b4d930
+        parent_ids:
+        - 5b1a40885ccf2f0abd20d7823223b053dffff257
+        message: |
+          fix(v-tabs): slider not re-positioning
+
+          fixed a bug where the `v-tabs-slider` component was not being adjusted properly when the `v-content`
+          component was being altered from the `v-navigation-drawer` component
+
+          fixes #684
+
+          (cherry picked from commit 574e0d634bbe16140fe0659b17643d78cb6e2227)
+        author: John Leider <john.j.leider@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508047828, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9db604a5f585b5c2b093ec73577274de5e96bc82
+        parent_ids:
+        - 08c4da809ea3ec9019f23888afa24f465136670a
+        message: |
+          fix(v-select): adjusted selected items functionality
+
+          Fixed a bug where `v-select` with the **combobox** prop was always displaying as dirty
+        author: John Leider <john.j.leider@gmail.com>
+        committer: John Leider <john.j.leider@gmail.com>
+        time: 'Time { raw: git_time { time: 1507939648, offset: -240, sign: 45 } }'
+      target:
+        id: 5b1a40885ccf2f0abd20d7823223b053dffff257
+        parent_ids:
+        - 382432d1e5ec28c9d21e6c9713f84b6c031788f3
+        message: |
+          fix(v-select): adjusted selected items functionality
+
+          Fixed a bug where `v-select` with the **combobox** prop was always displaying as dirty
+
+          (cherry picked from commit 9db604a5f585b5c2b093ec73577274de5e96bc82)
+        author: John Leider <john.j.leider@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508047826, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 023d78ef42ef99155d003027e90913d6dc53c73d
+        parent_ids:
+        - f6c44c7a0201b48289f17748202332630b52949b
+        message: |
+          chore: Add vue ^2.4.3 to peerDependencies
+
+          We assume $listeners is an object in a couple of places, which causes
+          errors with Vue <2.4.3
+
+          This could probably be considered a breaking change, but if someone's
+          still using an older version of Vue then they'll be having problems with
+          vuetify anyway
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1507877868, offset: 660, sign: 43 } }'
+      target:
+        id: c683b8978544e31b8b917f1cf20b0e98d76723a8
+        parent_ids:
+        - 598b44133d6a58ec17c9bfe808b0b6fb87fa1118
+        message: |
+          chore: Add vue ^2.4.3 to peerDependencies
+
+          We assume $listeners is an object in a couple of places, which causes
+          errors with Vue <2.4.3
+
+          This could probably be considered a breaking change, but if someone's
+          still using an older version of Vue then they'll be having problems with
+          vuetify anyway
+
+          (cherry picked from commit 023d78ef42ef99155d003027e90913d6dc53c73d)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508046397, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: eab8d329c33bf9eb8c22b1038e614c105c7b05d9
+        parent_ids:
+        - 90b3960b1c32f63fcd847fd98e3a9dd33cd6565b
+        message: |
+          fix(VAutocomplete/VCombobox): reset search when selecting same item
+
+          fixes #7259
+        author: John Leider <john.j.leider@gmail.com>
+        committer: John Leider <john.j.leider@gmail.com>
+        time: 'Time { raw: git_time { time: 1565141954, offset: -240, sign: 45 } }'
+      target:
+        id: aa9e7cbe10e40521969ac1b2d924bfc5beff35fd
+        parent_ids:
+        - 180e370e954d69cbba04256b0177d70258a9c17e
+        message: |
+          fix(VAutocomplete/VCombobox): reset search when selecting same item
+
+          fixes #7259
+
+          (cherry picked from commit eab8d329c33bf9eb8c22b1038e614c105c7b05d9)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1573136352, offset: 660, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 37429f8ac76ffa8cf4fcaa34e9b9111638b0f4dc
+        parent_ids:
+        - 22807ee72821b2a163090a01c1c97d9e57c62bb8
+        message: |
+          test(goto): comment out global performance
+
+          node v18.16 complains about this
+        author: John Leider <john@vuetifyjs.com>
+        committer: John Leider <john@vuetifyjs.com>
+        time: 'Time { raw: git_time { time: 1682431978, offset: -300, sign: 45 } }'
+      target:
+        id: e0438274ab99d6686be9d732b57acbcff90370ce
+        parent_ids:
+        - c0ecb0d0b926116898469b8a70096529145c5689
+        message: |
+          test(goto): comment out global performance
+
+          node v18.16 complains about this
+
+          (cherry picked from commit 37429f8ac76ffa8cf4fcaa34e9b9111638b0f4dc)
+        author: John Leider <john@vuetifyjs.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1682523336, offset: 600, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c82c73b5d40944e6027fa8dc8aa972b19c5687d1
+        parent_ids:
+        - ba6ccbdc1577a5054d289113a6033a99ddc7897e
+        message: |
+          fix (menuable): re-evaluate window size before calculating top offset
+
+          This will a least make sure that v-select menus are attached to the select
+          when the keyboard opens. The position is still incorrect as they will go
+          off the screen in many cases, but it's getting there.
+
+          See #2111
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508320561, offset: 660, sign: 43 } }'
+      target:
+        id: b5aa94a76ce9889abd3ca5c7fdd83651c8cd65ce
+        parent_ids:
+        - 0c710b0bee18fccad9223312cab421ff7eb6dd09
+        message: |
+          fix (menuable): re-evaluate window size before calculating top offset
+
+          This will a least make sure that v-select menus are attached to the select
+          when the keyboard opens. The position is still incorrect as they will go
+          off the screen in many cases, but it's getting there.
+
+          See #2111
+
+          (cherry picked from commit c82c73b5d40944e6027fa8dc8aa972b19c5687d1)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508331113, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 94564d6685a886c39fb6f50285829c214fe8f8f7
+        parent_ids:
+        - 37fdced596a0b47f86f4fb1fb18b227b3269321d
+        message: |-
+          fix: styles for buttons in bottom navigation (#2182)
+
+          fixes #2015
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1508057537, offset: 420, sign: 43 } }'
+      target:
+        id: bbaa09d7d26beb0edbb82311d1b34d1ec690b998
+        parent_ids:
+        - 25c56a3c53271c875a47c1cc532bdf6e686a4989
+        message: |
+          fix: styles for buttons in bottom navigation (#2182)
+
+          fixes #2015
+          (cherry picked from commit 94564d6685a886c39fb6f50285829c214fe8f8f7)
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508059389, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 24cea8cee42e7315dae7400399995f04538b42bc
+        parent_ids:
+        - a1265fa51e5c46fbcedb02aa0afaaadcb0c89518
+        message: |
+          feat: make $vuetify.breakpoint available before page load
+
+          breakpoint wasn't being avaluated until the load event was fired, so
+          attempting to access a breakpoint property before then would result in it
+          being undefined
+
+          Fixes #2208
+          Fixes #2121
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508224047, offset: 660, sign: 43 } }'
+      target:
+        id: dd8214e191c1f9578ad94e99a3070e1d39d7e04b
+        parent_ids:
+        - 49f482381b2545d66e684f97e9ee4f52206a47d0
+        message: |
+          feat: make $vuetify.breakpoint available before page load
+
+          breakpoint wasn't being avaluated until the load event was fired, so
+          attempting to access a breakpoint property before then would result in it
+          being undefined
+
+          Fixes #2208
+          Fixes #2121
+
+          (cherry picked from commit 24cea8cee42e7315dae7400399995f04538b42bc)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508224306, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 99d0df997183ee6ec68a103a000c5abbe2c1c496
+        parent_ids:
+        - 7f396e69d24fc75e0318832e060b23173d55198a
+        message: |
+          chore: add warning if multiple vue instances are loaded
+
+          see #4068
+        author: Kael Watts-Deuchar <kaelwd@gmail.com>
+        committer: Kael Watts-Deuchar <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1533628866, offset: 600, sign: 43 } }'
+      target:
+        id: e94119a87d067b44703b175a694bc1a5fb8d34fa
+        parent_ids:
+        - b55f5d13a3acb1cd5dc21a83d13cdbe26ebbf7f5
+        message: |
+          chore: add warning if multiple vue instances are loaded
+
+          see #4068
+
+          (cherry picked from commit 99d0df997183ee6ec68a103a000c5abbe2c1c496)
+        author: Kael Watts-Deuchar <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1533803605, offset: 600, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 37fdced596a0b47f86f4fb1fb18b227b3269321d
+        parent_ids:
+        - 061fd35c8386b31263fddad5887e39bc0f7bfe9f
+        message: "fix: trigger swipe events only for proper swiping angle (#2181)\n\n* fix: trigger swipe events only for proper swiping angle\r\n\r\nSwipe event should be triggered only where there is no doubt that user\r\nwants to swipe in the specified direction\r\n\r\nfixes #2125\r\n\r\n* refactor\r\n\r\nMakes sure that there is no division by 0 if offsetX/offsetY is 0\r\n\r\n* fix: set minimum distance for triggering swipe event\r\n"
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508052713, offset: 660, sign: 43 } }'
+      target:
+        id: 3875fef24097706f9a8b7bfde3786da5a07177f0
+        parent_ids:
+        - 1c77a5da5014fe1058d1e38e7e913739f273c02b
+        message: |
+          fix: trigger swipe events only for proper swiping angle (#2181)
+
+          * fix: trigger swipe events only for proper swiping angle
+
+          Swipe event should be triggered only where there is no doubt that user
+          wants to swipe in the specified direction
+
+          fixes #2125
+
+          * refactor
+
+          Makes sure that there is no division by 0 if offsetX/offsetY is 0
+
+          * fix: set minimum distance for triggering swipe event
+
+          (cherry picked from commit 37fdced596a0b47f86f4fb1fb18b227b3269321d)
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508052795, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3f965929aa4f80fef9629c4017ca8a12c7af8bbe
+        parent_ids:
+        - d9b68670f9703c581851be745028dcd48824abb1
+        message: |
+          fix(goTo): get clientHeight from <html> when target is <body>
+
+          body.clientHeight === body.scrollHeight in iOS
+
+          fixes #6914
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1564136502, offset: 600, sign: 43 } }'
+      target:
+        id: 854c8265af5970c38d8809804d9aad708593b219
+        parent_ids:
+        - 227b492c7ffd4f210086b574c9da44109a110f47
+        message: |
+          fix(goTo): get clientHeight from <html> when target is <body>
+
+          body.clientHeight === body.scrollHeight in iOS
+
+          fixes #6914
+
+          (cherry picked from commit 3f965929aa4f80fef9629c4017ca8a12c7af8bbe)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1564136684, offset: 600, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: efb352ffadf93c097eb318e17625e8ef69995f42
+        parent_ids:
+        - be71818a01f5f8f35d6e665320f2d0bfae9642d1
+        message: |
+          chore(ci): log full jest output
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1682014885, offset: 600, sign: 43 } }'
+      target:
+        id: 5424ed42bdc44f2beeee76bc4f730aa3cb05b25b
+        parent_ids:
+        - e0438274ab99d6686be9d732b57acbcff90370ce
+        message: |
+          chore(ci): log full jest output
+
+          (cherry picked from commit efb352ffadf93c097eb318e17625e8ef69995f42)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1682523407, offset: 600, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e8ca8bc22d08997a2033692955789343b2011009
+        parent_ids:
+        - 805ab5d0439b5b9bc8d66ee4b4ac860b8a307239
+        message: |
+          chore: convert release script to js, add PR template
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1512991142, offset: 660, sign: 43 } }'
+      target:
+        id: faaff75df784ac78f3ae03f1e93e1829d853ec37
+        parent_ids:
+        - 65129b910cfbbc8502c9b3f88e801ed44138dedf
+        message: |
+          chore: convert release script to js, add PR template
+
+          (cherry picked from commit e8ca8bc22d08997a2033692955789343b2011009)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1513358212, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d3dddd8e626ca49619dbe42c24dffd51be2e2529
+        parent_ids:
+        - 4695b21eeb8922866b74fe97266ac74dacc3e0ca
+        message: |+
+          fix: duplicated entries when using cache-items with return-object (#2195)
+
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1508166955, offset: 420, sign: 43 } }'
+      target:
+        id: 9c4da4a9ff69fcc1d07b1926a95f2bec28d661b2
+        parent_ids:
+        - bbdd41809005dde09a328416f511bcf9a85162aa
+        message: |
+          fix: duplicated entries when using cache-items with return-object (#2195)
+
+          (cherry picked from commit d3dddd8e626ca49619dbe42c24dffd51be2e2529)
+        author: Jacek Karczmarczyk <jkarczm@gmail.com>
+        committer: Jacek Karczmarczyk <jk@drukcd.pl>
+        time: 'Time { raw: git_time { time: 1508167036, offset: 420, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 93035a998cc0dc0496015bb68f2501690af53e3c
+        parent_ids:
+        - 7345049438a2b6c0ff5a172522f000c790a87288
+        message: |
+          refactor: Split genSearch into a separate method
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1507878718, offset: 660, sign: 43 } }'
+      target:
+        id: 2e84e8bc995e6c85fb84182f81c36bf146742372
+        parent_ids:
+        - b7940c40794d726737453dc60c74ce30db9bf32d
+        message: |
+          refactor: Split genSearch into a separate method
+
+          (cherry picked from commit 93035a998cc0dc0496015bb68f2501690af53e3c)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508047823, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 10eb8e25af3e4df57d2c7d5efc28ba302a21784d
+        parent_ids:
+        - 24cea8cee42e7315dae7400399995f04538b42bc
+        message: |
+          fix: v-content size desync with SSR
+
+           - Brings back the navigation drawer animation on page load
+
+          SSR doesn't know the client's screen width, so navigation drawers with
+          enable-resize-watcher are hidden on the server, causing v-content to have
+          0 left padding. When the page is hydrated, the correct inline styles don't
+          get applied, so the drawer overlaps the rest of the page.
+
+          Regression? from 24cea8c
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508263340, offset: 660, sign: 43 } }'
+      target:
+        id: fb77f5ce5425977a98b8e9f9a09ff4ac7752655c
+        parent_ids:
+        - dd8214e191c1f9578ad94e99a3070e1d39d7e04b
+        message: |
+          fix: v-content size desync with SSR
+
+           - Brings back the navigation drawer animation on page load
+
+          SSR doesn't know the client's screen width, so navigation drawers with
+          enable-resize-watcher are hidden on the server, causing v-content to have
+          0 left padding. When the page is hydrated, the correct inline styles don't
+          get applied, so the drawer overlaps the rest of the page.
+
+          Regression? from 24cea8c
+
+          (cherry picked from commit 10eb8e25af3e4df57d2c7d5efc28ba302a21784d)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508263899, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: dee97c3d79babf7490279c94dafea594465160b2
+        parent_ids:
+        - d21a879de436f3a080e9091fcbe9c85f59c96e56
+        message: "Ripple reactivity (#2177)\n\n* Ripple directive update handler for reactivity support.  Snapshot updates.\r\n\r\n* Add test for checkbox ripple data attribute reactivity\r\n"
+        author: Jay B <bab7e6v2gc@snkmail.com>
+        committer: John Leider <john.j.leider@gmail.com>
+        time: 'Time { raw: git_time { time: 1508112832, offset: -240, sign: 45 } }'
+      target:
+        id: 85462498aa6b99ee61691b0e316b9079ed6c97bf
+        parent_ids:
+        - 93471fa8bf746c98c1a2975a0f9bfb6cf733b720
+        message: |
+          Ripple reactivity (#2177)
+
+          * Ripple directive update handler for reactivity support.  Snapshot updates.
+
+          * Add test for checkbox ripple data attribute reactivity
+
+          (cherry picked from commit dee97c3d79babf7490279c94dafea594465160b2)
+        author: Jay B <bab7e6v2gc@snkmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508163965, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f0512f586ba4a5d205cf9338863250f5507ff54f
+        parent_ids:
+        - 574e0d634bbe16140fe0659b17643d78cb6e2227
+        message: |
+          chore: Fix travis deploy script
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508006163, offset: 660, sign: 43 } }'
+      target:
+        id: 00d04004e3a01cf73be995b35c5f0e61f4356dd2
+        parent_ids:
+        - fc9c5df7f4f86baf21aabe7bf560545ae6b4d930
+        message: |
+          chore: Fix travis deploy script
+
+          (cherry picked from commit f0512f586ba4a5d205cf9338863250f5507ff54f)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508047829, offset: 660, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 08c4da809ea3ec9019f23888afa24f465136670a
+        parent_ids:
+        - 186a950661ae3defdc73cec51bc253fada8d9684
+        message: "fix: Hide text field in blurred autocomplete v-selects (#2172)\n\nThe extra padding on input-group__selections__comma is to prevent a jump\r\nin line height when the element is focused\r\n\r\n - Also scroll to the end when focusing autocomplete selects that have\r\n   overflow\r\n\r\nFixes #1691"
+        author: Kael <kaelwd@gmail.com>
+        committer: John Leider <john.j.leider@gmail.com>
+        time: 'Time { raw: git_time { time: 1507938016, offset: -240, sign: 45 } }'
+      target:
+        id: 382432d1e5ec28c9d21e6c9713f84b6c031788f3
+        parent_ids:
+        - 2e84e8bc995e6c85fb84182f81c36bf146742372
+        message: |
+          fix: Hide text field in blurred autocomplete v-selects (#2172)
+
+          The extra padding on input-group__selections__comma is to prevent a jump
+          in line height when the element is focused
+
+           - Also scroll to the end when focusing autocomplete selects that have
+             overflow
+
+          Fixes #1691
+          (cherry picked from commit 08c4da809ea3ec9019f23888afa24f465136670a)
+        author: Kael <kaelwd@gmail.com>
+        committer: Kael <kaelwd@gmail.com>
+        time: 'Time { raw: git_time { time: 1508047825, offset: 660, sign: 43 } }'
+    is_trivial: true

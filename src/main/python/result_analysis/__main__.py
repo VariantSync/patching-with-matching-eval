@@ -7,9 +7,9 @@ from result_analysis.tables import (
 )
 from result_analysis.analyze_results import find_outliers
 
-results_dir = "../../../evaluation-workdir/results/"
-repo_sample = "../../../evaluation-workdir/data/repo-sample.yaml"
-metrics_file = "../../../evaluation-workdir/tables/metrics.tex"
+results_dir = "/home/user/evaluation-workdir/results/"
+repo_sample = "/home/user/dataset/repo-sample.yaml"
+metrics_file = "/home/user/evaluation-workdir/tables/metrics.tex"
 
 
 def main():

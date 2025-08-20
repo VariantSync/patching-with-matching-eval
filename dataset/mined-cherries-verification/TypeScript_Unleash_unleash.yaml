@@ -1,0 +1,416 @@
+- total_number_of_committers: '56'
+  language: TypeScript
+  total_number_of_commits: '13088'
+  total_number_of_branches: '405'
+  total_number_of_results: '14'
+  repo_name: Unleash/unleash
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 8d0477225667cf6fa0250d3c34c901784dd68482
+        parent_ids:
+        - 5c27e7501482799dd9d637df551bd3b05bd3e871
+        message: |+
+          fix: duplicate column name in search query (#6989)
+
+        author: Mateusz Kwasniewski <kwasniewski.mateusz@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1715016383, offset: 120, sign: 43 } }'
+      target:
+        id: 75897f138a3d2be7fccf7ad967963e12695c11d0
+        parent_ids:
+        - c0e3f5d9c7f16f6186d33a4aade1aa6774ce78b9
+        message: |
+          fix: duplicate column name in search query (#6989)
+
+          (cherry picked from commit 8d0477225667cf6fa0250d3c34c901784dd68482)
+        author: Mateusz Kwasniewski <kwasniewski.mateusz@gmail.com>
+        committer: kwasniew <kwasniewski.mateusz@gmail.com>
+        time: 'Time { raw: git_time { time: 1715018019, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 46076fcbc8633ffd55299f1b649536a18e9ff9e7
+        parent_ids:
+        - f0a929044d4efde680190a3c1c01e94cca0bfe02
+        message: |+
+          Fix: Conditionally hide Change Requests tab (#2329)
+
+        author: andreas-unleash <104830839+andreas-unleash@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1667549857, offset: 120, sign: 43 } }'
+      target:
+        id: 47cc168020703864f2014b12fea0f7588049b59e
+        parent_ids:
+        - 1061991ebbdd1f029414879342714ec7f3956914
+        message: |
+          Fix: Conditionally hide Change Requests tab (#2329)
+
+          (cherry picked from commit 46076fcbc8633ffd55299f1b649536a18e9ff9e7)
+        author: andreas-unleash <104830839+andreas-unleash@users.noreply.github.com>
+        committer: andreas-unleash <104830839+andreas-unleash@users.noreply.github.com>
+        time: 'Time { raw: git_time { time: 1667551556, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 84707e2bf3aa2241a60c92aa4fd40f5b6b6e34c2
+        parent_ids:
+        - 33ec7e189410b29444b13da5bdf04427a9c32280
+        message: "chore: create new flag to hide insights ui (#6638)\n\nCreates a new flag to control the executive dashboard ui\r\n\r\nCloses #\r\n[1-2208](https://linear.app/unleash/issue/1-2208/create-separate-ui-flag-decoupled-from-the-backend-flag)\r\n\r\n---------\r\n\r\nSigned-off-by: andreas-unleash <andreas@getunleash.ai>"
+        author: andreas-unleash <andreas@getunleash.ai>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1710948106, offset: 120, sign: 43 } }'
+      target:
+        id: 1f98b17bb718e3938e80deba4e256740f4d6a198
+        parent_ids:
+        - d11fd4dbe152e9659eed40ac266288655d04befc
+        message: |
+          chore: create new flag to hide insights ui (#6638)
+
+          Creates a new flag to control the executive dashboard ui
+
+          Closes #
+          [1-2208](https://linear.app/unleash/issue/1-2208/create-separate-ui-flag-decoupled-from-the-backend-flag)
+
+          ---------
+
+          Signed-off-by: andreas-unleash <andreas@getunleash.ai>
+
+          (cherry picked from commit 84707e2bf3aa2241a60c92aa4fd40f5b6b6e34c2)
+          Signed-off-by: andreas-unleash <andreas@getunleash.ai>
+        author: andreas-unleash <andreas@getunleash.ai>
+        committer: andreas-unleash <andreas@getunleash.ai>
+        time: 'Time { raw: git_time { time: 1711009251, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5225452bfda0f6d379a92a4177a5ad468367d7a1
+        parent_ids:
+        - 3643016a0ebe1bf304c8c68b9328a63cdd61795c
+        message: |+
+          fix: remove stale stats widget (#7353)
+
+        author: Mateusz Kwasniewski <kwasniewski.mateusz@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1718102364, offset: 120, sign: 43 } }'
+      target:
+        id: 2e47e4c35e4689985bc7bddb6add568e1fb29749
+        parent_ids:
+        - 8664776388e7574efb72335e7781441a433268ea
+        message: |
+          fix: remove stale stats widget (#7353)
+
+          (cherry picked from commit 5225452bfda0f6d379a92a4177a5ad468367d7a1)
+        author: Mateusz Kwasniewski <kwasniewski.mateusz@gmail.com>
+        committer: kwasniew <kwasniewski.mateusz@gmail.com>
+        time: 'Time { raw: git_time { time: 1718191844, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b132cce986eed73e6cc5d0bc94beb9ec441b6219
+        parent_ids:
+        - 97f22d496facde35296ae73760a242882f337a8b
+        message: "fix: project api token type to lowercase (#3717)\n\n<!-- Thanks for creating a PR! To make it easier for reviewers and\r\neveryone else to understand what your changes relate to, please add some\r\nrelevant content to the headings below. Feel free to ignore or delete\r\nsections that you don't think are relevant. Thank you! ❤️ -->\r\n\r\n## About the changes\r\n<!-- Describe the changes introduced. What are they and why are they\r\nbeing introduced? Feel free to also add screenshots or steps to view the\r\nchanges if they're visual. -->\r\n\r\n<!-- Does it close an issue? Multiple? -->\r\nCloses #\r\n\r\n<!-- (For internal contributors): Does it relate to an issue on public\r\nroadmap? -->\r\n<!--\r\nRelates to [roadmap](https://github.com/orgs/Unleash/projects/10) item:\r\n#\r\n-->\r\n\r\n### Important files\r\n<!-- PRs can contain a lot of changes, but not all changes are equally\r\nimportant. Where should a reviewer start looking to get an overview of\r\nthe changes? Are any files particularly important? -->\r\n\r\n\r\n## Discussion points\r\n<!-- Anything about the PR you'd like to discuss before it gets merged?\r\nGot any questions or doubts? -->\r\n\r\n---------\r\n\r\nSigned-off-by: andreas-unleash <andreas@getunleash.ai>"
+        author: andreas-unleash <andreas@getunleash.ai>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1683624141, offset: 0, sign: 43 } }'
+      target:
+        id: 17be02fee832c4d2e37b38691cc0c0a3bcd68cfd
+        parent_ids:
+        - e2ce1cca519e6aa3193afbac6cbe3205d52ce912
+        message: |
+          fix: project api token type to lowercase (#3717)
+
+          <!-- Thanks for creating a PR! To make it easier for reviewers and
+          everyone else to understand what your changes relate to, please add some
+          relevant content to the headings below. Feel free to ignore or delete
+          sections that you don't think are relevant. Thank you! ❤️ -->
+
+          ## About the changes
+          <!-- Describe the changes introduced. What are they and why are they
+          being introduced? Feel free to also add screenshots or steps to view the
+          changes if they're visual. -->
+
+          <!-- Does it close an issue? Multiple? -->
+          Closes #
+
+          <!-- (For internal contributors): Does it relate to an issue on public
+          roadmap? -->
+          <!--
+          Relates to [roadmap](https://github.com/orgs/Unleash/projects/10) item:
+          #
+          -->
+
+          ### Important files
+          <!-- PRs can contain a lot of changes, but not all changes are equally
+          important. Where should a reviewer start looking to get an overview of
+          the changes? Are any files particularly important? -->
+
+          Cher
+          ## Discussion points
+          <!-- Anything about the PR you'd like to discuss before it gets merged?
+          Got any questions or doubts? -->
+
+          ---------
+
+          Signed-off-by: andreas-unleash <andreas@getunleash.ai>
+
+          (cherry picked from commit b132cce986eed73e6cc5d0bc94beb9ec441b6219)
+          Signed-off-by: andreas-unleash <andreas@getunleash.ai>
+        author: andreas-unleash <andreas@getunleash.ai>
+        committer: andreas-unleash <andreas@getunleash.ai>
+        time: 'Time { raw: git_time { time: 1683720402, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: cedf19d2ecb1f51dbc861d63ce438f56c26dde7c
+        parent_ids:
+        - d69d826586d7a39d1582613d246df3871020949b
+        message: |+
+          fix: lifecycle metrics on metrics insert (#7322)
+
+        author: Mateusz Kwasniewski <kwasniewski.mateusz@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1717768515, offset: 120, sign: 43 } }'
+      target:
+        id: b4ae2ab2311b9ba09847724395a2a2a5443cfb1e
+        parent_ids:
+        - d7d9929e33f3acbcf8a9c19d82422f5b708017f2
+        message: |
+          fix: lifecycle metrics on metrics insert (#7322)
+
+          (cherry picked from commit cedf19d2ecb1f51dbc861d63ce438f56c26dde7c)
+        author: Mateusz Kwasniewski <kwasniewski.mateusz@gmail.com>
+        committer: kwasniew <kwasniewski.mateusz@gmail.com>
+        time: 'Time { raw: git_time { time: 1718008646, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b07c032d56a428edecd5af5be21d6c981f16e800
+        parent_ids:
+        - bd8b54b5bd0370a4de66b0308b27c61e8c21fd34
+        message: "fix: update potentially-stale status dynamically (#4905)\n\nFixes 2 bugs:\r\n\r\n- project-health-service keeping the feature types as an instance\r\nvariable and only updating it once was preventing real calculation to\r\nhappen if the lifetime value changed for a feature toggle type\r\n- the ui was reading from a predefined map for the lifetime values so\r\nthey would never reflect the BE change\r\n\r\nCloses #\r\n[SR-66](https://linear.app/unleash/issue/SR-66/slack-question-around-potentially-stale-and-its-uses)\r\n\r\n<img width=\"1680\" alt=\"Screenshot 2023-10-02 at 14 37 17\"\r\nsrc=\"https://github.com/Unleash/unleash/assets/104830839/7bee8d4a-9054-4214-a1a2-11ad8169c3d5\">\r\n<img width=\"1660\" alt=\"Screenshot 2023-10-02 at 14 37 06\"\r\nsrc=\"https://github.com/Unleash/unleash/assets/104830839/23bf55c7-a380-4423-a732-205ad81d5c3c\">\r\n\r\n---------\r\n\r\nSigned-off-by: andreas-unleash <andreas@getunleash.ai>"
+        author: andreas-unleash <andreas@getunleash.ai>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1696412836, offset: 180, sign: 43 } }'
+      target:
+        id: a14f0e2e859c5a16a10dcb75f7bf656d74f41389
+        parent_ids:
+        - e6114c6ce613180f5096764ea47808820e122c72
+        message: |
+          fix: update potentially-stale status dynamically (#4905)
+
+          Fixes 2 bugs:
+
+          - project-health-service keeping the feature types as an instance
+          variable and only updating it once was preventing real calculation to
+          happen if the lifetime value changed for a feature toggle type
+          - the ui was reading from a predefined map for the lifetime values so
+          they would never reflect the BE change
+
+          Closes #
+          [SR-66](https://linear.app/unleash/issue/SR-66/slack-question-around-potentially-stale-and-its-uses)
+
+          <img width="1680" alt="Screenshot 2023-10-02 at 14 37 17"
+          src="https://github.com/Unleash/unleash/assets/104830839/7bee8d4a-9054-4214-a1a2-11ad8169c3d5">
+          <img width="1660" alt="Screenshot 2023-10-02 at 14 37 06"
+          src="https://github.com/Unleash/unleash/assets/104830839/23bf55c7-a380-4423-a732-205ad81d5c3c">
+
+          ---------
+
+          Signed-off-by: andreas-unleash <andreas@getunleash.ai>
+
+          (cherry picked from commit b07c032d56a428edecd5af5be21d6c981f16e800)
+          Signed-off-by: andreas-unleash <andreas@getunleash.ai>
+        author: andreas-unleash <andreas@getunleash.ai>
+        committer: andreas-unleash <andreas@getunleash.ai>
+        time: 'Time { raw: git_time { time: 1696413337, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ce7644e0af884f80887a179ccdc769d924c2d930
+        parent_ids:
+        - 5782efa6c09c2a505004ccf24fe2c948d368923b
+        message: |+
+          chore: log unerlying DB error in set user root role (#5324)
+
+        author: Mateusz Kwasniewski <kwasniewski.mateusz@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1699874161, offset: 60, sign: 43 } }'
+      target:
+        id: 659b9c8b9cf04890961d83c3777d37114f869661
+        parent_ids:
+        - 5b81314be1c8c06471e079d4a0d77cf90b65cd37
+        message: |
+          chore: log unerlying DB error in set user root role (#5324)
+
+          (cherry picked from commit ce7644e0af884f80887a179ccdc769d924c2d930)
+        author: Mateusz Kwasniewski <kwasniewski.mateusz@gmail.com>
+        committer: kwasniew <kwasniewski.mateusz@gmail.com>
+        time: 'Time { raw: git_time { time: 1699971416, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 76a834ca91ca821d7fa1a0fb1794754a9767c8a9
+        parent_ids:
+        - 7843c93dc51a8724e58e7c8d5d09804ce21e8d62
+        message: "fix: sort toggleNames before updating last seen (#4747)\n\nSeems like when 2 pods are trying to POST lastSeen metrics, the db gets\r\ninto a deadlock state.\r\n\r\nThis is an attempt to fix the deadlock by sorting the toggleNames before\r\nthe update.\r\n\r\nThe hypothesis is that sorted toggle names will reduce the chance of\r\nworking on the same row at the same exact time\r\n\r\nCloses #\r\n[1-1382](https://linear.app/unleash/issue/1-1382/order-data-before-updating-the-lastseen-to-reduce-change-of-deadlock)\r\n\r\nSigned-off-by: andreas-unleash <andreas@getunleash.ai>"
+        author: andreas-unleash <andreas@getunleash.ai>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1694772158, offset: 180, sign: 43 } }'
+      target:
+        id: 790a7baf11b687d4e9e452307124dd1c38c21f07
+        parent_ids:
+        - e0409469efed9521143bd086ffecb1bf1af3be71
+        message: |
+          fix: sort toggleNames before updating last seen (#4747)
+
+          Seems like when 2 pods are trying to POST lastSeen metrics, the db gets
+          into a deadlock state.
+
+          This is an attempt to fix the deadlock by sorting the toggleNames before
+          the update.
+
+          The hypothesis is that sorted toggle names will reduce the chance of
+          working on the same row at the same exact time
+
+          Closes #
+          [1-1382](https://linear.app/unleash/issue/1-1382/order-data-before-updating-the-lastseen-to-reduce-change-of-deadlock)
+
+          Signed-off-by: andreas-unleash <andreas@getunleash.ai>
+          (cherry picked from commit 76a834ca91ca821d7fa1a0fb1794754a9767c8a9)
+        author: andreas-unleash <andreas@getunleash.ai>
+        committer: andreas-unleash <andreas@getunleash.ai>
+        time: 'Time { raw: git_time { time: 1694772240, offset: 180, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 02da9b1d34690535f51ed86370972e522047741d
+        parent_ids:
+        - f3df3a31bf5372545410b498512a19fb2462b21e
+        message: |+
+          fix: handle concurrent service account updates (#5349)
+
+        author: Gastón Fournier <gaston@getunleash.io>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700132607, offset: 0, sign: 43 } }'
+      target:
+        id: 175357ea3f50e1729b5bd278c2a4aa0bd853bf45
+        parent_ids:
+        - 4ca84560377824382f62488c62f36e6a69fb6df1
+        message: |
+          fix: handle concurrent service account updates (#5349)
+
+          (cherry picked from commit 02da9b1d34690535f51ed86370972e522047741d)
+        author: Gastón Fournier <gaston@getunleash.io>
+        committer: kwasniew <kwasniewski.mateusz@gmail.com>
+        time: 'Time { raw: git_time { time: 1700133045, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 44d85c0dcd5ace6f2094e82494a2fcc2eef34a79
+        parent_ids:
+        - 2b66ba41dce05bf565761111da42fc7b25851a61
+        message: "fix: UI navigation (reverts #5506) (#5512)\n\nLatest version had a UI navigation bug where we wouldn't correctly\r\nnavigate to the tab and instead it would add infinitely to the\r\nbreadcrumbs / URL:\r\n\r\n\r\nhttps://github.com/Unleash/unleash/assets/14320932/509fa528-7f9e-4476-a945-f74393e99dd5\r\n\r\nThis fixes the UI navigation by reverting\r\nhttps://github.com/Unleash/unleash/pull/5506"
+        author: Nuno Góis <github@nunogois.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1701335596, offset: 0, sign: 43 } }'
+      target:
+        id: 1a56985a3681670e7046a489b06c1aeff395bd42
+        parent_ids:
+        - 2b66ba41dce05bf565761111da42fc7b25851a61
+        message: |
+          fix: UI navigation (reverts #5506) (#5512)
+
+          Latest version had a UI navigation bug where we wouldn't correctly
+          navigate to the tab and instead it would add infinitely to the
+          breadcrumbs / URL:
+
+          https://github.com/Unleash/unleash/assets/14320932/509fa528-7f9e-4476-a945-f74393e99dd5
+
+          This fixes the UI navigation by reverting
+          https://github.com/Unleash/unleash/pull/5506
+
+          (cherry picked from commit 44d85c0dcd5ace6f2094e82494a2fcc2eef34a79)
+        author: Nuno Góis <github@nunogois.com>
+        committer: kwasniew <kwasniewski.mateusz@gmail.com>
+        time: 'Time { raw: git_time { time: 1701335867, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b07c032d56a428edecd5af5be21d6c981f16e800
+        parent_ids:
+        - bd8b54b5bd0370a4de66b0308b27c61e8c21fd34
+        message: "fix: update potentially-stale status dynamically (#4905)\n\nFixes 2 bugs:\r\n\r\n- project-health-service keeping the feature types as an instance\r\nvariable and only updating it once was preventing real calculation to\r\nhappen if the lifetime value changed for a feature toggle type\r\n- the ui was reading from a predefined map for the lifetime values so\r\nthey would never reflect the BE change\r\n\r\nCloses #\r\n[SR-66](https://linear.app/unleash/issue/SR-66/slack-question-around-potentially-stale-and-its-uses)\r\n\r\n<img width=\"1680\" alt=\"Screenshot 2023-10-02 at 14 37 17\"\r\nsrc=\"https://github.com/Unleash/unleash/assets/104830839/7bee8d4a-9054-4214-a1a2-11ad8169c3d5\">\r\n<img width=\"1660\" alt=\"Screenshot 2023-10-02 at 14 37 06\"\r\nsrc=\"https://github.com/Unleash/unleash/assets/104830839/23bf55c7-a380-4423-a732-205ad81d5c3c\">\r\n\r\n---------\r\n\r\nSigned-off-by: andreas-unleash <andreas@getunleash.ai>"
+        author: andreas-unleash <andreas@getunleash.ai>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1696412836, offset: 180, sign: 43 } }'
+      target:
+        id: ba40ed1f136a77642c45eba4dc3f40610555e19e
+        parent_ids:
+        - 32305bb44ec5e7b020d64bff114d0bfa118b2597
+        message: "fix: update potentially-stale status dynamically (#4905) (#4920)\n\nFixes 2 bugs:\r\n\r\n- project-health-service keeping the feature types as an instance\r\nvariable and only updating it once was preventing real calculation to\r\nhappen if the lifetime value changed for a feature toggle type\r\n- the ui was reading from a predefined map for the lifetime values so\r\nthey would never reflect the BE change\r\n\r\nCloses #\r\n\r\n[SR-66](https://linear.app/unleash/issue/SR-66/slack-question-around-potentially-stale-and-its-uses)\r\n\r\n<img width=\"1680\" alt=\"Screenshot 2023-10-02 at 14 37 17\"\r\nsrc=\"https://github.com/Unleash/unleash/assets/104830839/7bee8d4a-9054-4214-a1a2-11ad8169c3d5\">\r\n<img width=\"1660\" alt=\"Screenshot 2023-10-02 at 14 37 06\"\r\nsrc=\"https://github.com/Unleash/unleash/assets/104830839/23bf55c7-a380-4423-a732-205ad81d5c3c\">\r\n\r\n---------\r\n\r\n\r\n\r\n(cherry picked from commit b07c032d56a428edecd5af5be21d6c981f16e800)\r\n\r\n<!-- Thanks for creating a PR! To make it easier for reviewers and\r\neveryone else to understand what your changes relate to, please add some\r\nrelevant content to the headings below. Feel free to ignore or delete\r\nsections that you don't think are relevant. Thank you! ❤️ -->\r\n\r\n## About the changes\r\n<!-- Describe the changes introduced. What are they and why are they\r\nbeing introduced? Feel free to also add screenshots or steps to view the\r\nchanges if they're visual. -->\r\n\r\n<!-- Does it close an issue? Multiple? -->\r\nCloses #\r\n\r\n<!-- (For internal contributors): Does it relate to an issue on public\r\nroadmap? -->\r\n<!--\r\nRelates to [roadmap](https://github.com/orgs/Unleash/projects/10) item:\r\n#\r\n-->\r\n\r\n### Important files\r\n<!-- PRs can contain a lot of changes, but not all changes are equally\r\nimportant. Where should a reviewer start looking to get an overview of\r\nthe changes? Are any files particularly important? -->\r\n\r\n\r\n## Discussion points\r\n<!-- Anything about the PR you'd like to discuss before it gets merged?\r\nGot any questions or doubts? -->\r\n\r\n---------\r\n\r\nSigned-off-by: andreas-unleash <andreas@getunleash.ai>"
+        author: andreas-unleash <andreas@getunleash.ai>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1696414723, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f8a9d7f3558e62962cd722dbda1539359f920003
+        parent_ids:
+        - 2dd2d520e344e2ee765d20621a242add92dcf4e2
+        message: "fix: take into account project segments permission in form (#5352)\n\nhttps://linear.app/unleash/issue/SR-184/ticket-1106-users-with-createedit-project-segment-dont-see-all-the\r\n\r\nhttps://github.com/Unleash/unleash/pull/5304 did not take into account\r\npermissions further into the Segment form.\r\n\r\nThis PR fixes the remaining permission checks to take into consideration\r\nthe project-level permission: `UPDATE_PROJECT_SEGMENT`."
+        author: Nuno Góis <github@nunogois.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1700135696, offset: 0, sign: 43 } }'
+      target:
+        id: 528ca2f90037634f3a7c42aa2faec3e60681077d
+        parent_ids:
+        - 510fa30dbf899cffc260f36066345eae74bf53b9
+        message: |
+          fix: take into account project segments permission in form (#5352)
+
+          https://linear.app/unleash/issue/SR-184/ticket-1106-users-with-createedit-project-segment-dont-see-all-the
+
+          https://github.com/Unleash/unleash/pull/5304 did not take into account
+          permissions further into the Segment form.
+
+          This PR fixes the remaining permission checks to take into consideration
+          the project-level permission: `UPDATE_PROJECT_SEGMENT`.
+
+          (cherry picked from commit f8a9d7f3558e62962cd722dbda1539359f920003)
+        author: Nuno Góis <github@nunogois.com>
+        committer: kwasniew <kwasniewski.mateusz@gmail.com>
+        time: 'Time { raw: git_time { time: 1700137411, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 84707e2bf3aa2241a60c92aa4fd40f5b6b6e34c2
+        parent_ids:
+        - 33ec7e189410b29444b13da5bdf04427a9c32280
+        message: "chore: create new flag to hide insights ui (#6638)\n\nCreates a new flag to control the executive dashboard ui\r\n\r\nCloses #\r\n[1-2208](https://linear.app/unleash/issue/1-2208/create-separate-ui-flag-decoupled-from-the-backend-flag)\r\n\r\n---------\r\n\r\nSigned-off-by: andreas-unleash <andreas@getunleash.ai>"
+        author: andreas-unleash <andreas@getunleash.ai>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1710948106, offset: 120, sign: 43 } }'
+      target:
+        id: d24111bdd189652527f6b832aa747cc0995a25ae
+        parent_ids:
+        - d11fd4dbe152e9659eed40ac266288655d04befc
+        message: "chore: create new flag to hide insights ui (#6638) (#6653)\n\nCreates a new flag to control the executive dashboard ui\r\n\r\nCloses #\r\n\r\n[1-2208](https://linear.app/unleash/issue/1-2208/create-separate-ui-flag-decoupled-from-the-backend-flag)\r\n\r\n---------\r\n\r\n\r\n\r\n(cherry picked from commit 84707e2bf3aa2241a60c92aa4fd40f5b6b6e34c2)\r\n\r\n<!-- Thanks for creating a PR! To make it easier for reviewers and\r\neveryone else to understand what your changes relate to, please add some\r\nrelevant content to the headings below. Feel free to ignore or delete\r\nsections that you don't think are relevant. Thank you! ❤️ -->\r\n\r\n## About the changes\r\n<!-- Describe the changes introduced. What are they and why are they\r\nbeing introduced? Feel free to also add screenshots or steps to view the\r\nchanges if they're visual. -->\r\n\r\n<!-- Does it close an issue? Multiple? -->\r\nCloses #\r\n\r\n<!-- (For internal contributors): Does it relate to an issue on public\r\nroadmap? -->\r\n<!--\r\nRelates to [roadmap](https://github.com/orgs/Unleash/projects/10) item:\r\n#\r\n-->\r\n\r\n### Important files\r\n<!-- PRs can contain a lot of changes, but not all changes are equally\r\nimportant. Where should a reviewer start looking to get an overview of\r\nthe changes? Are any files particularly important? -->\r\n\r\n\r\n## Discussion points\r\n<!-- Anything about the PR you'd like to discuss before it gets merged?\r\nGot any questions or doubts? -->\r\n\r\n---------\r\n\r\nSigned-off-by: andreas-unleash <andreas@getunleash.ai>"
+        author: andreas-unleash <andreas@getunleash.ai>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1711011034, offset: 120, sign: 43 } }'
+    is_trivial: false

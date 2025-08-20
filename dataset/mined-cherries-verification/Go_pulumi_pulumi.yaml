@@ -1,0 +1,733 @@
+- repo_name: pulumi/pulumi
+  language: Go
+  total_number_of_committers: '145'
+  total_number_of_results: '26'
+  total_number_of_commits: '13379'
+  total_number_of_branches: '877'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ae1a2e8b7ea4bbae710ee1d24447b9a89d74f1fa
+        parent_ids:
+        - 3ecd1ddeb0cc645b19c65ad36fe4637ad7dcaa90
+        message: "Fail closure serialization in Node 11 (#2098)\n\n* Fail closure serialization in Node 11\r\n\r\nNode 11 changed many of the intrinsics that we depend upon for closure\r\nserialization, so until we fix the underlying issues this commit lazily\r\nfails if a closure is serialized when running on Node 11.\r\n\r\n* CR feedback\r\n"
+        author: Sean Gillespie <sean@pulumi.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1540490147, offset: -420, sign: 45 } }'
+      target:
+        id: b0a6766d963ef12b510db4d29d08cc998c78c595
+        parent_ids:
+        - 35bb7d39641c60ce3b1c75c933814f8458f0a182
+        message: "Fail closure serialization in Node 11 (#2098)\n\n* Fail closure serialization in Node 11\r\n\r\nNode 11 changed many of the intrinsics that we depend upon for closure\r\nserialization, so until we fix the underlying issues this commit lazily\r\nfails if a closure is serialized when running on Node 11.\r\n\r\n* CR feedback\r\n\n(cherry picked from commit ae1a2e8b7ea4bbae710ee1d24447b9a89d74f1fa)\n"
+        author: Sean Gillespie <sean@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1540841292, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2d0ca1992e0dfd700a4fc3e1c66f45cecec74376
+        parent_ids:
+        - b8f3bb24aa6e194fdbdb25ebfc338f5132e7f170
+        message: |
+          Cleanup provider launch scripts and fix some windows build oddities
+
+          The windows build was still on the old plan from way back when where
+          we had binaries littered in the build tree and you had to add parts of
+          your build-tree to the `%PATH%` for the integration tests to work.
+
+          This cleans that up and moves all of our scripts that invoke
+          javascript to be on the same plan. They invoke our specially named
+          node with a relative path to the JS code we want to run.
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1518742955, offset: -480, sign: 45 } }'
+      target:
+        id: 8a2188b190c833e2fb4e53f74c24e85be0428cae
+        parent_ids:
+        - c0b9d5f5f1539e732b6fdfcb176b6fae8a9da6aa
+        message: |
+          Cleanup provider launch scripts and fix some windows build oddities
+
+          The windows build was still on the old plan from way back when where
+          we had binaries littered in the build tree and you had to add parts of
+          your build-tree to the `%PATH%` for the integration tests to work.
+
+          This cleans that up and moves all of our scripts that invoke
+          javascript to be on the same plan. They invoke our specially named
+          node with a relative path to the JS code we want to run.
+
+          (cherry picked from commit 2d0ca1992e0dfd700a4fc3e1c66f45cecec74376)
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1518743675, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d9e3c2c91dc0c9fe84b04eda1226f8d95ae63c67
+        parent_ids:
+        - 197b23974106289a14170e2fbb4960865f1776ef
+        message: |
+          Restore build-sdk.sh script
+
+          It was not intended to be deleted as part of #1992, we just wanted to
+          delete `dist/install.sh`
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1538023759, offset: -420, sign: 45 } }'
+      target:
+        id: cd68f6c2c5e253f66998d6f62457b30cec2ea8b3
+        parent_ids:
+        - 1768c111a93a2a9b5788343966fa50edaa3d924f
+        message: |
+          Restore build-sdk.sh script
+
+          It was not intended to be deleted as part of #1992, we just wanted to
+          delete `dist/install.sh`
+
+          (cherry picked from commit d9e3c2c91dc0c9fe84b04eda1226f8d95ae63c67)
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1538166030, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c7a46848b922ef1f27002d3e7a4b419666999e4c
+        parent_ids:
+        - 3e25bc80c8517a14b2429308af90d021f2c2477c
+        message: |+
+          Ensure method always returns a boolean. (#2120)
+
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1540756957, offset: -420, sign: 45 } }'
+      target:
+        id: 4c5e4c776d445c0fecee1b38031d8f3304e2f4fd
+        parent_ids:
+        - b6ebb55fe92a6358ed4092744d5f2f673c27b9f2
+        message: |
+          Ensure method always returns a boolean. (#2120)
+
+
+          (cherry picked from commit c7a46848b922ef1f27002d3e7a4b419666999e4c)
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1541469929, offset: -480, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e7af13e144fa07423f3d3aefa8821c2560885ea0
+        parent_ids:
+        - d68bc0db6309658f93ec176ca58357cd9b527fd4
+        message: "Capture plugin names in the manifest (#967)\n\nPreviously, the checkpoint manifest contained the full path to a plugin\r\nbinary, in places of its friendly name.  Now that we must move to a model\r\nwhere we install plugins in the PPC based on the manifest contents, we\r\nactually need to store the name, in addition to the version (which is\r\nalready there).  We still also capture the path for debugging purposes."
+        author: Joe Duffy <joe@pulumi.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1519237951, offset: -480, sign: 45 } }'
+      target:
+        id: 10a610adba8d6f87a23ac116bd07992bf0f44230
+        parent_ids:
+        - e6d0d0fc9cae8522d1c9b4e912b6573950c9aeb8
+        message: |
+          Capture plugin names in the manifest (#967)
+
+          Previously, the checkpoint manifest contained the full path to a plugin
+          binary, in places of its friendly name.  Now that we must move to a model
+          where we install plugins in the PPC based on the manifest contents, we
+          actually need to store the name, in addition to the version (which is
+          already there).  We still also capture the path for debugging purposes.
+
+          (cherry picked from commit e7af13e144fa07423f3d3aefa8821c2560885ea0)
+        author: Joe Duffy <joe@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1519243339, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 6338875b727ef947d0ccd608c5624b6ec5d5ba36
+        parent_ids:
+        - a66a1ae698eb3985f500f0130ae0559fd4363d64
+        message: "Fix pulumi/pulumi#1995 (#1997)\n\nThe diff display code was not expecting that it would be possible for\r\nresource properties to transition from being an archive to being an\r\nasset, or the other way around. This commit prints out a reasonable diff\r\nif this situation occurs instead of crashing."
+        author: Sean Gillespie <sean@pulumi.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1538160403, offset: -420, sign: 45 } }'
+      target:
+        id: da880eab6c0df18f476c8db2ec51da7435aaf807
+        parent_ids:
+        - cd68f6c2c5e253f66998d6f62457b30cec2ea8b3
+        message: "Fix pulumi/pulumi#1995 (#1997)\n\nThe diff display code was not expecting that it would be possible for\r\nresource properties to transition from being an archive to being an\r\nasset, or the other way around. This commit prints out a reasonable diff\r\nif this situation occurs instead of crashing.\n\n(cherry picked from commit 6338875b727ef947d0ccd608c5624b6ec5d5ba36)\n"
+        author: Sean Gillespie <sean@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1538166041, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7efd3ddf0534e225be84d95653f6cd7f122fe7f6
+        parent_ids:
+        - 13d904377123a34f41bc71ce2c478cd9317740b3
+        message: |+
+          Cleanup a little code in closure creation. (#2122)
+
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1540756924, offset: -420, sign: 45 } }'
+      target:
+        id: 3f701e6c80853e43daa375dc566c731822be5b2b
+        parent_ids:
+        - 4a056c05d5957df0d71559007d0d7d078ad2e9e4
+        message: |
+          Cleanup a little code in closure creation. (#2122)
+
+
+          (cherry picked from commit 7efd3ddf0534e225be84d95653f6cd7f122fe7f6)
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1541469912, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: bed208ea18c1499afca947fe6a42b08910abc313
+        parent_ids:
+        - 298f479206e9ce98a28568b7b133b3f9062754b5
+        message: |
+          Fix NPM tagging
+
+          `npm publish`'s default was to tag the package we published with
+          `latest` tag. The NPM ecosystem has expected semantics around this
+          tag (it uses it by default if you don't pass a version).
+
+          From the NPM Docs:
+
+          > Typically, projects only use the latest tag for stable release
+          > versions, and use other tags for unstable versions such as
+          > prereleases.
+
+          We were not doing this, but now we will.  We'll have a new tag `dev`
+          which is the latest build out of CI, and we'll tag builds without a
+          pre-release tag with "latest".
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1522964479, offset: -420, sign: 45 } }'
+      target:
+        id: 1f4173134356fca546e35a7ff79f615823131dfb
+        parent_ids:
+        - 31761f36992bbabe3badb7d9791e063f35fa3ece
+        message: |
+          Fix NPM tagging
+
+          `npm publish`'s default was to tag the package we published with
+          `latest` tag. The NPM ecosystem has expected semantics around this
+          tag (it uses it by default if you don't pass a version).
+
+          From the NPM Docs:
+
+          > Typically, projects only use the latest tag for stable release
+          > versions, and use other tags for unstable versions such as
+          > prereleases.
+
+          We were not doing this, but now we will.  We'll have a new tag `dev`
+          which is the latest build out of CI, and we'll tag builds without a
+          pre-release tag with "latest".
+
+          (cherry picked from commit bed208ea18c1499afca947fe6a42b08910abc313)
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1522969438, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 258c34620d2e71d70515e6dca17bcdcd29598673
+        parent_ids:
+        - d57a456269ed58cf47de155896f45d70056aceab
+        message: |
+          Guard BirthTime checks with HasBirthTimes
+
+          Some file systems do not record BithTimes and BirthTime panics in
+          these cases. We use HasBirthTimes to guard against this and print n/a
+          when we do not have a BirthTime.
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1519324341, offset: -480, sign: 45 } }'
+      target:
+        id: e43377f3343e3e6387dc8f3ef1a1b0a0ccd319ce
+        parent_ids:
+        - 433b76b6e3a0d073594c131b91892a7410b43454
+        message: |
+          Guard BirthTime checks with HasBirthTimes
+
+          Some file systems do not record BithTimes and BirthTime panics in
+          these cases. We use HasBirthTimes to guard against this and print n/a
+          when we do not have a BirthTime.
+
+          (cherry picked from commit 258c34620d2e71d70515e6dca17bcdcd29598673)
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1519324388, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 13d904377123a34f41bc71ce2c478cd9317740b3
+        parent_ids:
+        - 4647aa6cdb1eee2c273604142f02a4e4b1429c31
+        message: |+
+          Produce values like the v8 Inspector does. (#2119)
+
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1540713708, offset: -420, sign: 45 } }'
+      target:
+        id: 4a056c05d5957df0d71559007d0d7d078ad2e9e4
+        parent_ids:
+        - 41f4bfa31c0ef8069a2fd5e5d42f92bed885bb2c
+        message: |
+          Produce values like the v8 Inspector does. (#2119)
+
+
+          (cherry picked from commit 13d904377123a34f41bc71ce2c478cd9317740b3)
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1541469900, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ded3882afdaf9bbc76c324b9feac46aea6fd97cb
+        parent_ids:
+        - 89f862e74e1fc8fff13ea0a18de9d78962961e43
+        message: "Fix synchronization with the event renderer (#2290)\n\nThe event rendering goroutine in the remote backend was not properly\r\nsynchronizing with the goroutine that created it, and could continue\r\nexecuting after its creator finished. I believe that this is the root\r\ncause of #1850.\r\n"
+        author: Pat Gavlin <pgavlin@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1544759906, offset: -480, sign: 45 } }'
+      target:
+        id: d2bd696d1598d7b460f37ff84a49b28ba65e7669
+        parent_ids:
+        - 7b74f3b1be574f94fc215f01df93c97e2bccc460
+        message: |
+          Fix synchronization with the event renderer (#2290)
+
+          The event rendering goroutine in the remote backend was not properly
+          synchronizing with the goroutine that created it, and could continue
+          executing after its creator finished. I believe that this is the root
+          cause of #1850.
+
+          (cherry picked from commit ded3882afdaf9bbc76c324b9feac46aea6fd97cb)
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1544825941, offset: -480, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1d7f35352d258af12d6df79a7deb78f025256f6f
+        parent_ids:
+        - 74672857fd4b058060500142763eea8a1f266f0d
+        message: |+
+          Properly serialize certain special JavaScript number values that JSON serialization cannot handle. (#2116)
+
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1540622817, offset: -420, sign: 45 } }'
+      target:
+        id: 200b0323331eedf3d70d71c4f5702604d766065b
+        parent_ids:
+        - 851a34dc7cf95955c15b10a06b46c1632a0e3992
+        message: |
+          Properly serialize certain special JavaScript number values that JSON serialization cannot handle. (#2116)
+
+
+          (cherry picked from commit 1d7f35352d258af12d6df79a7deb78f025256f6f)
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1541469868, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 402a599fc7d0bc7d02642ff6c3e2a835bb7427a3
+        parent_ids:
+        - 61a4d9f98b148896d04b0bf0658d0942d99cb823
+        message: "Don't use shebangs to launch providers and correctly kill child process trees on Unix (#934)\n\n* Don't use shebangs to launch providers and correctly kill child process trees on Unix\r\n\r\n* Link to relevant documentation\r\n"
+        author: Sean Gillespie <sean@pulumi.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1518645367, offset: -480, sign: 45 } }'
+      target:
+        id: f5937ffd8b0b16ab5b767f083fa7ef9671e060c7
+        parent_ids:
+        - ab1eb4632c762f8ddd956fde7dc740efaaf70fc9
+        message: |
+          Don't use shebangs to launch providers and correctly kill child process trees on Unix (#934)
+
+          * Don't use shebangs to launch providers and correctly kill child process trees on Unix
+
+          * Link to relevant documentation
+
+          (cherry picked from commit 402a599fc7d0bc7d02642ff6c3e2a835bb7427a3)
+        author: Sean Gillespie <sean@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1518676149, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3e25bc80c8517a14b2429308af90d021f2c2477c
+        parent_ids:
+        - 7efd3ddf0534e225be84d95653f6cd7f122fe7f6
+        message: |+
+          Add test with complex output scenarios. (#2118)
+
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1540756945, offset: -420, sign: 45 } }'
+      target:
+        id: b6ebb55fe92a6358ed4092744d5f2f673c27b9f2
+        parent_ids:
+        - 3f701e6c80853e43daa375dc566c731822be5b2b
+        message: |
+          Add test with complex output scenarios. (#2118)
+
+
+          (cherry picked from commit 3e25bc80c8517a14b2429308af90d021f2c2477c)
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1541469921, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ca540cc736eacd282fbc8ea54831f4b3ccebfd77
+        parent_ids:
+        - c7a46848b922ef1f27002d3e7a4b419666999e4c
+        message: |
+          Use math.MaxInt32 to signal unbounded parallelism
+
+          Downlevel versions of the Pulumi Node SDK assumed that a parallelism
+          level of zero implied serial execution, which current CLIs use to signal
+          unbounded parallelism. This commit works around the downlevel issue by
+          using math.MaxInt32 to signal unbounded parallelism.
+        author: Sean Gillespie <sean@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1540841223, offset: -420, sign: 45 } }'
+      target:
+        id: 072a0798335a36196ba1696c41576d7059c4cc7f
+        parent_ids:
+        - b0a6766d963ef12b510db4d29d08cc998c78c595
+        message: |
+          Use math.MaxInt32 to signal unbounded parallelism
+
+          Downlevel versions of the Pulumi Node SDK assumed that a parallelism
+          level of zero implied serial execution, which current CLIs use to signal
+          unbounded parallelism. This commit works around the downlevel issue by
+          using math.MaxInt32 to signal unbounded parallelism.
+
+          (cherry picked from commit ca540cc736eacd282fbc8ea54831f4b3ccebfd77)
+        author: Sean Gillespie <sean@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1540841309, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 818246a7087206f8bf9bb8d8e31b799dbe11b9b5
+        parent_ids:
+        - 39dbdc98e9d89b24e0f271147bbcd3af00095ccd
+        message: |
+          Allow control of uploaded archive root in Pulumi.yaml
+
+          Previously, when uploading a projectm to the service, we would only
+          upload the folder rooted by the Pulumi.yaml for that project. This
+          worked well, but it meant that customers needed to structure their
+          code in a way such that Pulumi.yaml was always as the root of their
+          project, and if they wanted to share common files between two projects
+          there was no good solution for doing this.
+
+          This change introduces an optional piece of metadata, named context,
+          that can be added to Pulumi.yaml, which allows controlling the root
+          folder used for computing the root folder to archive from.  When it is
+          set, it is combined with the location of the Pulumi.yaml file for the
+          project we are uploading and that folder is uses as the root of what
+          we upload to the service.
+
+          Fixes: #574
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1517444578, offset: -480, sign: 45 } }'
+      target:
+        id: 9695c1666dd8d23ed15ac8768f7738f9e86717cb
+        parent_ids:
+        - 39576d915e97bf822c89c3e4824abd97ac51498c
+        message: |
+          Allow control of uploaded archive root in Pulumi.yaml
+
+          Previously, when uploading a projectm to the service, we would only
+          upload the folder rooted by the Pulumi.yaml for that project. This
+          worked well, but it meant that customers needed to structure their
+          code in a way such that Pulumi.yaml was always as the root of their
+          project, and if they wanted to share common files between two projects
+          there was no good solution for doing this.
+
+          This change introduces an optional piece of metadata, named context,
+          that can be added to Pulumi.yaml, which allows controlling the root
+          folder used for computing the root folder to archive from.  When it is
+          set, it is combined with the location of the Pulumi.yaml file for the
+          project we are uploading and that folder is uses as the root of what
+          we upload to the service.
+
+          Fixes: #574
+          (cherry picked from commit 818246a7087206f8bf9bb8d8e31b799dbe11b9b5)
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1517950604, offset: -480, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 792c316e5e563b500173792d9ef93d6a81ae85a0
+        parent_ids:
+        - 3642cca98f54a1f833a963ec1d207506e01afb52
+        message: "Change backend.ListStacks to return a new StackSummary interface (#1931)\n\n* Have backend.ListStacks return a new StackSummary interface\r\n\r\n* Update filestake backend to use new type\r\n\r\n* Update httpstate backend to use new type\r\n\r\n* Update commands to use new type\r\n\r\n* lint\r\n\r\n* Address PR feedback\r\n\r\n* Lint\r\n"
+        author: Chris Smith <chrsmith@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1536897282, offset: -420, sign: 45 } }'
+      target:
+        id: 0739e6d9c06f6bf598f01b814cd779c566b39e6e
+        parent_ids:
+        - 3b814b3a2cd9e33893782e38ed8440ceba9aaa30
+        message: "Change backend.ListStacks to return a new StackSummary interface (#1931)\n\n* Have backend.ListStacks return a new StackSummary interface\r\n\r\n* Update filestake backend to use new type\r\n\r\n* Update httpstate backend to use new type\r\n\r\n* Update commands to use new type\r\n\r\n* lint\r\n\r\n* Address PR feedback\r\n\r\n* Lint\r\n\n(cherry picked from commit 792c316e5e563b500173792d9ef93d6a81ae85a0)\n"
+        author: Chris Smith <chrsmith@users.noreply.github.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1537299851, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e84eab0d9fa7fe395d071caebecbb98291ca4eed
+        parent_ids:
+        - db1c646c94922483761370df83c2dd963471ac71
+        message: |
+          Add Node 11 scouting build
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1540519624, offset: -420, sign: 45 } }'
+      target:
+        id: 851a34dc7cf95955c15b10a06b46c1632a0e3992
+        parent_ids:
+        - 072a0798335a36196ba1696c41576d7059c4cc7f
+        message: |
+          Add Node 11 scouting build
+
+          (cherry picked from commit e84eab0d9fa7fe395d071caebecbb98291ca4eed)
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1541469841, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 901a238fd50f20d9d63469ee29daf7c680a75224
+        parent_ids:
+        - 8ca284057715868f064668c24da5c5a0cecf95ad
+        message: "Get closure serialiation working in Node11 (#2101)\n\n* Make v8 primitives async as there is no way to avoid async in node11.\r\n\r\n* Simplify API.\r\n\r\n* Move processing of well-known globals into the v8 layer.\r\nWe'll need this so that we can map from RemoteObjectIds back to these well known values.\r\n\r\n* Remove unnecesssary check.\r\n\r\n* Cleanup comments and extract helper.\r\n\r\n* Introduce helper bridge method for the simple case of making an entry for a string.\r\n\r\n* Make functions async.  They'll need to be async once we move to the Inspector api.\r\n\r\n* Make functions async.  They'll need to be async once we move to the Inspector api.\r\n\r\n* Make functions async.  They'll need to be async once we move to the Inspector api.\r\n\r\n* Move property access behind helpers so they can move to the Inspector API in the future.\r\n\r\n* Only call function when we know we have a Function.  Remove redundant null check.\r\n\r\n* Properly serialize certain special JavaScript number values that JSON serialization cannot handle.\r\n\r\n* Only marshall across the 'source' and 'flags' for a RegExp when serializing.\r\n\r\n* Add a simple test to validate a regex without flags.\r\n\r\n* Extract functionality into helper method.\r\n\r\n* Add test with complex output scenarios.\r\n\r\n* Output serialization needs to avoid recursively trying to serialize a serialized value.\r\n\r\n* Introduce indirection for introspecting properties of an object.\r\n\r\n* Use our own introspection API for examining an Array.\r\n\r\n* Hide direct property access through API indirection.\r\n\r\n* Produce values like the v8 Inspector does.\r\n\r\n* Compute the module map asynchronously.  Will need that when mapping mirrors instead.\r\n\r\n* Cleanup a little code in closure creation.\r\n\r\n* Get serialization working on Node11 (except function locations).\r\n\r\n* Run tests in the same order on <v11 and >=v11\r\n\r\n* Make tests run on multiple versions of node.\r\n\r\n* Rename file to make PR simpler to review.\r\n\r\n* Cleanup.\r\n\r\n* Be more careful with global state.\r\n\r\n* Remove commented line.\r\n\r\n* Only allow getting a session when on Node11 or above.\r\n\r\n* Promisify methods.\r\n"
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1541112381, offset: -420, sign: 45 } }'
+      target:
+        id: bfd22b6cf3e09bc8baf3e9e60d25649f877be247
+        parent_ids:
+        - 4c5e4c776d445c0fecee1b38031d8f3304e2f4fd
+        message: "Get closure serialiation working in Node11 (#2101)\n\n* Make v8 primitives async as there is no way to avoid async in node11.\r\n\r\n* Simplify API.\r\n\r\n* Move processing of well-known globals into the v8 layer.\r\nWe'll need this so that we can map from RemoteObjectIds back to these well known values.\r\n\r\n* Remove unnecesssary check.\r\n\r\n* Cleanup comments and extract helper.\r\n\r\n* Introduce helper bridge method for the simple case of making an entry for a string.\r\n\r\n* Make functions async.  They'll need to be async once we move to the Inspector api.\r\n\r\n* Make functions async.  They'll need to be async once we move to the Inspector api.\r\n\r\n* Make functions async.  They'll need to be async once we move to the Inspector api.\r\n\r\n* Move property access behind helpers so they can move to the Inspector API in the future.\r\n\r\n* Only call function when we know we have a Function.  Remove redundant null check.\r\n\r\n* Properly serialize certain special JavaScript number values that JSON serialization cannot handle.\r\n\r\n* Only marshall across the 'source' and 'flags' for a RegExp when serializing.\r\n\r\n* Add a simple test to validate a regex without flags.\r\n\r\n* Extract functionality into helper method.\r\n\r\n* Add test with complex output scenarios.\r\n\r\n* Output serialization needs to avoid recursively trying to serialize a serialized value.\r\n\r\n* Introduce indirection for introspecting properties of an object.\r\n\r\n* Use our own introspection API for examining an Array.\r\n\r\n* Hide direct property access through API indirection.\r\n\r\n* Produce values like the v8 Inspector does.\r\n\r\n* Compute the module map asynchronously.  Will need that when mapping mirrors instead.\r\n\r\n* Cleanup a little code in closure creation.\r\n\r\n* Get serialization working on Node11 (except function locations).\r\n\r\n* Run tests in the same order on <v11 and >=v11\r\n\r\n* Make tests run on multiple versions of node.\r\n\r\n* Rename file to make PR simpler to review.\r\n\r\n* Cleanup.\r\n\r\n* Be more careful with global state.\r\n\r\n* Remove commented line.\r\n\r\n* Only allow getting a session when on Node11 or above.\r\n\r\n* Promisify methods.\r\n\n(cherry picked from commit 901a238fd50f20d9d63469ee29daf7c680a75224)\n"
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1541469951, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 68d6df47b9abb859552e29bd5f834ba0eaf14cc3
+        parent_ids:
+        - bed208ea18c1499afca947fe6a42b08910abc313
+        message: |
+          Fix logic condition in publish script
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1522964583, offset: -420, sign: 45 } }'
+      target:
+        id: 21ef1adaf3156bbe2e2e9823c320bfcee2188558
+        parent_ids:
+        - 1f4173134356fca546e35a7ff79f615823131dfb
+        message: |
+          Fix logic condition in publish script
+
+          (cherry picked from commit 68d6df47b9abb859552e29bd5f834ba0eaf14cc3)
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1522969448, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c83eaf428b6423751c9b13611896012aa058f202
+        parent_ids:
+        - 1d7f35352d258af12d6df79a7deb78f025256f6f
+        message: |+
+          Add a simple test to validate a regex without flags. (#2117)
+
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1540626172, offset: -420, sign: 45 } }'
+      target:
+        id: 41f4bfa31c0ef8069a2fd5e5d42f92bed885bb2c
+        parent_ids:
+        - 200b0323331eedf3d70d71c4f5702604d766065b
+        message: |
+          Add a simple test to validate a regex without flags. (#2117)
+
+
+          (cherry picked from commit c83eaf428b6423751c9b13611896012aa058f202)
+        author: CyrusNajmabadi <cyrus.najmabadi@gmail.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1541469878, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c01023737e0b615f94527061477813fb13bdc9f8
+        parent_ids:
+        - 59098fb6b63a6371b863ff2d0089af317c5c6c4c
+        message: |
+          Copy missing pulumi-resource-pulumi-nodejs binary in node lang host dist target
+        author: Thomas Schersach <tschersach@gmail.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1536862686, offset: -420, sign: 45 } }'
+      target:
+        id: 3b814b3a2cd9e33893782e38ed8440ceba9aaa30
+        parent_ids:
+        - 8ef626503359c4039b45f1296958ecf6e6630501
+        message: |
+          Copy missing pulumi-resource-pulumi-nodejs binary in node lang host dist target
+
+          (cherry picked from commit c01023737e0b615f94527061477813fb13bdc9f8)
+        author: Thomas Schersach <tschersach@gmail.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1537299842, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b8f3bb24aa6e194fdbdb25ebfc338f5132e7f170
+        parent_ids:
+        - 4b2441ac22080f93d6a011e5b0b7bffcac8e3563
+        message: |
+          Yarn link pulumi in history tests
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1518659748, offset: -480, sign: 45 } }'
+      target:
+        id: c0b9d5f5f1539e732b6fdfcb176b6fae8a9da6aa
+        parent_ids:
+        - a848e4c808e89d55d8dbeeb462a7ff2eb98b22e0
+        message: |
+          Yarn link pulumi in history tests
+
+          (cherry picked from commit b8f3bb24aa6e194fdbdb25ebfc338f5132e7f170)
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1518676181, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5f4189555ac492c83c5eb439fca359965a71f017
+        parent_ids:
+        - 3b13803c71b10957472dcf659c42d4f873155b2f
+        message: |
+          Fix update permalink for stacks on new identity model
+
+          We were generating incorrect URLs for stacks on the new identity
+          model. When we don't have a repository in our ProjectIdentifier, the
+          URL's in the service use "-" for the repository and project names.
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1524612043, offset: -420, sign: 45 } }'
+      target:
+        id: d9230719301375bd56dfef365c0f9d6dbf69a646
+        parent_ids:
+        - e822dc19227814da052d358cadd04f025ab3c7cb
+        message: |
+          Fix update permalink for stacks on new identity model
+
+          We were generating incorrect URLs for stacks on the new identity
+          model. When we don't have a repository in our ProjectIdentifier, the
+          URL's in the service use "-" for the repository and project names.
+
+          (cherry picked from commit 5f4189555ac492c83c5eb439fca359965a71f017)
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1524681246, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4b2441ac22080f93d6a011e5b0b7bffcac8e3563
+        parent_ids:
+        - 902d6462152c941667c80025d51dfc47da1e0684
+        message: |
+          Use relative path in langhost launcher
+
+          We no longer have a node_modules folder in the SDK (since all
+          packages now come from NPM) so we need to adjust the shell script we
+          use to launch our runner to use a relative path.
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1518659748, offset: -480, sign: 45 } }'
+      target:
+        id: a848e4c808e89d55d8dbeeb462a7ff2eb98b22e0
+        parent_ids:
+        - f5937ffd8b0b16ab5b767f083fa7ef9671e060c7
+        message: |
+          Use relative path in langhost launcher
+
+          We no longer have a node_modules folder in the SDK (since all
+          packages now come from NPM) so we need to adjust the shell script we
+          use to launch our runner to use a relative path.
+
+          (cherry picked from commit 4b2441ac22080f93d6a011e5b0b7bffcac8e3563)
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1518676171, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: aa018081b267aea278b3e8fdd9a10924bc8752f9
+        parent_ids:
+        - e19b1fa0299b014b490a318828c19a0b7bf7dd5e
+        message: |
+          Require Node 11 run to pass
+
+          It was alowed to fail when we were bringing up Node 11 support, but
+          now that we do support it, we should lock in the win.
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1541447364, offset: -480, sign: 45 } }'
+      target:
+        id: 30b26a5203c4e1ed1c7455ce0ba9bccedf859bad
+        parent_ids:
+        - bfd22b6cf3e09bc8baf3e9e60d25649f877be247
+        message: |
+          Require Node 11 run to pass
+
+          It was alowed to fail when we were bringing up Node 11 support, but
+          now that we do support it, we should lock in the win.
+
+          (cherry picked from commit aa018081b267aea278b3e8fdd9a10924bc8752f9)
+        author: Matt Ellis <matt@pulumi.com>
+        committer: Matt Ellis <matt@pulumi.com>
+        time: 'Time { raw: git_time { time: 1541469970, offset: -480, sign: 45 } }'
+    is_trivial: true

@@ -1,0 +1,532 @@
+- total_number_of_results: '21'
+  language: C#
+  repo_name: tModLoader/tModLoader
+  total_number_of_commits: '7329'
+  total_number_of_branches: '58'
+  total_number_of_committers: '45'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 16c3ef6483b231a2a546242a3d405478cf2c53f9
+        parent_ids:
+        - f11990cfd21394a77899080abac0252393e7bb87
+        message: |
+          Makes tml ignore the patch version (4th number) for mod exception message
+        author: nmoll <59670736+Solxanich@users.noreply.github.com>
+        committer: nmoll <59670736+Solxanich@users.noreply.github.com>
+        time: 'Time { raw: git_time { time: 1673213676, offset: -420, sign: 45 } }'
+      target:
+        id: 71d556650f1d2a90ca59e313eec2d2a51f333af1
+        parent_ids:
+        - 0214c6f25635727b099c8e3f14bbfbf4b7d913bc
+        message: |
+          Makes tml ignore the patch version (4th number) for mod exception message
+
+          (cherry picked from commit 16c3ef6483b231a2a546242a3d405478cf2c53f9)
+        author: nmoll <59670736+Solxanich@users.noreply.github.com>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1673460355, offset: 180, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 495e120b1191aa82f4546696d04fab359c36b994
+        parent_ids:
+        - 7faee4dd78261d96c6b51c7134625d96f47dfaaf
+        message: "Fix #2980 ChatManager.GetStringSize with newlines and format tags (#2981)\n\n* fix ChatManager.GetStringSize returning wrong string height in strings with newlines and chat tags\r\n\r\n* add explaining comment"
+        author: Ved_s <53968411+Ved-s@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1664300125, offset: 600, sign: 43 } }'
+      target:
+        id: 361442346b6280518ebbcc7e2157a5c2c598ad4c
+        parent_ids:
+        - 4d1327cbb38b4086493b7eeaa18b1eeb22da294d
+        message: |
+          Fix #2980 ChatManager.GetStringSize with newlines and format tags (#2981)
+
+          * fix ChatManager.GetStringSize returning wrong string height in strings with newlines and chat tags
+
+          * add explaining comment
+
+          (cherry picked from commit 495e120b1191aa82f4546696d04fab359c36b994)
+        author: Ved_s <53968411+Ved-s@users.noreply.github.com>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1673459365, offset: 180, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ccdc9079bcc317c62389a3814a9e7c133255b847
+        parent_ids:
+        - eac8ea2e6595b4ec1c395f8ceee64eba076c0ca4
+        message: |
+          Updated MonoMod.
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1605566243, offset: 180, sign: 43 } }'
+      target:
+        id: 06d91b9673bff8cdc493acb224223edc764165d0
+        parent_ids:
+        - e965cffa4ec5aa0def927995e2c217a9cf7f7d02
+        message: |
+          Updated MonoMod.
+
+          (cherry picked from commit ccdc9079bcc317c62389a3814a9e7c133255b847)
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1605701527, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 27fb086695204b6ec86fe325fcf8d13b71bddbd8
+        parent_ids:
+        - 008ccc0e10d04b7f7d751fda1144b70a2793b4a9
+        message: |
+          Fixed date parsing crashes in world backup cleanups.
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1665407013, offset: 180, sign: 43 } }'
+      target:
+        id: 5c5b8b1ec80b71a2c20f47c36a8e10fb113dc8f1
+        parent_ids:
+        - b6006740bb760f434efd6355c23f16642d907de6
+        message: |
+          Fixed date parsing crashes in world backup cleanups.
+
+          (cherry picked from commit 27fb086695204b6ec86fe325fcf8d13b71bddbd8)
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1665408524, offset: 180, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2ac9759bad0a92dcd1d5fc3fe7ced1564d5a008d
+        parent_ids:
+        - 1657a09cd121bd83b2bbd1c2bc1da67cf7e5635d
+        message: |
+          Moved ModGore.OnSpawn calls to after vanilla init, + fixes ChildSafety replacements having ModGores.
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1691087077, offset: 180, sign: 43 } }'
+      target:
+        id: 91825931d0856676ab52ff14817e3b6e6629e098
+        parent_ids:
+        - ab3c35f68082166e117ea42a5a860256c04229af
+        message: |
+          Moved ModGore.OnSpawn calls to after vanilla init, + fixes ChildSafety replacements having ModGores.
+
+          (cherry picked from commit 2ac9759bad0a92dcd1d5fc3fe7ced1564d5a008d)
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1691718687, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b6155fe990d4bac2c64c2d15547eb3980aaf8537
+        parent_ids:
+        - 9bc68756b8ffbad0b7242ebd1a679b4375a5b4f2
+        message: "Fix tile framing (causing infinite UnloadedXTile loop and invisible tiles) (#3107)\n\n* tile frame fix\r\n\r\n* Minor fix to formatting after merge conflict fix\r\n\r\n* Missed a line removal in merged conflict resolution\r\n\r\nCo-authored-by: Solxanich <59670736+Solxanich@users.noreply.github.com>"
+        author: direwolf420 <amakejk1@web.de>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1669343691, offset: -420, sign: 45 } }'
+      target:
+        id: 23d03739031f99cc07de446c4ac6c3a55071279d
+        parent_ids:
+        - 5192bce81f9762d62c6b154ea3c1514ab73f3d78
+        message: |
+          Fix tile framing (causing infinite UnloadedXTile loop and invisible tiles) (#3107)
+
+          * tile frame fix
+
+          * Minor fix to formatting after merge conflict fix
+
+          * Missed a line removal in merged conflict resolution
+
+          Co-authored-by: Solxanich <59670736+Solxanich@users.noreply.github.com>
+          (cherry picked from commit b6155fe990d4bac2c64c2d15547eb3980aaf8537)
+          (cherry picked from commit ccfe89ee47a6ea79569f84b9b810acf39957529b)
+        author: direwolf420 <amakejk1@web.de>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1670935903, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a646b7d5aedb662184013ec847307cb7b07877bf
+        parent_ids:
+        - 50fdab9c6d67e6e7e1b09e6bef8df193ea4a9f2b
+        message: |+
+          Fixed typo with paramref (#1207)
+
+        author: RighteousRyan <60587654+RighteousRyan1@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1605479276, offset: 60, sign: 43 } }'
+      target:
+        id: 45a1d89d78495f784eeb8ab4b236ef1453e93a27
+        parent_ids:
+        - 5bd99f2acce9fdf0c6a292c3d48afe0a20c6f85d
+        message: |
+          Fixed typo with paramref (#1207)
+
+          (cherry picked from commit a646b7d5aedb662184013ec847307cb7b07877bf)
+        author: RighteousRyan <60587654+RighteousRyan1@users.noreply.github.com>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1605703877, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: bc8d03bf39009578d3157907f2295e61a5f5a988
+        parent_ids:
+        - 16c3ef6483b231a2a546242a3d405478cf2c53f9
+        message: "Fix Multiline Buff Tooltips (#3128)\n\nOffsets buff tooltips by the buff name's height, not the tooltip's height.\r\nThis issue was originally fixed five years ago: https://github.com/tModLoader/tModLoader/commit/34701d7e1da0483f6ce37ed450aedf8e910d1768\r\n...but was recently undone (likely by accident): https://github.com/tModLoader/tModLoader/commit/faefc4b1fab7e7f68cfd625e172de71f8b38a2ca"
+        author: Michael Scott <33076411+Antirhinnum@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1673380698, offset: -420, sign: 45 } }'
+      target:
+        id: 0214c6f25635727b099c8e3f14bbfbf4b7d913bc
+        parent_ids:
+        - 361442346b6280518ebbcc7e2157a5c2c598ad4c
+        message: |
+          Fix Multiline Buff Tooltips (#3128)
+
+          Offsets buff tooltips by the buff name's height, not the tooltip's height.
+          This issue was originally fixed five years ago: https://github.com/tModLoader/tModLoader/commit/34701d7e1da0483f6ce37ed450aedf8e910d1768
+          ...but was recently undone (likely by accident): https://github.com/tModLoader/tModLoader/commit/faefc4b1fab7e7f68cfd625e172de71f8b38a2ca
+
+          (cherry picked from commit bc8d03bf39009578d3157907f2295e61a5f5a988)
+        author: Michael Scott <33076411+Antirhinnum@users.noreply.github.com>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1673460289, offset: 180, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c3d4adc6fd080954b5deed9220239a40053f612c
+        parent_ids:
+        - fc7d4f16b6fcec0969ad5d4188e92b0f2d53a414
+        message: |-
+          Updated Spanish localization (#1249)
+
+          Fixed some typos and improved existing translations.
+        author: Wolf Igmc <31896129+Igmc@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1609022520, offset: 180, sign: 43 } }'
+      target:
+        id: 87db50c9a8d69c3227543344ed6f84c71b7e7e37
+        parent_ids:
+        - e88ac3d10bb92f639b01596c699482ab9d5fc4fc
+        message: |
+          Updated Spanish localization (#1249)
+
+          Fixed some typos and improved existing translations.
+
+          (cherry picked from commit c3d4adc6fd080954b5deed9220239a40053f612c)
+        author: Wolf Igmc <31896129+Igmc@users.noreply.github.com>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1609075237, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ad8b59eba69a83daeda44b66e0688df8bf5bee88
+        parent_ids:
+        - bc8d03bf39009578d3157907f2295e61a5f5a988
+        message: |
+          Scaled down the TML logo in Doxygen.
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1673457479, offset: 180, sign: 43 } }'
+      target:
+        id: d11b558eca22ab8567fc4e1f1ac88f579922d13f
+        parent_ids:
+        - 53818967a16f4ec6e8af69bc2af4f03a10ef85dc
+        message: |
+          Scaled down the TML logo in Doxygen.
+
+          (cherry picked from commit ad8b59eba69a83daeda44b66e0688df8bf5bee88)
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1673457588, offset: 180, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0a061eea93cf1c7c50cf6855f2fdebcd3de4fa0c
+        parent_ids:
+        - 7db84bfeb4e3d2b1cebdec3165fe2107c0acfa9b
+        message: "Saethar patron set changes & fixes (#3224)\n\n* Add files via upload\r\n\r\n* Delete Saethar_Body_Arms.png\r\n\r\n* Add files via upload\r\n\r\n* Modernized Saethar.cs\r\n\r\n* Eye glow rendering.\r\n\r\n* Fixed wobbling in this & Guildpack's glow layers.\r\n\r\n* Only require the hat for the eye glow..\r\n\r\n* Fixed away artefacts.\r\n\r\n---------\r\n\r\nCo-authored-by: Mirsario <me@mirsar.io>"
+        author: Saethar <54192800+Saethar@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1675278701, offset: 180, sign: 43 } }'
+      target:
+        id: 2be6c856f4ed94bfeee248368ffb2b418a53ffc9
+        parent_ids:
+        - 33b38fed0322fc3ce64facb6c64f3900bb059542
+        message: |
+          Saethar patron set changes & fixes (#3224)
+
+          * Add files via upload
+
+          * Delete Saethar_Body_Arms.png
+
+          * Add files via upload
+
+          * Modernized Saethar.cs
+
+          * Eye glow rendering.
+
+          * Fixed wobbling in this & Guildpack's glow layers.
+
+          * Only require the hat for the eye glow..
+
+          * Fixed away artefacts.
+
+          ---------
+
+          Co-authored-by: Mirsario <me@mirsar.io>
+          (cherry picked from commit 0a061eea93cf1c7c50cf6855f2fdebcd3de4fa0c)
+        author: Saethar <54192800+Saethar@users.noreply.github.com>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1675280409, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b442ad6db849fd18e3a79c7a4f6a463f181c3a32
+        parent_ids:
+        - e4f67ac5dea3dd65e3fb507b70efe66e356ce981
+        message: |
+          Fix #3052 , modded doors now auto open in other direction if blocked. Also fix right click open.
+        author: JavidPack <javidpack@gmail.com>
+        committer: JavidPack <javidpack@gmail.com>
+        time: 'Time { raw: git_time { time: 1666643507, offset: -360, sign: 45 } }'
+      target:
+        id: a974cb700c1bd3b6f6db43c3e0428e2b1a0d5901
+        parent_ids:
+        - 6924db0b9f63dabcf85c9f0bd0b045380b633367
+        message: |
+          Fix #3052 , modded doors now auto open in other direction if blocked. Also fix right click open.
+
+          (cherry picked from commit b442ad6db849fd18e3a79c7a4f6a463f181c3a32)
+        author: JavidPack <javidpack@gmail.com>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1673713309, offset: 180, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 69526ea4be84e8461e77e4306b7433dd6111e02b
+        parent_ids:
+        - baa16ecba13d738b09cde1b675b5eb1fc0d8a4a6
+        message: |
+          Mitigate issue with errors before localization loads.
+        author: JavidPack <javidpack@gmail.com>
+        committer: JavidPack <javidpack@gmail.com>
+        time: 'Time { raw: git_time { time: 1605134048, offset: -420, sign: 45 } }'
+      target:
+        id: 88bf2b73ad6de735bd0f48f2cc5e7b05a3a1b46e
+        parent_ids:
+        - 06d91b9673bff8cdc493acb224223edc764165d0
+        message: |
+          Mitigate issue with errors before localization loads.
+
+          (cherry picked from commit 69526ea4be84e8461e77e4306b7433dd6111e02b)
+        author: JavidPack <javidpack@gmail.com>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1605701668, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e6caaaf678efd2a69deece4d72fdaecc4391bd26
+        parent_ids:
+        - cf0c83bb97cc36bdbfb74a8c4da3821b6b83dafa
+        message: |
+          Large workshop icon for EM.
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1690119827, offset: 180, sign: 43 } }'
+      target:
+        id: c22ee3b71056ad2139a93042ccca2f6ca5f10083
+        parent_ids:
+        - 9789a6a0894ad35e2521960dbb50850816d52457
+        message: |
+          Large workshop icon for EM.
+
+          (cherry picked from commit e6caaaf678efd2a69deece4d72fdaecc4391bd26)
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1690120357, offset: 180, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a24609750cc96840888ee8ce972b2113112fbd1e
+        parent_ids:
+        - f913a7ec6f7e9f68fb72f121dc72dfe246789325
+        message: |
+          Fix #890
+        author: JavidPack <javidpack@gmail.com>
+        committer: JavidPack <javidpack@gmail.com>
+        time: 'Time { raw: git_time { time: 1590134219, offset: -360, sign: 45 } }'
+      target:
+        id: de55d4a6da9fadee0c19247903251c979630750d
+        parent_ids:
+        - b024c57c89ddd442b9488175054a5ba5b66e24bb
+        message: |
+          Fix #890
+
+          (cherry picked from commit a24609750cc96840888ee8ce972b2113112fbd1e)
+        author: JavidPack <javidpack@gmail.com>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1595678627, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1dbf7cfb180c71bd571027152f04084a861364ce
+        parent_ids:
+        - 27fb086695204b6ec86fe325fcf8d13b71bddbd8
+        message: |
+          Autoremove TML64's Wave Bank from Content.
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1665493472, offset: 180, sign: 43 } }'
+      target:
+        id: 4a66fe19b415b17c7531ceb89b80be08171ba663
+        parent_ids:
+        - 80e4e6bd1de5fbe6417cfd2e7e832cb1c0336ec8
+        message: |
+          Autoremove TML64's Wave Bank from Content.
+
+          (cherry picked from commit 1dbf7cfb180c71bd571027152f04084a861364ce)
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1665494286, offset: 180, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e4f67ac5dea3dd65e3fb507b70efe66e356ce981
+        parent_ids:
+        - 4fb69896f385b4cb4b7e7e1e14ad4f33aec86aac
+        message: |
+          Documentation
+        author: JavidPack <javidpack@gmail.com>
+        committer: JavidPack <javidpack@gmail.com>
+        time: 'Time { raw: git_time { time: 1666638682, offset: -360, sign: 45 } }'
+      target:
+        id: 6924db0b9f63dabcf85c9f0bd0b045380b633367
+        parent_ids:
+        - 71d556650f1d2a90ca59e313eec2d2a51f333af1
+        message: |
+          Documentation
+
+          (cherry picked from commit e4f67ac5dea3dd65e3fb507b70efe66e356ce981)
+        author: JavidPack <javidpack@gmail.com>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1673713258, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f913a7ec6f7e9f68fb72f121dc72dfe246789325
+        parent_ids:
+        - ecc983f413d2a176b6b54f344e48fb5d1425ae30
+        message: |
+          Fix semicolon issue with mod generator postbuild command on linux/mac
+        author: JavidPack <javidpack@gmail.com>
+        committer: JavidPack <javidpack@gmail.com>
+        time: 'Time { raw: git_time { time: 1590131254, offset: -360, sign: 45 } }'
+      target:
+        id: b024c57c89ddd442b9488175054a5ba5b66e24bb
+        parent_ids:
+        - 0b7628554d102451a420bf7bc619461a63536940
+        message: |
+          Fix semicolon issue with mod generator postbuild command on linux/mac
+
+          (cherry picked from commit f913a7ec6f7e9f68fb72f121dc72dfe246789325)
+        author: JavidPack <javidpack@gmail.com>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1595678609, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3bda2527bb136e3c705381b11725bf0e4b89ca4a
+        parent_ids:
+        - a75e2b26f478738d13207162897c1773fae55ec8
+        message: |
+          Fixed #3281 (QS mount visual issue)
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1677764389, offset: 180, sign: 43 } }'
+      target:
+        id: d884269997e7fb986d4ba02fe4cca24b851e64ed
+        parent_ids:
+        - c2fcd2eab2f0ba1c332cb112f220b013c26829fc
+        message: |
+          Fixed #3281 (QS mount visual issue)
+
+          (cherry picked from commit 3bda2527bb136e3c705381b11725bf0e4b89ca4a)
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1677764861, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b6155fe990d4bac2c64c2d15547eb3980aaf8537
+        parent_ids:
+        - 9bc68756b8ffbad0b7242ebd1a679b4375a5b4f2
+        message: "Fix tile framing (causing infinite UnloadedXTile loop and invisible tiles) (#3107)\n\n* tile frame fix\r\n\r\n* Minor fix to formatting after merge conflict fix\r\n\r\n* Missed a line removal in merged conflict resolution\r\n\r\nCo-authored-by: Solxanich <59670736+Solxanich@users.noreply.github.com>"
+        author: direwolf420 <amakejk1@web.de>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1669343691, offset: -420, sign: 45 } }'
+      target:
+        id: ccfe89ee47a6ea79569f84b9b810acf39957529b
+        parent_ids:
+        - a7b3ccccdae0d82b477321b187d57f0e77f2cee6
+        message: |
+          Fix tile framing (causing infinite UnloadedXTile loop and invisible tiles) (#3107)
+
+          * tile frame fix
+
+          * Minor fix to formatting after merge conflict fix
+
+          * Missed a line removal in merged conflict resolution
+
+          Co-authored-by: Solxanich <59670736+Solxanich@users.noreply.github.com>
+          (cherry picked from commit b6155fe990d4bac2c64c2d15547eb3980aaf8537)
+        author: direwolf420 <amakejk1@web.de>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1670935123, offset: 180, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ad8b59eba69a83daeda44b66e0688df8bf5bee88
+        parent_ids:
+        - bc8d03bf39009578d3157907f2295e61a5f5a988
+        message: |
+          Scaled down the TML logo in Doxygen.
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1673457479, offset: 180, sign: 43 } }'
+      target:
+        id: 4d1327cbb38b4086493b7eeaa18b1eeb22da294d
+        parent_ids:
+        - b29c37a14ed5f7c20dddccb662bf0d5b7759b1be
+        message: |
+          Scaled down the TML logo in Doxygen.
+
+          (cherry picked from commit ad8b59eba69a83daeda44b66e0688df8bf5bee88)
+          (cherry picked from commit d11b558eca22ab8567fc4e1f1ac88f579922d13f)
+        author: Mirsario <me@mirsar.io>
+        committer: Mirsario <me@mirsar.io>
+        time: 'Time { raw: git_time { time: 1673459259, offset: 180, sign: 43 } }'
+    is_trivial: true

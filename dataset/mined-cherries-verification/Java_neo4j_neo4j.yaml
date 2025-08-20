@@ -1,0 +1,1213 @@
+- total_number_of_results: '44'
+  repo_name: neo4j/neo4j
+  language: Java
+  total_number_of_commits: '69684'
+  total_number_of_branches: '52'
+  total_number_of_committers: '342'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 291f7be09ccfc561a1de3dbda4d18ecc43ce8094
+        parent_ids:
+        - 1e38511eda0ae9f77a67495d8278d50ff6d73adf
+        message: |
+          Uses a DEV_NULL StringLogger instead of SYSTEM
+
+          due to, most likely, a problem with the test or even SubProcess that the
+          piping of System.out/System.err from the sub process where those buffers
+          fill up in the sub process since the parent process doesn't pull that
+          data. When those buffers have filled up, then any write to its System.xxx
+          will block awaiting the buffer to drain, which it doesn't.
+
+          The current fix is just to not use System.out in this test, however a
+          future fix should be to look at and fix the issue in SubProcess itself.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1391165395, offset: 60, sign: 43 } }'
+      target:
+        id: 2b4e821f2a6a8ceed225ef13d7dde517dbae3dca
+        parent_ids:
+        - d9a5529a68a2ec455d76afbc1a116ed16ec4559c
+        message: |
+          Uses a DEV_NULL StringLogger instead of SYSTEM
+
+          due to, most likely, a problem with the test or even SubProcess that the
+          piping of System.out/System.err from the sub process where those buffers
+          fill up in the sub process since the parent process doesn't pull that
+          data. When those buffers have filled up, then any write to its System.xxx
+          will block awaiting the buffer to drain, which it doesn't.
+
+          The current fix is just to not use System.out in this test, however a
+          future fix should be to look at and fix the issue in SubProcess itself.
+
+          (cherry picked from commit 291f7be09ccfc561a1de3dbda4d18ecc43ce8094)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1391165869, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 6e351f7318cb75d6a17b1d7f7cd1d401cd0ca551
+        parent_ids:
+        - 69ec08cc8ca2188348a06e17297705351d31b58a
+        message: |
+          Parallelizes calculation of dense nodes in import tool
+
+          by radix splitting batches by node id so that each batch (i.e. each
+          thread processing it) is guaranteed to not touch any same item in cache as
+          any other thread.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1426628203, offset: 60, sign: 43 } }'
+      target:
+        id: d2bcc565c2e658ee88a9dd27280ed9fcbefe0ef0
+        parent_ids:
+        - e3d2a0734ff581cf81b5229a6a0b8956fc566925
+        message: |
+          Parallelizes calculation of dense nodes in import tool
+
+          by radix splitting batches by node id so that each batch (i.e. each
+          thread processing it) is guaranteed to not touch any same item in cache as
+          any other thread.
+
+          (cherry picked from commit 6e351f7318cb75d6a17b1d7f7cd1d401cd0ca551)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1428572970, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 39be5a3a284c8be60cf058482863b7436d09351b
+        parent_ids:
+        - ab2f26ebd31d522c705ee68ea6d5a2f515513b09
+        message: |
+          Prevents local slave lock acquisition waiting after granted on master
+
+          A slave in an HA cluster acquires locks by first acquiring it on its
+          master, and if granted go and acquire it locally. Given that the master is
+          the authorative instances w/ regards to locks in the cluster it is
+          expected that acquiring a lock that the master just granted should not
+          have to await any condition - it's expected to be free to acquire. However
+          that is apparently not the case since sometimes the slave comes back from
+          the master having just acquired it and it goes and blocks, awaiting the
+          lock to be free since some other transactions holds it presumably.
+
+          The problem described above in many cases results in such a lock being
+          stuck forever on the master, where the only way to release it would be to
+          restart that database.
+
+          This commit doesn't fix the issue that is the confusion that the master is
+          not the single authorative entity of locks. The fix here is to prevent a
+          local lock acquisition, after master acquired such, to go and wait for that
+          lock to be free locally. If that would happen then it will not wait, but
+          instead throw a DeadlockDetectedException (actually a subclass thereof)
+          containing diagnostics about which locks are present in the local lock
+          manager. These deadlock detected exceptions will walk and quack the same
+          way a "real" such deadlock and a normal retry of the transaction will put
+          things right again.
+
+          The root cause will have to be fixed, but having a few more deadlock
+          detected exceptions thrown to the client instead of leaving unreleasable
+          locks on the master behind is a massive improvement.
+
+          For reference, this issue caused many unexpected BlockingReadTimeoutExceptions
+          to be thrown, exceptions of which there should be much less of after this commit.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1384961606, offset: 60, sign: 43 } }'
+      target:
+        id: d3bf6bb2308bf4e209f55ad301a3c4a197887e77
+        parent_ids:
+        - e8b6ea169ad850f4fd84259413cec6addd678ef7
+        message: "Prevents local slave lock acquisition waiting after granted on master\n\nA slave in an HA cluster acquires locks by first acquiring it on its\nmaster, and if granted go and acquire it locally. Given that the master is\nthe authorative instances w/ regards to locks in the cluster it is\nexpected that acquiring a lock that the master just granted should not\nhave to await any condition - it's expected to be free to acquire. However\nthat is apparently not the case since sometimes the slave comes back from\nthe master having just acquired it and it goes and blocks, awaiting the\nlock to be free since some other transactions holds it presumably.\n\nThe problem described above in many cases results in such a lock being\nstuck forever on the master, where the only way to release it would be to\nrestart that database.\n\nThis commit doesn't fix the issue that is the confusion that the master is\nnot the single authorative entity of locks. The fix here is to prevent a\nlocal lock acquisition, after master acquired such, to go and wait for that\nlock to be free locally. If that would happen then it will not wait, but\ninstead throw a DeadlockDetectedException (actually a subclass thereof)\ncontaining diagnostics about which locks are present in the local lock\nmanager. These deadlock detected exceptions will walk and quack the same\nway a \"real\" such deadlock and a normal retry of the transaction will put\nthings right again.\n\nThe root cause will have to be fixed, but having a few more deadlock\ndetected exceptions thrown to the client instead of leaving unreleasable\nlocks on the master behind is a massive improvement.\n\nFor reference, this issue caused many unexpected BlockingReadTimeoutExceptions\nto be thrown, exceptions of which there should be much less of after this commit.\n\n(cherry picked from commit 39be5a3a284c8be60cf058482863b7436d09351b)\n\nConflicts:\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/transaction/LockManager.java\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/transaction/LockManagerImpl.java\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/transaction/RWLock.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/com/master/MasterImpl.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/lock/LockManagerModeSwitcher.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/lock/SlaveLockManager.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1385985427, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 44c3e320330ecd71b687268c35ea7b436b553fbb
+        parent_ids:
+        - 4eb84e8507fe6e663132b5d4cfc0c6258ebeece4
+        message: |
+          Cope with version check of very short store files.
+
+          Fixes a bug where the server would be unable to start if specific store files were
+          very short and where the database had not been shutdown cleanly.
+        author: Mark Needham <mark.needham@neotechnology.com>
+        committer: Mark Needham <mark.needham@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1386863628, offset: 0, sign: 43 } }'
+      target:
+        id: d9451eebf53ea3820514c2111003c5059b089d84
+        parent_ids:
+        - a773a802681dcda5d059c17db520a52d66d140f0
+        message: "Cope with version check of very short store files.\n\nFixes a bug where the server would be unable to start if specific store files were\nvery short and where the database had not been shutdown cleanly.\n\n(cherry picked from commit 44c3e320330ecd71b687268c35ea7b436b553fbb)\n\nConflicts:\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/nioneo/store/StoreFactory.java\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/storemigration/CurrentDatabase.java\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/storemigration/UpgradableDatabase.java\n\tcommunity/kernel/src/test/java/org/neo4j/kernel/impl/storemigration/StoreUpgraderInterruptionTestIT.java\n\tcommunity/kernel/src/test/java/org/neo4j/kernel/impl/storemigration/StoreUpgraderTestIT.java\n"
+        author: Mark Needham <mark.needham@neotechnology.com>
+        committer: Chris Leishman <chris@leishman.org>
+        time: 'Time { raw: git_time { time: 1390314578, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0a5eb2aba58c9caf5061d88d20818157011a9add
+        parent_ids:
+        - 153ad6293a0879b61aafbf1b6542b4d32c450e0c
+        message: |
+          Completes the change where FileLock throws IOException or returns an instance, i.e. stops using null for failure signal
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1386064496, offset: 60, sign: 43 } }'
+      target:
+        id: 0d4213e93567ee41db650eacda3a4cab666c4661
+        parent_ids:
+        - fcecb93836f0c7754bfb085a0da98ab91833a4bf
+        message: "Completes the change where FileLock throws IOException or returns an instance, i.e. stops using null for failure signal\n\n(cherry picked from commit 0a5eb2aba58c9caf5061d88d20818157011a9add)\n\nConflicts:\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/nioneo/store/CommonAbstractStore.java\n\tcommunity/kernel/src/test/java/org/neo4j/kernel/StoreLockerTest.java\n\tcommunity/kernel/src/test/java/org/neo4j/kernel/impl/nioneo/store/TestOsSpecificLocks.java\n\tcommunity/kernel/src/test/java/org/neo4j/unsafe/batchinsert/BatchInserterImplTest.java\n\tenterprise/cluster/src/test/java/org/neo4j/cluster/protocol/heartbeat/HeartbeatContextTest.java\n\tenterprise/cluster/src/test/java/org/neo4j/cluster/protocol/heartbeat/HeartbeatStateTest.java\n\tenterprise/ha/src/test/java/org/neo4j/kernel/ha/cluster/HighAvailabilityModeSwitcherTest.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Chris Leishman <chris@leishman.org>
+        time: 'Time { raw: git_time { time: 1390314578, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e87c2a855d5439659c0b1951cc79c7d3c1749001
+        parent_ids:
+        - 90d130a08e1c68297cf1a9224805810d3cc423cb
+        message: |
+          Uses a snapshot of the reference to Master instead of a proxy
+
+          so that the master cannot change all of a sudden in the middle of
+          operations. This fixes a problem where a service which was instantiated
+          for one specific master continued to run for a different master after a
+          sudden master switch. Specifically this resulted in misuse of id ranges,
+          potentially received from a different master than expected.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387187205, offset: 60, sign: 43 } }'
+      target:
+        id: 4252a4057d96c21ac4946c2884c96261b9abc627
+        parent_ids:
+        - 317d80f8d562328f3dddb3fb6f79e22b8f038b6d
+        message: "Uses a snapshot of the reference to Master instead of a proxy\n\nso that the master cannot change all of a sudden in the middle of\noperations. This fixes a problem where a service which was instantiated\nfor one specific master continued to run for a different master after a\nsudden master switch. Specifically this resulted in misuse of id ranges,\npotentially received from a different master than expected.\n\n(cherry picked from commit e87c2a855d5439659c0b1951cc79c7d3c1749001)\n\nConflicts:\n\tcommunity/kernel/src/test/java/org/neo4j/test/OtherThreadExecutor.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/HighlyAvailableGraphDatabase.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/LabelTokenCreatorModeSwitcher.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/PropertyKeyCreatorModeSwitcher.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/RelationshipTypeCreatorModeSwitcher.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/cluster/HighAvailabilityModeSwitcher.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/lock/LockManagerModeSwitcher.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/transaction/TxHookModeSwitcher.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/transaction/TxIdGeneratorModeSwitcher.java\n\tenterprise/ha/src/test/java/org/neo4j/ha/TransactionConstraintsIT.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387487218, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 45a16ed812a2694b1b5dba589c630425f8b3db57
+        parent_ids:
+        - 5ecf9c66676d513a3ae6b320cfc41f5bbfe9f360
+        message: |
+          Fixes #1697
+
+          Fixes #1697 which is an issue where replacing a property on an entity
+          using batch inserter where the property would be bigger than the one it
+          overwrote so that it would need to go into a new property record. There
+          would be a NullPointerException due to removing that property block from
+          the property record two times.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387199272, offset: 60, sign: 43 } }'
+      target:
+        id: c100d9cd72f118270a4e3f3e8085e6b2858a0966
+        parent_ids:
+        - a2cccfb63704ff40d72c5316efba6fbdeb638571
+        message: "Fixes #1697\n\nFixes #1697 which is an issue where replacing a property on an entity\nusing batch inserter where the property would be bigger than the one it\noverwrote so that it would need to go into a new property record. There\nwould be a NullPointerException due to removing that property block from\nthe property record two times.\n\n(cherry picked from commit 45a16ed812a2694b1b5dba589c630425f8b3db57)\n\nConflicts:\n\tcommunity/kernel/src/main/java/org/neo4j/unsafe/batchinsert/BatchInserterImpl.java\n\tcommunity/kernel/src/test/java/org/neo4j/unsafe/batchinsert/TestBatchInsert.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387499346, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 8b01cb463967388a1d69bc726a45b2e754a9956e
+        parent_ids:
+        - f4ab0f8d42f3dc6cd594b43b48baff8ca831461a
+        message: |
+          This will use the embedded jgit instead of whatever git happens to be available in your environment.
+
+          "As rule of thumb - stay on jgit (keep this false) until you notice performance problems."
+        author: Mark Needham <mark.needham@neotechnology.com>
+        committer: Mark Needham <mark.needham@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1448311548, offset: 0, sign: 43 } }'
+      target:
+        id: 6bcc2e5ad97a37a72804220619950648c0439994
+        parent_ids:
+        - 5a42c855c92fc3de58c06a9757265e3f6d8be877
+        message: |
+          This will use the embedded jgit instead of whatever git happens to be available in your environment.
+
+          "As rule of thumb - stay on jgit (keep this false) until you notice performance problems."
+
+          (cherry picked from commit 8b01cb463967388a1d69bc726a45b2e754a9956e)
+        author: Mark Needham <mark.needham@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1449213835, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9c34b48a20d34c2aaf837d5e6394e547130b39f0
+        parent_ids:
+        - dcc72fa83e0f3742c9ddebaad625254b9f3c9404
+        message: |
+          Removes a test that isn't complete and has been ignored over a year
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1386776951, offset: 60, sign: 43 } }'
+      target:
+        id: 9c846b5c82f269a824ee97409f80ac2ff6a43267
+        parent_ids:
+        - 4203296c55ad2a639baffe6329b55b1a811b5614
+        message: |
+          Removes a test that isn't complete and has been ignored over a year
+
+          (cherry picked from commit 9c34b48a20d34c2aaf837d5e6394e547130b39f0)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387467809, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a56eb15e7b59f2fdb838d9e783f283ccb87dae6c
+        parent_ids:
+        - b46f14326a056c8a4350023a545f6301402e0d34
+        message: |
+          Import tool has ability to skip duplicate nodes
+
+          rather nodes that have the same input ids in the same group. This ability
+          is controlled with `--skip-duplicate-nodes<=true/false>`, whereas the
+          skipping of bad relationships `--skip-bad-relationships<=true/false>`. All
+          and any allowed bad entities (both relationships and duplicate nodes) are
+          collected and controlled using `--bad` and `--bad-tolerance`.
+
+          Duplicate nodes are detected after node stage, when preparing IdMapper
+          and deleted as a side-effect in node->relationship stage. For this the
+          handling of not-in-use records is controlled using inUse record flag as
+          opposed to null record due to a detail in the BatchingPageCache. It's
+          generally better to not leave a record to chance, rather write it as inUse
+          or not.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mark Needham <mark.needham@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1427962805, offset: 60, sign: 43 } }'
+      target:
+        id: f79caebfa4a848c0cdfc9d7703ae3a2424e744dd
+        parent_ids:
+        - e38dab9af179f6b519d2a6f2f74cdb62575a8dde
+        message: "Import tool has ability to skip duplicate nodes\n\nrather nodes that have the same input ids in the same group. This ability\nis controlled with `--skip-duplicate-nodes<=true/false>`, whereas the\nskipping of bad relationships `--skip-bad-relationships<=true/false>`. All\nand any allowed bad entities (both relationships and duplicate nodes) are\ncollected and controlled using `--bad` and `--bad-tolerance`.\n\nDuplicate nodes are detected after node stage, when preparing IdMapper\nand deleted as a side-effect in node->relationship stage. For this the\nhandling of not-in-use records is controlled using inUse record flag as\nopposed to null record due to a detail in the BatchingPageCache. It's\ngenerally better to not leave a record to chance, rather write it as inUse\nor not.\n\n(cherry picked from commit a56eb15e7b59f2fdb838d9e783f283ccb87dae6c)\n\nConflicts:\n\tcommunity/import-tool/src/main/java/org/neo4j/tooling/ImportTool.java\n\tcommunity/import-tool/src/test/java/org/neo4j/tooling/ImportToolDocIT.java\n\tcommunity/import-tool/src/test/java/org/neo4j/tooling/ImportToolTest.java\n\tcommunity/kernel/src/main/java/org/neo4j/unsafe/impl/batchimport/ParallelBatchImporter.java\n\tcommunity/kernel/src/main/java/org/neo4j/unsafe/impl/batchimport/RelationshipEncoderStep.java\n\tcommunity/kernel/src/main/java/org/neo4j/unsafe/impl/batchimport/cache/idmapping/string/EncodingIdMapper.java\n\tcommunity/kernel/src/main/java/org/neo4j/unsafe/impl/batchimport/input/Group.java\n\tcommunity/kernel/src/main/java/org/neo4j/unsafe/impl/batchimport/input/Inputs.java\n\tcommunity/kernel/src/test/java/org/neo4j/unsafe/impl/batchimport/cache/idmapping/string/EncodingIdMapperTest.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1429620117, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 06da3315ccfa8aec43266234db2fede07a8424ae
+        parent_ids:
+        - 4304c9fc628648ee326c85a01a5e045b0e0d263a
+        message: |
+          Enables sending batches at different pace than processing
+
+          ProcessorStep used to have the invariant that one received/processed
+          batch resulted in one batch sent downstream. This made certain processing
+          impossible where the items in each batch were split up by a certain
+          criteria and sent downstream when batch size reached per part.
+
+          This commit changes that so that instead of returning a batch object to
+          send downstream as part of processing it, processing has access to a
+          batch sender allowing for more flexible sending downstream.
+
+          As part of doing this, TaskExecutor got a generic parameter for a
+          thread-local state and using its own Task instead of Callable.
+
+          Also cleaning up configuration of steps into a Configuration instead of
+          passing in the individual configuration into all step constructors.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1426628061, offset: 60, sign: 43 } }'
+      target:
+        id: f9ff718dd908a83219f0f8bf4a7bc656bfdc7ab6
+        parent_ids:
+        - aafdd8bb8d5be4b928edd8d672d54097f3f8dda9
+        message: |
+          Enables sending batches at different pace than processing
+
+          ProcessorStep used to have the invariant that one received/processed
+          batch resulted in one batch sent downstream. This made certain processing
+          impossible where the items in each batch were split up by a certain
+          criteria and sent downstream when batch size reached per part.
+
+          This commit changes that so that instead of returning a batch object to
+          send downstream as part of processing it, processing has access to a
+          batch sender allowing for more flexible sending downstream.
+
+          As part of doing this, TaskExecutor got a generic parameter for a
+          thread-local state and using its own Task instead of Callable.
+
+          Also cleaning up configuration of steps into a Configuration instead of
+          passing in the individual configuration into all step constructors.
+
+          (cherry picked from commit 06da3315ccfa8aec43266234db2fede07a8424ae)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1428572840, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5581112812f76e96bf9f683d13f323e997c09b0e
+        parent_ids:
+        - 24260e7aff65a705aa2d22801ca871ee25e152bd
+        message: |
+          Throws more specific exceptions from TxManager#resume
+
+          There are two possible failures that can happen in #resume:
+           (1) The current thread has already got another transaction associated with it
+           (2) The transaction to be resumed is already associated with another thread
+
+          These two failures got their own exceptions: ThreadAssociatedWithOtherTransactionException and
+          TransactionAlreadyActiveException so that callers can react appropriately
+          to the two scenarios. Typically there's special handling of (2). Doing
+          this made UnableToResumeTransactionException redundant, and it was too
+          generic to begin with as it represented both (1) and (2).
+
+          This commit also tidies up and corrects logging regarding old transactions
+          on the master which are to reaped, so less logging and more relevant
+          logging there.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1385042342, offset: 60, sign: 43 } }'
+      target:
+        id: 92919e65808099e711a032c48106da15dc6f99df
+        parent_ids:
+        - 5419c20cc12751478a396b6d6c8a502708f9ea3d
+        message: "Throws more specific exceptions from TxManager#resume\n\nThere are two possible failures that can happen in #resume:\n (1) The current thread has already got another transaction associated with it\n (2) The transaction to be resumed is already associated with another thread\n\nThese two failures got their own exceptions: ThreadAssociatedWithOtherTransactionException and\nTransactionAlreadyActiveException so that callers can react appropriately\nto the two scenarios. Typically there's special handling of (2). Doing\nthis made UnableToResumeTransactionException redundant, and it was too\ngeneric to begin with as it represented both (1) and (2).\n\nThis commit also tidies up and corrects logging regarding old transactions\non the master which are to reaped, so less logging and more relevant\nlogging there.\n\n(cherry picked from commit 5581112812f76e96bf9f683d13f323e997c09b0e)\n\nConflicts:\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/transaction/TxManager.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/MasterClient20.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/cluster/DefaultMasterImplSPI.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/com/master/MasterImpl.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/com/master/MasterServer.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1386009470, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b76f8e34f7184e1457e37f6da6137bfbde79c3e5
+        parent_ids:
+        - 6deaa8d1740e012916c9f4d8cafe8dbaf6d68e38
+        message: |
+          Master generates and propagates an epoch
+
+          that slaves must use for all further communication with it, or fail with
+          InvalidEpochException. This is to prevent the scenario where one part of a
+          transaction or commit communicates with one master, there's a master
+          switch where the new master instance uses the same host and port as the old one.
+          If a transaction would continue through such a scenario then unexpected
+          things and bad things might happen.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1389181738, offset: 60, sign: 43 } }'
+      target:
+        id: e47e18cacb66a950f4ceafaa6cde0486e62690a0
+        parent_ids:
+        - f8eb0c8dba4b2d52cb76081ee8a335eb4443c4a0
+        message: "Master generates and propagates an epoch\n\nthat slaves must use for all further communication with it, or fail with\nInvalidEpochException. This is to prevent the scenario where one part of a\ntransaction or commit communicates with one master, there's a master\nswitch where the new master instance uses the same host and port as the old one.\nIf a transaction would continue through such a scenario then unexpected\nthings and bad things might happen.\n\n(cherry picked from commit b76f8e34f7184e1457e37f6da6137bfbde79c3e5)\n\nConflicts:\n\tcommunity/lucene-index/src/main/java/org/neo4j/kernel/api/impl/index/LuceneDocumentStructure.java\n\tcommunity/lucene-index/src/test/java/org/neo4j/kernel/api/impl/index/LuceneDocumentStructureTest.java\n\tenterprise/com/src/test/java/org/neo4j/com/MadeUpClient.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/HaRequestType20.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/HighlyAvailableGraphDatabase.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/MasterClient20.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/cluster/HighAvailabilityModeSwitcher.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/com/RequestContextFactory.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/com/master/MasterImpl.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/com/master/MasterServer.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/com/slave/MasterClient153.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/com/slave/MasterClientResolver.java\n\tenterprise/ha/src/test/java/org/neo4j/kernel/ha/cluster/HighAvailabilityModeSwitcherTest.java\n\tenterprise/ha/src/test/java/org/neo4j/kernel/ha/com/master/MasterImplTest.java\n\tenterprise/ha/src/test/java/org/neo4j/kernel/ha/id/HaIdGeneratorFactoryTest.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1389366377, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ea33317a4c9cce0b4a7945a920806333e864827d
+        parent_ids:
+        - 54592b9b558a322c51bb4250882cbd10343a1717
+        message: |
+          Ability to fixate dynamic NumberArray
+
+          when it has done all it's dynamic growing. Fixating a dynamic NumberArray
+          returns a new instance with better performance, but one which cannot
+          dynamically grow anymore.
+
+          ParallelBatchImporter now fixates the node->relationship cache after
+          relationship import for faster relationship->relationship stage.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1427184571, offset: 60, sign: 43 } }'
+      target:
+        id: 1eb61315d43f24f43740c36dacd6643ae49a653a
+        parent_ids:
+        - 7b29a29e473ea3df951d6ba066a1e4e9f80fb417
+        message: |
+          Ability to fixate dynamic NumberArray
+
+          when it has done all it's dynamic growing. Fixating a dynamic NumberArray
+          returns a new instance with better performance, but one which cannot
+          dynamically grow anymore.
+
+          ParallelBatchImporter now fixates the node->relationship cache after
+          relationship import for faster relationship->relationship stage.
+
+          (cherry picked from commit ea33317a4c9cce0b4a7945a920806333e864827d)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1428573055, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d3da2c164fd1c8d22e3a5d499c4775dad85bdb28
+        parent_ids:
+        - 4203296c55ad2a639baffe6329b55b1a811b5614
+        message: |
+          added status endpoint to indicate ability to process transactions, additional to the existing master/ slave endpoints
+        author: Lasse Westh-Nielsen <lassewesth@gmail.com>
+        committer: Lasse Westh-Nielsen <lassewesth@gmail.com>
+        time: 'Time { raw: git_time { time: 1387353704, offset: 60, sign: 43 } }'
+      target:
+        id: 2cf0b4661d99bb1c4860d93258d29207cfaa8e8f
+        parent_ids:
+        - d9451eebf53ea3820514c2111003c5059b089d84
+        message: |
+          added status endpoint to indicate ability to process transactions, additional to the existing master/ slave endpoints
+
+          (cherry picked from commit d3da2c164fd1c8d22e3a5d499c4775dad85bdb28)
+        author: Lasse Westh-Nielsen <lassewesth@gmail.com>
+        committer: Chris Leishman <chris@leishman.org>
+        time: 'Time { raw: git_time { time: 1390314578, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c8d4c5f5cb10c31c41d8046e38f35c9f97ed101a
+        parent_ids:
+        - abc75138c1643e66f462543b68528780eda27675
+        message: |
+          Re-adds I/O monitor to writer step in importer
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1428322413, offset: 120, sign: 43 } }'
+      target:
+        id: 95a4798ff8e157cd51c630b79725f4dbe3791f20
+        parent_ids:
+        - c33520cebdd3ec6547aa55225b358701281706a5
+        message: |
+          Re-adds I/O monitor to writer step in importer
+
+          (cherry picked from commit c8d4c5f5cb10c31c41d8046e38f35c9f97ed101a)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1428573268, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 6d39a48b91da5939e780a30d72db20ec20661ef9
+        parent_ids:
+        - 218e00b1eebc4f8018e18907c92865b9a5606926
+        message: |
+          Uses the full 16 bits for keeping the type id value
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1355841599, offset: 60, sign: 43 } }'
+      target:
+        id: 5daeba96757c7ec8e702d47ab8daf33feaae4522
+        parent_ids:
+        - c44f040ffdc44dc21b14024ce74535dad0ac9b44
+        message: |
+          Uses the full 16 bits for keeping the type id value
+          (cherry picked from commit 6d39a48b91da5939e780a30d72db20ec20661ef9)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1355860274, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3bc742f2664c381d3076840e1f9ee53dcb922483
+        parent_ids:
+        - c768496aaaba1c1fe9249f38e056baa5ff027dbd
+        message: |
+          Make sure multiline fields are enabled by default for LOAD CSV
+        author: Davide Grohmann <davide.grohmann@neotechnology.com>
+        committer: Davide Grohmann <davide.grohmann@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1432740574, offset: 120, sign: 43 } }'
+      target:
+        id: 0e68a0393f87a55f17ff1e756ac6d5bca2617e43
+        parent_ids:
+        - 85df2250786b7e615e69e3a09b6e1825443f52bc
+        message: |
+          Make sure multiline fields are enabled by default for LOAD CSV
+
+          (cherry picked from commit 3bc742f2664c381d3076840e1f9ee53dcb922483)
+        author: Davide Grohmann <davide.grohmann@neotechnology.com>
+        committer: Davide Grohmann <davide.grohmann@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1438604992, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: efda6177fd0596377758d465b2e1a134777af66f
+        parent_ids:
+        - 45293a05ca15b807f28db6bf019bc3be6be4c83d
+        message: |
+          Fixed a counting issues for trailing batches
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1427039204, offset: 60, sign: 43 } }'
+      target:
+        id: 7b29a29e473ea3df951d6ba066a1e4e9f80fb417
+        parent_ids:
+        - d2bcc565c2e658ee88a9dd27280ed9fcbefe0ef0
+        message: |
+          Fixed a counting issues for trailing batches
+
+          (cherry picked from commit efda6177fd0596377758d465b2e1a134777af66f)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1428573034, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 69ec08cc8ca2188348a06e17297705351d31b58a
+        parent_ids:
+        - 06da3315ccfa8aec43266234db2fede07a8424ae
+        message: |
+          Synchronized adding of chunks in DynamicNumberArray
+
+          this to support concurrent writing to it, at least if touching different
+          items in the array.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1426628123, offset: 60, sign: 43 } }'
+      target:
+        id: e3d2a0734ff581cf81b5229a6a0b8956fc566925
+        parent_ids:
+        - f9ff718dd908a83219f0f8bf4a7bc656bfdc7ab6
+        message: |
+          Synchronized adding of chunks in DynamicNumberArray
+
+          this to support concurrent writing to it, at least if touching different
+          items in the array.
+
+          (cherry picked from commit 69ec08cc8ca2188348a06e17297705351d31b58a)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1428572867, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1d93b20e29c22fb0ee49348a1d43a9333dafe438
+        parent_ids:
+        - b43442fb63f0bb85d9fe2f10594634468e1129ef
+        message: |
+          Ability to specify max processors for each step
+
+          which suits interaction with DynamicTaskExecutor better and also useful
+          for "calculate dense node stage", where batches are split up by radix (%10)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1427362548, offset: 60, sign: 43 } }'
+      target:
+        id: c33520cebdd3ec6547aa55225b358701281706a5
+        parent_ids:
+        - 6763221c7d8c928fd60d6d4348c317abc4fd507e
+        message: |
+          Ability to specify max processors for each step
+
+          which suits interaction with DynamicTaskExecutor better and also useful
+          for "calculate dense node stage", where batches are split up by radix (%10)
+
+          (cherry picked from commit 1d93b20e29c22fb0ee49348a1d43a9333dafe438)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1428573200, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4773dced901c38d289f51f4a0c376dbd5b6a3b92
+        parent_ids:
+        - 0716dfc5561f1b8152273ee2a8c85a83d498dacd
+        message: |
+          Properly closes resources created by some tests
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1421760947, offset: 60, sign: 43 } }'
+      target:
+        id: d65e56be3541319ce70de1a36cb8cc45b49fc0f7
+        parent_ids:
+        - 34e104f4aeb0311f863d9cb5cd3aad598e1d0ff5
+        message: "Properly closes resources created by some tests\n\n(cherry picked from commit 4773dced901c38d289f51f4a0c376dbd5b6a3b92)\n\nConflicts:\n\tcommunity/kernel/src/test/java/org/neo4j/kernel/impl/index/TestIndexProviderStore.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1421780689, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 059bb13af0d492a95c68a5027e746ae07153bbd2
+        parent_ids:
+        - a6d3fa1a2d35d51d13a92c571f7187e30e924d08
+        message: |
+          Performance optimizations for best-first selector
+
+          Mostly revolving around finding single paths. This gives a good
+          improvement when calling PathFinder#findSinglePath for those graph
+          algorithms using the traversal framework and more specifically the
+          BestFirstSelector. Currently this will benefit Dijkstra and A*, although
+          the default implementation of A* is a custom non-traversal-framework
+          version that only supports single paths anyways so already has got a
+          similar performance behaviour. Look at TraversalAStar for a A* version
+          that uses the traversal framework.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1382954415, offset: 60, sign: 43 } }'
+      target:
+        id: 3812f79a3090ef277cd73eb5f4f9c37d945fef30
+        parent_ids:
+        - d218994cff7ea740c72ec9e45df700e8de239a10
+        message: |
+          Performance optimizations for best-first selector
+
+          Mostly revolving around finding single paths. This gives a good
+          improvement when calling PathFinder#findSinglePath for those graph
+          algorithms using the traversal framework and more specifically the
+          BestFirstSelector. Currently this will benefit Dijkstra and A*, although
+          the default implementation of A* is a custom non-traversal-framework
+          version that only supports single paths anyways so already has got a
+          similar performance behaviour. Look at TraversalAStar for a A* version
+          that uses the traversal framework.
+
+          (cherry picked from commit 059bb13af0d492a95c68a5027e746ae07153bbd2)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1383657719, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0b2e53301f1cf16f996894b48c6800a90963ce3d
+        parent_ids:
+        - bd965755fe82c91e5a3b4ab66435505e46ccf7fd
+        message: |
+          Proper naming of parameterized values
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1426326490, offset: 60, sign: 43 } }'
+      target:
+        id: d359f9e1bb98b98376eee9e29e912b6d8eb68940
+        parent_ids:
+        - 712f808ccb5845ad314474c4ce7601896426285c
+        message: |
+          Proper naming of parameterized values
+
+          (cherry picked from commit 0b2e53301f1cf16f996894b48c6800a90963ce3d)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1427291555, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e9a88b91d0c59627a25f81d0b523ba44cea3890b
+        parent_ids:
+        - f7c09f6cc7d111b9b97d0ea51eac851ce5a1307a
+        message: |
+          Keeps explicit state whether a transaction is remotely initialize or not
+
+          instead of relying on lock information (whether any lock was grabbed or
+          not). There was a problem where the "old" transaction state was checked
+          for locks and not the new one (the one in the Kernel API), or preferrably
+          both should have been checked. But that approach was error prone so an
+          explicit flag is better and safer.
+
+          Also renamed TxHook --> RemoteTxHook because that name and its method
+          names were so misguiding that it slowed down reasoning around problems
+          where it was involved.
+
+          The fix in this commit is for a regression from 1.9, but may also fix some
+          other corner cases with remote transaction management.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1384873347, offset: 60, sign: 43 } }'
+      target:
+        id: e8b6ea169ad850f4fd84259413cec6addd678ef7
+        parent_ids:
+        - ef4040fee9c8f47855cd8d808e6b79a1293f626e
+        message: "Keeps explicit state whether a transaction is remotely initialize or not\n\ninstead of relying on lock information (whether any lock was grabbed or\nnot). There was a problem where the \"old\" transaction state was checked\nfor locks and not the new one (the one in the Kernel API), or preferrably\nboth should have been checked. But that approach was error prone so an\nexplicit flag is better and safer.\n\nAlso renamed TxHook --> RemoteTxHook because that name and its method\nnames were so misguiding that it slowed down reasoning around problems\nwhere it was involved.\n\nThe fix in this commit is for a regression from 1.9, but may also fix some\nother corner cases with remote transaction management.\n\nAlso had to pull in some constructs from\ne5cdeec2b7706aefd1bb88cd62409a0591ca2f0f due to differences in data source\nenlisting timing between 1.9 and 2.0.\n\n(cherry picked from commit e9a88b91d0c59627a25f81d0b523ba44cea3890b)\n\nConflicts:\n\tcommunity/kernel/src/main/java/org/neo4j/helpers/Exceptions.java\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/DefaultTxHook.java\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/InternalAbstractGraphDatabase.java\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/core/NoTransactionState.java\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/core/TransactionState.java\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/core/WritableTransactionState.java\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/nioneo/store/NeoStore.java\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/transaction/TransactionStateFactory.java\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/transaction/TxManager.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/HighlyAvailableGraphDatabase.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1385978509, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d62194d2c9f04003ae9c695c8d1c51cfb0f8951d
+        parent_ids:
+        - 1461f2a4d0f74db6cf998d1af47e0a10e81670a4
+        message: |
+          Adds tests for state rollback in HAMSM
+        author: Chris Gioran <chris.gioran@neotechnology.com>
+        committer: Chris Gioran <chris.gioran@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1386257546, offset: 60, sign: 43 } }'
+      target:
+        id: e45508b48c36cc14055b67511934820de8b01a2a
+        parent_ids:
+        - f463cd282c0af93a5893392e29418a819d0a6f0e
+        message: |
+          Adds tests for state rollback in HAMSM
+
+          (cherry picked from commit d62194d2c9f04003ae9c695c8d1c51cfb0f8951d)
+        author: Chris Gioran <chris.gioran@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387467853, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e9d762bacf0d3d5c355069e25efdff09d2d68c29
+        parent_ids:
+        - 0a5eb2aba58c9caf5061d88d20818157011a9add
+        message: |
+          Gets rid of even some more null handling for FileLock
+
+          which is nowadays unnecessary. Also throws the expected IOException,
+          instead of an IllegalArgumentException if the lock couldn't be had from
+          the FileChannel. May bad, introduced in
+          0a5eb2aba58c9caf5061d88d20818157011a9add.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1386082129, offset: 60, sign: 43 } }'
+      target:
+        id: a773a802681dcda5d059c17db520a52d66d140f0
+        parent_ids:
+        - 0d4213e93567ee41db650eacda3a4cab666c4661
+        message: "Gets rid of even some more null handling for FileLock\n\nwhich is nowadays unnecessary. Also throws the expected IOException,\ninstead of an IllegalArgumentException if the lock couldn't be had from\nthe FileChannel. May bad, introduced in\n0a5eb2aba58c9caf5061d88d20818157011a9add.\n\n(cherry picked from commit e9d762bacf0d3d5c355069e25efdff09d2d68c29)\n\nConflicts:\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/nioneo/store/FileLock.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Chris Leishman <chris@leishman.org>
+        time: 'Time { raw: git_time { time: 1390314578, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1461f2a4d0f74db6cf998d1af47e0a10e81670a4
+        parent_ids:
+        - 83e53d5d83c3bd4b53645745a2da0dbc6b150a16
+        message: |
+          Reverts HA state transitions if one or more state transition listeners fail
+
+          This will make the state machine more resilient and a retried event will
+          be able to succeed.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1386239015, offset: 60, sign: 43 } }'
+      target:
+        id: 627e1dce4eca0285511b4111a0817faa1e8ca89f
+        parent_ids:
+        - 9c846b5c82f269a824ee97409f80ac2ff6a43267
+        message: |
+          Reverts HA state transitions if one or more state transition listeners fail
+
+          This will make the state machine more resilient and a retried event will
+          be able to succeed.
+
+          (cherry picked from commit 1461f2a4d0f74db6cf998d1af47e0a10e81670a4)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387467823, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1a42148dd347b83f69f87e12f9524c0db9e44b9e
+        parent_ids:
+        - 90d130a08e1c68297cf1a9224805810d3cc423cb
+        message: |
+          Passes along phase1Timeout payload in all places
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387196222, offset: 60, sign: 43 } }'
+      target:
+        id: a2cccfb63704ff40d72c5316efba6fbdeb638571
+        parent_ids:
+        - 4252a4057d96c21ac4946c2884c96261b9abc627
+        message: |
+          Passes along phase1Timeout payload in all places
+
+          (cherry picked from commit 1a42148dd347b83f69f87e12f9524c0db9e44b9e)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387488730, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 79c4c3f18940bbe5d7a358dc65857751d6345f0a
+        parent_ids:
+        - a56aae6a0166274d08059f6706a66a796dc0c4d2
+        message: |
+          Fixes an issue of unexpected message payload in a timeout message
+
+          Also added some more sanity checks.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1386604707, offset: 60, sign: 43 } }'
+      target:
+        id: 44ad5d00bf08708f2042f77770d11a1743a0d372
+        parent_ids:
+        - e45508b48c36cc14055b67511934820de8b01a2a
+        message: "Fixes an issue of unexpected message payload in a timeout message\n\nAlso added some more sanity checks.\n\n(cherry picked from commit 79c4c3f18940bbe5d7a358dc65857751d6345f0a)\n\nConflicts:\n\tenterprise/cluster/src/test/java/org/neo4j/cluster/protocol/atomicbroadcast/multipaxos/ProposerStateTest.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387467907, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4ed6f7be6b6218473e1d6da5b78d5074b19e08d7
+        parent_ids:
+        - 5ecf9c66676d513a3ae6b320cfc41f5bbfe9f360
+        message: |
+          Enabled more tests for tx event handlers
+
+          so that more is tested, also afterCommit(). Some issues was exposed which
+          were also fixed.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387208069, offset: 60, sign: 43 } }'
+      target:
+        id: 750b7d6e489b79fde136f3b742feee8270a1731e
+        parent_ids:
+        - c100d9cd72f118270a4e3f3e8085e6b2858a0966
+        message: "Enabled more tests for tx event handlers\n\nso that more is tested, also afterCommit(). Some issues was exposed which\nwere also fixed.\n\n(cherry picked from commit 4ed6f7be6b6218473e1d6da5b78d5074b19e08d7)\n\nConflicts:\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/core/WritableTransactionState.java\n\tcommunity/kernel/src/test/java/org/neo4j/kernel/impl/event/VerifyingTransactionEventHandler.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387499354, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c82701d2a0bddf39b77e795638bd98555fc46540
+        parent_ids:
+        - 06cb2a8c2439ba31ff1fef674d0f6393c10c9a8f
+        message: |
+          Suspends the transaction in a finally block
+
+          since we must uphold the contract where the transaction must have been
+          suspended no matter what happens before leaving that method.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1385040316, offset: 60, sign: 43 } }'
+      target:
+        id: 5419c20cc12751478a396b6d6c8a502708f9ea3d
+        parent_ids:
+        - 2c1968a93b35d3d6d6cead8b2ea9db552945e34b
+        message: "Suspends the transaction in a finally block\n\nsince we must uphold the contract where the transaction must have been\nsuspended no matter what happens before leaving that method.\n\n(cherry picked from commit c82701d2a0bddf39b77e795638bd98555fc46540)\n\nConflicts:\n\tcommunity/kernel/src/main/java/org/neo4j/kernel/impl/transaction/TransactionImpl.java\n\tenterprise/ha/src/main/java/org/neo4j/kernel/ha/com/master/MasterImpl.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1386008305, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0b2e53301f1cf16f996894b48c6800a90963ce3d
+        parent_ids:
+        - bd965755fe82c91e5a3b4ab66435505e46ccf7fd
+        message: |
+          Proper naming of parameterized values
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1426326490, offset: 60, sign: 43 } }'
+      target:
+        id: c938e08a9319b22eb93300b254227c65498109f1
+        parent_ids:
+        - 0233772526fbd7f7eefac22451a0e2d578a49faa
+        message: "Proper naming of parameterized values\n\n(cherry picked from commit 0b2e53301f1cf16f996894b48c6800a90963ce3d)\n\nConflicts:\n\tcommunity/neo4j/src/test/java/org/neo4j/index/IndexTxStateLookupTest.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Ben Butler-Cole <ben@bridesmere.com>
+        time: 'Time { raw: git_time { time: 1433320377, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d3da2c164fd1c8d22e3a5d499c4775dad85bdb28
+        parent_ids:
+        - 4203296c55ad2a639baffe6329b55b1a811b5614
+        message: |
+          added status endpoint to indicate ability to process transactions, additional to the existing master/ slave endpoints
+        author: Lasse Westh-Nielsen <lassewesth@gmail.com>
+        committer: Lasse Westh-Nielsen <lassewesth@gmail.com>
+        time: 'Time { raw: git_time { time: 1387353704, offset: 60, sign: 43 } }'
+      target:
+        id: ddb4d0585f4fc8936ac05db06741f0c2604b5790
+        parent_ids:
+        - 2cf0b4661d99bb1c4860d93258d29207cfaa8e8f
+        message: |
+          Fixes problem with parser not being thread safe
+
+          (cherry picked from commit d3da2c164fd1c8d22e3a5d499c4775dad85bdb28)
+        author: Andres Taylor <andres@neotechnology.com>
+        committer: Chris Leishman <chris@leishman.org>
+        time: 'Time { raw: git_time { time: 1390314578, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 564e177a3935632b28a819e1b9686bee92c7fe6a
+        parent_ids:
+        - 8669f23b27ce55d8d273d1d00c9bf45401cfdf6d
+        message: |
+          Moved API level usage of internal class GraphDatabaseAPI into internals.
+        author: Jacob Hansson <jakewins@gmail.com>
+        committer: Jacob Hansson <jakewins@gmail.com>
+        time: 'Time { raw: git_time { time: 1389282285, offset: 60, sign: 43 } }'
+      target:
+        id: 6e60687053418c8e839d4d406099ac5dec720b46
+        parent_ids:
+        - dad16774f8eb20eded6f18982b7b16e1c1b52dd4
+        message: |
+          Moved API level usage of internal class GraphDatabaseAPI into internals.
+
+          (cherry picked from commit 564e177a3935632b28a819e1b9686bee92c7fe6a)
+        author: Jacob Hansson <jakewins@gmail.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1390387828, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3636952ae2c5d89bf4d3e9917ec3cacca774e103
+        parent_ids:
+        - c90a96b89377390abd2dd0714e54995f156485b4
+        message: |
+          Updated rolling upgrade 'quick verification' IT test so that it can be used again
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1390221808, offset: 60, sign: 43 } }'
+      target:
+        id: a84abd4d5d748590fb32be2f9be2d363677d5734
+        parent_ids:
+        - 86d1333cd890cffb9d70d2aca4f5c1bae018bf07
+        message: "Updated rolling upgrade 'quick verification' IT test so that it can be used again\n\n(cherry picked from commit 3636952ae2c5d89bf4d3e9917ec3cacca774e103)\n\nConflicts:\n\tenterprise/ha/src/test/java/org/neo4j/ha/upgrade/RollingUpgradeIT.java\n\nFixed some issues with the test itself\n\n(cherry picked from commit 6d5aed4d27520bdb0179356aedf29a8abc05cad3)\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1390226472, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b453f98dba1e5bcb8e19d5f5f2efcc68eb09c75a
+        parent_ids:
+        - 932be349c9a54c808ea8f5f9ab7b8c4ce28765cf
+        message: |
+          Test and fix for failing to start transaction in MasterImpl.
+        author: Jacob Hansson <jakewins@gmail.com>
+        committer: Jacob Hansson <jakewins@gmail.com>
+        time: 'Time { raw: git_time { time: 1384466593, offset: 60, sign: 43 } }'
+      target:
+        id: f8eb0c8dba4b2d52cb76081ee8a335eb4443c4a0
+        parent_ids:
+        - 94e6771466327c81ecdd258506d61e0ceb6f2db0
+        message: |
+          Test and fix for failing to start transaction in MasterImpl.
+
+          (cherry picked from commit b453f98dba1e5bcb8e19d5f5f2efcc68eb09c75a)
+        author: Jacob Hansson <jakewins@gmail.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1389365668, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4773dced901c38d289f51f4a0c376dbd5b6a3b92
+        parent_ids:
+        - 0716dfc5561f1b8152273ee2a8c85a83d498dacd
+        message: |
+          Properly closes resources created by some tests
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1421760947, offset: 60, sign: 43 } }'
+      target:
+        id: 9977e5b96e48ab6101b121db40d024303c45d002
+        parent_ids:
+        - d7bf9d329782fc809d892ccd726af7a046586d8c
+        message: "Properly closes resources created by some tests\n\n(cherry picked from commit 4773dced901c38d289f51f4a0c376dbd5b6a3b92)\n\nConflicts:\n\tcommunity/kernel/src/test/java/org/neo4j/kernel/impl/index/TestIndexProviderStore.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1421772047, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 72b24acc95b93e7928e76dd69a2d40628176843c
+        parent_ids:
+        - 652e25390a31834378af48289da200a1c75dd062
+        message: |
+          Minor fix to clustering tutorial formating.
+        author: Ben Butler-Cole <ben@bridesmere.com>
+        committer: Alistair Jones <alistair.jones@gmail.com>
+        time: 'Time { raw: git_time { time: 1386242212, offset: 0, sign: 43 } }'
+      target:
+        id: f463cd282c0af93a5893392e29418a819d0a6f0e
+        parent_ids:
+        - 627e1dce4eca0285511b4111a0817faa1e8ca89f
+        message: |
+          Minor fix to clustering tutorial formating.
+
+          (cherry picked from commit 72b24acc95b93e7928e76dd69a2d40628176843c)
+        author: Ben Butler-Cole <ben@bridesmere.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387467842, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4304c9fc628648ee326c85a01a5e045b0e0d263a
+        parent_ids:
+        - 04d50090ceb0a836b861f9c90f2e24a699cbc2ac
+        message: |
+          Renames ExecutorServiceStep --> ProcessorsStep and proper step packages
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1426626560, offset: 60, sign: 43 } }'
+      target:
+        id: aafdd8bb8d5be4b928edd8d672d54097f3f8dda9
+        parent_ids:
+        - eb5f1b8e484120eeb57fba79a57f65e7a9cbd8ea
+        message: |
+          Renames ExecutorServiceStep --> ProcessorsStep and proper step packages
+
+          (cherry picked from commit 4304c9fc628648ee326c85a01a5e045b0e0d263a)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1428572323, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b40b8b6ebdb86de126ee4c3a48eeb361f32a16e5
+        parent_ids:
+        - 4f94cb5c606fe4e6fd7d2fe9c845f7dad11062d0
+        message: |
+          Passes correct payload for phase1Timeout messages
+
+          There was an issue where a phase1Timeout occured, but no payload passed
+          with it. The consumer of such a timeout used the payload and made it
+          available for later usage even, which then would unexpectedly fail.
+
+          Now, wherever applicable, the correct payload is sent with such timeout
+          messages.
+
+          co-author: Rickard Öberg, @rickardoberg
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1386851943, offset: 60, sign: 43 } }'
+      target:
+        id: 317d80f8d562328f3dddb3fb6f79e22b8f038b6d
+        parent_ids:
+        - 44ad5d00bf08708f2042f77770d11a1743a0d372
+        message: "Passes correct payload for phase1Timeout messages\n\nThere was an issue where a phase1Timeout occured, but no payload passed\nwith it. The consumer of such a timeout used the payload and made it\navailable for later usage even, which then would unexpectedly fail.\n\nNow, wherever applicable, the correct payload is sent with such timeout\nmessages.\n\nco-author: Rickard Öberg, @rickardoberg\n(cherry picked from commit b40b8b6ebdb86de126ee4c3a48eeb361f32a16e5)\n\nConflicts:\n\tenterprise/cluster/src/test/java/org/neo4j/cluster/protocol/atomicbroadcast/multipaxos/ProposerStateTest.java\n\tenterprise/cluster/src/test/java/org/neo4j/cluster/protocol/cluster/ClusterStateTest.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387468161, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e50473ec0ff19786fae997c4f9b09bca368d5bae
+        parent_ids:
+        - ad00506f15a4d9fe392cfe336594368ea4657c46
+        message: |
+          Refactorings and improvements on batch importer staging
+
+          The staging framework for the ParallelBatchImporter has been
+          changed to reduce time spent in the framework itself as well
+          as reporing much more accurate statistics.
+
+          - Simplified Stage to only have #add(Step), instead of input/add
+          - Simplified and streamlined waiting of conditions in individual steps
+            where conditions are first busy waited a little while, to then
+            back off to a sleep strategy.
+          - Improved accuracy of statistics of upstream/downstream idling,
+            possible since better placed for measuring was found.
+          - DetailedExecutionMonitor will find and print which step is the
+            current most likely step to be the bottle neck in the stage.
+          - Correctly and efficiently follows the contract of a step, where
+            batches must be sent downstream in the order they arrived, which
+            implies total ordering as a whole between steps. Previously there
+            was too strict checks such that some parallelization was hindered.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1411678829, offset: 120, sign: 43 } }'
+      target:
+        id: 4876372f130f6372a852985e58406a8961d5b872
+        parent_ids:
+        - b602940a447b7ee4ac6c3e206d1847800a198ca4
+        message: "Refactorings and improvements on batch importer staging\n\nThe staging framework for the ParallelBatchImporter has been\nchanged to reduce time spent in the framework itself as well\nas reporing much more accurate statistics.\n\n- Simplified Stage to only have #add(Step), instead of input/add\n- Simplified and streamlined waiting of conditions in individual steps\n  where conditions are first busy waited a little while, to then\n  back off to a sleep strategy.\n- Improved accuracy of statistics of upstream/downstream idling,\n  possible since better placed for measuring was found.\n- DetailedExecutionMonitor will find and print which step is the\n  current most likely step to be the bottle neck in the stage.\n- Correctly and efficiently follows the contract of a step, where\n  batches must be sent downstream in the order they arrived, which\n  implies total ordering as a whole between steps. Previously there\n  was too strict checks such that some parallelization was hindered.\n\n(cherry picked from commit e50473ec0ff19786fae997c4f9b09bca368d5bae)\n\nConflicts:\n\tcommunity/consistency-check/src/test/java/org/neo4j/unsafe/impl/batchimport/ParallelBatchImporterTest.java\n"
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1411992232, offset: 120, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5977faf23b0eaa7f4e437ca133246092db8f4d63
+        parent_ids:
+        - 41346d45e45aca2b00adf5840d47a8798c447a86
+        message: |
+          Sends booked instance payload for repropose after rejectPrepare
+
+          this will fix an issue where there were a null payload when reproposing an
+          instance.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387371338, offset: 60, sign: 43 } }'
+      target:
+        id: d353f6b23045c04e51a4c961c2addbaf43bd4b5a
+        parent_ids:
+        - 750b7d6e489b79fde136f3b742feee8270a1731e
+        message: |
+          Sends booked instance payload for repropose after rejectPrepare
+
+          this will fix an issue where there were a null payload when reproposing an
+          instance.
+
+          (cherry picked from commit 5977faf23b0eaa7f4e437ca133246092db8f4d63)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1387499355, offset: 60, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 829ee8a76acb968eefc177b3b44f4a7c1b1938a2
+        parent_ids:
+        - ea33317a4c9cce0b4a7945a920806333e864827d
+        message: |
+          Renamed NodeRelationshipLink-->NodeRelationshipCache
+
+          to have similar names as other e.g. NodeLabelsCache. Also removed
+          unnecessary NodeRelationshipLink interface as well.
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1427184574, offset: 60, sign: 43 } }'
+      target:
+        id: 6763221c7d8c928fd60d6d4348c317abc4fd507e
+        parent_ids:
+        - 1eb61315d43f24f43740c36dacd6643ae49a653a
+        message: |
+          Renamed NodeRelationshipLink-->NodeRelationshipCache
+
+          to have similar names as other e.g. NodeLabelsCache. Also removed
+          unnecessary NodeRelationshipLink interface as well.
+
+          (cherry picked from commit 829ee8a76acb968eefc177b3b44f4a7c1b1938a2)
+        author: Mattias Persson <mattias@neotechnology.com>
+        committer: Mattias Persson <mattias@neotechnology.com>
+        time: 'Time { raw: git_time { time: 1428573170, offset: 120, sign: 43 } }'
+    is_trivial: false

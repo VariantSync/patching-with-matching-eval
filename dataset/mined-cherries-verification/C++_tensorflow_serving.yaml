@@ -1,0 +1,1370 @@
+- repo_name: tensorflow/serving
+  total_number_of_branches: '75'
+  total_number_of_commits: '8639'
+  language: C++
+  total_number_of_committers: '91'
+  total_number_of_results: '49'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: fdf23de9993c0fef83ce5a4029cd2ed8582039a8
+        parent_ids:
+        - 281c665b2eaed9836da313b720611019a1a12c31
+        message: |
+          Add missing include.
+
+          PiperOrigin-RevId: 212981021
+        author: awk <awk@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1536936279, offset: -420, sign: 45 } }'
+      target:
+        id: 84ef62d579863d4f1b2fdc7151cd7b35136e89d3
+        parent_ids:
+        - c81b2c26d5965d20d7b40c109a01ef53b226caf6
+        message: |
+          Add missing include.
+
+          PiperOrigin-RevId: 212981021
+          (cherry picked from commit fdf23de9993c0fef83ce5a4029cd2ed8582039a8)
+        author: awk <awk@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1536944261, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5c7740fc3d8d5c017643a8cc40a7202717b10dd6
+        parent_ids:
+        - 831434474b34e0067a18b3b5bc0161b9e1c7b08b
+        message: |
+          Add git hash for version metadata of model server and add tags for dev and nightly builds.
+
+          PiperOrigin-RevId: 217403451
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1539730648, offset: -420, sign: 45 } }'
+      target:
+        id: ff018e22b0fe1f4b98ae4b7a778b7194db2e2d9f
+        parent_ids:
+        - 02a6fc10216aed5644badac31f35cef3243688fa
+        message: |
+          Add git hash for version metadata of model server and add tags for dev and nightly builds.
+
+          PiperOrigin-RevId: 217403451
+          (cherry picked from commit 5c7740fc3d8d5c017643a8cc40a7202717b10dd6)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1540319108, offset: -240, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 6ff5d9f80ef4ae7b69af2e114fed969c163d6c47
+        parent_ids:
+        - 72edc451d4166b4e3e022b1e242046e2bfdd8c4c
+        message: |
+          Fix erroneous formatting of numbers that are larger than 6 digits.
+
+          Such numbers are converted to scientific notation (by StrCat()).
+          The code suffixed such numbers with '.0' yielding invalid numbers.
+
+          As an example before this fix, 9000000 would get string converted
+          (incorrectly) to 9e+06.0 instead of 9e+06 -- the latter is correct.
+          Similarly .00003 gets converted incorrectly to 3e-5.0 instead of
+          3e-5
+
+          Fixes https://github.com/tensorflow/serving/issues/989
+
+          PiperOrigin-RevId: 204536301
+        author: awk <awk@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1531520095, offset: -420, sign: 45 } }'
+      target:
+        id: fca72ce414b809dfacdc958e5988f98bad7e0dd7
+        parent_ids:
+        - 3d2db30e3b413764c8d3fba04ea5e3a08261d4ee
+        message: |
+          Fix erroneous formatting of numbers that are larger than 6 digits.
+
+          Such numbers are converted to scientific notation (by StrCat()).
+          The code suffixed such numbers with '.0' yielding invalid numbers.
+
+          As an example before this fix, 9000000 would get string converted
+          (incorrectly) to 9e+06.0 instead of 9e+06 -- the latter is correct.
+          Similarly .00003 gets converted incorrectly to 3e-5.0 instead of
+          3e-5
+
+          Fixes https://github.com/tensorflow/serving/issues/989
+
+          PiperOrigin-RevId: 204536301
+          (cherry picked from commit 6ff5d9f80ef4ae7b69af2e114fed969c163d6c47)
+        author: awk <awk@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533180860, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3a0bdbe5c216e4eeab8110cad8d959d21a2e376a
+        parent_ids:
+        - 8b8434240e688ac78f1132f19c86951f99ed2abe
+        message: |
+          Add Python 3.7 as supported for tensorflow-serving-api package.
+
+          The API package itself is a collection of .proto files, and should be
+          compatible with Python 3.7. Underlying dependencies: protobuf and grpcio
+          both support Python 3.7, so we can too.
+
+          Fixes #1640
+
+          PiperOrigin-RevId: 313979135
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1590891783, offset: -420, sign: 45 } }'
+      target:
+        id: f775bb25e80a6c7b3c66842eb9085d44d9752ec2
+        parent_ids:
+        - 43fec910a84f5883f569e61a32d2392f2c648570
+        message: |
+          Add Python 3.7 as supported for tensorflow-serving-api package.
+
+          The API package itself is a collection of .proto files, and should be
+          compatible with Python 3.7. Underlying dependencies: protobuf and grpcio
+          both support Python 3.7, so we can too.
+
+          Fixes #1640
+
+          PiperOrigin-RevId: 313979135
+          (cherry picked from commit 3a0bdbe5c216e4eeab8110cad8d959d21a2e376a)
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: netfs <awk@google.com>
+        time: 'Time { raw: git_time { time: 1590892674, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 739b2065a4bd7f08b6f4b61ba6604124c1513db0
+        parent_ids:
+        - dba55c6f89c6478f775e8bb72b7f8682bb99c06c
+        message: |
+          Fix missing NCCL header path
+
+          PiperOrigin-RevId: 215463591
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1538517343, offset: -420, sign: 45 } }'
+      target:
+        id: 1ac5f399de11f7abc1e0e114c36e5154dbd012e0
+        parent_ids:
+        - 62e06f742a8adb6719ac6017dc4be7882d3289bf
+        message: |
+          Fix missing NCCL header path
+
+          PiperOrigin-RevId: 215463591
+          (cherry picked from commit 739b2065a4bd7f08b6f4b61ba6604124c1513db0)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1538596178, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: be7c70d779a39fad73a535185a4f4f991c1d859a
+        parent_ids:
+        - 99d32fc8379cfb1082894b1ac4e4602784aa1264
+        message: |
+          Fix GPU build
+
+          Fixes https://github.com/tensorflow/serving/issues/1150
+
+          PiperOrigin-RevId: 217890974
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1539970179, offset: -420, sign: 45 } }'
+      target:
+        id: a313d904abe7b298a9c0c3f6cb5fc80d0cba6bf5
+        parent_ids:
+        - ff018e22b0fe1f4b98ae4b7a778b7194db2e2d9f
+        message: |
+          Fix GPU build
+
+          Fixes https://github.com/tensorflow/serving/issues/1150
+
+          PiperOrigin-RevId: 217890974
+          (cherry picked from commit be7c70d779a39fad73a535185a4f4f991c1d859a)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1540319144, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e1ceccbde64272fbe09915cc34053ad44648447e
+        parent_ids:
+        - 83533141aa62f1e08237c5b0f6380819a20c67a0
+        message: |
+          Return error strings that conform to JSON specs, to
+          prevent malformed JSON responses that fail to parse.
+
+          Fixes #1600
+
+          PiperOrigin-RevId: 310921928
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1589212514, offset: -420, sign: 45 } }'
+      target:
+        id: 1ff4d31cd9a0a736162813c149139cce0ccaaa2c
+        parent_ids:
+        - dae2bc6bcb622055bcf86f2f2b464d4950deff9f
+        message: |
+          Return error strings that conform to JSON specs, to
+          prevent malformed JSON responses that fail to parse.
+
+          Fixes #1600
+
+          PiperOrigin-RevId: 310921928
+          (cherry picked from commit e1ceccbde64272fbe09915cc34053ad44648447e)
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: netfs <awk@google.com>
+        time: 'Time { raw: git_time { time: 1589828887, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 88ad2c62de3eb63846289534dfab500db1b2fb6b
+        parent_ids:
+        - e805d1b1fa2dc7eb47e913d3f35f391946102e01
+        message: |
+          Internal change.
+
+          PiperOrigin-RevId: 206635850
+        author: awk <awk@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1532982326, offset: -420, sign: 45 } }'
+      target:
+        id: 10a67ef61d44635bcc17341dac970107e8f55495
+        parent_ids:
+        - 4383edee344026a8d5a111344c9cce8b426fce01
+        message: |
+          Internal change.
+
+          PiperOrigin-RevId: 206635850
+          (cherry picked from commit 88ad2c62de3eb63846289534dfab500db1b2fb6b)
+        author: awk <awk@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533156883, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: fb7c5defe70a5f454809dc46a947fd470294b67d
+        parent_ids:
+        - b16d34129468e30571bb725dd8c9a66cb905f8ea
+        message: |
+          Add util for get model status
+        author: ynqa <un.pensiero.vano@gmail.com>
+        committer: ynqa <un.pensiero.vano@gmail.com>
+        time: 'Time { raw: git_time { time: 1531906826, offset: 540, sign: 43 } }'
+      target:
+        id: af72316214f857f50bdf62dac36f79a6659bfeff
+        parent_ids:
+        - 79f621daa9642f011a8234a55cb7f9252f89e45a
+        message: |
+          Add util for get model status
+
+          (cherry picked from commit fb7c5defe70a5f454809dc46a947fd470294b67d)
+        author: ynqa <un.pensiero.vano@gmail.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533156827, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a173809f40b81299a79663d757a02ba201381e97
+        parent_ids:
+        - f8a607a11035732c3a3287cdd1ce2cb46856459b
+        message: |
+          Add old/beta gRPC API signature and route it to GA gRPC API.
+          This prevents breaking existing clients, along with a warning
+          that in (near) furture the old API will be removed.
+
+          PiperOrigin-RevId: 207878049
+        author: awk <awk@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1533736870, offset: -420, sign: 45 } }'
+      target:
+        id: b7179d8e426ecbd0f0937e53c73b0ed7c7a6529d
+        parent_ids:
+        - c4f4bbe5484779ed277d240c73c32045d85e719f
+        message: |
+          Add old/beta gRPC API signature and route it to GA gRPC API.
+          This prevents breaking existing clients, along with a warning
+          that in (near) furture the old API will be removed.
+
+          PiperOrigin-RevId: 207878049
+          (cherry picked from commit a173809f40b81299a79663d757a02ba201381e97)
+        author: awk <awk@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533759581, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1277991345f2144f194c6d5b87dc862a02068c5d
+        parent_ids:
+        - fd0a3d0bd8d0adc7ce2e52268d11189c4be126fc
+        message: |
+          Install TF Serving API in development Docker images
+
+          PiperOrigin-RevId: 213676487
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1537386297, offset: -420, sign: 45 } }'
+      target:
+        id: defd37d1383739335983ebf00dd0899d0c0d3a2a
+        parent_ids:
+        - dc8d417c884d5af0d9a25f6a14d954d96756fb2a
+        message: |
+          Install TF Serving API in development Docker images
+
+          PiperOrigin-RevId: 213676487
+          (cherry picked from commit 1277991345f2144f194c6d5b87dc862a02068c5d)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1538596178, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 844b751d6325ef294b806d7549eb79eddafeb132
+        parent_ids:
+        - 5b78ebf5ecb123574d7414822088ce5998b6b0f8
+        message: Update build_pip_package.sh
+        author: gautamvasudevan <12356580+gautamvasudevan@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1532452971, offset: -420, sign: 45 } }'
+      target:
+        id: 71127a782ab0113a4ec9776c29e7857c31fa4123
+        parent_ids:
+        - f34e8440208629f94a41ca08d0b9cbee2a607d01
+        message: |
+          Update build_pip_package.sh
+
+          (cherry picked from commit 844b751d6325ef294b806d7549eb79eddafeb132)
+        author: gautamvasudevan <12356580+gautamvasudevan@users.noreply.github.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533156883, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2b276fc328e47c51e5c1d14d0e64ba2009773eca
+        parent_ids:
+        - b6810971dad0401b5457f4aa7b6eb6c22e7e5f13
+        message: |
+          Adds LICENSE file to tensorflow-serving-api python package.
+
+          It is recommended to include LICENSE file in the package.[1] But tensorflow-serving-api doesn't have one in it.
+
+          We need LICENSE file and recent versions of `wheel` will automatically pickup LICENSE file in local directory.
+
+          [1] https://packaging.python.org/tutorials/packaging-projects/#creating-a-license
+
+          PiperOrigin-RevId: 343562364
+        author: Chao Xie <chaox@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1605910310, offset: -480, sign: 45 } }'
+      target:
+        id: 93668685296f7ab70b8ebdc477684e808806bec9
+        parent_ids:
+        - c48d83c55b0268334a4ae4b528bf32de5857f2df
+        message: |
+          Adds LICENSE file to tensorflow-serving-api python package.
+
+          It is recommended to include LICENSE file in the package.[1] But tensorflow-serving-api doesn't have one in it.
+
+          We need LICENSE file and recent versions of `wheel` will automatically pickup LICENSE file in local directory.
+
+          [1] https://packaging.python.org/tutorials/packaging-projects/#creating-a-license
+
+          PiperOrigin-RevId: 343562364
+          (cherry picked from commit 2b276fc328e47c51e5c1d14d0e64ba2009773eca)
+        author: Chao Xie <chaox@google.com>
+        committer: Chao Xie <chaox@google.com>
+        time: 'Time { raw: git_time { time: 1605910557, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 01c2fb804161125bebda0b5880657ad046ab2da7
+        parent_ids:
+        - 1cceb78579f51a20d07447436180e55ef769774d
+        message: |
+          Handle range checking of floating point numbers correctly.
+
+          Underlying rapidjson::IsLosslessFloat() does not work correctly
+          (e.g. IsLosslessFloat(0.2) returns false!). We now split the
+          range check into two parts: one to check if a integral value
+          can fit in float/double without loss and other part to do usual
+          decimal compare against the defined limits. The latter is used
+          for non-integer values.
+
+          Fixes https://github.com/tensorflow/serving/issues/1136
+
+          PiperOrigin-RevId: 217166796
+        author: awk <awk@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1539624903, offset: -420, sign: 45 } }'
+      target:
+        id: 02a6fc10216aed5644badac31f35cef3243688fa
+        parent_ids:
+        - 7c9a8f6e46227d0f7e74d489d91f169ce86bc0af
+        message: |
+          Handle range checking of floating point numbers correctly.
+
+          Underlying rapidjson::IsLosslessFloat() does not work correctly
+          (e.g. IsLosslessFloat(0.2) returns false!). We now split the
+          range check into two parts: one to check if a integral value
+          can fit in float/double without loss and other part to do usual
+          decimal compare against the defined limits. The latter is used
+          for non-integer values.
+
+          Fixes https://github.com/tensorflow/serving/issues/1136
+
+          PiperOrigin-RevId: 217166796
+          (cherry picked from commit 01c2fb804161125bebda0b5880657ad046ab2da7)
+        author: awk <awk@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1540318779, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 140bbe7d4f6440449b61b360f227da6851b6332b
+        parent_ids:
+        - 7a2fecf1695cfb4fc743adbde0be35c2dd31e82e
+        message: |
+          Fix the bug running get-pip.py on python3.6.
+
+          PiperOrigin-RevId: 425544723
+        author: Sungsoon Cho <sungcho@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1643700923, offset: -480, sign: 45 } }'
+      target:
+        id: cc66d958ded8aaaa568dbf4aedd6d0a2d2ca19c9
+        parent_ids:
+        - d69e89280c94d986e6cfd51e395b694b1a3afd14
+        message: |
+          Fix the bug running get-pip.py on python3.6.
+
+          PiperOrigin-RevId: 425544723
+          (cherry picked from commit 140bbe7d4f6440449b61b360f227da6851b6332b)
+        author: Sungsoon Cho <sungcho@google.com>
+        committer: RaviTeja Gorijala <gorijala@google.com>
+        time: 'Time { raw: git_time { time: 1644633204, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: fc8c5301125903a3e2ddc8b743f78f0d539bf61b
+        parent_ids:
+        - 2a3f866d21a2883b4a25fb7153b9847bcc9c39ef
+        message: |
+          Keep pypi package from overwriting TF package
+
+          PiperOrigin-RevId: 208718607
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1534283662, offset: -420, sign: 45 } }'
+      target:
+        id: f66b9fda721008f06eb0739eba1491220136647f
+        parent_ids:
+        - 7fb55e4aaf0a1caf3d0726b744fa351ff4289555
+        message: |
+          Keep pypi package from overwriting TF package
+
+          PiperOrigin-RevId: 208718607
+          (cherry picked from commit fc8c5301125903a3e2ddc8b743f78f0d539bf61b)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1534284820, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f92ac94bf5d597582065198e9ff50e6eeb50c078
+        parent_ids:
+        - 5fb57805b9987d1727c7326718d2c0c2bcfc7be1
+        message: |
+          Make Internal Change
+
+          PiperOrigin-RevId: 355546760
+        author: Chao Xie <chaox@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1612416042, offset: -480, sign: 45 } }'
+      target:
+        id: 644baeb482741e96d2ca0a5acdc2d7d2ab038710
+        parent_ids:
+        - 8300bd1e8878b7fd8b6cbf604d7feef45eb42ab7
+        message: |
+          Make Internal Change
+
+          PiperOrigin-RevId: 355546760
+          (cherry picked from commit f92ac94bf5d597582065198e9ff50e6eeb50c078)
+        author: Chao Xie <chaox@google.com>
+        committer: Chao Xie <chaox@google.com>
+        time: 'Time { raw: git_time { time: 1612467092, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 52ff24de9a0da84aba6065ca41c9fc060a301391
+        parent_ids:
+        - ba1539e3afa14784345e233f0660b07a8536e453
+        message: |
+          Add GPU serving Docker image, change source of binary
+
+          PiperOrigin-RevId: 206344761
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1532715585, offset: -420, sign: 45 } }'
+      target:
+        id: 4383edee344026a8d5a111344c9cce8b426fce01
+        parent_ids:
+        - f7d69e1430048e71d7b5b523bddd83cd379af967
+        message: |
+          Add GPU serving Docker image, change source of binary
+
+          PiperOrigin-RevId: 206344761
+          (cherry picked from commit 52ff24de9a0da84aba6065ca41c9fc060a301391)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533156883, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 74ea413db4407c1affe2b9fa69dc53ecdba61fa6
+        parent_ids:
+        - baab6180231009e9ebd86d5d0df301ce360e445e
+        message: |
+          Install cuda-nvrtc 10.1 into release tf serving gpu docker image.
+
+          PiperOrigin-RevId: 314861537
+        author: Haiming Bao <haiming@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1591331416, offset: -420, sign: 45 } }'
+      target:
+        id: 9b74939d6bd45486a3e10168f9863a33e6a488eb
+        parent_ids:
+        - 997223c8329a17df4308d96d15d67eeda08dc9a9
+        message: |
+          Install cuda-nvrtc 10.1 into release tf serving gpu docker image.
+
+          PiperOrigin-RevId: 314861537
+          (cherry picked from commit 74ea413db4407c1affe2b9fa69dc53ecdba61fa6)
+        author: Haiming Bao <haiming@google.com>
+        committer: Haiming Bao <haiming@google.com>
+        time: 'Time { raw: git_time { time: 1591379545, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 012e0b992d4b6ff003e0bc02226681ae526c9059
+        parent_ids:
+        - b153d43f956a468bf6a72ca6bd708cdb257f2d08
+        message: |
+          Remove old bazel workarounds
+
+          PiperOrigin-RevId: 205460242
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1532124413, offset: -420, sign: 45 } }'
+      target:
+        id: 79f621daa9642f011a8234a55cb7f9252f89e45a
+        parent_ids:
+        - 58dee83387647bf1b144b3114292edeab0ac5b59
+        message: |
+          Remove old bazel workarounds
+
+          PiperOrigin-RevId: 205460242
+          (cherry picked from commit 012e0b992d4b6ff003e0bc02226681ae526c9059)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533156818, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a09b6e7850f47121df0b9df01e720ea2b8dde331
+        parent_ids:
+        - 6169bd7d3e27d6b04ee871138815e6c150a81059
+        message: |
+          Update Dockerfile.devel* with py3.7 installed.
+
+          PiperOrigin-RevId: 403429336
+        author: Sanjay Kumar Chotakur <chotakur@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1634323588, offset: -420, sign: 45 } }'
+      target:
+        id: 498196b1869d84e2f0c5a4a206545084916d2b0a
+        parent_ids:
+        - 1fc1b44105a329294c4552c6d2c83857e560daf0
+        message: |
+          Update Dockerfile.devel* with py3.7 installed.
+
+          PiperOrigin-RevId: 403429336
+          (cherry picked from commit a09b6e7850f47121df0b9df01e720ea2b8dde331)
+        author: Sanjay Kumar Chotakur <chotakur@google.com>
+        committer: jay90099 <chotakur@google.com>
+        time: 'Time { raw: git_time { time: 1634324862, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 01ea36b337073ed3e6949d078c7e742373321d70
+        parent_ids:
+        - 3fdc9d312c1ab5a62d1ceacdfc435a6789582be6
+        message: |
+          Minor documentation updates and fix docker gpu build
+          Fixes #987
+
+          PiperOrigin-RevId: 204508857
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1531509188, offset: -420, sign: 45 } }'
+      target:
+        id: 58dee83387647bf1b144b3114292edeab0ac5b59
+        parent_ids:
+        - d90e0ae0dfab4886da4fe8b519c97418afb88f9b
+        message: |
+          Minor documentation updates and fix docker gpu build
+          Fixes #987
+
+          PiperOrigin-RevId: 204508857
+          (cherry picked from commit 01ea36b337073ed3e6949d078c7e742373321d70)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533156805, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d8555724ed54f3102952f9eca5a7d2b695899e20
+        parent_ids:
+        - cda26f6065753167ac83e3b1aad7485d3d1d6db0
+        message: |
+          Upgrade to ubuntu20.04 for docker images, which defaults to gcc-9.
+
+          PiperOrigin-RevId: 488422181
+        author: Dero Gharibian <dero@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1668454092, offset: -480, sign: 45 } }'
+      target:
+        id: 32631bc7a524dec7b38c5671ea181961f7a3b72a
+        parent_ids:
+        - 4a824caf4cb63f68071c3cdb20247612f58ed910
+        message: |
+          Upgrade to ubuntu20.04 for docker images, which defaults to gcc-9.
+
+          PiperOrigin-RevId: 488422181
+          (cherry picked from commit d8555724ed54f3102952f9eca5a7d2b695899e20)
+        author: Dero Gharibian <dero@google.com>
+        committer: Shawn Lu <xiaoxlu@google.com>
+        time: 'Time { raw: git_time { time: 1680035108, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 64469a0da89e314680509df21eb8b2f7efd91060
+        parent_ids:
+        - 7105d7affbe752e9d577082d564617fa9b5725a6
+        message: |
+          add flags to config max_num_load_retries and load_retry_interval_micros
+        author: Yu Zheng <bearzheng2011@gmail.com>
+        committer: Yu Zheng <bearzheng2011@gmail.com>
+        time: 'Time { raw: git_time { time: 1537377866, offset: -240, sign: 45 } }'
+      target:
+        id: dc8d417c884d5af0d9a25f6a14d954d96756fb2a
+        parent_ids:
+        - a278817d0f826030fe3e47110ef1d970340b0323
+        message: |
+          add flags to config max_num_load_retries and load_retry_interval_micros
+
+          (cherry picked from commit 64469a0da89e314680509df21eb8b2f7efd91060)
+        author: Yu Zheng <bearzheng2011@gmail.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1538596178, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 140bbe7d4f6440449b61b360f227da6851b6332b
+        parent_ids:
+        - 7a2fecf1695cfb4fc743adbde0be35c2dd31e82e
+        message: |
+          Fix the bug running get-pip.py on python3.6.
+
+          PiperOrigin-RevId: 425544723
+        author: Sungsoon Cho <sungcho@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1643700923, offset: -480, sign: 45 } }'
+      target:
+        id: 2202d1183c44b68b0f142bce774f6e1e92c897a9
+        parent_ids:
+        - 0e8f0cd5932e8b8c435938d7b0713647c333fe36
+        message: |
+          Fix the bug running get-pip.py on python3.6.
+
+          PiperOrigin-RevId: 425544723
+          (cherry picked from commit 140bbe7d4f6440449b61b360f227da6851b6332b)
+        author: Sungsoon Cho <sungcho@google.com>
+        committer: RaviTeja Gorijala <gorijala@google.com>
+        time: 'Time { raw: git_time { time: 1644368692, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: c1ce0752f1076bd6f92e1af5f73e3a3c552f4691
+        parent_ids:
+        - 6ad81047a282f0e67ceebe9e25d7f0201e636a84
+        message: |
+          Fix broken GetModelMetadata request processing.
+
+          Fixes #1612
+
+          PiperOrigin-RevId: 312723939
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1590091029, offset: -420, sign: 45 } }'
+      target:
+        id: 55c40374b548b89e8de6d899ef2b0b355c0fa9e5
+        parent_ids:
+        - dae2bc6bcb622055bcf86f2f2b464d4950deff9f
+        message: |
+          Fix broken GetModelMetadata request processing.
+
+          Fixes #1612
+
+          PiperOrigin-RevId: 312723939
+          (cherry picked from commit c1ce0752f1076bd6f92e1af5f73e3a3c552f4691)
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: netfs <awk@google.com>
+        time: 'Time { raw: git_time { time: 1590093828, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 140bbe7d4f6440449b61b360f227da6851b6332b
+        parent_ids:
+        - 7a2fecf1695cfb4fc743adbde0be35c2dd31e82e
+        message: |
+          Fix the bug running get-pip.py on python3.6.
+
+          PiperOrigin-RevId: 425544723
+        author: Sungsoon Cho <sungcho@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1643700923, offset: -480, sign: 45 } }'
+      target:
+        id: 34f4d3c932d5c8785a84bde965db5d8cc15d6ce0
+        parent_ids:
+        - fd5650a50f9287eab0d39f6b8df9285e8671b3ce
+        message: |
+          Fix the bug running get-pip.py on python3.6.
+
+          PiperOrigin-RevId: 425544723
+          (cherry picked from commit 140bbe7d4f6440449b61b360f227da6851b6332b)
+        author: Sungsoon Cho <sungcho@google.com>
+        committer: RaviTeja Gorijala <gorijala@google.com>
+        time: 'Time { raw: git_time { time: 1644428421, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 48b71603188701bcfcba24fc3fc2ba86f15f2a0b
+        parent_ids:
+        - df5ad1540993bda08303436f9b72d8b2547ff1e3
+        message: |
+          Update to cuDNN 7.2 in Docker images
+
+          PiperOrigin-RevId: 215313756
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1538441397, offset: -420, sign: 45 } }'
+      target:
+        id: 62e06f742a8adb6719ac6017dc4be7882d3289bf
+        parent_ids:
+        - dceb6e4e3854dd1fc5ff17dc32ee37969c3f7f29
+        message: |
+          Update to cuDNN 7.2 in Docker images
+
+          PiperOrigin-RevId: 215313756
+          (cherry picked from commit 48b71603188701bcfcba24fc3fc2ba86f15f2a0b)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1538596178, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5b78ebf5ecb123574d7414822088ce5998b6b0f8
+        parent_ids:
+        - fb7c5defe70a5f454809dc46a947fd470294b67d
+        message: |
+          Add config, sources
+        author: ynqa <un.pensiero.vano@gmail.com>
+        committer: ynqa <un.pensiero.vano@gmail.com>
+        time: 'Time { raw: git_time { time: 1531934960, offset: 540, sign: 43 } }'
+      target:
+        id: f34e8440208629f94a41ca08d0b9cbee2a607d01
+        parent_ids:
+        - af72316214f857f50bdf62dac36f79a6659bfeff
+        message: |
+          Add config, sources
+
+          (cherry picked from commit 5b78ebf5ecb123574d7414822088ce5998b6b0f8)
+        author: ynqa <un.pensiero.vano@gmail.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533156836, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d6914ba17ff2557ad91809807d61699db18255cd
+        parent_ids:
+        - 1a18b724dd24a1bf325182e423efe85cc19db184
+        message: |
+          Accept integers in input requests where float/doubles are allowed,
+          converting them to corresponding decimal type. The conversion fails
+          (and so does the request) if the integer is too big to fit in the
+          decimal type (and incurring a precision loss).
+
+          PiperOrigin-RevId: 215515883
+        author: awk <awk@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1538545554, offset: -420, sign: 45 } }'
+      target:
+        id: bd3c1a0a4e268fe2ceffb9ae59655e252c3be412
+        parent_ids:
+        - 1ac5f399de11f7abc1e0e114c36e5154dbd012e0
+        message: |
+          Accept integers in input requests where float/doubles are allowed,
+          converting them to corresponding decimal type. The conversion fails
+          (and so does the request) if the integer is too big to fit in the
+          decimal type (and incurring a precision loss).
+
+          PiperOrigin-RevId: 215515883
+          (cherry picked from commit d6914ba17ff2557ad91809807d61699db18255cd)
+        author: awk <awk@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1538596178, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 46694d03ef9287d72f856b2a4a159381ff645815
+        parent_ids:
+        - 134361f9c9d0fe83ecfcffa0447d5f70a37c3cc2
+        message: |
+          Fix broken GPU build by add TF cuda options:
+
+          https://github.com/tensorflow/tensorflow/blob/aa44812e3e40b1c95586466bc177b07525b787ea/.bazelrc#L227
+
+          to TF Serving. This causes TF sources to be built with correct
+          options (bazel options are not picked from relevant dependent
+          repo (TF in this case), when building code from that repo).
+
+          PiperOrigin-RevId: 369022405
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1618682627, offset: -420, sign: 45 } }'
+      target:
+        id: 05377a99a61217976cb4ddd2ea2c7f1ce71ae0eb
+        parent_ids:
+        - f144361e527dcbebd6a97dca244412581d24e43c
+        message: |
+          Fix broken GPU build by add TF cuda options:
+
+          https://github.com/tensorflow/tensorflow/blob/aa44812e3e40b1c95586466bc177b07525b787ea/.bazelrc#L227
+
+          to TF Serving. This causes TF sources to be built with correct
+          options (bazel options are not picked from relevant dependent
+          repo (TF in this case), when building code from that repo).
+
+          PiperOrigin-RevId: 369022405
+          (cherry picked from commit 46694d03ef9287d72f856b2a4a159381ff645815)
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1618696951, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5bd88e01b357fd874b00b13726e45d4c03a09959
+        parent_ids:
+        - f1e33715403d2674d1a968181275c5b4db2f6338
+        message: |
+          Internal change
+
+          PiperOrigin-RevId: 207179369
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1533250004, offset: -420, sign: 45 } }'
+      target:
+        id: 5b16f90875e54107d1355eafe32694f59cd266e8
+        parent_ids:
+        - 08edcf95c6aaebcc4190fcc82a973be942ed5a98
+        message: |
+          Internal change
+
+          PiperOrigin-RevId: 207179369
+          (cherry picked from commit 5bd88e01b357fd874b00b13726e45d4c03a09959)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533759581, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 97978adfc4fa982d2448a9fc358dffe7a2945c32
+        parent_ids:
+        - aee599e833ba2a6b0b2994985f66e9ff68dacab9
+        message: "Add `-N` to useradd. \n\nFixes #1137"
+        author: vfdev <vfdev.5@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1539327159, offset: 120, sign: 43 } }'
+      target:
+        id: 7c9a8f6e46227d0f7e74d489d91f169ce86bc0af
+        parent_ids:
+        - a3eef519d1f6ca843daafac94e1c68ac9cece69c
+        message: "Add `-N` to useradd. \n\nFixes #1137\n\n(cherry picked from commit 97978adfc4fa982d2448a9fc358dffe7a2945c32)\n"
+        author: vfdev <vfdev.5@gmail.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1540318754, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 140bbe7d4f6440449b61b360f227da6851b6332b
+        parent_ids:
+        - 7a2fecf1695cfb4fc743adbde0be35c2dd31e82e
+        message: |
+          Fix the bug running get-pip.py on python3.6.
+
+          PiperOrigin-RevId: 425544723
+        author: Sungsoon Cho <sungcho@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1643700923, offset: -480, sign: 45 } }'
+      target:
+        id: 6f38402a82225b13713dbe81ab5ca2f325e6efaf
+        parent_ids:
+        - 55f8331c8e4f614fc08378231ac80a3cdd90e232
+        message: |
+          Fix the bug running get-pip.py on python3.6.
+
+          PiperOrigin-RevId: 425544723
+          (cherry picked from commit 140bbe7d4f6440449b61b360f227da6851b6332b)
+        author: Sungsoon Cho <sungcho@google.com>
+        committer: RaviTeja Gorijala <gorijala@google.com>
+        time: 'Time { raw: git_time { time: 1644368181, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5adb5ed5c061cd48ae2f448eb83c64c1b165d0fd
+        parent_ids:
+        - b8564c0a6a9c3145b555d8be25823f40d3322c09
+        message: |
+          Update docker instructions to simplify process using Docker Hub
+
+          PiperOrigin-RevId: 203004750
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1530665082, offset: -420, sign: 45 } }'
+      target:
+        id: 26539333978b5e7ec95a32357a2f720c6438d58d
+        parent_ids:
+        - 0d219b72c01d45af8c5d8079950b09df839d9e15
+        message: |
+          Update docker instructions to simplify process using Docker Hub
+
+          PiperOrigin-RevId: 203004750
+          (cherry picked from commit 5adb5ed5c061cd48ae2f448eb83c64c1b165d0fd)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533156555, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9186b1a465211fc7f334025a922914949c5e2471
+        parent_ids:
+        - 42afdc98579e43522a66682713bcf3dfaedddcb9
+        message: |
+          Set cuda compute capabilities for `cuda` build config.
+
+          PiperOrigin-RevId: 325552145
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1596854221, offset: -420, sign: 45 } }'
+      target:
+        id: 731a34f0b3f43a6f7a8da85655d3a4a5c72d066a
+        parent_ids:
+        - f57632facd4f74644b36e81cadac5bf4fee43424
+        message: |
+          Set cuda compute capabilities for `cuda` build config.
+
+          PiperOrigin-RevId: 325552145
+          (cherry picked from commit 9186b1a465211fc7f334025a922914949c5e2471)
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: netfs <awk@google.com>
+        time: 'Time { raw: git_time { time: 1597085969, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a40cf2176dbdc0454fa9c32e7ab3c0d6da0c738e
+        parent_ids:
+        - 6bb32ee0ced800c9afa155594335719df1b1a830
+        message: |
+          Install TensorRT in TF Serving's docker build.
+
+          PiperOrigin-RevId: 215241014
+        author: laigd <laigd@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1538416167, offset: -420, sign: 45 } }'
+      target:
+        id: dceb6e4e3854dd1fc5ff17dc32ee37969c3f7f29
+        parent_ids:
+        - defd37d1383739335983ebf00dd0899d0c0d3a2a
+        message: |
+          Install TensorRT in TF Serving's docker build.
+
+          PiperOrigin-RevId: 215241014
+          (cherry picked from commit a40cf2176dbdc0454fa9c32e7ab3c0d6da0c738e)
+        author: laigd <laigd@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1538596178, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4cbac38c307ea11527d0e45a3b18fd41f1b67601
+        parent_ids:
+        - ce382aeb104b5ed61e9ee8a1c452fe32be357dd0
+        message: |
+          Update docker files
+
+          PiperOrigin-RevId: 206050867
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1532552656, offset: -420, sign: 45 } }'
+      target:
+        id: f7d69e1430048e71d7b5b523bddd83cd379af967
+        parent_ids:
+        - 71127a782ab0113a4ec9776c29e7857c31fa4123
+        message: |
+          Update docker files
+
+          PiperOrigin-RevId: 206050867
+          (cherry picked from commit 4cbac38c307ea11527d0e45a3b18fd41f1b67601)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533156883, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b2d2b87d67ec065ae1e4df4ca5b36c151d6457f6
+        parent_ids:
+        - 153e75ab838c252b3a8f66824754dd4f30519601
+        message: |
+          Update docker builds
+
+          PiperOrigin-RevId: 208535314
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1534192897, offset: -420, sign: 45 } }'
+      target:
+        id: 129fc505b7d053f8c5e51f80bbac015493cc3bc2
+        parent_ids:
+        - f344c92e50189dc4d336c21086992f98e04e6e9f
+        message: |
+          Update docker builds
+
+          PiperOrigin-RevId: 208535314
+          (cherry picked from commit b2d2b87d67ec065ae1e4df4ca5b36c151d6457f6)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1534201258, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: aed1ae7e406d511e648709239411fcd0681b5ac0
+        parent_ids:
+        - 5a6936324059fcdfedeb2ac9f5f1d53544bbc8ef
+        message: |
+          Update docker images
+
+          PiperOrigin-RevId: 208891157
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1534371083, offset: -420, sign: 45 } }'
+      target:
+        id: 17bec134e3e62a2e97cb5211fa630a7a81acf5f9
+        parent_ids:
+        - 274e97a4b473c4ecbfb7da670dd1a0ad07d2b836
+        message: |
+          Update docker images
+
+          PiperOrigin-RevId: 208891157
+          (cherry picked from commit aed1ae7e406d511e648709239411fcd0681b5ac0)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1534438551, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 68d92ff3fdca0641f465cc3ba3858a619c8b82a6
+        parent_ids:
+        - 77807bf783a3a18a68c0260b27444c2c93a6dc3d
+        message: |
+          Update Dockerfile.devel* with py3.8 installed.
+
+          PiperOrigin-RevId: 519799120
+        author: Shawn Lu <xiaoxlu@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1679945804, offset: -420, sign: 45 } }'
+      target:
+        id: c688ac1d81e02c80f16a7f8fed241b2180a76170
+        parent_ids:
+        - 4a824caf4cb63f68071c3cdb20247612f58ed910
+        message: |
+          Update Dockerfile.devel* with py3.8 installed.
+
+          PiperOrigin-RevId: 519799120
+          (cherry picked from commit 68d92ff3fdca0641f465cc3ba3858a619c8b82a6)
+        author: Shawn Lu <xiaoxlu@google.com>
+        committer: Shawn Lu <xiaoxlu@google.com>
+        time: 'Time { raw: git_time { time: 1680040207, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ab1372b0a2537cde1d4597f7468dce9bcbdc0ee5
+        parent_ids:
+        - 110845a40a6670067aa7cc24ed889ea829999063
+        message: |
+          o Restructure test to start one model server for every unique
+            variation of model server flags (model name, path and other
+            params). This results in majority of the tests (all predict/
+            classify/regress over grpc and rest) sharing the same server
+            and executing faster. This change shaves off ~15-20 seconds
+            in overall test run.
+
+          o Add retry for REST API calls.
+
+          PiperOrigin-RevId: 207606701
+        author: awk <awk@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1533590364, offset: -420, sign: 45 } }'
+      target:
+        id: c4f4bbe5484779ed277d240c73c32045d85e719f
+        parent_ids:
+        - b5a84e39c48f9ca2724344dcda0f706532285696
+        message: |
+          o Restructure test to start one model server for every unique
+            variation of model server flags (model name, path and other
+            params). This results in majority of the tests (all predict/
+            classify/regress over grpc and rest) sharing the same server
+            and executing faster. This change shaves off ~15-20 seconds
+            in overall test run.
+
+          o Add retry for REST API calls.
+
+          PiperOrigin-RevId: 207606701
+          (cherry picked from commit ab1372b0a2537cde1d4597f7468dce9bcbdc0ee5)
+        author: awk <awk@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533759581, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1bcc01132df0cc835a9d3388ee6fce65d2f2fbe9
+        parent_ids:
+        - 101730f8ea8218955a02e0474d1d7e643cba1263
+        message: |
+          Internal change
+
+          PiperOrigin-RevId: 206864789
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1533087941, offset: -420, sign: 45 } }'
+      target:
+        id: 3d2db30e3b413764c8d3fba04ea5e3a08261d4ee
+        parent_ids:
+        - 10a67ef61d44635bcc17341dac970107e8f55495
+        message: |
+          Internal change
+
+          PiperOrigin-RevId: 206864789
+          (cherry picked from commit 1bcc01132df0cc835a9d3388ee6fce65d2f2fbe9)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533156883, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1bcc01132df0cc835a9d3388ee6fce65d2f2fbe9
+        parent_ids:
+        - 101730f8ea8218955a02e0474d1d7e643cba1263
+        message: |
+          Internal change
+
+          PiperOrigin-RevId: 206864789
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1533087941, offset: -420, sign: 45 } }'
+      target:
+        id: 08edcf95c6aaebcc4190fcc82a973be942ed5a98
+        parent_ids:
+        - e16a67da804053d78bdcc57b6b7fdba2dc1a017f
+        message: |
+          Internal change
+
+          PiperOrigin-RevId: 206864789
+          (cherry picked from commit 1bcc01132df0cc835a9d3388ee6fce65d2f2fbe9)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533759581, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 07f9ba50ebf75991ef27541c8a318de76886c5f6
+        parent_ids:
+        - 793304c0e9d6dd7d3d031e21c32aeea3d7336a03
+        message: |
+          Update Dockerfile.devel* with py3.9 installed.
+
+          PiperOrigin-RevId: 559891667
+        author: Shawn Lu <xiaoxlu@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1692916877, offset: -420, sign: 45 } }'
+      target:
+        id: 89e76e785ebe458264e6a40b76b8258e32377103
+        parent_ids:
+        - f620b474db18ecd9dbcabcaed0d541fc7f275c40
+        message: "Update Dockerfile.devel* with py3.9 installed. (#2178)\n\nPiperOrigin-RevId: 559891667\r\n(cherry picked from commit 07f9ba50ebf75991ef27541c8a318de76886c5f6)\r\n\r\nCo-authored-by: Shawn Lu <xiaoxlu@google.com>"
+        author: Raviteja Gorijala <36429068+rtg0795@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1692993729, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ebbbc87b925008da25bfb53f8fb0d8398c6767a7
+        parent_ids:
+        - c304f2ca35894fe7cbb6905d987a9f013987abda
+        message: |
+          Enable download of TF Serving sources at arbitrary commit for GPU/MKL docker images.
+
+          PiperOrigin-RevId: 345132448
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1606872119, offset: -480, sign: 45 } }'
+      target:
+        id: 4725d9095919c64bb3f6c60b55bfbb103fe6a52e
+        parent_ids:
+        - ac3a2eb190bbe1dd9054391b293a2172a8b07bec
+        message: |
+          Enable download of TF Serving sources at arbitrary commit for GPU/MKL docker images.
+
+          PiperOrigin-RevId: 345132448
+          (cherry picked from commit ebbbc87b925008da25bfb53f8fb0d8398c6767a7)
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1613521210, offset: -480, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 535821151b9ea03464050e6f19690ece5a26be81
+        parent_ids:
+        - 1b62e2e5d1800a0e1ce856e96ef29a5e80e0962b
+        message: |
+          Internal change
+
+          PiperOrigin-RevId: 207300092
+        author: gvasudevan <gvasudevan@google.com>
+        committer: TensorFlower Gardener <gardener@tensorflow.org>
+        time: 'Time { raw: git_time { time: 1533322101, offset: -420, sign: 45 } }'
+      target:
+        id: b5a84e39c48f9ca2724344dcda0f706532285696
+        parent_ids:
+        - 5b16f90875e54107d1355eafe32694f59cd266e8
+        message: |
+          Internal change
+
+          PiperOrigin-RevId: 207300092
+          (cherry picked from commit 535821151b9ea03464050e6f19690ece5a26be81)
+        author: gvasudevan <gvasudevan@google.com>
+        committer: Abhijit Karmarkar <awk@google.com>
+        time: 'Time { raw: git_time { time: 1533759581, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 7359725873a4f5356893309b9075da09b1fb23f2
+        parent_ids:
+        - 10ef8d4cebf2ee2cf9a77066208f1ada2016336e
+        message: |
+          Updates the test model for TF Text v2.6.0.
+
+          PiperOrigin-RevId: 427871547
+        author: Robert Neale <rneale@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1644539347, offset: -480, sign: 45 } }'
+      target:
+        id: 86e35d7c52259d6ab1ef2a34ccc98fba998d28a2
+        parent_ids:
+        - 462a36f9d606d6959683a0070eecb38ae207865b
+        message: |
+          Updates the test model for TF Text v2.6.0.
+
+          PiperOrigin-RevId: 427871547
+          (cherry picked from commit 7359725873a4f5356893309b9075da09b1fb23f2)
+        author: Robert Neale <rneale@google.com>
+        committer: RaviTeja Gorijala <gorijala@google.com>
+        time: 'Time { raw: git_time { time: 1644618708, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4aa0cfc24098000163fdfe270c4eb205e98790b1
+        parent_ids:
+        - 5a3c268d3fe508466b8ccc7c7785032a1f1b5c1d
+        message: |
+          Remove hyphen from version numbers to conform with PIP.
+
+          PiperOrigin-RevId: 250520004
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: tensorflow-copybara <tensorflow.copybara@gmail.com>
+        time: 'Time { raw: git_time { time: 1559151471, offset: -420, sign: 45 } }'
+      target:
+        id: 7074db64efdfb2d0cd9250aa1854717778933307
+        parent_ids:
+        - d1ff44989d50c3e61cb10f68cd3a9b3aab67323b
+        message: |
+          Remove hyphen from version numbers to conform with PIP.
+
+          PiperOrigin-RevId: 250520004
+          (cherry picked from commit 4aa0cfc24098000163fdfe270c4eb205e98790b1)
+        author: Abhijit Karmarkar <awk@google.com>
+        committer: netfs <awk@google.com>
+        time: 'Time { raw: git_time { time: 1559153066, offset: -420, sign: 45 } }'
+    is_trivial: false

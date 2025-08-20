@@ -1,0 +1,572 @@
+- total_number_of_results: '22'
+  total_number_of_commits: '27276'
+  total_number_of_branches: '814'
+  total_number_of_committers: '132'
+  repo_name: ray-project/ray
+  language: Python
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ba70d8dbc60aac4cfd5ee8a3f739009ce4bf7400
+        parent_ids:
+        - 915c426515a39b7d9235eca4b44c460219d19763
+        message: |+
+          [RFC] Fix object size inconsistency caused by object-marked-failed. (#16976)
+
+        author: Chen Shen <scv119@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626330816, offset: -420, sign: 45 } }'
+      target:
+        id: dafbae8c49b3825c825d4e056e3182113e98e5ff
+        parent_ids:
+        - 5c4b511e105a6a701ecf5289f2d5ea8356d2f9ae
+        message: |
+          [RFC] Fix object size inconsistency caused by object-marked-failed. (#16976)
+
+          (cherry picked from commit ba70d8dbc60aac4cfd5ee8a3f739009ce4bf7400)
+        author: Chen Shen <scv119@gmail.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626900914, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4616e8a03c48e6806738d5c13c9d5e88f07c9f26
+        parent_ids:
+        - 57b190c98770c0582d525076c261a104fc72a66a
+        message: "Fix wrong invariant pubsub (#17620)\n\n* ip\r\n\r\n* loose check failure\r\n\r\n* Fix the bug properly.\r\n\r\n* Fix comments."
+        author: SangBin Cho <rkooo567@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1628284494, offset: -420, sign: 45 } }'
+      target:
+        id: 6b4f70add513a88b6411ae6eaebb2f30a3db6d60
+        parent_ids:
+        - e3280633bd050b25aaa7d581bf720f64d56cfd94
+        message: |
+          Fix wrong invariant pubsub (#17620)
+
+          * ip
+
+          * loose check failure
+
+          * Fix the bug properly.
+
+          * Fix comments.
+
+          (cherry picked from commit 4616e8a03c48e6806738d5c13c9d5e88f07c9f26)
+        author: SangBin Cho <rkooo567@gmail.com>
+        committer: Kai Fricke <kai@anyscale.com>
+        time: 'Time { raw: git_time { time: 1628542570, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: bbfa8ffec9affe84db7313930434eeb4208de645
+        parent_ids:
+        - ef0f163d16432a9cbef279cac7876258237a23d0
+        message: |+
+          [RLlib] Minor release 1.3 warnings cleanups. (#15272)
+
+        author: Sven Mika <sven@anyscale.io>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1618401795, offset: 120, sign: 43 } }'
+      target:
+        id: db0b6a6a9526a1c2b2516376c9f8030bb72464dc
+        parent_ids:
+        - cb3661e547662f309a0cc55c5495b3adb779a309
+        message: |
+          [RLlib] Minor release 1.3 warnings cleanups. (#15272)
+
+          (cherry picked from commit bbfa8ffec9affe84db7313930434eeb4208de645)
+        author: Sven Mika <sven@anyscale.io>
+        committer: Kai Fricke <kai@anyscale.com>
+        time: 'Time { raw: git_time { time: 1618402428, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b366500938903e3f7607b514d29f2b340ec4f8dc
+        parent_ids:
+        - 84b3c3376be2905c7110297b712bdc278d8e095a
+        message: "[tune] fix long running release test WIP (#14866)\n\n- Use placement groups\r\n- Introduce time between checks for failure testing\r\n- Use gloo instead of nccl"
+        author: Kai Fricke <krfricke@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1616666602, offset: 60, sign: 43 } }'
+      target:
+        id: e0fe20bdafaf9458e0c61d8792893e984c6c55b9
+        parent_ids:
+        - cd86578b85d4c3a9ab7df85ae72ada99fd41b15a
+        message: |
+          [tune] fix long running release test WIP (#14866)
+
+          - Use placement groups
+          - Introduce time between checks for failure testing
+          - Use gloo instead of nccl
+
+          (cherry picked from commit b366500938903e3f7607b514d29f2b340ec4f8dc)
+        author: Kai Fricke <krfricke@users.noreply.github.com>
+        committer: Kai Fricke <kai@anyscale.com>
+        time: 'Time { raw: git_time { time: 1616666918, offset: 60, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 92f19170abf68bc7883ef83884f8368d1a4e75ae
+        parent_ids:
+        - 75bdccb86e0a514561d6720890302b2fc97d7972
+        message: |+
+          [error message] change noisy missing object error to debug (#17081)
+
+        author: Chen Shen <scv119@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626291390, offset: -420, sign: 45 } }'
+      target:
+        id: 5c4b511e105a6a701ecf5289f2d5ea8356d2f9ae
+        parent_ids:
+        - c3252b7f532d346708e8ddb423335aa42ee80865
+        message: |
+          [error message] change noisy missing object error to debug (#17081)
+
+          (cherry picked from commit 92f19170abf68bc7883ef83884f8368d1a4e75ae)
+        author: Chen Shen <scv119@gmail.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626899631, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: bd9d7bbbaa7c07cd38cb22b6af6c8d78e5d5cb15
+        parent_ids:
+        - ac54164e73cf554ea51452ba3fb4ece4f7017623
+        message: |+
+          [client] Add support for protocol (ray://, local://, custom://) to ray.init (#16946)
+
+        author: Chris K. W <cwong@anyscale.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626324346, offset: -420, sign: 45 } }'
+      target:
+        id: dbbe56c9997955d3efcc5c1ef11efe8c83fc22c1
+        parent_ids:
+        - c93def63547a1d194c2a95c6257fe87e4038ea0e
+        message: |
+          [client] Add support for protocol (ray://, local://, custom://) to ray.init (#16946)
+
+          (cherry picked from commit bd9d7bbbaa7c07cd38cb22b6af6c8d78e5d5cb15)
+
+          resolve conflict
+        author: Chris K. W <cwong@anyscale.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626901199, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 63ebfe2f2d03f5787a7359c3231da0c6be20f35f
+        parent_ids:
+        - ac912f0ce1c9c88e06053cf8afe626f940204cd5
+        message: |+
+          Revert back to ray.init (#17047)
+
+        author: SangBin Cho <rkooo567@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626212187, offset: -420, sign: 45 } }'
+      target:
+        id: 08a49410bbec9d8cd529a8f930825ce3dc3d2f18
+        parent_ids:
+        - dbbe56c9997955d3efcc5c1ef11efe8c83fc22c1
+        message: |
+          Revert back to ray.init (#17047)
+
+          (cherry picked from commit 63ebfe2f2d03f5787a7359c3231da0c6be20f35f)
+        author: SangBin Cho <rkooo567@gmail.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626901234, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1ae02c411c1b6cd444258a2d8f8adae507d06f04
+        parent_ids:
+        - 396e0bf3d6099abe944541f6e56d904bad6b3a45
+        message: |-
+          [Doc] Remove time-series and reinforcement-learning example gallery tags (#43894)
+
+          Signed-off-by: pdmurray <peynmurray@gmail.com>
+        author: Peyton Murray <peynmurray@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1710434412, offset: -420, sign: 45 } }'
+      target:
+        id: bada91741c6b4b8d271ef15d46518542e0a593b6
+        parent_ids:
+        - bb44eb19aafe67761dbdeb64482457ac93b0c108
+        message: "[Doc] Remove time-series and reinforcement-learning example gallery tags (#43894) (#44157)\n\nThis PR cherry-picks #43894 to remove time-series and reinforcement-learning filters from the example gallery (there are no examples that match these yet).\r\n\r\nSigned-off-by: pdmurray <peynmurray@gmail.com>\r\n(cherry picked from commit 1ae02c411c1b6cd444258a2d8f8adae507d06f04)"
+        author: Peyton Murray <peynmurray@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1710895693, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 055a90374c4bba887d0240abefe8ec8d4494847a
+        parent_ids:
+        - 908aa2c7f3e61a9723f1f620406afdd9f9b81e37
+        message: |+
+          [Core] fix erase iterator while iterating over a map. (#17204)
+
+        author: Chen Shen <scv119@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626804175, offset: -420, sign: 45 } }'
+      target:
+        id: f9600486313797df12d941984d4fee9db11b8615
+        parent_ids:
+        - c2d70bdb12b7591ce2c4a4829334b9ab1f0eef36
+        message: |
+          [Core] fix erase iterator while iterating over a map. (#17204)
+
+          (cherry picked from commit 055a90374c4bba887d0240abefe8ec8d4494847a)
+        author: Chen Shen <scv119@gmail.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626901514, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 95a7c28ed5c309787066f56ed2d14f98650e12e4
+        parent_ids:
+        - 8ece30246f79666c9217adcbc6eccebf873484d1
+        message: |+
+          [Core] [runtime env] Use global lock for conda install instead of per-env lock (#17101)
+
+        author: architkulkarni <architkulkarni@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626366810, offset: -300, sign: 45 } }'
+      target:
+        id: 1e7cf348c3ddfa1aaecf378b458fd919904db291
+        parent_ids:
+        - 08a49410bbec9d8cd529a8f930825ce3dc3d2f18
+        message: |
+          [Core] [runtime env] Use global lock for conda install instead of per-env lock (#17101)
+
+          (cherry picked from commit 95a7c28ed5c309787066f56ed2d14f98650e12e4)
+        author: architkulkarni <architkulkarni@users.noreply.github.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626901261, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4afdd3276faa428087d1a9a005fd49c40c62c608
+        parent_ids:
+        - e3c0aadcb5a75db0bc223c27adcc2409d1378fee
+        message: "[Doc] Add support for community examples (#43895)\n\n* [Doc] Add support for community examples\r\n\r\nSigned-off-by: pdmurray <peynmurray@gmail.com>"
+        author: Peyton Murray <peynmurray@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1710451298, offset: -420, sign: 45 } }'
+      target:
+        id: 9f3d7d05d1729671d78af5556934bf8791e71b72
+        parent_ids:
+        - bada91741c6b4b8d271ef15d46518542e0a593b6
+        message: "[Doc] Add support for community examples (#43895) (#44154)\n\nThis PR cherry-picks support for community examples in the docs.\r\n\r\nSigned-off-by: pdmurray <peynmurray@gmail.com>\r\n(cherry picked from commit 4afdd3276faa428087d1a9a005fd49c40c62c608)"
+        author: Peyton Murray <peynmurray@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1710895711, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 77933c922d5136c5c2e2f0ac2edb4da67111d690
+        parent_ids:
+        - 681bae709a624763e3e6745263c03fb24c018ce7
+        message: |-
+          Add scripts symlink back (#9219)
+
+          This partially reverts commit 43043ee4d5c672f7fbc22ac9559e8164731fd053.
+        author: Simon Mo <xmo@berkeley.edu>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1593548759, offset: -420, sign: 45 } }'
+      target:
+        id: 1c992661a80eb59e1ad208d57930eb1bdd65dd29
+        parent_ids:
+        - 539c51a003f7cf8f94c9b238489df191a4beecf0
+        message: "Add scripts symlink back (#9219) (#9475)\n\n(cherry picked from commit 77933c922d5136c5c2e2f0ac2edb4da67111d690)\r\n\r\nCo-authored-by: Simon Mo <xmo@berkeley.edu>"
+        author: Siyuan (Ryans) Zhuang <suquark@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1594755109, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 80e013f342d625fe9c10afb4180bd1bdf0d016ae
+        parent_ids:
+        - bfc9e5c36f0fa9bffb34a548fd677f8c33910d43
+        message: |+
+          [core] Fix SIGABRT on erase call (#17140)
+
+        author: Chen Shen <scv119@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626720158, offset: -420, sign: 45 } }'
+      target:
+        id: 9c3b3857700b6d3272d7d07094e7ba385a2b6179
+        parent_ids:
+        - 1e7cf348c3ddfa1aaecf378b458fd919904db291
+        message: |
+          [core] Fix SIGABRT on erase call (#17140)
+
+          (cherry picked from commit 80e013f342d625fe9c10afb4180bd1bdf0d016ae)
+        author: Chen Shen <scv119@gmail.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626901286, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 246f80961e05dc360538a303400711ee63d17374
+        parent_ids:
+        - fd3742bb637f858956edc241465a7fd984c86ba7
+        message: "Dask on Ray version documentation update (#16905)\n\n* In progress\r\n\r\n* done\r\n\r\n* Fix the table format\r\n\r\n* completed\r\n\r\n* done\r\n\r\n* Fix lint"
+        author: SangBin Cho <rkooo567@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626455426, offset: -420, sign: 45 } }'
+      target:
+        id: a03f05b41a21c274c1bb4633a5a4654ef86ee2c7
+        parent_ids:
+        - dafbae8c49b3825c825d4e056e3182113e98e5ff
+        message: |
+          Dask on Ray version documentation update (#16905)
+
+          * In progress
+
+          * done
+
+          * Fix the table format
+
+          * completed
+
+          * done
+
+          * Fix lint
+
+          (cherry picked from commit 246f80961e05dc360538a303400711ee63d17374)
+        author: SangBin Cho <rkooo567@gmail.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626900946, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b26fcd3fce62d91624c12f7a9d4b8b7730054c75
+        parent_ids:
+        - 777921b2e7dc5cbf85b0f8b746dbf107e31a8db5
+        message: |+
+          fix spill bug (#17187)
+
+        author: Chen Shen <scv119@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626741852, offset: -420, sign: 45 } }'
+      target:
+        id: c2d70bdb12b7591ce2c4a4829334b9ab1f0eef36
+        parent_ids:
+        - b142368297f31778b60e81a7dbc4b6788aac63ce
+        message: |
+          fix spill bug (#17187)
+
+          (cherry picked from commit b26fcd3fce62d91624c12f7a9d4b8b7730054c75)
+        author: Chen Shen <scv119@gmail.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626901466, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0a505ca83d18a340e7e2dd270d82aeff620ebc77
+        parent_ids:
+        - e0573df337d9d6ec4298e4d3dce056e071abe9e4
+        message: "[Core] zero-copy serializer for pytorch (#12344)\n\n* zero-copy serializer for pytorch\r\n\r\n* address possible bottleneck\r\n\r\n* add tests & device support\r\n"
+        author: Siyuan (Ryans) Zhuang <suquark@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1606435794, offset: -480, sign: 45 } }'
+      target:
+        id: 3f22448834b38414542ee6a05f9046ac76e3a595
+        parent_ids:
+        - bb03e2499b2bc3a99ded1a6896b2ea32e6b477b6
+        message: "Re-Revert \"[Core] zero-copy serializer for pytorch (#12344)\" (#12478)\n\n* [Core] zero-copy serializer for pytorch (#12344)\r\n\r\n* zero-copy serializer for pytorch\r\n\r\n* address possible bottleneck\r\n\r\n* add tests & device support\r\n\r\n(cherry picked from commit 0a505ca83d18a340e7e2dd270d82aeff620ebc77)\r\n\r\n* add environmental variables\r\n\r\n* update doc"
+        author: Siyuan (Ryans) Zhuang <suquark@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1606765383, offset: -480, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 908aa2c7f3e61a9723f1f620406afdd9f9b81e37
+        parent_ids:
+        - 994ff3ce2175ee44abbf7c49f37b2b138d36ea21
+        message: |+
+          Fix runtime env and dispatch queue take 2 (#17163)
+
+        author: Simon Mo <simon.mo@hey.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626801848, offset: -420, sign: 45 } }'
+      target:
+        id: b142368297f31778b60e81a7dbc4b6788aac63ce
+        parent_ids:
+        - 54ecd186ea551e44586cc18052e813b6d0cccee1
+        message: |
+          Fix runtime env and dispatch queue take 2 (#17163)
+
+          (cherry picked from commit 908aa2c7f3e61a9723f1f620406afdd9f9b81e37)
+
+          resolve merge conflict
+        author: Simon Mo <simon.mo@hey.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626901430, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d33b0e4bc34abc9036fc2a202d2155376ce4eb41
+        parent_ids:
+        - 3e1a0439b791ab67a90d0a41e14c3cffcf49807b
+        message: |-
+          [tune] Reconcile placement groups every N seconds to avoid bottlenecks when running many short trials (#15011)
+
+          Closes a release blocking issue
+        author: Kai Fricke <krfricke@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1617289484, offset: 120, sign: 43 } }'
+      target:
+        id: de90942cda83a2e616d6e00ae2ec38a30ecd07eb
+        parent_ids:
+        - f4809439abf9c59c579a9d1cc041a945ccf6eace
+        message: |
+          [tune] Reconcile placement groups every N seconds to avoid bottlenecks when running many short trials (#15011)
+
+          Closes a release blocking issue
+
+          (cherry picked from commit d33b0e4bc34abc9036fc2a202d2155376ce4eb41)
+        author: Kai Fricke <krfricke@users.noreply.github.com>
+        committer: Kai Fricke <kai@anyscale.com>
+        time: 'Time { raw: git_time { time: 1617289625, offset: 120, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f4f702c595521ced800baeca2beaba8bda1cd6fa
+        parent_ids:
+        - 877076160e555bf3c47e48767654955d0c977b2e
+        message: |-
+          [Release] change default expiration to 2 days in order to prevent custodian kill it early morning (#17215)
+
+          Co-authored-by: Jiao Dong <jiaodong@anyscale.com>
+        author: Jiao <sophchess@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626825794, offset: -420, sign: 45 } }'
+      target:
+        id: 664efdbf58c60c522d16165bca0f18694d91d410
+        parent_ids:
+        - f9600486313797df12d941984d4fee9db11b8615
+        message: |
+          [Release] change default expiration to 2 days in order to prevent custodian kill it early morning (#17215)
+
+          Co-authored-by: Jiao Dong <jiaodong@anyscale.com>
+          (cherry picked from commit f4f702c595521ced800baeca2beaba8bda1cd6fa)
+        author: Jiao <sophchess@gmail.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626901531, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: edb80d61228decf1570d5a79269aefaf7cbc328d
+        parent_ids:
+        - 7b44dd8ecbd728d243ae70e16fe16f3745883d59
+        message: "[core][rfc] Fix race condition between write chunk and abort object. (#17234)\n\n* fix\r\n\r\n* address comments\r\n\r\n* sang's comment"
+        author: Chen Shen <scv119@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626914346, offset: -420, sign: 45 } }'
+      target:
+        id: d3e8c71aa05bab4c437f9b94b1482ab890cc358d
+        parent_ids:
+        - c6b64e2794e2f7c04bffbb187f40affff7c184b9
+        message: |
+          [core][rfc] Fix race condition between write chunk and abort object. (#17234)
+
+          * fix
+
+          * address comments
+
+          * sang's comment
+
+          (cherry picked from commit edb80d61228decf1570d5a79269aefaf7cbc328d)
+        author: Chen Shen <scv119@gmail.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626986409, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d6b63561731390ce3d96ad9001f4ef1f804b1639
+        parent_ids:
+        - 5e9b680e394e6291c093dbf003f03a69c9be7d85
+        message: "[Core] Properly call shutdown instead of deleting a reference (#17096)\n\n* Properly call shutdown instead of deleting a reference\r\n\r\n* Add unit tests\r\n\r\n* Add test ray shutdown\r\n\r\n* Formatting\r\n\r\n* format2\r\n\r\n* Revert main logic to see if windows issue still fail\r\n\r\n* Skip tests for windows.\r\n\r\n* formatting\r\n\r\n* Try fixing flakiness\r\n\r\n* Remove node removed code path\r\n\r\nCo-authored-by: Eric Liang <ekhliang@gmail.com>"
+        author: SangBin Cho <rkooo567@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626794553, offset: -420, sign: 45 } }'
+      target:
+        id: c93def63547a1d194c2a95c6257fe87e4038ea0e
+        parent_ids:
+        - a03f05b41a21c274c1bb4633a5a4654ef86ee2c7
+        message: |
+          [Core] Properly call shutdown instead of deleting a reference (#17096)
+
+          * Properly call shutdown instead of deleting a reference
+
+          * Add unit tests
+
+          * Add test ray shutdown
+
+          * Formatting
+
+          * format2
+
+          * Revert main logic to see if windows issue still fail
+
+          * Skip tests for windows.
+
+          * formatting
+
+          * Try fixing flakiness
+
+          * Remove node removed code path
+
+          Co-authored-by: Eric Liang <ekhliang@gmail.com>
+          (cherry picked from commit d6b63561731390ce3d96ad9001f4ef1f804b1639)
+
+          resolve merge conflict
+        author: SangBin Cho <rkooo567@gmail.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626901115, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 02f58a5c6b5b7444d4a753bc17bb4b257a2fbfa9
+        parent_ids:
+        - d4635836baffacad02c0b734c91950c51043bbf8
+        message: |+
+          [nightly-test] increase timeout to 1 hour (#17125)
+
+        author: Chen Shen <scv119@gmail.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1626377408, offset: -420, sign: 45 } }'
+      target:
+        id: 54ecd186ea551e44586cc18052e813b6d0cccee1
+        parent_ids:
+        - 9c3b3857700b6d3272d7d07094e7ba385a2b6179
+        message: |
+          [nightly-test] increase timeout to 1 hour (#17125)
+
+          (cherry picked from commit 02f58a5c6b5b7444d4a753bc17bb4b257a2fbfa9)
+        author: Chen Shen <scv119@gmail.com>
+        committer: Jiao Dong <jiaodong@anyscale.com>
+        time: 'Time { raw: git_time { time: 1626901311, offset: -420, sign: 45 } }'
+    is_trivial: true
