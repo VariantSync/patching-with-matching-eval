@@ -85,6 +85,10 @@ def metrics_table_generation(
         language = language[0]
         print(language)
         for patcher in Patcher:  # Patcher is an enum
+            if patcher.nice_name() not in results_per_patcher:
+                continue
+            if language not in results_per_patcher[patcher.nice_name()]:
+                continue
             patcher_data = results_per_patcher[patcher.nice_name()][language]
             print(patcher_data)
             num = len(patcher_data.per_patch.f1_score)
@@ -122,6 +126,8 @@ def relative_difference(base_patcher: Patcher, results):
     effects = []
     for other_patcher in Patcher:
         other_patcher = other_patcher.nice_name()
+        if other_patcher not in results:
+            continue
         for metric in Metric:
             base_values = []
             other_values = []
@@ -170,6 +176,8 @@ def relative_difference(base_patcher: Patcher, results):
     i = 0
     for patcher in Patcher:
         patcher = patcher.nice_name()
+        if patcher not in results:
+            continue
         for metric in Metric:
             if patcher == base:
                 continue

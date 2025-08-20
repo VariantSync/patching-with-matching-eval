@@ -162,6 +162,8 @@ def accumulate_data_per_patcher(
             language = language[0]
             for patcher in Patcher:  # Patcher is an enum
                 results = load_all_results(result_dir, patcher)
+                if len(results) == 0:
+                    continue
                 # Filter trivial results
                 if only_non_trivial:
                     results = non_trivial_results(results)

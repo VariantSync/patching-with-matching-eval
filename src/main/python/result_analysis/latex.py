@@ -8,7 +8,6 @@ def generate_metrics_result_table(
 ):
     language_names = [lang[1] for lang in languages]
     languages = [lang[0] for lang in languages]
-    t = 60
     total_vals = 0
     mpatch_over_t = 0
 
@@ -49,25 +48,14 @@ def generate_metrics_result_table(
             best_average = determine_best_average(differences, patcher_names, metric)
             for patcher in patcher_names:
                 line = " & " + patcher
+                if patcher not in results_per_patcher:
+                    continue
                 for language in languages:
                     value = 0
                     best_type = ""
-                    results = results_per_patcher[patcher][language].per_patch
-                    value = np.nanmean(results.get(metric))
-                    if metric == Metric.Runtime:
-                        values = results.get(metric)
-                        print(
-                            str(patcher) + " -- " + str(language) + ":",
-                            [
-                                float(f"{v:.4f}")
-                                for v in sorted(values, reverse=True)[:20]
-                            ],
-                        )
-                        if patcher == Patcher.MPatch.nice_name():
-                            for v in values:
-                                if v > t:
-                                    mpatch_over_t += 1
-                            total_vals += len(values)
+                    if language in results_per_patcher[patcher]:
+                        results = results_per_patcher[patcher][language].per_patch
+                        value = np.nanmean(results.get(metric))
                     postfix = ""
                     if metric == Metric.F1Score:
                         best_type = "max"
@@ -127,6 +115,10 @@ def generate_metrics_result_table(
 def determine_best(results_per_patcher, patcher_names, metric, best_type, language):
     values = []
     for patcher in patcher_names:
+        if patcher not in results_per_patcher:
+            continue
+        if language not in results_per_patcher[patcher]:
+            return 0
         results = results_per_patcher[patcher][language].per_patch
         if metric == Metric.Automation:
             values.append(100 * np.nanmean(results.get(metric)))
@@ -142,6 +134,8 @@ def determine_best(results_per_patcher, patcher_names, metric, best_type, langua
 def determine_best_average(differences, patcher_names, metric):
     values = []
     for patcher in patcher_names:
+        if patcher not in differences:
+            continue
         results = differences[patcher][metric][0]
         values.append(results)
 
