@@ -6,11 +6,12 @@ from result_analysis.tables import (
     direct_runtime_comparison,
 )
 from result_analysis.analyze_results import find_outliers
+from rq3_report import rq3_analysis
 
 import argparse
 
 
-def main(results_dir, repo_sample, metrics_file):
+def main(repo_sample, mined_cherries, results_dir, metrics_file, impact_file):
     metrics_table_generation(
         results_dir,
         repo_sample,
@@ -18,6 +19,7 @@ def main(results_dir, repo_sample, metrics_file):
         file_metrics=metrics_file,
         file_power="",
     )
+    rq3_analysis(repo_sample, mined_cherries, results_dir, impact_file)
 
 
 def example(results_dir, repo_sample):
@@ -51,7 +53,21 @@ if __name__ == "__main__":
         "--repo_sample", required=True, help="Path to the repo sample YAML file"
     )
     parser.add_argument(
+        "--mined_cherries",
+        required=True,
+        help="Path to the directory with mined cherries",
+    )
+    parser.add_argument(
         "--metrics_file", required=True, help="Path to the metrics output file"
     )
+    parser.add_argument(
+        "--impact_file", required=True, help="Path to the impact output file"
+    )
     args = parser.parse_args()
-    main(args.results_dir, args.repo_sample, args.metrics_file)
+    main(
+        args.repo_sample,
+        args.mined_cherries,
+        args.results_dir,
+        args.metrics_file,
+        args.impact_file,
+    )

@@ -15,8 +15,6 @@ except ImportError:
 pd.set_option("display.expand_frame_repr", False)  # Avoid line breaks in long columns
 pd.set_option("display.max_columns", None)  # Display all columns
 
-yaml_folder = "/home/user/dataset/mined-cherries"
-repo_sample_yaml = "/home/user/dataset/repo-sample.yaml"
 language_count = 10
 sample_per_language = 500
 
@@ -52,9 +50,9 @@ sampled_cherry_list = [9227, 1405, 11215, 5522, 8375, 698, 2533, 5840, 1979, 353
 table_names = {
     c_repo_name: "repository",
     "rq_git_cherry": "{\mymakecell{required \\\\ fixes \\\\ \\gitcherrypickshort}}",
-    "rq_mpatch": "{\mymakecell{required \\\\ fixes \\\\ \\approach}}",
+    "rq_mpatch": "{\mymakecell{required \\\\ fixes \\\\ \\mpatch}}",
     "ap_git_cherry": "{\mymakecell{fully \\\\ automatable \\\\ \\gitcherrypickshort{} \%}}",
-    "ap_mpatch": "{\mymakecell{fully \\\\ automatable \\\\ \\approach{} \%}}",
+    "ap_mpatch": "{\mymakecell{fully \\\\ automatable \\\\ \\mpatch{} \%}}",
     c_projects_with_cherries: "{\mymakecell{projects \\\\ with \\\\ cherry \\\\ picks}}",
     c_language: "{\mymakecell[l]{main \\\\ repository \\\\ language}}",
     c_sampled_projects_per_language: "{\mymakecell[l]{sampled \\\\ projects}}",
@@ -153,7 +151,7 @@ def find_trivial_cherries(file_name):
     return sum([1 if l == "    is_trivial: true\n" else 0 for l in lines])
 
 
-def read_yamls(files):
+def read_yamls(repo_sample_yaml, files):
     # first define (headers for) dataFrames
     header = read_cherry(files[0])
     header[c_trivial_cherries] = np.nan
@@ -387,9 +385,8 @@ def impact_file(file):
     return rq, ap / seen, seen
 
 
-def impact_analysis(pr_df):
+def impact_analysis(pr_df, path_to_results, file):
     approaches = ["git_cherry", "mpatch"]
-    prefix = "C:\\work\\patching-with-matching-eval\\evaluation-workdir\\results\\cherries\\rep-1\\"
 
     df = pr_df.sort_values(by=c_cherry_ratio)[-5:].append(
         pr_df.sort_values(by=c_cherries)[-5:]
@@ -410,7 +407,8 @@ def impact_analysis(pr_df):
         idf.loc[len(idf)] = [projects[i]] + [np.nan] * len(approaches) * 2
         for approach in approaches:
             file = (
-                prefix + f"{langs[i]}_{pnames0[i]}_{pnames1[i]}.yaml_{approach}.results"
+                path_to_results
+                + f"{langs[i]}_{pnames0[i]}_{pnames1[i]}.yaml_{approach}.results"
             )
             rq, ap, seen = impact_file(file)
             idf.loc[len(idf) - 1, "rq_" + approach] = rq / seen
@@ -450,25 +448,33 @@ def impact_analysis(pr_df):
     tl = to_latex(
         idf,
         label="tab:impact",
-        caption="Potential impact for the projects with the most relative and most absolute cherry picks. We compare \\approach{} to \\gitcherrypick.",
+        caption="Potential impact for the projects with the most relative and most absolute cherry picks. We compare \\mpatch{} to \\gitcherrypick.",
         position=table_pos,
         column_format="llS[table-format=2.2, round-precision=2]S[table-format=5.0, round-precision=0]S[table-format=4.0, round-precision=0]S[table-format=2.1, round-precision=1]S[table-format=2.1, round-precision=1]S[table-format=2.1, round-precision=1]S[table-format=2.1, round-precision=1]",
     )
     tl = tl.replace("JetBrains", "\t\midrule\n" + "JetBrains")
 
+    with open(file, "w") as file:
+        file.write(tl)
+
     print(tl)
     return idf
 
 
-if __name__ == "__main__":
+def rq3_analysis(
+    path_to_repo_sample, path_to_mined_cherries, path_to_results, path_to_output
+):
     yml_files = [
-        f for f in glob.glob(os.path.join(yaml_folder, "**", "*.yaml"), recursive=True)
+        f
+        for f in glob.glob(
+            os.path.join(path_to_mined_cherries, "**", "*.yaml"), recursive=True
+        )
     ]
-    pr_df, ch_df = read_yamls(yml_files)
+    pr_df, ch_df = read_yamls(path_to_repo_sample, yml_files)
     pr_df = report_projects(pr_df)
-    impact_analysis(pr_df)
+    impact_analysis(pr_df, path_to_results, path_to_output)
 
     correlate(pr_df)
-    plot_projects(pr_df)
+    # plot_projects(pr_df)
     for language in pr_df[c_language].unique():
         report_projects(pr_df[pr_df[c_language] == language])
