@@ -112,7 +112,10 @@ fun printProgress(completed: Int, numCherryPicks: Int, repetition: Int) {
 }
 
 fun cloneDatasets(allSamples: ArrayList<ArrayList<CherryDataset>>, config: EvalConfig) {
-    Logger.info("Looking for datasets that still should be cloned.")
+    if (!config.PRELOAD_REPOSITORIES()) {
+        return
+    }
+    Logger.info("Looking for repositories that still should be cloned.")
     val datasetsToClone = HashSet<CherryDataset>()
     for (s in allSamples) {
         for (dataset in s) {
@@ -132,6 +135,11 @@ fun cloneDatasets(allSamples: ArrayList<ArrayList<CherryDataset>>, config: EvalC
             } catch (_: Exception) {
                 // Retry in case of a server error
                 Thread.sleep(60_000)
+                Logger.info(
+                        "Failed to clone repository" +
+                                dataset.repositoryId +
+                                ". This may happen due to server rate limiting. Retrying..."
+                )
                 cloneGitHubRepo(config, dataset.repositoryId)
             } finally {
                 synchronized(datasetsToClone) {
@@ -150,7 +158,7 @@ fun cloneDatasets(allSamples: ArrayList<ArrayList<CherryDataset>>, config: EvalC
     if (!threadPool.awaitTermination(1, TimeUnit.DAYS)) {
         Logger.error("Thread pool timeout while cloning repositories.")
     }
-    Logger.info("Cloned all datasets\n")
+    Logger.info("Cloned all repositories\n")
 }
 
 fun createOrLoadSamples(

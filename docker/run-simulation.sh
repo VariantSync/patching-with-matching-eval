@@ -35,11 +35,12 @@ start() {
 
 analysis() {
     cd /home/user/analysis
-    poetry run python result_analysis/__main__.py --results_dir /home/user/evaluation-workdir/results/"$1" --repo_sample /home/user/dataset/repo-sample.yaml --metrics_file /home/user/metrics-"$1".tex
+    poetry run python result_analysis/__main__.py --mined_cherries /home/user/dataset/mined-cherries --results_dir /home/user/evaluation-workdir/results/"$1" --repo_sample /home/user/dataset/repo-sample.yaml --metrics_file /home/user/metrics-"$1".tex --impact-file /home/user/impact-"$1".tex
 
     cd /home/user/
     latexmk -pdf -interaction=nonstopmode -synctex=1 -shell-escape metrics-$1.tex
     cp metrics-$1.pdf evaluation-workdir
+    cp impact-$1.tex evaluation-workdir
 
     echo "++++++++++++++++++++++++++++++++++++"
     echo "          Analysis done             "

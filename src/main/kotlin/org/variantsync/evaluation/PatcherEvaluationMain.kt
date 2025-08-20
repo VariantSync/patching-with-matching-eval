@@ -232,6 +232,12 @@ fun main(args: Array<String>) {
         for (future in futures) {
             val dataset = future.get()
             completed += dataset.cherryPicks.size
+            if (config.CLEAN_REPOSITORIES()) {
+                val cloneDir =
+                        config.EXPERIMENT_DIR_REPOS()
+                                .resolve(dataset.repositoryId.replace("/", "_"))
+                cloneDir.toFile().deleteRecursively()
+            }
             printProgress(completed, numCherryPicks, repetition)
         }
         threadPool.awaitTermination(10, TimeUnit.DAYS)

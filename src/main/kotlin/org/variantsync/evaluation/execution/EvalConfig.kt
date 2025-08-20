@@ -187,7 +187,18 @@ class EvalConfig(propertiesFile: File) {
         return config!!.getBoolean(EXPERIMENT_PATCHER_MPATCH)
     }
 
+    fun PRELOAD_REPOSITORIES(): Boolean {
+        return config!!.getBoolean(PRELOAD_REPOSITORIES)
+    }
+
+    fun CLEAN_REPOSITORIES(): Boolean {
+        return config!!.getBoolean(CLEAN_REPOSITORIES)
+    }
+
     companion object {
+        private const val PRELOAD_REPOSITORIES = "preload-repositories"
+        private const val CLEAN_REPOSITORIES = "clean-repositories"
+
         // Which patchers should be enabled?
         private const val EXPERIMENT_PATCHER_GNU_PATCH = "experiment.patcher.gnu-patch"
         private const val EXPERIMENT_PATCHER_GIT_APPLY = "experiment.patcher.git-apply"
