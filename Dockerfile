@@ -9,11 +9,6 @@ COPY local-maven-repo local-maven-repo
 COPY *gradle.kts ./
 COPY gradlew ./
 COPY gradle gradle
-COPY dataset dataset
-WORKDIR /home/user/dataset
-RUN zip -s 0 mined-cherries.zip --out unsplit-mined-cherries.zip
-RUN unzip unsplit-mined-cherries
-RUN unzip repo-sample.zip
 
 # Build the evaluation
 WORKDIR /home/user
@@ -28,6 +23,19 @@ RUN apk add --no-cache --upgrade bash diffutils patch git python3 py3-matplotlib
 
 # Install dependencies for patching with matching
 RUN apk add --no-cache curl bash gcc musl-dev
+
+RUN apk add --no-cache python3 poetry
+
+RUN apk add --no-cache zip unzip
+COPY dataset /home/user/dataset
+WORKDIR /home/user/dataset
+RUN zip -s 0 mined-cherries.zip --out unsplit-mined-cherries.zip
+RUN unzip unsplit-mined-cherries
+RUN unzip repo-sample.zip
+WORKDIR /home/user
+
+COPY src/main/python ./analysis
+WORKDIR /home/user/analysis
 
 ARG GROUP_ID
 ARG USER_ID
@@ -65,3 +73,8 @@ RUN rustup default stable
 # RUN rustup default nightly
 
 RUN cargo install --path /home/user/mpatch
+
+
+WORKDIR /home/user/analysis
+RUN poetry install
+WORKDIR /home/user/
