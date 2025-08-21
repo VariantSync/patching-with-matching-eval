@@ -133,9 +133,21 @@ docker run --rm -v "./evaluation-workdir/":"/home/user/evaluation-workdir" mpatc
 > Depending on your hardware, the full reproduction may require a very long time. The expected runtime are 5-10 days, but the reproduction may also require several weeks if the drive is too slow. 
 
 
-## Local dataset setup
-- The `repo-sample.zip` file in `evaluation-workdir/data/` contains a single yaml file which enumerates the metadata for all sampled repositories.
-- To unpack the dataset of cherry picks, you may need to perform the following command on a Linux console first. Thereafter, you can extract all the mined cherry picks from the created `unsplit-mined-cherries.zip` file.
-```shell
-zip -s 0 mined-cherries.zip --out unsplit-mined-cherries.zip
-```
+
+## Troubleshooting
+
+### 'Got permission denied while trying to connect to the Docker daemon socket'
+`Problem:` This is a common problem under Linux, if the user trying to execute Docker commands does not have the permissions to do so.
+
+`Fix:` You can fix this problem by either following the [post-installation instructions](https://docs.docker.com/engine/install/linux-postinstall/), or by executing the scripts in the replication package with elevated permissions (i.e., `sudo`).
+
+### 'Unable to find image 'mpatch-reproduction:latest' locally'
+`Problem:` The Docker container could not be found. This either means that the name of the container that was built does not fit the name of the container that is being executed (this only happens if you changed the provided scripts), or that the Docker container was not built yet.
+
+`Fix:` Follow the instructions described above in the section `Build the Docker Container`.
+
+### Failed to load class "org.slf4j.impl.StaticLoggerBinder"
+`Problem:` An operation within the initialization phase of the logger library we use (tinylog) failed.
+
+`Fix:` Please ignore this warning. Tinylog will fall back onto a default implementation (`Defaulting to no-operation (NOP) logger implementation`) and logging will work as expected.
+
