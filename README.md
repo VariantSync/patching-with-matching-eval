@@ -107,8 +107,61 @@ docker run --rm -v "./evaluation-workdir/":"/home/user/evaluation-workdir" mpatc
 
 #### Expected outcome
 
-TODO TODO TODO
+> [!NOTE]  
+> If you executed the evaluation in a custom directory, all mentioned files will be located there.
 
+
+The verification should begin with output that looks similar to the following screenshot: 
+```shell 
+2025-08-21 14:36:30 [main] org.variantsync.evaluation.PatcherEvaluationMainKt.main()
+INFO: Starting experiment initialization.
+2025-08-21 14:36:30 [main] org.variantsync.evaluation.execution.EvalUtilsKt.createOrLoadSamples()
+INFO: Loading dataset for C with 1 usable repositories
+2025-08-21 14:36:30 [main] org.variantsync.evaluation.execution.EvalUtilsKt.createOrLoadSamples()
+...
+INFO: Loading dataset for TypeScript with 1 usable repositories
+2025-08-21 14:36:30 [main] org.variantsync.evaluation.execution.EvalUtilsKt.createOrLoadSamples()
+INFO: Done.
+
+2025-08-21 14:36:30 [main] org.variantsync.evaluation.PatcherEvaluationMainKt.main()
+INFO: Processing 5 repos in parallel
+2025-08-21 14:36:30 [main] org.variantsync.evaluation.PatcherEvaluationMainKt.main()
+INFO: Already considered 0 repos.
+2025-08-21 14:36:30 [main] org.variantsync.evaluation.PatcherEvaluationMainKt.main()
+INFO: Already processed a total of 0 evaluation runs.
+
+2025-08-21 14:36:35 [main] org.variantsync.evaluation.PatcherEvaluationMainKt.main()
+INFO: Considering a total of 85 cherry-picks for repetition 1
+2025-08-21 14:36:35 [pool-1-thread-3] org.variantsync.evaluation.execution.EvalUtilsKt.cloneGitHubRepo()
+INFO: cloning https://github.com/tensorflow/serving.git into /home/user/evaluation-workdir/REPOS/tensorflow_serving
+...
+```
+The output shows that the dataset used for verification contains one repository for each project language. The projects are cloned into the `evaluation-workdir`. 
+Once a project has been cloned, the patchers are evaluated on the cherry picks (i.e., patches) that have been found for that repository.
+
+The verification should complete with the following output:
+```shell 
+Latexmk: All targets (metrics-verification.pdf) are up-to-date
+
+++++++++++++++++++++++++++++++++++++
+          Analysis done
+++++++++++++++++++++++++++++++++++++
+
+The result table can be found under evaluation-workdir/metrics-verification.pdf
+```
+
+After all repositories have been considered, the result analysis is executed. 
+The raw results can be found in the `evaluation-workdir/results` directory. 
+
+
+
+In addition, the script generates a PDF file with a result table similar to the one presented in our paper.
+This table can be found under `evaluation-workdir/metrics-verification.pdf`.
+It should look similar to this:
+![](misc/verification-results.png)
+
+> [!NOTE]  
+> The verification results shown are based on only a tiny portion of our dataset and are therefore not representative.
 
 # Starting the reproduction
 Once you have verified the correct installation, you can start the reproduction similar to how you started the verification. 
@@ -125,7 +178,8 @@ On other machines, you may start a Docker container from the Docker image with t
 docker run --rm -v "./evaluation-workdir/":"/home/user/evaluation-workdir" mpatch-reproduction reproduction
 ```
 
-
+> [!NOTE]  
+> The results of the reproduction will be stored in the same manner as the results of the verification.
 
 > [!NOTE]  
 > Our evaluation processes large amounts of data. 

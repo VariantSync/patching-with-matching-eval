@@ -6,13 +6,11 @@ start() {
 
     if [ "$1" == 'reproduction' ]; then
         echo "Running full reproduction of evaluation on the entire patch dataset."
-        ls -l
         java -jar -Dtinylog.configuration=/home/user/tinylog.properties cherries.jar config-reproduction.properties
 
         analysis $1
     elif [ "$1" == 'verification' ]; then
         echo "Verifying the evaluation setup on a tiny subset of the patch dataset."
-        ls -l
         java -jar -Dtinylog.configuration=/home/user/tinylog.properties cherries.jar config-verification.properties
 
         analysis $1
