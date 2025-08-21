@@ -1,37 +1,41 @@
 package org.variantsync.evaluation.patching
 
-import org.tinylog.kotlin.Logger
-import org.variantsync.evaluation.execution.Operations
-import org.variantsync.evaluation.util.diff.DiffParser
-import org.variantsync.evaluation.util.diff.components.OriginalDiff
-import org.variantsync.evaluation.util.shell.PatchCommand
-import org.variantsync.evaluation.execution.panic
-import org.variantsync.evaluation.error.ShellException
-import org.variantsync.evaluation.execution.readContentSafely
-import org.variantsync.vevos.simulation.feature.Variant
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
+import org.tinylog.kotlin.Logger
+import org.variantsync.evaluation.error.ShellException
+import org.variantsync.evaluation.execution.EvalConfig
+import org.variantsync.evaluation.execution.Operations
+import org.variantsync.evaluation.execution.panic
+import org.variantsync.evaluation.execution.readContentSafely
+import org.variantsync.evaluation.util.diff.DiffParser
+import org.variantsync.evaluation.util.diff.components.OriginalDiff
+import org.variantsync.evaluation.util.shell.PatchCommand
+import org.variantsync.evaluation.util.shell.ShellExecutor
+import org.variantsync.vevos.simulation.feature.Variant
 
-class GNUPatch(private val name: String, private val strip: Int) : Patcher {
+class GNUPatch(private val config: EvalConfig, private val name: String, private val strip: Int) : Patcher {
     override fun applyPatch(
-        operations: Operations,
-        sourceVariant: Variant,
-        targetVariant: Variant,
-        withFiler: Boolean,
+            operations: Operations,
+            sourceVariant: Variant,
+            targetVariant: Variant,
+            withFiler: Boolean,
     ): Rejects {
-        val rejectFile = if (withFiler) {
-            operations.rejectsFileFiltered()
-        } else {
-            operations.rejectsFile()
-        }
+        val rejectFile =
+                if (withFiler) {
+                    operations.rejectsFileFiltered()
+                } else {
+                    operations.rejectsFile()
+                }
 
-        val pathToPatchFile = if (withFiler) {
-            operations.filteredPatchFile()
-        } else {
-            operations.patchFile()
-        }
+        val pathToPatchFile =
+                if (withFiler) {
+                    operations.filteredPatchFile()
+                } else {
+                    operations.patchFile()
+                }
 
         val patch = DiffParser.toOriginalDiff(readContentSafely(pathToPatchFile))
 
@@ -41,12 +45,15 @@ class GNUPatch(private val name: String, private val strip: Int) : Patcher {
         }
 
         // apply patch to target variant
-        val patchCommand = PatchCommand.Recommended(pathToPatchFile).strip(strip)
-            .rejectFile(rejectFile).force().ignoreWhitespace()
-        val result = operations.shell().execute(
-            patchCommand,
-            operations.patchDir()
-        )
+        val patchCommand =
+                PatchCommand.Recommended(pathToPatchFile)
+                        .strip(strip)
+                        .rejectFile(rejectFile)
+                        .force()
+                        .ignoreWhitespace()
+
+        val customShell = ShellExecutor(Logger::debug, Logger::debug, operations.workDir(),config.EXPERIMENT_TIMEOUT_LENGTH(), config.EXPERIMENT_TIMEOUT_UNIT())
+        val result = customShell.execute(patchCommand, operations.patchDir())
 
         val rejects = Rejects(ArrayList())
         if (result.isSuccess) {
@@ -61,18 +68,25 @@ class GNUPatch(private val name: String, private val strip: Int) : Patcher {
     }
 
     private fun readRejectsFromOutput(
-        patchError: ShellException,
-        patch: OriginalDiff,
+            patchError: ShellException,
+            patch: OriginalDiff,
     ): Rejects {
         // Handle rejects
         val skippedFiles: MutableSet<Path> = HashSet()
         val lines = patchError.output
-        Logger.debug("Failed to apply part of patch. See debug log and rejects file for more information")
+        Logger.debug(
+                "Failed to apply part of patch. See debug log and rejects file for more information"
+        )
         var oldFile: Path
         for (nextLine in lines) {
             Logger.debug(nextLine)
             if (nextLine.startsWith("|---")) {
-                oldFile = Path.of(nextLine.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1])
+                oldFile =
+                        Path.of(
+                                nextLine.split("\\s+".toRegex())
+                                        .dropLastWhile { it.isEmpty() }
+                                        .toTypedArray()[1]
+                        )
                 oldFile = oldFile.subpath(strip, oldFile.nameCount)
                 skippedFiles.add(oldFile)
             }
@@ -106,7 +120,11 @@ class GNUPatch(private val name: String, private val strip: Int) : Patcher {
     }
 
     // Read a rejects file
-    private fun readRejectsFromFile(operations: Operations, rejectFile: Path, patch: OriginalDiff): Rejects {
+    private fun readRejectsFromFile(
+            operations: Operations,
+            rejectFile: Path,
+            patch: OriginalDiff
+    ): Rejects {
         var rejectsDiff: OriginalDiff? = null
         if (Files.exists(rejectFile)) {
             try {
@@ -119,11 +137,15 @@ class GNUPatch(private val name: String, private val strip: Int) : Patcher {
         val result: OriginalDiff = rejectsDiff ?: OriginalDiff(ArrayList())
 
         if (operations.appliedPatchTracker().hasAnyError()) {
-            Logger.error("patch that caused the error: {}", patch.fileDiffs()[operations.appliedPatchTracker().patchId])
+            Logger.error(
+                    "patch that caused the error: {}",
+                    patch.fileDiffs()[operations.appliedPatchTracker().patchId]
+            )
         }
         if (operations.appliedPatchTracker().hasCriticalError()) {
             // There was a critical error due to a bug in patch
-            // We have to read which file caused the error from our tracker, and then add all patches that came afterward
+            // We have to read which file caused the error from our tracker, and then add all
+            // patches that came afterward
             // to the rejects, because patching was aborted
             val file = operations.appliedPatchTracker().lastPatchTarget()
             var afterError = false
@@ -146,3 +168,4 @@ class GNUPatch(private val name: String, private val strip: Int) : Patcher {
         return Rejects(result.intoChanges(0))
     }
 }
+

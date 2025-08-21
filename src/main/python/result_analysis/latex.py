@@ -1,6 +1,6 @@
 import numpy as np
 
-from result_analysis.eval_setup import Metric
+from result_analysis.eval_setup import Metric, Patcher
 
 
 def generate_metrics_result_table(
@@ -8,8 +8,27 @@ def generate_metrics_result_table(
 ):
     language_names = [lang[1] for lang in languages]
     languages = [lang[0] for lang in languages]
+    total_vals = 0
+    mpatch_over_t = 0
 
     with open(file, "w") as file:
+        file.write("\\documentclass{article}")
+        file.write("\\usepackage{booktabs}")
+        file.write("\\usepackage{multirow}")
+        file.write("\\usepackage{siunitx}")
+        file.write("\\usepackage[table]{xcolor}")
+        file.write("\\usepackage{geometry}")
+        file.write("\\usepackage{graphicx}")
+        file.write("\\geometry{margin=1in}")
+        file.write("\\newcommand{\\mpatch}{\\textit{mpatch}}")
+        file.write("\\newcommand{\\patch}{\\textit{GNU patch}}")
+        file.write("\\newcommand{\\gitapply}{\\textit{Git apply}}")
+        file.write("\\newcommand{\\gitcherrypickshort}{\\textit{Git cp}}")
+        file.write("\\begin{document}")
+        file.write("\\begin{table}")
+        file.write("	\\centering")
+        file.write("	\\resizebox{\\textwidth}{!}{")
+
         fmt = "S[table-format=2.2]" * (4 + len(languages))
         # Begin the tabular environment
         file.write("\\begin{tabular}{lc" + fmt + "}\n")
@@ -34,7 +53,7 @@ def generate_metrics_result_table(
         # Write the multi-rows and their corresponding rows
         file.write("\\toprule\n")
         for metric in Metric:
-            if metric != Metric.F1Score:
+            if metric != Metric.Automation:
                 file.write("\\midrule\n")
             file.write(
                 "\\multirow{"
@@ -46,13 +65,20 @@ def generate_metrics_result_table(
             best_average = determine_best_average(differences, patcher_names, metric)
             for patcher in patcher_names:
                 line = " & " + patcher
+                if patcher not in results_per_patcher:
+                    continue
                 for language in languages:
                     value = 0
                     best_type = ""
-                    results = results_per_patcher[patcher][language].per_patch
-                    value = np.nanmean(results.get(metric))
+                    if language in results_per_patcher[patcher]:
+                        results = results_per_patcher[patcher][language].per_patch
+                        value = np.nanmean(results.get(metric))
                     postfix = ""
                     if metric == Metric.F1Score:
+                        best_type = "max"
+                    elif metric == Metric.Precision:
+                        best_type = "max"
+                    elif metric == Metric.Recall:
                         best_type = "max"
                     elif metric == Metric.Automation:
                         value = 100 * value
@@ -100,11 +126,19 @@ def generate_metrics_result_table(
         # End the tabular environment
         file.write("\\bottomrule\n")
         file.write("\\end{tabular}")
+        file.write("}")
+        file.write("\\end{table}")
+        file.write("\\end{document}")
+        print(f"mpatch over t: {mpatch_over_t} / {total_vals}")
 
 
 def determine_best(results_per_patcher, patcher_names, metric, best_type, language):
     values = []
     for patcher in patcher_names:
+        if patcher not in results_per_patcher:
+            continue
+        if language not in results_per_patcher[patcher]:
+            return 0
         results = results_per_patcher[patcher][language].per_patch
         if metric == Metric.Automation:
             values.append(100 * np.nanmean(results.get(metric)))
@@ -120,10 +154,16 @@ def determine_best(results_per_patcher, patcher_names, metric, best_type, langua
 def determine_best_average(differences, patcher_names, metric):
     values = []
     for patcher in patcher_names:
+        if patcher not in differences:
+            continue
         results = differences[patcher][metric][0]
         values.append(results)
 
     if metric == Metric.F1Score:
+        best_type = "max"
+    elif metric == Metric.Precision:
+        best_type = "max"
+    elif metric == Metric.Recall:
         best_type = "max"
     elif metric == Metric.Automation:
         best_type = "max"

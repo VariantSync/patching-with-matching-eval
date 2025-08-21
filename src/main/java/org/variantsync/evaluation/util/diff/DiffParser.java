@@ -81,30 +81,17 @@ public class DiffParser {
                         fileDiffContent = new ArrayList<>();
                     }
                 }
-            } else if (line.contains(fileDiffStart)) {
-                if (indexNext < lines.size()) {
-                    final String nextLine = lines.get(indexNext);
-                    if (nextLine.startsWith(fileDiffFollow)) {
-                        final String additionalContent = line.substring(0, line.indexOf(fileDiffStart));
-                        // Create a FileDiff from the collected lines
-                        if (fileDiffContent != null) {
-                            fileDiffContent.add(additionalContent);
-                            fileDiffs.add(parseFileDiff(fileDiffContent));
-                        }
-                        // Reset the lines that should go into the next FileDiff
-                        fileDiffContent = new ArrayList<>();
-                        fileDiffContent.add(line.substring(line.indexOf(fileDiffStart)));
-                        continue;
-                    }
-                }
             }
             if (fileDiffContent == null) {
                 throw new IllegalArgumentException("The provided lines do not contain one of the expected fileDiffStart values");
             }
             fileDiffContent.add(line);
         }
+
         // Parse the content of the last file diff
-        fileDiffs.add(parseFileDiff(fileDiffContent));
+        if (fileDiffContent != null) {
+            fileDiffs.add(parseFileDiff(fileDiffContent));
+        }
 
         return new OriginalDiff(fileDiffs);
     }

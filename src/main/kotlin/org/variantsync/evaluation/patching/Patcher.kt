@@ -1,17 +1,17 @@
 package org.variantsync.evaluation.patching
 
+import java.nio.file.Files
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.execution.Operations
 import org.variantsync.vevos.simulation.feature.Variant
-import java.nio.file.Files
 
 interface Patcher {
 
     fun applyPatch(
-        operations: Operations,
-        sourceVariant: Variant,
-        targetVariant: Variant,
-        withFiler: Boolean,
+            operations: Operations,
+            sourceVariant: Variant,
+            targetVariant: Variant,
+            withFiler: Boolean,
     ): Rejects
 
     fun name(): String
@@ -27,3 +27,4 @@ interface Patcher {
         }
     }
 }
+

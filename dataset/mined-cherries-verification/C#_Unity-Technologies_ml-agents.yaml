@@ -1,0 +1,347 @@
+- language: C#
+  total_number_of_results: '13'
+  repo_name: Unity-Technologies/ml-agents
+  total_number_of_commits: '7096'
+  total_number_of_branches: '426'
+  total_number_of_committers: '70'
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 707730256a6797336ba749f05f7dbf10dadd8126
+        parent_ids:
+        - 02b77dd7ac05c386004845f30c9a623845bfbe91
+        message: "[bug-fix] Use correct memories for LSTM SAC (#5228)\n\n* Use correct memories for LSTM SAC\r\n\r\n* Add some comments"
+        author: Ervin T <ervin@unity3d.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1617908980, offset: -240, sign: 45 } }'
+      target:
+        id: bae46c274b743900cdb87b654181e7b83ab8535c
+        parent_ids:
+        - efa8f344c1d6bd2c59c8b8df3989df1f1b791f61
+        message: |
+          [bug-fix] Use correct memories for LSTM SAC (#5228)
+
+          * Use correct memories for LSTM SAC
+
+          * Add some comments
+
+          (cherry picked from commit 707730256a6797336ba749f05f7dbf10dadd8126)
+        author: Ervin T <ervin@unity3d.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1617917937, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2c03d2b544d0c615e7b60d939f01532674d80753
+        parent_ids:
+        - fce4ad3bdae981dc8f03f0e2d239792e61006ea8
+        message: |
+          Buffer fixes
+        author: Ervin Teng <ervin@unity3d.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1614122747, offset: -300, sign: 45 } }'
+      target:
+        id: f879b616a797bf54cf19b1a6c616aa7cd5f72389
+        parent_ids:
+        - 9a0005314f2116def4c6232c72fa9fdd1f6d7fe0
+        message: |
+          Buffer fixes
+
+          (cherry picked from commit 2c03d2b544d0c615e7b60d939f01532674d80753)
+        author: Ervin Teng <ervin@unity3d.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1614184238, offset: -300, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 8457c5bf87dcd943eb200a68735d48f84864448c
+        parent_ids:
+        - 2ca6a87c508b97f74ca5845a6eedca52429581a3
+        message: |+
+          Fixing the GymWrapper Logging issue (#5201)
+
+        author: Vincent-Pierre BERGES <vincentpierre@unity3d.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1617159000, offset: -420, sign: 45 } }'
+      target:
+        id: cf18e0e4035cfc699531eadd2c38513848bc5a83
+        parent_ids:
+        - 5d1c1e1f5fa70e7f44c5bcf6ce026a7520d47cde
+        message: |
+          Fixing the GymWrapper Logging issue (#5201)
+
+          (cherry picked from commit 8457c5bf87dcd943eb200a68735d48f84864448c)
+        author: Vincent-Pierre BERGES <vincentpierre@unity3d.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1617917860, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ac4f43cf18b98d0fc7063b9b831e07429f7ea39e
+        parent_ids:
+        - 30fde2dffe2edd2562b24d1051f257b39d20a837
+        message: "Load individual elements if state dict load fails (#5213)\n\n\r\nCo-authored-by: Vincent-Pierre BERGES <vincentpierre@unity3d.com>\r\nCo-authored-by: Ervin T. <ervin@unity3d.com>"
+        author: andrewcoh <54679309+andrewcoh@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1617729234, offset: -240, sign: 45 } }'
+      target:
+        id: 5e4f279376616ab3096a819db0bed663483ddc73
+        parent_ids:
+        - bae46c274b743900cdb87b654181e7b83ab8535c
+        message: |
+          Load individual elements if state dict load fails (#5213)
+
+          Co-authored-by: Vincent-Pierre BERGES <vincentpierre@unity3d.com>
+          Co-authored-by: Ervin T. <ervin@unity3d.com>
+          (cherry picked from commit ac4f43cf18b98d0fc7063b9b831e07429f7ea39e)
+        author: andrewcoh <54679309+andrewcoh@users.noreply.github.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1617918137, offset: -240, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: aac2ee6cb650e6969a6d8b9f7c966f69b9e2df04
+        parent_ids:
+        - 21548e02e83a563c75a0b6bae0cbbe1ceb6552e0
+        message: "[🐛 🔨 ] set_action_for_agent expects a ActionTuple with batch size 1. (#5208)\n\n* [Bug Fix] set_action_for_agent expects a ActionTuple with batch size 1.\r\n\r\n* moving a line around"
+        author: Vincent-Pierre BERGES <vincentpierre@unity3d.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1617222987, offset: -420, sign: 45 } }'
+      target:
+        id: 2aaf326bf8ff13d11590fc8ee33f7e862503fb08
+        parent_ids:
+        - 7fae8734459a4ecd232bb8c63bfada7bed52ede3
+        message: |
+          [🐛 🔨 ] set_action_for_agent expects a ActionTuple with batch size 1. (#5208)
+
+          * [Bug Fix] set_action_for_agent expects a ActionTuple with batch size 1.
+
+          * moving a line around
+
+          (cherry picked from commit aac2ee6cb650e6969a6d8b9f7c966f69b9e2df04)
+        author: Vincent-Pierre BERGES <vincentpierre@unity3d.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1617916611, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 272899a8a100b4ff1bbcaa575d2bc46965fc5938
+        parent_ids:
+        - 18ff7bc85cc504296f5d6586afe261d490f39e53
+        message: |+
+          [bug fix] Fix warning using demo recorder (#5216)
+
+        author: Vincent-Pierre BERGES <vincentpierre@unity3d.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1617309115, offset: -420, sign: 45 } }'
+      target:
+        id: f699d8db1a65e7a1435df819b7e3b3dee53b2593
+        parent_ids:
+        - 7b800d15aee4750c084f97b1db95acd32f6b56c3
+        message: |
+          [bug fix] Fix warning using demo recorder (#5216)
+
+          (cherry picked from commit 272899a8a100b4ff1bbcaa575d2bc46965fc5938)
+        author: Vincent-Pierre BERGES <vincentpierre@unity3d.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1617917324, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 875feb01509d8191fc3cc60d6a08c931546fb6dc
+        parent_ids:
+        - 41818c5e42f35e68d74e43385228a6bfd3278aa0
+        message: |+
+          Fix path to PushBlock demo (#5198)
+
+        author: andrewcoh <54679309+andrewcoh@users.noreply.github.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1617122444, offset: -240, sign: 45 } }'
+      target:
+        id: deebc3dc904b8e66f37bb2e57186227c6ce51f06
+        parent_ids:
+        - cf18e0e4035cfc699531eadd2c38513848bc5a83
+        message: |
+          Fix path to PushBlock demo (#5198)
+
+          (cherry picked from commit 875feb01509d8191fc3cc60d6a08c931546fb6dc)
+        author: andrewcoh <54679309+andrewcoh@users.noreply.github.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1617917880, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 63e7ad44d96b7663b91f005ca1d88f4f3b11dd2a
+        parent_ids:
+        - d17b735ea90616ad06ac536fd6e9de95ff398872
+        message: "[bug-fix] When agent isn't training, don't clear update buffer (#5205)\n\n* Don't clear update buffer, but don't append to it either\r\n\r\n* Update changelog\r\n\r\n* Address comments\r\n\r\n* Make experience replay buffer saving more verbose"
+        author: Ervin T <ervin@unity3d.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1617288882, offset: -240, sign: 45 } }'
+      target:
+        id: 7b800d15aee4750c084f97b1db95acd32f6b56c3
+        parent_ids:
+        - 2aaf326bf8ff13d11590fc8ee33f7e862503fb08
+        message: |
+          [bug-fix] When agent isn't training, don't clear update buffer (#5205)
+
+          * Don't clear update buffer, but don't append to it either
+
+          * Update changelog
+
+          * Address comments
+
+          * Make experience replay buffer saving more verbose
+
+          (cherry picked from commit 63e7ad44d96b7663b91f005ca1d88f4f3b11dd2a)
+        author: Ervin T <ervin@unity3d.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1617917070, offset: -240, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 9c3dc4542ce2fa35f25dfa7809a7e1c2ee06001e
+        parent_ids:
+        - 73ba867a9a441585a00b3aa03de5c4cd1c72fc81
+        message: "[🐛 🔨 ]Adding the ELO to the GlobalTrainingStatus (#5202)\n\n* Adding the ELO to the GlobalTrainingStatus\r\n\r\n* Update ml-agents/mlagents/trainers/ghost/trainer.py\r\n\r\nCo-authored-by: andrewcoh <54679309+andrewcoh@users.noreply.github.com>\r\n\r\nCo-authored-by: andrewcoh <54679309+andrewcoh@users.noreply.github.com>"
+        author: Vincent-Pierre BERGES <vincentpierre@unity3d.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1617222527, offset: -420, sign: 45 } }'
+      target:
+        id: 7fae8734459a4ecd232bb8c63bfada7bed52ede3
+        parent_ids:
+        - 65c1550cfaee89c980a7b9f722e8925363507834
+        message: |
+          [🐛 🔨 ]Adding the ELO to the GlobalTrainingStatus (#5202)
+
+          * Adding the ELO to the GlobalTrainingStatus
+
+          * Update ml-agents/mlagents/trainers/ghost/trainer.py
+
+          Co-authored-by: andrewcoh <54679309+andrewcoh@users.noreply.github.com>
+
+          Co-authored-by: andrewcoh <54679309+andrewcoh@users.noreply.github.com>
+          (cherry picked from commit 9c3dc4542ce2fa35f25dfa7809a7e1c2ee06001e)
+        author: Vincent-Pierre BERGES <vincentpierre@unity3d.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1617916603, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 86a4070bad4f5bca201db57f29117362c62617d0
+        parent_ids:
+        - 31e26e769cb286ef08c924a2320e5ec9202eab98
+        message: "[debug] Require all behavior names to have a matching YAML entry (#5210)\n\n* Add strict check to settings.py\r\n\r\n* Remove warning from trainer factory, add test\r\n\r\n* Add changelog\r\n\r\n* Fix test\r\n\r\n* Update changelog\r\n\r\n* Remove strict CLI options\r\n\r\n* Remove strict option, rename, make strict default\r\n\r\n* Remove newline\r\n\r\n* Update comments\r\n\r\n* Set default dict to actually default to a default dict\r\n\r\n* Fix tests\r\n\r\n* Fix tests again\r\n\r\n* Default trainer dict to requiring all fields\r\n\r\n* Fix settings typing\r\n\r\n* Use logger\r\n\r\n* Add default_settings to error"
+        author: Ervin T <ervin@unity3d.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1618868475, offset: -240, sign: 45 } }'
+      target:
+        id: 06488b0635ae0e8d85846e76b693844010b7154d
+        parent_ids:
+        - ee8036815fd34513c6e44f75b8e3ef950bb7eae6
+        message: "[debug] Require all behavior names to have a matching YAML entry (#5210) (#5296)\n\n* Add strict check to settings.py\r\n\r\n* Remove warning from trainer factory, add test\r\n\r\n* Add changelog\r\n\r\n* Fix test\r\n\r\n* Update changelog\r\n\r\n* Remove strict CLI options\r\n\r\n* Remove strict option, rename, make strict default\r\n\r\n* Remove newline\r\n\r\n* Update comments\r\n\r\n* Set default dict to actually default to a default dict\r\n\r\n* Fix tests\r\n\r\n* Fix tests again\r\n\r\n* Default trainer dict to requiring all fields\r\n\r\n* Fix settings typing\r\n\r\n* Use logger\r\n\r\n* Add default_settings to error\r\n\r\n(cherry picked from commit 86a4070bad4f5bca201db57f29117362c62617d0)"
+        author: Ervin T <ervin@unity3d.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1619118102, offset: -240, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2ce6810846ba9268e4fb5fb082fa54e90414c980
+        parent_ids:
+        - 314f9e7e3355f6e5e1c6b017a39d156f1c01774b
+        message: "[bug-fix] Fix POCA LSTM, pad sequences in the back (#5206)\n\n* Pad buffer at the end\r\n\r\n* Fix padding in optimizer value estimate\r\n\r\n* Fix additional bugs and POCA\r\n\r\n* Fix groupmate obs, add tests\r\n\r\n* Update changelog\r\n\r\n* Improve tests\r\n\r\n* Address comments\r\n\r\n* Fix poca test\r\n\r\n* Fix buffer test\r\n\r\n* Increase entropy for Hallway\r\n\r\n* Add EOF newline\r\n\r\n* Fix Behavior Name\r\n\r\n* Address comments"
+        author: Ervin T <ervin@unity3d.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1617662534, offset: -240, sign: 45 } }'
+      target:
+        id: efa8f344c1d6bd2c59c8b8df3989df1f1b791f61
+        parent_ids:
+        - deebc3dc904b8e66f37bb2e57186227c6ce51f06
+        message: |
+          [bug-fix] Fix POCA LSTM, pad sequences in the back (#5206)
+
+          * Pad buffer at the end
+
+          * Fix padding in optimizer value estimate
+
+          * Fix additional bugs and POCA
+
+          * Fix groupmate obs, add tests
+
+          * Update changelog
+
+          * Improve tests
+
+          * Address comments
+
+          * Fix poca test
+
+          * Fix buffer test
+
+          * Increase entropy for Hallway
+
+          * Add EOF newline
+
+          * Fix Behavior Name
+
+          * Address comments
+
+          (cherry picked from commit 2ce6810846ba9268e4fb5fb082fa54e90414c980)
+        author: Ervin T <ervin@unity3d.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1617917908, offset: -240, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 2c03d2b544d0c615e7b60d939f01532674d80753
+        parent_ids:
+        - fce4ad3bdae981dc8f03f0e2d239792e61006ea8
+        message: |
+          Buffer fixes
+        author: Ervin Teng <ervin@unity3d.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1614122747, offset: -300, sign: 45 } }'
+      target:
+        id: 2a26887b42ac2d514fc7cd54187402581a054275
+        parent_ids:
+        - a5b324a30ad3162cbf078eb37a6602fd9c2c4127
+        message: "Python Dataflow for Group Manager (#4926)\n\n* Make buffer type-agnostic\r\n\r\n* Edit types of Apped method\r\n\r\n* Change comment\r\n\r\n* Collaborative walljump\r\n\r\n* Make collab env harder\r\n\r\n* Add group ID\r\n\r\n* Add collab obs to trajectory\r\n\r\n* Fix bug; add critic_obs to buffer\r\n\r\n* Set group ids for some envs\r\n\r\n* Pretty broken\r\n\r\n* Less broken PPO\r\n\r\n* Update SAC, fix PPO batching\r\n\r\n* Fix SAC interrupted condition and typing\r\n\r\n* Fix SAC interrupted again\r\n\r\n* Remove erroneous file\r\n\r\n* Fix multiple obs\r\n\r\n* Update curiosity reward provider\r\n\r\n* Update GAIL and BC\r\n\r\n* Multi-input network\r\n\r\n* Some minor tweaks but still broken\r\n\r\n* Get next critic observations into value estimate\r\n\r\n* Temporarily disable exporting\r\n\r\n* Use Vince's ONNX export code\r\n\r\n* Cleanup\r\n\r\n* Add walljump collab YAML\r\n\r\n* Lower max height\r\n\r\n* Update prefab\r\n\r\n* Update prefab\r\n\r\n* Collaborative Hallway\r\n\r\n* Set num teammates to 2\r\n\r\n* Add config and group ids to HallwayCollab\r\n\r\n* Fix bug with hallway collab\r\n\r\n* Edits to HallwayCollab\r\n\r\n* Update onnx file meta\r\n\r\n* Make the env easier\r\n\r\n* Remove prints\r\n\r\n* Make Collab env harder\r\n\r\n* Fix group ID\r\n\r\n* Add cc to ghost trainer\r\n\r\n* Add comment to ghost trainer\r\n\r\n* Revert \"Add comment to ghost trainer\"\r\n\r\nThis reverts commit 292b6ce672a7a23ebfdd76bf07b11c50a825dcf4.\r\n\r\n* Actually add comment to ghosttrainer\r\n\r\n* Scale size of CC network\r\n\r\n* Scale value network based on num agents\r\n\r\n* Add 3rd symbol to hallway collab\r\n\r\n* Make comms one-hot\r\n\r\n* Fix S tag\r\n\r\n* Additional changes\r\n\r\n* Some more fixes\r\n\r\n* Self-attention Centralized Critic\r\n\r\n* separate entity encoder and RSA\r\n\r\n* clean up args in mha\r\n\r\n* more cleanups\r\n\r\n* fixed tests\r\n\r\n* entity embeddings work with no max\r\nIntegrate into CC\r\n\r\n* remove group id\r\n\r\n* very rough sketch for TeamManager interface\r\n\r\n* One layer for entity embed\r\n\r\n* Use 4 heads\r\n\r\n* add defaults to linear encoder, initialize ent encoders\r\n\r\n* add team manager id to proto\r\n\r\n* team manager for hallway\r\n\r\n* add manager to hallway\r\n\r\n* send and process team manager id\r\n\r\n* remove print\r\n\r\n* small cleanup\r\n\r\n* default behavior for baseTeamManager\r\n\r\n* add back statsrecorder\r\n\r\n* update\r\n\r\n* Team manager prototype  (#4850)\r\n\r\n* remove group id\r\n\r\n* very rough sketch for TeamManager interface\r\n\r\n* add team manager id to proto\r\n\r\n* team manager for hallway\r\n\r\n* add manager to hallway\r\n\r\n* send and process team manager id\r\n\r\n* remove print\r\n\r\n* small cleanup\r\n\r\nCo-authored-by: Chris Elion <chris.elion@unity3d.com>\r\n\r\n* Remove statsrecorder\r\n\r\n* Fix AgentProcessor for TeamManager\r\nShould work for variable decision frequencies (untested)\r\n\r\n* team manager\r\n\r\n* New buffer layout, TeamObsUtil, pad dead agents\r\n\r\n* Use NaNs to get masks for attention\r\n\r\n* Add team reward to buffer\r\n\r\n* Try subtract marginalized value\r\n\r\n* Add Q function with attention\r\n\r\n* Some more progress - still broken\r\n\r\n* use singular entity embedding (#4873)\r\n\r\n* I think it's running\r\n\r\n* Actions added but untested\r\n\r\n* Fix issue with team_actions\r\n\r\n* Add next action and next team obs\r\n\r\n* separate forward into q_net and baseline\r\n\r\n* might be right\r\n\r\n* forcing this to work\r\n\r\n* buffer error\r\n\r\n* COMAA runs\r\n\r\n* add lambda return and target network\r\n\r\n* no target net\r\n\r\n* remove normalize advantages\r\n\r\n* add target network back\r\n\r\n* value estimator\r\n\r\n* update coma config\r\n\r\n* add target net\r\n\r\n* no target, increase lambda\r\n\r\n* remove prints\r\n\r\n* cloud config\r\n\r\n* use v return\r\n\r\n* use target net\r\n\r\n* adding zombie to coma2 brnch\r\n\r\n* add callbacks\r\n\r\n* cloud run with coma2 of held out zombie test env\r\n\r\n* target of baseline is returns_v\r\n\r\n* remove target update\r\n\r\n* Add team dones\r\n\r\n* ntegrate teammate dones\r\n\r\n* add value clipping\r\n\r\n* try again on cloud\r\n\r\n* clipping values and updated zombie\r\n\r\n* update configs\r\n\r\n* remove value head clipping\r\n\r\n* update zombie config\r\n\r\n* Add trust region to COMA updates\r\n\r\n* Remove Q-net for perf\r\n\r\n* Weight decay, regularizaton loss\r\n\r\n* Use same network\r\n\r\n* add base team manager\r\n\r\n* Remove reg loss, still stable\r\n\r\n* Black format\r\n\r\n* add team reward field to agent and proto\r\n\r\n* set team reward\r\n\r\n* add maxstep to teammanager and hook to academy\r\n\r\n* check agent by agent.enabled\r\n\r\n* remove manager from academy when dispose\r\n\r\n* move manager\r\n\r\n* put team reward in decision steps\r\n\r\n* use 0 as default manager id\r\n\r\n* fix setTeamReward\r\n\r\nCo-authored-by: Vincent-Pierre BERGES <vincentpierre@unity3d.com>\r\n\r\n* change method name to GetRegisteredAgents\r\n\r\n* address comments\r\n\r\n* Revert C# env changes\r\n\r\n* Remove a bunch of stuff from envs\r\n\r\n* Remove a bunch of extra files\r\n\r\n* Remove changes from base-teammanager\r\n\r\n* Remove remaining files\r\n\r\n* Remove some unneeded changes\r\n\r\n* Make buffer typing neater\r\n\r\n* AgentProcessor fixes\r\n\r\n* Back out trainer changes\r\n\r\n* use delegate to avoid agent-manager cyclic reference\r\n\r\n* put team reward in decision steps\r\n\r\n* fix unregister agents\r\n\r\n* add teamreward to decision step\r\n\r\n* typo\r\n\r\n* unregister on disabled\r\n\r\n* remove OnTeamEpisodeBegin\r\n\r\n* change name TeamManager to MultiAgentGroup\r\n\r\n* more team -> group\r\n\r\n* fix tests\r\n\r\n* fix tests\r\n\r\n* Use attention tests from master\r\n\r\n* Revert \"Use attention tests from master\"\r\n\r\nThis reverts commit 78e052be8f36381bb6857817ff0f505716be83b9.\r\n\r\n* Use attention from master\r\n\r\n* Renaming fest\r\n\r\n* Use NamedTuples instead of attrs classes\r\n\r\n* Bug fixes\r\n\r\n* remove GroupMaxStep\r\n\r\n* add some doc\r\n\r\n* Fix mock brain\r\n\r\n* np float32 fixes\r\n\r\n* more renaming\r\n\r\n* Test for team obs in agentprocessor\r\n\r\n* Test for group and add team reward\r\n\r\n* doc improve\r\n\r\nCo-authored-by: Ervin T. <ervin@unity3d.com>\r\n\r\n* store registered agents in set\r\n\r\n* remove unused step counts\r\n\r\n* Global group ids\r\n\r\n* Fix Trajectory test\r\n\r\n* Remove duplicated files\r\n\r\n* Add team methods to AgentAction\r\n\r\n* Buffer fixes\r\n\r\n(cherry picked from commit 2c03d2b544d0c615e7b60d939f01532674d80753)\r\n\r\n* Add test for GroupObs\r\n\r\n* Change AgentAction back to 0 pad and add tests\r\n\r\n* Addressed some comments\r\n\r\n* Address some comments\r\n\r\n* Add more comments\r\n\r\n* Rename internal function\r\n\r\n* Move padding method to AgentBufferField\r\n\r\n* Fix slicing typing and string printing in AgentBufferField\r\n\r\n* Fix to-flat and add tests\r\n\r\n* Rename GroupmateStatus to AgentStatus\r\n\r\n* Update comments\r\n\r\n* Added GroupId, GlobalGroupId, GlobalAgentId types\r\n\r\n* Update comment\r\n\r\n* Make some agent processor properties internal\r\n\r\n* Rename add_group_status\r\n\r\n* Rename store_group_status, fix test\r\n\r\n* Rename clear_group_obs\r\n\r\nCo-authored-by: Andrew Cohen <andrew.cohen@unity3d.com>\r\nCo-authored-by: Ruo-Ping Dong <ruoping.dong@unity3d.com>\r\nCo-authored-by: Chris Elion <chris.elion@unity3d.com>\r\nCo-authored-by: andrewcoh <54679309+andrewcoh@users.noreply.github.com>\r\nCo-authored-by: Vincent-Pierre BERGES <vincentpierre@unity3d.com>"
+        author: Ervin T <ervin@unity3d.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1614885920, offset: -300, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 21548e02e83a563c75a0b6bae0cbbe1ceb6552e0
+        parent_ids:
+        - 9c3dc4542ce2fa35f25dfa7809a7e1c2ee06001e
+        message: |+
+          [Bug Fix] Issue 5204 : GymToUnityWrapper must call reset if done (#5207)
+
+        author: Vincent-Pierre BERGES <vincentpierre@unity3d.com>
+        committer: GitHub <noreply@github.com>
+        time: 'Time { raw: git_time { time: 1617222539, offset: -420, sign: 45 } }'
+      target:
+        id: 5d1c1e1f5fa70e7f44c5bcf6ce026a7520d47cde
+        parent_ids:
+        - f699d8db1a65e7a1435df819b7e3b3dee53b2593
+        message: |
+          [Bug Fix] Issue 5204 : GymToUnityWrapper must call reset if done (#5207)
+
+          (cherry picked from commit 21548e02e83a563c75a0b6bae0cbbe1ceb6552e0)
+        author: Vincent-Pierre BERGES <vincentpierre@unity3d.com>
+        committer: Ervin Teng <ervin@unity3d.com>
+        time: 'Time { raw: git_time { time: 1617917838, offset: -240, sign: 45 } }'
+    is_trivial: true

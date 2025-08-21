@@ -25,3 +25,8 @@ src/main/python/test.pdf
 src/main/python/experiment_table.tex
 src/main/python/result_analysis/experiment_table.tex
 src/main/python/output.txt
+kls_database.db
+bin
+dataset/mined-cherries
+dataset/repo-sample.yaml
+dataset/unsplit-mined-cherries.zip

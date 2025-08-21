@@ -1,0 +1,736 @@
+- language: C
+  total_number_of_commits: '2559'
+  total_number_of_branches: '47'
+  total_number_of_committers: '78'
+  total_number_of_results: '22'
+  repo_name: yshui/picom
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 642a43acbb5a92f00c31bd7487c07fab59ab18a9
+        parent_ids:
+        - 755996a42c88483b452e7b9133c8b69c808d3b7a
+        message: |
+          Update README.md and CHANGELOG.md
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707617227, offset: 0, sign: 43 } }'
+      target:
+        id: 5984747912daf94dbc5ab417b8da270151e9e93d
+        parent_ids:
+        - 5db2ae08e1d7539271ecf41e61909d55f33e64c2
+        message: |
+          Update README.md
+
+          (cherry picked from commit 642a43acbb5a92f00c31bd7487c07fab59ab18a9)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819989, offset: 0, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 1bfb1299857dea9b058ba6934529c6e62a59ea29
+        parent_ids:
+        - f3bdd01dc8afcc1e311ec6e81d999f2ec2b9965a
+        message: |
+          backend: don't choose SGI_video_sync vblank if opengl is not enabled
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1706562156, offset: 0, sign: 43 } }'
+      target:
+        id: d457348972e56719ddbc077c5b6d77686f8c0c48
+        parent_ids:
+        - c4139a94cac06b9a7517fcfb6384fa877e5718cc
+        message: |
+          backend: don't choose SGI_video_sync vblank if opengl is not enabled
+
+          (cherry picked from commit 1bfb1299857dea9b058ba6934529c6e62a59ea29)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819708, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4a79e7b7779297db9a622523953a6f207fe38cde
+        parent_ids:
+        - a655730e490a57f53bb38a740aa6dbaf8f872ecc
+        message: |
+          render: fix binding the root background pixmap in case of depth mismatch
+
+          fix the same issue in the legacy backends, see the previous commit for
+          details. this commit also removes the x_validate_pixmap function because
+          it was used only in the get_root_tile function and the fix pretty much
+          implies and embeds it.
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Maxim Solovyov <msolovyov@protonmail.com>
+        time: 'Time { raw: git_time { time: 1706828685, offset: 180, sign: 43 } }'
+      target:
+        id: 96399a01d1ac5626e8065461b1085363a99b996d
+        parent_ids:
+        - 6d44ef41a7201ef8ebd157e15ecc0db58d0205d7
+        message: |
+          render: fix binding the root background pixmap in case of depth mismatch
+
+          fix the same issue in the legacy backends, see the previous commit for
+          details. this commit also removes the x_validate_pixmap function because
+          it was used only in the get_root_tile function and the fix pretty much
+          implies and embeds it.
+
+          (cherry picked from commit 4a79e7b7779297db9a622523953a6f207fe38cde)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819734, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5fba210ad64b6a15e415c872e552c3b158adc7bc
+        parent_ids:
+        - 1bfb1299857dea9b058ba6934529c6e62a59ea29
+        message: |
+          vblank: make schedule fallible
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1706566024, offset: 0, sign: 43 } }'
+      target:
+        id: 2f79a5d75a451fd0ac0bb02d68b45c94ae2b3a21
+        parent_ids:
+        - d457348972e56719ddbc077c5b6d77686f8c0c48
+        message: |
+          vblank: make schedule fallible
+
+          (cherry picked from commit 5fba210ad64b6a15e415c872e552c3b158adc7bc)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819717, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a655730e490a57f53bb38a740aa6dbaf8f872ecc
+        parent_ids:
+        - 4401666cfb06f9d76a1bf109feda42730a6da9aa
+        message: |
+          picom: fix binding the root background pixmap in case of depth mismatch
+
+          if the root background pixmap's depth doesn't match the root window's
+          depth, find a suitable visual for the root background pixmap's depth and
+          use it instead of the root window's visual
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Maxim Solovyov <msolovyov@protonmail.com>
+        time: 'Time { raw: git_time { time: 1706828675, offset: 180, sign: 43 } }'
+      target:
+        id: 6d44ef41a7201ef8ebd157e15ecc0db58d0205d7
+        parent_ids:
+        - d3a108b3db8732e01bfb3970f7e5772fc5d0008d
+        message: |
+          picom: fix binding the root background pixmap in case of depth mismatch
+
+          if the root background pixmap's depth doesn't match the root window's
+          depth, find a suitable visual for the root background pixmap's depth and
+          use it instead of the root window's visual
+
+          (cherry picked from commit a655730e490a57f53bb38a740aa6dbaf8f872ecc)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819732, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: f3bdd01dc8afcc1e311ec6e81d999f2ec2b9965a
+        parent_ids:
+        - 71e29c4128725856ab1546a2501823bdac32d819
+        message: |
+          vblank: don't use symbols from backend/gl/glx.h
+
+          sgi video sync runs in a separate thread, we don't want to have
+          potential races between threads.
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1706550764, offset: 0, sign: 43 } }'
+      target:
+        id: c4139a94cac06b9a7517fcfb6384fa877e5718cc
+        parent_ids:
+        - fc1d1d40e5ffe73cb35a6b09b3cd713a14d242f6
+        message: |
+          vblank: don't use symbols from backend/gl/glx.h
+
+          sgi video sync runs in a separate thread, we don't want to have
+          potential races between threads.
+
+          (cherry picked from commit f3bdd01dc8afcc1e311ec6e81d999f2ec2b9965a)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819698, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 14a345a81755943f85e7e1fa76f2d341633ad2ba
+        parent_ids:
+        - 5fba210ad64b6a15e415c872e552c3b158adc7bc
+        message: |
+          vblank: make init fallible
+
+          Improve error handling in sgi_video_sync_scheduler_init a bit.
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1706566261, offset: 0, sign: 43 } }'
+      target:
+        id: 4e6dc55ec84c871f9954391506e18eca0acd98f6
+        parent_ids:
+        - 2f79a5d75a451fd0ac0bb02d68b45c94ae2b3a21
+        message: |
+          vblank: make init fallible
+
+          Improve error handling in sgi_video_sync_scheduler_init a bit.
+
+          (cherry picked from commit 14a345a81755943f85e7e1fa76f2d341633ad2ba)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819724, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: eb39426b08a77563fbbe8e74320a3799663b8c47
+        parent_ids:
+        - bbc657e4bc099ec2f958a222b658ab5a5345c055
+        message: |
+          backend: gl: inherit image's inner properties in the gl_image_decouple function
+
+          Image decouple should keep all the image properies from the source
+          image, so shader must be copied. And there are also some internal
+          properties what should be inherited but wasn't.
+
+          In particular this prevents images from losing their shaders when
+          alpha is applied.
+
+          Fixes #1174
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707224099, offset: 0, sign: 43 } }'
+      target:
+        id: baf78e733f05fb3257398193a6374693baded93e
+        parent_ids:
+        - d27d3773ce5deb24de6072c49052e31ac8e9d4e0
+        message: |
+          backend: gl: inherit image's inner properties in the gl_image_decouple function
+
+          Image decouple should keep all the image properies from the source
+          image, so shader must be copied. And there are also some internal
+          properties what should be inherited but wasn't.
+
+          In particular this prevents images from losing their shaders when
+          alpha is applied.
+
+          Fixes #1174
+
+          (cherry picked from commit eb39426b08a77563fbbe8e74320a3799663b8c47)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819738, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 4401666cfb06f9d76a1bf109feda42730a6da9aa
+        parent_ids:
+        - 90f5f4ca2944a7705e43b31b680fcf311efb3b4d
+        message: |
+          x: add the x_get_visual_for_depth function
+
+          it returns the first found visual for the given depth
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Maxim Solovyov <msolovyov@protonmail.com>
+        time: 'Time { raw: git_time { time: 1706743889, offset: 180, sign: 43 } }'
+      target:
+        id: d3a108b3db8732e01bfb3970f7e5772fc5d0008d
+        parent_ids:
+        - e0aa6f9107f4df1b54e27dc90c7f5e8503ef05bd
+        message: |
+          x: add the x_get_visual_for_depth function
+
+          it returns the first found visual for the given depth
+
+          (cherry picked from commit 4401666cfb06f9d76a1bf109feda42730a6da9aa)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819731, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 755996a42c88483b452e7b9133c8b69c808d3b7a
+        parent_ids:
+        - eb723eee296e4095cd4f03de5be3ed7048762851
+        message: |
+          backend: gl: use libepoxy's has_*_extension
+
+          So we don't need maintain our own version.
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707617225, offset: 0, sign: 43 } }'
+      target:
+        id: 0d5afb16d4f8cac7d1b016de93a289827722eee0
+        parent_ids:
+        - 0bb467b61fae5b9c723df334cf33758bd899569f
+        message: |
+          backend: gl: use libepoxy's has_*_extension
+
+          So we don't need maintain our own version.
+
+          (cherry picked from commit 755996a42c88483b452e7b9133c8b69c808d3b7a)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819841, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: baeafb3a3b4ad3de3690929e68245b5cd54b9366
+        parent_ids:
+        - 037be5cca20366a8bd26fe90865f225a471859b1
+        message: |
+          event: tweak ev_reparent_notify
+
+          Instead of change window attributes back and forth, calculate the evmask
+          and set it just once. And also make sure the request is flushed.
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707686417, offset: 0, sign: 43 } }'
+      target:
+        id: 5f20ee0e9ba1ea2096173e96d5439fcd32a8e9a3
+        parent_ids:
+        - 5984747912daf94dbc5ab417b8da270151e9e93d
+        message: |
+          event: tweak ev_reparent_notify
+
+          Instead of change window attributes back and forth, calculate the evmask
+          and set it just once. And also make sure the request is flushed.
+
+          (cherry picked from commit baeafb3a3b4ad3de3690929e68245b5cd54b9366)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707820488, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: bdc0943399584275c5bfcf01e84e4c38ecb2d515
+        parent_ids:
+        - baeafb3a3b4ad3de3690929e68245b5cd54b9366
+        message: |
+          event: make sure ev_property_notify flushes its requests
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707686419, offset: 0, sign: 43 } }'
+      target:
+        id: de9724f81434589e614d772f10d3a2f0f691b7ae
+        parent_ids:
+        - 5f20ee0e9ba1ea2096173e96d5439fcd32a8e9a3
+        message: |
+          event: make sure ev_property_notify flushes its requests
+
+          (cherry picked from commit bdc0943399584275c5bfcf01e84e4c38ecb2d515)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707820511, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: efb7a1430f2c530c7b9cc0cb6d6d6cff95d8a4d9
+        parent_ids:
+        - d111e1640a7262f5476bce1d4e8fe0080b711545
+        message: |
+          x: add the x_set_region function
+
+          it sets an x region to a pixman region
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Maxim Solovyov <msolovyov@protonmail.com>
+        time: 'Time { raw: git_time { time: 1706463312, offset: 180, sign: 43 } }'
+      target:
+        id: a4ec70982c824c172f2958bfe26827be3a68783c
+        parent_ids:
+        - 0ab3e0740e61849bb230e5f60290905eecfd0c43
+        message: |
+          x: add the x_set_region function
+
+          it sets an x region to a pixman region
+
+          (cherry picked from commit efb7a1430f2c530c7b9cc0cb6d6d6cff95d8a4d9)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707820061, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: a5826b6fb0dc4888ce922df5d82151972ff4b247
+        parent_ids:
+        - bdc0943399584275c5bfcf01e84e4c38ecb2d515
+        message: |
+          event: fix dumb bug in repair_win
+
+          Basically we won't call xcb_damage_subtract if show_all_xerrors is set,
+          which is very bad.
+
+          Fixes that, and also make sure the damage subtract request is flushed in
+          all branches.
+
+          Fixes: 1307d9ec709c9fbbe99939d46ad04c57d5e4b501
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707692753, offset: 0, sign: 43 } }'
+      target:
+        id: 41f9a5816c1a74d41e18cf273e6e76f96dba267a
+        parent_ids:
+        - de9724f81434589e614d772f10d3a2f0f691b7ae
+        message: |
+          event: fix dumb bug in repair_win
+
+          Basically we won't call xcb_damage_subtract if show_all_xerrors is set,
+          which is very bad.
+
+          Fixes that, and also make sure the damage subtract request is flushed in
+          all branches.
+
+          (cherry picked from commit a5826b6fb0dc4888ce922df5d82151972ff4b247)
+          Fixes: 1307d9ec709c9fbbe99939d46ad04c57d5e4b501
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707820544, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: eb723eee296e4095cd4f03de5be3ed7048762851
+        parent_ids:
+        - fcd51e7373d14881e13ad086304d3511355b5f1b
+        message: |
+          backend: gl: use libepoxy
+
+          There is actually no specification what symbols are exported from a
+          libGL implementation. The (extremely outdated) OpenGL ABI specification
+          says only GL 1.2 functions are guaranteed. Don't know how relevant that
+          is now, but different libGL implementations do export different set of
+          symbols. On Linux we are most likely to be linked with libglvnd, which
+          has everything we need. But on other platforms this is not necessarily
+          the case, for example on OpenBSD we are missing glGetQueryObjectui64v.
+
+          Use libepoxy so we can outsource this problem and never worry about it
+          ever again. Plus it also saves us from calling GetProcAddress ourselves.
+
+          Changes other than trivial build fixes I have to make:
+
+          1. Can't use eglCreatePlatformWindowSurface/eglGetPlatformDisplay.
+             libepoxy checks for EGL 1.5 when resolving these functions. But
+             without a current context, libepoxy assumes we only have EGL 1.4.
+             This creates a chicken and egg problem - we need a display to call
+             eglGetPlatformDisplay. We have to use the *EXT version instead.
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707597362, offset: 0, sign: 43 } }'
+      target:
+        id: 0bb467b61fae5b9c723df334cf33758bd899569f
+        parent_ids:
+        - 71f0d5b92383b24e84988a4ac6c937936ad8340b
+        message: |
+          backend: gl: use libepoxy
+
+          There is actually no specification what symbols are exported from a
+          libGL implementation. The (extremely outdated) OpenGL ABI specification
+          says only GL 1.2 functions are guaranteed. Don't know how relevant that
+          is now, but different libGL implementations do export different set of
+          symbols. On Linux we are most likely to be linked with libglvnd, which
+          has everything we need. But on other platforms this is not necessarily
+          the case, for example on OpenBSD we are missing glGetQueryObjectui64v.
+
+          Use libepoxy so we can outsource this problem and never worry about it
+          ever again. Plus it also saves us from calling GetProcAddress ourselves.
+
+          Changes other than trivial build fixes I have to make:
+
+          1. Can't use eglCreatePlatformWindowSurface/eglGetPlatformDisplay.
+             libepoxy checks for EGL 1.5 when resolving these functions. But
+             without a current context, libepoxy assumes we only have EGL 1.4.
+             This creates a chicken and egg problem - we need a display to call
+             eglGetPlatformDisplay. We have to use the *EXT version instead.
+
+          (cherry picked from commit eb723eee296e4095cd4f03de5be3ed7048762851)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819837, offset: 0, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 023103c620749fd5eb1956c255a9cc5fcd6903a4
+        parent_ids:
+        - 0f22b70705eece1ec534663af515b3219f01ed38
+        message: |
+          core: use pthread_setschedparam on OpenBSD
+
+          OpenBSD don't have support for sched_getparam(), sched_setparam(), or
+          sched_setscheduler() functions (yet). In this case, we need use
+          pthead-equivalents for real-time sched for picom. Theses changes add
+          this support.
+
+          Authored-by: Jose Maldonado aka Yukiteru <josemald89@gmail.com>
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Jose Maldonado aka Yukiteru <josemald89@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707560308, offset: 0, sign: 43 } }'
+      target:
+        id: 33c20c57c115f7ee9408c0929c3e5af7e8e60a91
+        parent_ids:
+        - baf78e733f05fb3257398193a6374693baded93e
+        message: |
+          core: use pthread_setschedparam on OpenBSD
+
+          OpenBSD don't have support for sched_getparam(), sched_setparam(), or
+          sched_setscheduler() functions (yet). In this case, we need use
+          pthead-equivalents for real-time sched for picom. Theses changes add
+          this support.
+
+          (cherry picked from commit 023103c620749fd5eb1956c255a9cc5fcd6903a4)
+          Authored-by: Jose Maldonado aka Yukiteru <josemald89@gmail.com>
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Jose Maldonado aka Yukiteru <josemald89@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819741, offset: 0, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: fcd51e7373d14881e13ad086304d3511355b5f1b
+        parent_ids:
+        - dff77aae27cf064941798c066a248283b1996318
+        message: |
+          build: add libepoxy
+
+          Add libepoxy dependency to CI manifest and Nix.
+
+          For Nix, we need to set shellHook to workaround a NixOS limitation, see:
+
+          https://github.com/NixOS/nixpkgs/issues/287763
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707597324, offset: 0, sign: 43 } }'
+      target:
+        id: 71f0d5b92383b24e84988a4ac6c937936ad8340b
+        parent_ids:
+        - 33c20c57c115f7ee9408c0929c3e5af7e8e60a91
+        message: |
+          build: add libepoxy
+
+          Add libepoxy dependency to CI manifest and Nix.
+
+          For Nix, we need to set shellHook to workaround a NixOS limitation, see:
+
+          https://github.com/NixOS/nixpkgs/issues/287763
+
+          (cherry picked from commit fcd51e7373d14881e13ad086304d3511355b5f1b)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819743, offset: 0, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5a1990b236c85f1222098ef147398855cbb3af69
+        parent_ids:
+        - efb7a1430f2c530c7b9cc0cb6d6d6cff95d8a4d9
+        message: |
+          backend: xrender: cache the present region
+
+          to avoid creating and destroying it every frame
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Maxim Solovyov <msolovyov@protonmail.com>
+        time: 'Time { raw: git_time { time: 1706463312, offset: 180, sign: 43 } }'
+      target:
+        id: 9392829d84d9b63f411e2af8191d1161e90cb984
+        parent_ids:
+        - a4ec70982c824c172f2958bfe26827be3a68783c
+        message: |
+          backend: xrender: cache the present region
+
+          to avoid creating and destroying it every frame
+
+          (cherry picked from commit 5a1990b236c85f1222098ef147398855cbb3af69)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707820071, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 709f0168d96fa42e40261c65b345c5fa14418300
+        parent_ids:
+        - 726b8d0e285e7d7e7809df4f0ada4c4943fc8cea
+        message: |
+          ci: build on OpenBSD
+
+          Building on OpenBSD fails currently.
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707560536, offset: 0, sign: 43 } }'
+      target:
+        id: 826e1d72f59372c2f15ce4b3b2333bc30b4be417
+        parent_ids:
+        - eaf72a7a9354322b36f77ac5afdd451734f98dc2
+        message: |
+          ci: build on OpenBSD
+
+          Building on OpenBSD fails currently.
+
+          (cherry picked from commit 709f0168d96fa42e40261c65b345c5fa14418300)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707821410, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 238c3cc8336fe24370a3ca44ff0d891ca8907c94
+        parent_ids:
+        - 0638de5c568dab4215140a37bb7be702301a038b
+        message: |
+          vblank: reset SGI_video_sync scheduler if it's getting nonsense
+
+          If resetting fails, set a flag so all future schedule calls will fail.
+
+          Fixes #1168
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1706654463, offset: 0, sign: 43 } }'
+      target:
+        id: e0aa6f9107f4df1b54e27dc90c7f5e8503ef05bd
+        parent_ids:
+        - 4e6dc55ec84c871f9954391506e18eca0acd98f6
+        message: |
+          vblank: reset SGI_video_sync scheduler if it's getting nonsense
+
+          If resetting fails, set a flag so all future schedule calls will fail.
+
+          Fixes #1168
+
+          (cherry picked from commit 238c3cc8336fe24370a3ca44ff0d891ca8907c94)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819729, offset: 0, sign: 43 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 75d0b7ba1e84e5057efaa1e61398f003a8e9e246
+        parent_ids:
+        - a5826b6fb0dc4888ce922df5d82151972ff4b247
+        message: |
+          core: don't flush X connection before go to sleep
+
+          See the added comments for details.
+
+          Fixes #1145
+          Fixes #1166
+          Fixes #1040?
+
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707693070, offset: 0, sign: 43 } }'
+      target:
+        id: 89c2c8530319f72394522336e483b31275d1ef7c
+        parent_ids:
+        - 41f9a5816c1a74d41e18cf273e6e76f96dba267a
+        message: |
+          core: don't flush X connection before go to sleep
+
+          See the added comments for details.
+
+          Fixes #1145
+          Fixes #1166
+          Fixes #1040?
+
+          (cherry picked from commit 75d0b7ba1e84e5057efaa1e61398f003a8e9e246)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Yuxuan Shui <yshuiv7@gmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707820562, offset: 0, sign: 43 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 0ed8d0cadfb6fc60ee77cd2c2e24e153175e5547
+        parent_ids:
+        - bbc657e4bc099ec2f958a222b658ab5a5345c055
+        message: |
+          picom: post-process and free the corner radius rules list
+
+          to make conditions based on non-standard atoms in this list work.
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Maxim Solovyov <msolovyov@protonmail.com>
+        time: 'Time { raw: git_time { time: 1706882778, offset: 180, sign: 43 } }'
+      target:
+        id: d27d3773ce5deb24de6072c49052e31ac8e9d4e0
+        parent_ids:
+        - 96399a01d1ac5626e8065461b1085363a99b996d
+        message: |
+          picom: post-process and free the corner radius rules list
+
+          to make conditions based on non-standard atoms in this list work.
+
+          (cherry picked from commit 0ed8d0cadfb6fc60ee77cd2c2e24e153175e5547)
+          Signed-off-by: Yuxuan Shui <yshuiv7@gmail.com>
+        author: Maxim Solovyov <msolovyov@protonmail.com>
+        committer: Yuxuan Shui <yshuiv7@gmail.com>
+        time: 'Time { raw: git_time { time: 1707819736, offset: 0, sign: 43 } }'
+    is_trivial: true

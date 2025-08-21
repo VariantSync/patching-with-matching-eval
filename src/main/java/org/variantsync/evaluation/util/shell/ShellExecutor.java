@@ -13,10 +13,9 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -26,8 +25,8 @@ public class ShellExecutor {
     private final Consumer<String> outputReader;
     private final Consumer<String> errorReader;
     private final Path workDir;
-    private final ExecutorService outputCollection;
-    private final ExecutorService errorCollection;
+    private final long timeout;
+    private final TimeUnit timeoutUnit;
 
     /**
      * Initialize a new ShellExecutor
@@ -40,7 +39,8 @@ public class ShellExecutor {
     }
 
     /**
-     * Initialize a new ShellExecutor that executes all commands in the given working directory
+     * Initialize a new ShellExecutor that executes all commands in the given
+     * working directory
      *
      * @param outputReader Consumer for shell's normal output
      * @param errorReader  Consumer for shell's error output
@@ -50,8 +50,34 @@ public class ShellExecutor {
         this.workDir = workDir;
         this.outputReader = outputReader;
         this.errorReader = errorReader;
-        outputCollection = Executors.newSingleThreadExecutor();
-        errorCollection = Executors.newSingleThreadExecutor();
+        this.timeout = 0;
+        this.timeoutUnit = null;
+    }
+
+    /**
+     * Initialize a new ShellExecutor
+     *
+     * @param outputReader Consumer for shell's normal output
+     * @param errorReader  Consumer for shell's error output
+     */
+    public ShellExecutor(final Consumer<String> outputReader, final Consumer<String> errorReader, long timeout, TimeUnit timeoutUnit) {
+        this(outputReader, errorReader, null, timeout, timeoutUnit);
+    }
+
+    /**
+     * Initialize a new ShellExecutor that executes all commands in the given
+     * working directory
+     *
+     * @param outputReader Consumer for shell's normal output
+     * @param errorReader  Consumer for shell's error output
+     * @param workDir      The working directory
+     */
+    public ShellExecutor(final Consumer<String> outputReader, final Consumer<String> errorReader, final Path workDir, long timeout, TimeUnit timeoutUnit) {
+        this.workDir = workDir;
+        this.outputReader = outputReader;
+        this.errorReader = errorReader;
+        this.timeout = timeout;
+        this.timeoutUnit = timeoutUnit;
     }
 
     /**
@@ -72,7 +98,7 @@ public class ShellExecutor {
      */
     public Result<List<String>, ShellException> execute(final ShellCommand command, final Path executionDir) {
         if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-            throw new SetupError("The synchronization study can only be executed under Linux!");
+            throw new SetupError("The evaluation can only be executed under Linux!");
         }
 
         final ProcessBuilder builder = new ProcessBuilder();
@@ -82,55 +108,56 @@ public class ShellExecutor {
         Logger.debug("Executing '" + command + "' in directory " + builder.directory());
         builder.command(command.parts());
 
-        final Process process;
-        final Future<?> outputFuture;
-        final Future<?> errorFuture;
+        Process process;
         final List<String> output = new ArrayList<>();
         final Consumer<String> shareOutput = s -> {
             output.add(s);
             outputReader.accept(s);
         };
 
+        final int exitCode;
         try {
             process = builder.start();
-            outputFuture = outputCollection.submit(collectOutput(process.getInputStream(), shareOutput));
-            errorFuture = errorCollection.submit(collectOutput(process.getErrorStream(), errorReader));
         } catch (final IOException e) {
-            Logger.error("Was not able to execute " + command, e);
+            Logger.warn("Was not able to execute " + command, e);
             e.printStackTrace();
             return Result.Failure(new ShellException(e));
         }
-
-        final int exitCode;
-        try {
+        try(ExecutorService executor = Executors.newFixedThreadPool(2)) {
+            executor.submit(() -> collectOutput(process.inputReader(), shareOutput));
+            executor.submit(() -> collectOutput(process.errorReader(), errorReader));
+            if (timeout > 0 && timeoutUnit != null) {
+                boolean completed = process.waitFor(timeout, timeoutUnit);
+                if (!completed) {
+                    Logger.debug("Command timed out after 60 seconds:");
+                    Logger.debug(command.toString());
+                    process.destroy();
+                    executor.shutdown();
+                }
+            }
             exitCode = process.waitFor();
-            outputFuture.get();
-            errorFuture.get();
-        } catch (final InterruptedException | ExecutionException e) {
-            Logger.error("Interrupted while waiting for process to end.", e);
+        } catch (final InterruptedException e) {
+            Logger.warn("Interrupted while waiting for process to end.", e);
             return Result.Failure(new ShellException(e));
+        } finally {
+            if (process.isAlive()) {
+                // Make sure the process is killed in case of an error
+                process.destroy();
+            }
         }
+
+        Logger.debug("Command '" + command + "' returned with exit code " + exitCode);
         return command.interpretResult(exitCode, output);
     }
 
-private Runnable collectOutput(final InputStream inputStream, final Consumer<String> consumer) {
-    return () -> {
-        try (inputStream; final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, Charsets.UTF_8))) {
-            StringBuilder output = new StringBuilder();
-            int character;
-            while ((character = reader.read()) != -1) {
-                output.append((char) character);
-            }
-            if (output.isEmpty()) {
-                return;
-            }
-            String[] lines = output.toString().split("\n");
-            for (String line : lines) {
+private void collectOutput(final BufferedReader reader, final Consumer<String> consumer) {
+        try (reader) {
+            String line;
+            while ((line = reader.readLine()) != null) {
                 consumer.accept(line);
             }
         } catch (final IOException e) {
-            Logger.error("Exception thrown while reading stream of Shell command.", e);
+            Logger.debug("Could not read output stream of Shell command. Command probably reached the configured timeout of %s %s.".formatted(timeout, timeoutUnit), e);
         }
-    };
-}
+    }
 }

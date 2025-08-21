@@ -1,13 +1,15 @@
 package org.variantsync.evaluation.execution
 
+import java.nio.file.Path
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.util.shell.*
-import java.nio.file.Path
 
 class VariantRepoManager(
-    sourceVariantV0: Path, sourceVariantV1: Path,
-    private val targetVariantV0: Path, targetVariantV1: Path,
-    private val githubRepoPath: Path
+        sourceVariantV0: Path,
+        sourceVariantV1: Path,
+        private val targetVariantV0: Path,
+        targetVariantV1: Path,
+        private val githubRepoPath: Path
 ) {
     var lastCherry: CherryPick? = null
 
@@ -21,8 +23,8 @@ class VariantRepoManager(
         Logger.debug("Checking out commits of next cherry pick")
         try {
             val command = GitCheckoutCommand.Recommended(cherryPick.cherryParentCommit)
-            if (this.shellSourceV0.execute(command).isFailure()) {
-                Logger.info("Was not able to find source variant V0 (source before changes)")
+            if (this.shellSourceV0.execute(command).isFailure) {
+                Logger.debug("Was not able to find source variant V0 (source before changes)")
                 return false
             }
         } catch (e: Exception) {
@@ -32,7 +34,7 @@ class VariantRepoManager(
         try {
             val command = GitCheckoutCommand.Recommended(cherryPick.cherryCommit)
             if (this.shellSourceV1.execute(command).isFailure) {
-                Logger.info("Was not able to find source variant V1 (source after changes)")
+                Logger.debug("Was not able to find source variant V1 (source after changes)")
                 return false
             }
         } catch (e: Exception) {
@@ -42,10 +44,12 @@ class VariantRepoManager(
         try {
             resetTargetVariant()
             val command = GitCheckoutCommand.Recommended(cherryPick.targetCommit)
-           if (this.shellTargetV0.execute(command).isFailure) {
-               Logger.info("Was not able to find target variant V0 (target before change propagation)")
-               return false
-           }
+            if (this.shellTargetV0.execute(command).isFailure) {
+                Logger.info(
+                        "Was not able to find target variant V0 (target before change propagation)"
+                )
+                return false
+            }
         } catch (e: Exception) {
             Logger.error(e.message)
             return false
@@ -54,8 +58,10 @@ class VariantRepoManager(
         try {
             val command = GitCheckoutCommand.Recommended(cherryPick.expectedResultCommit)
             if (this.shellTargetV1.execute(command).isFailure) {
-               Logger.info("Was not able to find source variant V1 (expected result of change propagation)")
-               return false
+                Logger.info(
+                        "Was not able to find source variant V1 (expected result of change propagation)"
+                )
+                return false
             }
         } catch (e: Exception) {
             Logger.error(e.message)
@@ -87,3 +93,4 @@ class VariantRepoManager(
         }
     }
 }
+

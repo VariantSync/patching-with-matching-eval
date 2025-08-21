@@ -76,7 +76,7 @@ public class DiffParserTest {
             }
         }
     }
-    
+
     @Test
     public void parseDiffThatCausedException() throws IOException {
         Path diff = Path.of("src/test/resources/patch-breakdown/problem.txt");
@@ -111,13 +111,20 @@ public class DiffParserTest {
         assert !originalDiff.isEmpty();
     }
 
+    @Test
+    public void parseUnknownProblem() throws Exception {
+        Path diff = Path.of("src/test/resources/troublesome-diffs/sql-escapes.txt");
+        List<String> lines = Files.readAllLines(diff);
+        OriginalDiff originalDiff = DiffParser.toOriginalDiff(lines);
+        assert !originalDiff.isEmpty();
+    }
 
-@Test
-public void parseCRLF() throws Exception {
-    Path diff = Path.of("src/test/resources/troublesome-diffs/crlf.txt");
-    List<String> lines = readContentSafely(diff);
-    OriginalDiff originalDiff = DiffParser.toOriginalDiff(lines);
-    assert !originalDiff.isEmpty();
-    Assertions.assertEquals(21, originalDiff.toLines().size());
-}
+    @Test
+    public void parseCRLF() throws Exception {
+        Path diff = Path.of("src/test/resources/troublesome-diffs/crlf.txt");
+        List<String> lines = readContentSafely(diff);
+        OriginalDiff originalDiff = DiffParser.toOriginalDiff(lines);
+        assert !originalDiff.isEmpty();
+        Assertions.assertEquals(21, originalDiff.toLines().size());
+    }
 }

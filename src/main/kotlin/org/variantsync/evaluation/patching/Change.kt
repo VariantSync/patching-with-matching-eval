@@ -1,12 +1,11 @@
 package org.variantsync.evaluation.patching
 
+import java.nio.file.Path
 import org.variantsync.evaluation.util.diff.components.Hunk
 import org.variantsync.evaluation.util.diff.lines.AddedLine
 import org.variantsync.evaluation.util.diff.lines.ChangedLine
 import org.variantsync.evaluation.util.diff.lines.Line
 import org.variantsync.evaluation.util.diff.lines.RemovedLine
-import java.nio.file.Path
-
 
 class Change(val lineChange: Line, val hunk: Hunk, val path: Path) {
     override fun equals(other: Any?): Boolean {
@@ -34,11 +33,12 @@ class Change(val lineChange: Line, val hunk: Hunk, val path: Path) {
     fun inverse(): Change {
         val changedText: String = lineChange.line().substring(1)
 
-        val l = if (lineChange is AddedLine) {
-            RemovedLine("-$changedText")
-        } else {
-            AddedLine("+$changedText")
-        }
+        val l =
+                if (lineChange is AddedLine) {
+                    RemovedLine("-$changedText")
+                } else {
+                    AddedLine("+$changedText")
+                }
         return Change(l, hunk, path)
     }
 
@@ -52,15 +52,16 @@ class Change(val lineChange: Line, val hunk: Hunk, val path: Path) {
         val sb = StringBuilder()
         sb.appendLine(this.path)
         sb.appendLine(
-            String.format(
-                "@@ -%d,%d +%d,%d @@",
-                this.hunk.rawLocation().startLineSource,
-                1,
-                this.hunk.rawLocation().startLineTarget,
-                1
-            )
+                String.format(
+                        "@@ -%d,%d +%d,%d @@",
+                        this.hunk.rawLocation().startLineSource,
+                        1,
+                        this.hunk.rawLocation().startLineTarget,
+                        1
+                )
         )
         sb.appendLine(this.lineChange)
         return super.toString()
     }
 }
+

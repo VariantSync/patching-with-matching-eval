@@ -3,7 +3,6 @@ package org.variantsync.evaluation.util.shell;
 import org.variantsync.evaluation.error.ShellException;
 import org.variantsync.functjonal.Result;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,6 +28,11 @@ public abstract class ShellCommand {
 
     @Override
     public String toString() {
-        return Arrays.toString(this.parts());
+        StringBuilder sb = new StringBuilder();
+        for (String part : parts()) {
+            sb.append(part);
+            sb.append(" ");
+        }
+        return sb.toString();
     }
 }

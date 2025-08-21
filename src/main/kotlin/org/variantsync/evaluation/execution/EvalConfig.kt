@@ -1,38 +1,33 @@
 package org.variantsync.evaluation.execution
 
+import java.io.File
+import java.nio.file.Path
+import java.util.concurrent.TimeUnit
 import org.apache.commons.configuration2.Configuration
 import org.apache.commons.configuration2.PropertiesConfiguration
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder
 import org.apache.commons.configuration2.builder.fluent.Parameters
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler
 import org.apache.commons.configuration2.ex.ConfigurationException
-import org.variantsync.evaluation.CherryType
-import java.io.File
-import java.nio.file.Path
 
-/**
- * Determines the configuration of our study.
- */
+/** Determines the configuration of our study. */
 class EvalConfig(propertiesFile: File) {
     // Configuration object holding key-value properties.
     private var config: Configuration? = null
 
-    /**
-     * Load a configuration from the given properties file.
-     *
-     */
+    /** Load a configuration from the given properties file. */
     init {
         val params = Parameters()
         try {
-            val builder = FileBasedConfigurationBuilder(
-                PropertiesConfiguration::class.java
-            )
-                .configure(
-                    params.properties().setFile(propertiesFile)
-                        .setListDelimiterHandler(
-                            DefaultListDelimiterHandler(',')
-                        )
-                )
+            val builder =
+                    FileBasedConfigurationBuilder(PropertiesConfiguration::class.java)
+                            .configure(
+                                    params.properties()
+                                            .setFile(propertiesFile)
+                                            .setListDelimiterHandler(
+                                                    DefaultListDelimiterHandler(',')
+                                            )
+                            )
             config = builder.configuration
         } catch (e: ConfigurationException) {
             System.err.println("Was not able to load properties file $propertiesFile")
@@ -40,46 +35,24 @@ class EvalConfig(propertiesFile: File) {
         }
     }
 
-    /**
-     * @return The start of repetitions for each commit pair and source-target combination
-     */
+    /** @return The start of repetitions for each commit pair and source-target combination */
     fun EXPERIMENT_REPEATS_START(): Int {
         return config!!.getInt(EXPERIMENT_REPEATS_START, 1)
     }
 
-    /**
-     * @return The end of repetitions for each commit pair and source-target combination
-     */
+    /** @return The end of repetitions for each commit pair and source-target combination */
     fun EXPERIMENT_REPEATS_END(): Int {
         return config!!.getInt(EXPERIMENT_REPEATS_END)
     }
 
-    /**
-     * @return The number of repetitions for each commit pair and source-target combination
-     */
+    /** @return The number of repetitions for each commit pair and source-target combination */
     fun EXPERIMENT_REPEATS_COUNT(): Int {
         return EXPERIMENT_REPEATS_END() - EXPERIMENT_REPEATS_START() + 1
     }
 
-    /**
-     * @return The number of variants that are to be generated
-     */
-    fun EXPERIMENT_VARIANT_COUNT(): Int {
-        return config!!.getInt(EXPERIMENT_VARIANT_COUNT)
-    }
-
-    /**
-     * @return The working directory
-     */
+    /** @return The working directory */
     fun EXPERIMENT_DIR_MAIN(): Path {
         return Path.of(config!!.getString(EXPERIMENT_DIR_MAIN))
-    }
-
-    /**
-     * @return The root directory of the ground truth
-     */
-    fun EXPERIMENT_DIR_GROUND_TRUTH(): Path {
-        return Path.of(config!!.getString(EXPERIMENT_DIR_GROUND_TRUTH))
     }
 
     /**
@@ -89,16 +62,12 @@ class EvalConfig(propertiesFile: File) {
         return Path.of(config!!.getString(EXPERIMENT_DIR_REPOS))
     }
 
-    /**
-     * @return The file with the list of datasets in Markdown format
-     */
+    /** @return The file with the list of datasets in Markdown format */
     fun EXPERIMENT_DATASETS(): Path {
         return Path.of(config!!.getString(EXPERIMENT_DATASETS))
     }
 
-    /**
-     * @return Whether additional debugging is enabled
-     */
+    /** @return Whether additional debugging is enabled */
     fun EXPERIMENT_DEBUG(): Boolean {
         return config!!.getBoolean(EXPERIMENT_DEBUG)
     }
@@ -112,16 +81,12 @@ class EvalConfig(propertiesFile: File) {
         return config!!.getLong(EXPERIMENT_STARTID, 0).toULong()
     }
 
-    /**
-     * @return The path to the file remembering processed runs
-     */
+    /** @return The path to the file remembering processed runs */
     fun EXPERIMENT_PROCESSED_FILE(): Path {
         return Path.of(config!!.getString(EXPERIMENT_PROCESSED_FILE))
     }
 
-    /**
-     * @return The path to the results directory
-     */
+    /** @return The path to the results directory */
     fun EXPERIMENT_DIR_RESULTS(): Path {
         return Path.of(config!!.getString(EXPERIMENT_DIR_RESULTS))
     }
@@ -129,8 +94,8 @@ class EvalConfig(propertiesFile: File) {
     /**
      *
      * @return Minimum number of cherries in a repository for a dataset to be considered for the
-     * study. If a repository has fewer cherries, it is simply ignored. Values of 0 or less
-     * are automatically converted to 0.
+     * study. If a repository has fewer cherries, it is simply ignored. Values of 0 or less are
+     * automatically converted to 0.
      */
     fun EXPERIMENT_DATASET_MIN_SIZE(): Int {
         var value = config!!.getInt(EXPERIMENT_DATASET_MIN_SIZE)
@@ -143,8 +108,8 @@ class EvalConfig(propertiesFile: File) {
     /**
      *
      * @return Maximum number of cherries in a repository for a dataset to be considered for the
-     * study. If a repository has more cherries, it is simply ignored. Values of 0 or less
-     * are automatically converted to Integer.MAX_VALUE.
+     * study. If a repository has more cherries, it is simply ignored. Values of 0 or less are
+     * automatically converted to Integer.MAX_VALUE.
      */
     fun EXPERIMENT_DATASET_MAX_SIZE(): Int {
         var value = config!!.getInt(EXPERIMENT_DATASET_MAX_SIZE)
@@ -166,9 +131,7 @@ class EvalConfig(propertiesFile: File) {
         return count
     }
 
-    /**
-     * @return Whether sampling of commits that are processed is enabled
-     */
+    /** @return Whether sampling of commits that are processed is enabled */
     fun EXPERIMENT_ENABLE_SAMPLING(): Boolean {
         return config!!.getBoolean(EXPERIMENT_ENABLE_SAMPLING)
     }
@@ -200,21 +163,62 @@ class EvalConfig(propertiesFile: File) {
         return config!!.getEnum(EXPERIMENT_CHERRY_TYPE, CherryType::class.java)
     }
 
+    fun EXPERIMENT_TIMEOUT_LENGTH(): Long {
+        return config!!.getLong(EXPERIMENT_TIMEOUT_LENGTH, 0)
+    }
+
+    fun EXPERIMENT_TIMEOUT_UNIT(): TimeUnit {
+        return config!!.getEnum(EXPERIMENT_TIMEOUT_UNIT, TimeUnit::class.java, null)
+    }
+
+    fun EXPERIMENT_PATCHER_GNU_PATCH(): Boolean {
+        return config!!.getBoolean(EXPERIMENT_PATCHER_GNU_PATCH)
+    }
+
+    fun EXPERIMENT_PATCHER_GIT_APPLY(): Boolean {
+        return config!!.getBoolean(EXPERIMENT_PATCHER_GIT_APPLY)
+    }
+
+    fun EXPERIMENT_PATCHER_GIT_CP(): Boolean {
+        return config!!.getBoolean(EXPERIMENT_PATCHER_GIT_CP)
+    }
+
+    fun EXPERIMENT_PATCHER_MPATCH(): Boolean {
+        return config!!.getBoolean(EXPERIMENT_PATCHER_MPATCH)
+    }
+
+    fun PRELOAD_REPOSITORIES(): Boolean {
+        return config!!.getBoolean(PRELOAD_REPOSITORIES)
+    }
+
+    fun CLEAN_REPOSITORIES(): Boolean {
+        return config!!.getBoolean(CLEAN_REPOSITORIES)
+    }
+
     companion object {
+        private const val PRELOAD_REPOSITORIES = "preload-repositories"
+        private const val CLEAN_REPOSITORIES = "clean-repositories"
+
+        // Which patchers should be enabled?
+        private const val EXPERIMENT_PATCHER_GNU_PATCH = "experiment.patcher.gnu-patch"
+        private const val EXPERIMENT_PATCHER_GIT_APPLY = "experiment.patcher.git-apply"
+        private const val EXPERIMENT_PATCHER_GIT_CP = "experiment.patcher.git-cp"
+        private const val EXPERIMENT_PATCHER_MPATCH = "experiment.patcher.mpatch"
+
+        // The number of EXPERIMENT_TIMEOUT_UNIT to wait for a patcher to finish patching (long)
+        private const val EXPERIMENT_TIMEOUT_LENGTH = "experiment.timeout.length"
+
+        // The time unit for the timeout, e.g., SECONDS, MINUTES, ...
+        private const val EXPERIMENT_TIMEOUT_UNIT = "experiment.timeout.unit"
+
         // The first id of repetitions for each commit and source target combination
         private const val EXPERIMENT_REPEATS_START = "experiment.repeats.start"
 
         // The last id of repetitions for each commit and source target combination
         private const val EXPERIMENT_REPEATS_END = "experiment.repeats.end"
 
-        // The number of generated variants
-        private const val EXPERIMENT_VARIANT_COUNT = "experiment.variant.count"
-
         // The working directory
         private const val EXPERIMENT_DIR_MAIN = "experiment.dir.main"
-
-        // The directory containing the ground truth
-        private const val EXPERIMENT_DIR_GROUND_TRUTH = "experiment.dir.ground-truths"
 
         // The directory to which the repositories are cloned to
         private const val EXPERIMENT_DIR_REPOS = "experiment.dir.repos"
@@ -224,7 +228,8 @@ class EvalConfig(propertiesFile: File) {
 
         private const val EXPERIMENT_CHERRY_TYPE = "experiment.cherry-type"
 
-        // Enable saving of certain files (e.g., feature list, presence conditions, configurations) for
+        // Enable saving of certain files (e.g., feature list, presence conditions, configurations)
+        // for
         // additional debugging
         private const val EXPERIMENT_DEBUG = "experiment.debug"
 

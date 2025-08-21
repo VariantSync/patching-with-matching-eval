@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pwm_eval"
+name = "mpatch_eval"
 version = "0.1.0"
 description = "Result analysis scripts for patching with matching"
 authors = ["anonymous"]
@@ -8,13 +8,14 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">3.0"
 pyyaml = "*"
 matplotlib = "*"
 setuptools = "*"
 scipy = "*"
 statsmodels = "*"
 tqdm = "*"
+pandas = "*"
 
 [tool.poetry.scripts]
 run-eval = "result_analysis.__main__:main"
@@ -22,6 +23,8 @@ power-simulation = "result_analysis.simulation:main"
 find-example = "result_analysis.__main__:example"
 find-outliers = "result_analysis.__main__:outliers"
 compare-patchers = "result_analysis.__main__:compare"
+runtime-comparison = "result_analysis.__main__:runtime"
+calc_patch_sizes = "result_analysis.__main__:sizes"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -1,5 +1,7 @@
-FROM openjdk:19-alpine
+FROM alpine:latest
 
+RUN apk update
+RUN apk add --no-cache --upgrade openjdk21
 # Build the jar files
 WORKDIR /home/user
 COPY src ./src
@@ -12,14 +14,29 @@ COPY gradle gradle
 WORKDIR /home/user
 RUN ./gradlew Cherries || exit
 
-FROM openjdk:19-alpine
+FROM alpine:latest
 
 RUN apk update
 # Install dependencies for unix patch
-RUN apk add --no-cache --upgrade bash diffutils patch git python3 py3-matplotlib unzip
+RUN apk add --no-cache --upgrade bash diffutils patch git python3 py3-matplotlib unzip openjdk21
 
 # Install dependencies for patching with matching
 RUN apk add --no-cache curl bash gcc musl-dev
+
+RUN apk add --no-cache python3 poetry
+
+RUN apk add --no-cache zip unzip
+COPY dataset /home/user/dataset
+WORKDIR /home/user/dataset
+RUN zip -s 0 mined-cherries.zip --out unsplit-mined-cherries.zip
+RUN unzip unsplit-mined-cherries
+RUN unzip repo-sample.zip
+WORKDIR /home/user
+
+RUN apk add --no-cache texlive-most
+
+COPY src/main/python ./analysis
+WORKDIR /home/user/analysis
 
 ARG GROUP_ID
 ARG USER_ID
@@ -57,3 +74,8 @@ RUN rustup default stable
 # RUN rustup default nightly
 
 RUN cargo install --path /home/user/mpatch
+
+
+WORKDIR /home/user/analysis
+RUN poetry install
+WORKDIR /home/user/

@@ -10,11 +10,11 @@ from result_analysis.result_handling import (
 
 languages = [
     ("Python", "Python"),
-    ("JavaScript", "\\multicolumn{1}{c}{JavaS.}"),
+    ("JavaScript", "\\multicolumn{1}{c}{JS}"),
     ("Go", "Go"),
     ("C++", "\\multicolumn{1}{c}{C++}"),
     ("Java", "Java"),
-    ("TypeScript", "\\multicolumn{1}{c}{TypeS.}"),
+    ("TypeScript", "\\multicolumn{1}{c}{TS}"),
     ("C", "C"),
     ("C#", "C#"),
     ("PHP", "PHP"),

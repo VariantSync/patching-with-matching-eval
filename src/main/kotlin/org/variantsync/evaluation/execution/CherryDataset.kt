@@ -3,11 +3,11 @@ package org.variantsync.evaluation.execution
 import java.io.Serializable
 
 class CherryDataset(
-    val datasetName: String,
-    val repositoryId: String,
-    val language: String,
-    var cherryPicks: MutableList<CherryPick>
-): Serializable {
+        val datasetName: String,
+        val repositoryId: String,
+        val language: String,
+        var cherryPicks: MutableList<CherryPick>
+) : Serializable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -28,3 +28,4 @@ class CherryDataset(
         return result
     }
 }
+

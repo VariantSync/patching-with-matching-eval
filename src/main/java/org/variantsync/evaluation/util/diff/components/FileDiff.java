@@ -1,5 +1,6 @@
 package org.variantsync.evaluation.util.diff.components;
 
+import org.jetbrains.annotations.NotNull;
 import org.variantsync.evaluation.util.diff.lines.Line;
 import org.variantsync.evaluation.patching.Change;
 
@@ -29,7 +30,7 @@ public record FileDiff(List<String> header, List<Hunk> hunks, Path oldFile, Path
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         StringBuilder sb = new StringBuilder();
         for (String line : toLines()) {
             sb.append(line);

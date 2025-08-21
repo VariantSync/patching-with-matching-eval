@@ -1,0 +1,658 @@
+- total_number_of_branches: '16'
+  repo_name: quay/clair
+  total_number_of_committers: '121'
+  total_number_of_commits: '1988'
+  total_number_of_results: '22'
+  language: Go
+- - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5446e49ff9de13a0d95ce5937f1ce722e59304f5
+        parent_ids:
+        - a433c93c349f63e7b8cc6f4d5a95a2394fe1dd31
+        message: |
+          notifier: Avoid double reference
+
+          I guess the pgx lib changed to not account for this.
+
+          Signed-off-by: crozzy <joseph.crosland@gmail.com>
+        author: crozzy <joseph.crosland@gmail.com>
+        committer: Joseph Crosland <joseph.crosland@gmail.com>
+        time: 'Time { raw: git_time { time: 1680014860, offset: -420, sign: 45 } }'
+      target:
+        id: ffa4556d0f251cc984ed34594356625b9b747744
+        parent_ids:
+        - e02aba27de01cb461f79bee9644aac80c2f9bd65
+        message: |
+          notifier: Avoid double reference
+
+          I guess the pgx lib changed to not account for this.
+
+          Signed-off-by: crozzy <joseph.crosland@gmail.com>
+          (cherry picked from commit 5446e49ff9de13a0d95ce5937f1ce722e59304f5)
+        author: crozzy <joseph.crosland@gmail.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1680703562, offset: -300, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 94757c7d8cda907902d1020a5c2fe74b2e5ccba9
+        parent_ids:
+        - d726e15796882e6f2adba6a84a0aef419bc59849
+        message: |
+          airgap: Remove libindex Airgap option
+
+          This option no longer exists in claircore and is handled by clair
+          when creating the client that is passed to claircore.
+
+          Signed-off-by: crozzy <joseph.crosland@gmail.com>
+        author: crozzy <joseph.crosland@gmail.com>
+        committer: Joseph Crosland <joseph.crosland@gmail.com>
+        time: 'Time { raw: git_time { time: 1679673855, offset: -420, sign: 45 } }'
+      target:
+        id: e02aba27de01cb461f79bee9644aac80c2f9bd65
+        parent_ids:
+        - 9e8eacf51b2a45f967036396b3dc14a52edc480d
+        message: |
+          airgap: Remove libindex Airgap option
+
+          This option no longer exists in claircore and is handled by clair
+          when creating the client that is passed to claircore.
+
+          Signed-off-by: crozzy <joseph.crosland@gmail.com>
+          (cherry picked from commit 94757c7d8cda907902d1020a5c2fe74b2e5ccba9)
+        author: crozzy <joseph.crosland@gmail.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1680703562, offset: -300, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5faf0fc9edba86cef87bff4e9941fd2a93a2889a
+        parent_ids:
+        - 5446e49ff9de13a0d95ce5937f1ce722e59304f5
+        message: |
+          chore: Bump Claircore to v1.4.21
+
+          Bump Claircore to the latest tag.
+
+          Signed-off-by: crozzy <joseph.crosland@gmail.com>
+        author: crozzy <joseph.crosland@gmail.com>
+        committer: Joseph Crosland <joseph.crosland@gmail.com>
+        time: 'Time { raw: git_time { time: 1680124140, offset: -420, sign: 45 } }'
+      target:
+        id: e676671c17d2612470cd8de05aa668312fbb3036
+        parent_ids:
+        - ffa4556d0f251cc984ed34594356625b9b747744
+        message: |
+          chore: Bump Claircore to v1.4.21
+
+          Bump Claircore to the latest tag.
+
+          Signed-off-by: crozzy <joseph.crosland@gmail.com>
+          (cherry picked from commit 5faf0fc9edba86cef87bff4e9941fd2a93a2889a)
+        author: crozzy <joseph.crosland@gmail.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1680703626, offset: -300, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: eb54b8896f6fd93bd67d6b6c0875cfff426698d7
+        parent_ids:
+        - 6969e003d05dfb7777afa0d5a628f8d445dfa2d3
+        message: |
+          docs: add dropins to prose documentation
+
+          This change explains how to use the dropins and updates the local-dev
+          config to do so.
+
+          Closes: #1783
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1695153440, offset: -300, sign: 45 } }'
+      target:
+        id: 8a2d99f4da70de6bdf14858c6163a2e3b8042782
+        parent_ids:
+        - 0729ad2a36721f9fe99196370a9f3cd31fdbd4b7
+        message: |
+          docs: add dropins to prose documentation
+
+          This change explains how to use the dropins and updates the local-dev
+          config to do so.
+
+          Closes: #1783
+          See-also: #1806
+          (cherry picked from commit eb54b8896f6fd93bd67d6b6c0875cfff426698d7)
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1695154148, offset: -300, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ce462ea41a81be2c13f9a4a85847b7f93570db48
+        parent_ids:
+        - ae7675af1e68c4e5cf2301480b7a3b99ae6faf89
+        message: |
+          httptransport: handle no notifier in "combo" mode
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1647885591, offset: -300, sign: 45 } }'
+      target:
+        id: d314e41234292084dc125c3c9489f3958ca772ae
+        parent_ids:
+        - cc5a916ef11f5de53af0b87b9ad75d940a615beb
+        message: |
+          httptransport: handle no notifier in "combo" mode
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          Backports: #1531
+          (cherry picked from commit ce462ea41a81be2c13f9a4a85847b7f93570db48)
+          Signed-off-by: test
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1649098199, offset: -300, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: ab3a754e1408d8fed0160ce999536c8fd2f452f7
+        parent_ids:
+        - f783b356ce3c7903641913ee25d0a384c19602db
+        message: |
+          'chore: update claircore to v1.5.19
+
+          Update claircore to latest release.
+          '
+
+          Signed-off-by: Claircore-CI <crozzy@users.noreply.github.com>
+        author: crozzy <crozzy@users.noreply.github.com>
+        committer: Joseph Crosland <joseph.crosland@gmail.com>
+        time: 'Time { raw: git_time { time: 1696363450, offset: -420, sign: 45 } }'
+      target:
+        id: 9a3cde3b16bb0c0e02fb7e128ff86e255ec6112f
+        parent_ids:
+        - 04f36991e19cfb44423cbb2e96ccfcd786dd85c5
+        message: |
+          'chore: update claircore to v1.5.19
+
+          Update claircore to latest release.
+          '
+
+          Signed-off-by: Claircore-CI <crozzy@users.noreply.github.com>
+          (cherry picked from commit ab3a754e1408d8fed0160ce999536c8fd2f452f7)
+          Signed-off-by: crozzy <joseph.crosland@gmail.com>
+        author: crozzy <crozzy@users.noreply.github.com>
+        committer: Joseph Crosland <joseph.crosland@gmail.com>
+        time: 'Time { raw: git_time { time: 1696881603, offset: -420, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5c44e70c92331f4150b8c2474043e6d92f125d31
+        parent_ids:
+        - c473c92c31d3e38027b35395fb951524e03f84c7
+        message: |
+          chore: update claircore version
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1636125871, offset: -300, sign: 45 } }'
+      target:
+        id: 5e060135111e07fcc3d0c2fc6c6570a98021dde7
+        parent_ids:
+        - bfd971861e88bb21e4480ac98b8b0b7e1abf1501
+        message: |
+          chore: update claircore version
+
+          Backports: #1418
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit 5c44e70c92331f4150b8c2474043e6d92f125d31)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1636126021, offset: -300, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: e1833161315d45484f433fdb3a3692a9a617f3bd
+        parent_ids:
+        - e5cb6a91484254ab647989ab7761ae4d0f85a5f4
+        message: |
+          go.mod: update claircore version
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1653511970, offset: -300, sign: 45 } }'
+      target:
+        id: 67f32bff3f3ef655ff24313ccc7905d6d2a0a719
+        parent_ids:
+        - 363dca4d771d7e36e2925552cce102e458193c4f
+        message: |
+          go.mod: update claircore version
+
+          Backports: #1571
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit e1833161315d45484f433fdb3a3692a9a617f3bd)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1653512650, offset: -300, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b18f989c7869a480b7bbfc8181d515227e701a39
+        parent_ids:
+        - 12f38e45cec579f92438059702884fa4284bb93c
+        message: |
+          httputil: fix ParseIP usage
+
+          The string fed into the ParseIP function needs to not have a port.
+          This does that and adds a test to check the desired behavior.
+
+          Closes: #1689
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1676386605, offset: -360, sign: 45 } }'
+      target:
+        id: 9e8eacf51b2a45f967036396b3dc14a52edc480d
+        parent_ids:
+        - 36de97ccf619113b1ef4dff6bfd0e0c692252544
+        message: |
+          httputil: fix ParseIP usage
+
+          The string fed into the ParseIP function needs to not have a port.
+          This does that and adds a test to check the desired behavior.
+
+          Closes: #1689
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit b18f989c7869a480b7bbfc8181d515227e701a39)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1680703562, offset: -300, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 378a4b5f35ceb452654e7d9dca12fc455ac1697c
+        parent_ids:
+        - 5fd265634d162dc0acba6c28e36d35dd0a90aec0
+        message: |
+          httptransport: fix request_id logging
+
+          The final HTTP status message was getting an earlier Context which was
+          missing the request_id key.
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1674771374, offset: -360, sign: 45 } }'
+      target:
+        id: 922f33d18919578049fbf2ccb756e6990b66f280
+        parent_ids:
+        - 5fd265634d162dc0acba6c28e36d35dd0a90aec0
+        message: |
+          httptransport: fix request_id logging
+
+          The final HTTP status message was getting an earlier Context which was
+          missing the request_id key.
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit 378a4b5f35ceb452654e7d9dca12fc455ac1697c)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1680703562, offset: -300, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b1fe4db1d1b295b5377a0a70dbe5ae977e393eb5
+        parent_ids:
+        - 422d6b4a60fcb3ae7c059b97d89dcd456ed01d28
+        message: |
+          go.mod: update claircore
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1642179260, offset: -360, sign: 45 } }'
+      target:
+        id: 8562653ac42933bbf0e73d82abde09c2a337ea22
+        parent_ids:
+        - 844bfd2436fb5acb1d08975acad152d78367364a
+        message: |
+          go.mod: update claircore
+
+          Closes: PROJQUAY-3037
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit b1fe4db1d1b295b5377a0a70dbe5ae977e393eb5)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1642181328, offset: -360, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 670376a29dad524e8ebea8f2acd22220053e6ec9
+        parent_ids:
+        - 72417962880862b986872709317a39fa0582f143
+        message: |
+          go.mod: update json (de)serializer
+
+          This project notes that there's a fix for go1.20 support in the latest
+          version.
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1675880410, offset: -360, sign: 45 } }'
+      target:
+        id: 36de97ccf619113b1ef4dff6bfd0e0c692252544
+        parent_ids:
+        - 922f33d18919578049fbf2ccb756e6990b66f280
+        message: |
+          go.mod: update json (de)serializer
+
+          This project notes that there's a fix for go1.20 support in the latest
+          version.
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit 670376a29dad524e8ebea8f2acd22220053e6ec9)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1680703562, offset: -300, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 3273a96981b007d8c4e271aec0371cb7e4f45baf
+        parent_ids:
+        - eea6fea1966b4d599e8eb900150c2b90bff47e37
+        message: |
+          chore: bump claircore to v1.3.2
+
+          Signed-off-by: crozzy <joseph.crosland@gmail.com>
+        author: crozzy <joseph.crosland@gmail.com>
+        committer: Joseph Crosland <joseph.crosland@gmail.com>
+        time: 'Time { raw: git_time { time: 1647902124, offset: -420, sign: 45 } }'
+      target:
+        id: cc5a916ef11f5de53af0b87b9ad75d940a615beb
+        parent_ids:
+        - c7075aa46dfffbbd9b09393d5db42938cda2a615
+        message: |
+          chore: bump claircore to v1.3.2
+
+          Backports: #1537
+          Signed-off-by: crozzy <joseph.crosland@gmail.com>
+          (cherry picked from commit 3273a96981b007d8c4e271aec0371cb7e4f45baf)
+        author: crozzy <joseph.crosland@gmail.com>
+        committer: Joseph Crosland <joseph.crosland@gmail.com>
+        time: 'Time { raw: git_time { time: 1648054630, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 953fa97b70878dfbe2ccf0b1183c902b8618119b
+        parent_ids:
+        - b2d68b39a8ae3095d2cbcc471f8efcd30be43ea9
+        message: |
+          chore: update claircore version
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1637355167, offset: -360, sign: 45 } }'
+      target:
+        id: 8849c61360520230b6c987bdc243db03b7340c9f
+        parent_ids:
+        - dddb910b6f51e7b69042ba3db98c2a0d6cc1caa2
+        message: |
+          chore: update claircore version
+
+          Backports: #1437
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit 953fa97b70878dfbe2ccf0b1183c902b8618119b)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1637355563, offset: -360, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 5354f1073cf073202c7c98388c13abc6b6743d08
+        parent_ids:
+        - af6a1f49b35f10faff1102a5d776050eb74cd0d0
+        message: |
+          chore: bump claircore version
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1623769007, offset: -300, sign: 45 } }'
+      target:
+        id: a3a8020c2225de42e248352503b06704d7167839
+        parent_ids:
+        - ad9eccf9c93a00bda4300ae783b42753d2c10d35
+        message: |
+          chore: bump claircore version
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit 5354f1073cf073202c7c98388c13abc6b6743d08)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1623770892, offset: -300, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 28647ba13fd38162ebdbc2f878db2691431f197a
+        parent_ids:
+        - 7c258d395ab5474696f50a1785ff51eabb69272e
+        message: |
+          chore: update claircore version
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1635444119, offset: -300, sign: 45 } }'
+      target:
+        id: ec26f33a54fb2995a5898f1bd42484bf90da14fd
+        parent_ids:
+        - ce63ff2615cef36804346acc016c625d2fcfd630
+        message: |
+          chore: update claircore version
+
+          Backports: #1404
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit 28647ba13fd38162ebdbc2f878db2691431f197a)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1635445063, offset: -300, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: d583395ec2a03655f44c8eea7e1052e04d6ff889
+        parent_ids:
+        - 12b676d4862a97629acf5bc501189da9728d690d
+        message: |
+          go.mod: update claircore version
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1654537951, offset: -300, sign: 45 } }'
+      target:
+        id: 51c63e323cc27824cdb59b942b66af110400d5b3
+        parent_ids:
+        - edc65d667261fbc08d54bbc4057151f47ce6d4b7
+        message: |
+          go.mod: update claircore version
+
+          Backports: #1580
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit d583395ec2a03655f44c8eea7e1052e04d6ff889)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1654538744, offset: -300, sign: 45 } }'
+    is_trivial: false
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 74210ca1bea67f0369bc9b26d40354410317627b
+        parent_ids:
+        - eddad2e61984defca5b0e9f842d2df44c1ea11fc
+        message: |
+          chore: update changelog to cope with submodule tags
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1636134677, offset: -300, sign: 45 } }'
+      target:
+        id: 41d25933ad25b8ae5deb4b6da84336c2a4d400fe
+        parent_ids:
+        - 4aca7b5a8bd82826d4c6e41dcafcb52d72696d3a
+        message: |
+          chore: update changelog to cope with submodule tags
+
+          Backports: #1421
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit 74210ca1bea67f0369bc9b26d40354410317627b)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1636134774, offset: -300, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 180fa4f444ff0affcc6ee9dd4436f97ea75c2dab
+        parent_ids:
+        - a478ce918566144d58b50ffb892cb33a11992036
+        message: |
+          chore: bump claircore to v1.5.16
+
+          Update claircore dep to latest tag.
+
+          Signed-off-by: crozzy <joseph.crosland@gmail.com>
+        author: crozzy <joseph.crosland@gmail.com>
+        committer: Joseph Crosland <joseph.crosland@gmail.com>
+        time: 'Time { raw: git_time { time: 1692045611, offset: -420, sign: 45 } }'
+      target:
+        id: 0729ad2a36721f9fe99196370a9f3cd31fdbd4b7
+        parent_ids:
+        - 25ab0f4e01ac08870b6e8fe9cccc134a011a4f4f
+        message: |
+          chore: bump claircore to v1.5.16
+
+          Update claircore dep to latest tag.
+
+          Signed-off-by: crozzy <joseph.crosland@gmail.com>
+          (cherry picked from commit 180fa4f444ff0affcc6ee9dd4436f97ea75c2dab)
+        author: crozzy <joseph.crosland@gmail.com>
+        committer: Joseph Crosland <joseph.crosland@gmail.com>
+        time: 'Time { raw: git_time { time: 1692048676, offset: -420, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: bd8160c908a6ec27420144c5c39397c8e866bd97
+        parent_ids:
+        - 28647ba13fd38162ebdbc2f878db2691431f197a
+        message: |
+          go.mod: update go-containerregistry
+
+          The previous version was causing MVS to pick incompatible versions of
+          github.com/docker/docker and github.com/opencontainers/runc.
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1635518424, offset: -300, sign: 45 } }'
+      target:
+        id: f8dff8b8691ad58508457b2022425a7c533fca3c
+        parent_ids:
+        - 6ddf86205e558df705e0f21dd12c582a67566b3d
+        message: |
+          go.mod: update go-containerregistry
+
+          The previous version was causing MVS to pick incompatible versions of
+          github.com/docker/docker and github.com/opencontainers/runc.
+
+          Backports: #1407
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit bd8160c908a6ec27420144c5c39397c8e866bd97)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1635520706, offset: -300, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: b3e490dbc1022a5d08f7ceef8565928fdd19be98
+        parent_ids:
+        - 5354f1073cf073202c7c98388c13abc6b6743d08
+        message: |
+          services: disable transport compression in matcher
+
+          Some servers (e.g. Github) return weak HTTP validators when the
+          Content-Encoding is not "identity". This disables automatically
+          negotiating compression, which breaks Updaters' conditional requests.
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1623779760, offset: -300, sign: 45 } }'
+      target:
+        id: bc60dcc29d4440636f68911e79b08b188ac8e81e
+        parent_ids:
+        - 6528f738a2a0cf303625040459d5590050f75294
+        message: |
+          services: disable transport compression in matcher
+
+          Some servers (e.g. Github) return weak HTTP validators when the
+          Content-Encoding is not "identity". This disables automatically
+          negotiating compression, which breaks Updaters' conditional requests.
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit b3e490dbc1022a5d08f7ceef8565928fdd19be98)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1623787777, offset: -300, sign: 45 } }'
+    is_trivial: true
+  - search_method: MessageScan
+    cherry_and_target:
+      cherry:
+        id: 472e70b6c4c6a65f7afd5ef4ecd2c4d722578ba5
+        parent_ids:
+        - f0d6a35763d5589f17c1a40dca5e155188a79b1e
+        message: |
+          webhook: clone headers on request
+
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1651671969, offset: -300, sign: 45 } }'
+      target:
+        id: edc65d667261fbc08d54bbc4057151f47ce6d4b7
+        parent_ids:
+        - 2a4694bff671a9e41c3c5c5c77eb1a53afebf971
+        message: |
+          webhook: clone headers on request
+
+          Backports: #1557
+          Signed-off-by: Hank Donnay <hdonnay@redhat.com>
+          (cherry picked from commit 472e70b6c4c6a65f7afd5ef4ecd2c4d722578ba5)
+        author: Hank Donnay <hdonnay@redhat.com>
+        committer: Hank Donnay <hdonnay@redhat.com>
+        time: 'Time { raw: git_time { time: 1654200331, offset: -300, sign: 45 } }'
+    is_trivial: true

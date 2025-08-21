@@ -1,5 +1,7 @@
 package org.variantsync.evaluation.util.diff.lines;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -12,7 +14,7 @@ import java.util.Objects;
 public record ChangedLine(Path file, Line line) {
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return file + "\n" + line;
     }
 
