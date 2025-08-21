@@ -15,6 +15,7 @@ setuptools = "*"
 scipy = "*"
 statsmodels = "*"
 tqdm = "*"
+pandas = "*"
 
 [tool.poetry.scripts]
 run-eval = "result_analysis.__main__:main"

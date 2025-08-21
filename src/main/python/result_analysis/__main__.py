@@ -11,7 +11,7 @@ from rq3_report import rq3_analysis
 import argparse
 
 
-def main(repo_sample, mined_cherries, results_dir, metrics_file, impact_file):
+def main(repo_sample, results_dir, metrics_file):
     metrics_table_generation(
         results_dir,
         repo_sample,
@@ -19,7 +19,6 @@ def main(repo_sample, mined_cherries, results_dir, metrics_file, impact_file):
         file_metrics=metrics_file,
         file_power="",
     )
-    rq3_analysis(repo_sample, mined_cherries, results_dir, impact_file)
 
 
 def example(results_dir, repo_sample):
@@ -47,27 +46,17 @@ if __name__ == "__main__":
         description="Run evaluation scripts with specified paths."
     )
     parser.add_argument(
-        "--results_dir", required=True, help="Path to the results directory"
-    )
-    parser.add_argument(
         "--repo_sample", required=True, help="Path to the repo sample YAML file"
     )
     parser.add_argument(
-        "--mined_cherries",
-        required=True,
-        help="Path to the directory with mined cherries",
+        "--results_dir", required=True, help="Path to the results directory"
     )
     parser.add_argument(
         "--metrics_file", required=True, help="Path to the metrics output file"
     )
-    parser.add_argument(
-        "--impact_file", required=True, help="Path to the impact output file"
-    )
     args = parser.parse_args()
     main(
         args.repo_sample,
-        args.mined_cherries,
         args.results_dir,
         args.metrics_file,
-        args.impact_file,
     )

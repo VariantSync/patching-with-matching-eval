@@ -49,27 +49,27 @@ sampled_cherry_list = [9227, 1405, 11215, 5522, 8375, 698, 2533, 5840, 1979, 353
 
 table_names = {
     c_repo_name: "repository",
-    "rq_git_cherry": "{\mymakecell{required \\\\ fixes \\\\ \\gitcherrypickshort}}",
-    "rq_mpatch": "{\mymakecell{required \\\\ fixes \\\\ \\mpatch}}",
-    "ap_git_cherry": "{\mymakecell{fully \\\\ automatable \\\\ \\gitcherrypickshort{} \%}}",
-    "ap_mpatch": "{\mymakecell{fully \\\\ automatable \\\\ \\mpatch{} \%}}",
-    c_projects_with_cherries: "{\mymakecell{projects \\\\ with \\\\ cherry \\\\ picks}}",
-    c_language: "{\mymakecell[l]{main \\\\ repository \\\\ language}}",
-    c_sampled_projects_per_language: "{\mymakecell[l]{sampled \\\\ projects}}",
-    c_cherries: "{\mymakecell{cherry \\\\ picks}}",
-    c_cherry_ratio: "{\mymakecell{cherry \\\\ pick \%}}",
-    c_trivial_cherries: "{\mymakecell{complex \\\\ cherry \\\\ pick \%}}",
-    c_sampled_cherries: "{\mymakecell{sampled \\\\ cherry \\\\ picks}}",
+    "rq_git_cherry": "{\\mymakecell{required \\\\ fixes \\\\ \\gitcherrypickshort}}",
+    "rq_mpatch": "{\\mymakecell{required \\\\ fixes \\\\ \\mpatch}}",
+    "ap_git_cherry": "{\\mymakecell{fully \\\\ automatable \\\\ \\gitcherrypickshort{} \\%}}",
+    "ap_mpatch": "{\\mymakecell{fully \\\\ automatable \\\\ \\mpatch{} \\%}}",
+    c_projects_with_cherries: "{\\mymakecell{projects \\\\ with \\\\ cherry \\\\ picks}}",
+    c_language: "{\\mymakecell[l]{main \\\\ repository \\\\ language}}",
+    c_sampled_projects_per_language: "{\\mymakecell[l]{sampled \\\\ projects}}",
+    c_cherries: "{\\mymakecell{cherry \\\\ picks}}",
+    c_cherry_ratio: "{\\mymakecell{cherry \\\\ pick \\%}}",
+    c_trivial_cherries: "{\\mymakecell{complex \\\\ cherry \\\\ pick \\%}}",
+    c_sampled_cherries: "{\\mymakecell{sampled \\\\ cherry \\\\ picks}}",
 }
 
 c_total = "total"
 table_pos = "!tb"
 
 plot_labels = {
-    c_commits: "\#Commits",
+    c_commits: "\\#Commits",
     c_language: "Language",
-    c_cherries: "\#Cherrypicks",
-    c_cherry_ratio: "$\frac{\#Cherrypicks}{\#Commits}$",
+    c_cherries: "\\#Cherrypicks",
+    c_cherry_ratio: "$\\frac{\\#Cherrypicks}{\\#Commits}$",
 }
 
 
@@ -164,7 +164,7 @@ def read_yamls(repo_sample_yaml, files):
         header = read_cherry(f)
         header[c_trivial_cherries] = find_trivial_cherries(f)
 
-        pr_df = pr_df.append(header, ignore_index=True)
+        pr_df = pd.concat([pr_df, pd.DataFrame([header])], ignore_index=True)
 
     # add new columns of interest
 
@@ -248,7 +248,7 @@ def df_to_latex(pr_df):
         1 - pr_df[c_trivial_cherries].sum() / pr_df[c_cherries].sum()
     ) * 100
 
-    df[c_language].replace("C#", "C\#", inplace=True)
+    df[c_language].replace("C#", "C\\#", inplace=True)
     df = df.rename(columns=table_names)
 
     to_latex(
@@ -385,10 +385,10 @@ def impact_file(file):
     return rq, ap / seen, seen
 
 
-def impact_analysis(pr_df, path_to_results, file):
+def impact_analysis(pr_df, path_to_results, path_to_output):
     approaches = ["git_cherry", "mpatch"]
 
-    df = pr_df.sort_values(by=c_cherry_ratio)[-5:].append(
+    df = pr_df.sort_values(by=c_cherry_ratio)[-5:].concat(
         pr_df.sort_values(by=c_cherries)[-5:]
     )
 
@@ -439,9 +439,9 @@ def impact_analysis(pr_df, path_to_results, file):
         )
     idf[c_cherries] = idf[c_cherries].astype(int, errors="ignore")
     idf[c_trivial_cherries] = idf[c_trivial_cherries].astype(int, errors="ignore")
-    idf = idf.rename(columns={c_language: "{\mymakecell{main \\\\ language}}"})
+    idf = idf.rename(columns={c_language: "{\\mymakecell{main \\\\ language}}"})
     idf = idf.rename(
-        columns={c_trivial_cherries: "{\mymakecell{complex \\\\ cherry \\\\ picks}}"}
+        columns={c_trivial_cherries: "{\\mymakecell{complex \\\\ cherry \\\\ picks}}"}
     )
     idf = idf.rename(columns=table_names)
 
@@ -452,10 +452,10 @@ def impact_analysis(pr_df, path_to_results, file):
         position=table_pos,
         column_format="llS[table-format=2.2, round-precision=2]S[table-format=5.0, round-precision=0]S[table-format=4.0, round-precision=0]S[table-format=2.1, round-precision=1]S[table-format=2.1, round-precision=1]S[table-format=2.1, round-precision=1]S[table-format=2.1, round-precision=1]",
     )
-    tl = tl.replace("JetBrains", "\t\midrule\n" + "JetBrains")
+    tl = tl.replace("JetBrains", "\t\\midrule\n" + "JetBrains")
 
-    with open(file, "w") as file:
-        file.write(tl)
+    with open(path_to_output, "w") as output_file:
+        output_file.write(tl)
 
     print(tl)
     return idf
