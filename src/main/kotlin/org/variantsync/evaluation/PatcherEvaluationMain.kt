@@ -15,10 +15,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
-import kotlin.inc
-import kotlin.rem
 import kotlin.system.exitProcess
-import kotlin.toString
 import org.apache.commons.io.FileUtils
 import org.tinylog.kotlin.Logger
 import org.variantsync.evaluation.execution.*
