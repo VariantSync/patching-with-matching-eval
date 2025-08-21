@@ -39,7 +39,7 @@ analysis() {
 
     cd /home/user/
     latexmk -pdf -interaction=nonstopmode -synctex=1 -shell-escape metrics-$1.tex
-    cp metrics-$1.pdf evaluation-workdir
+    cp metrics-$1.pdf evaluation-workdir || exit
 
     echo "++++++++++++++++++++++++++++++++++++"
     echo "          Analysis done             "

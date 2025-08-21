@@ -13,7 +13,6 @@ COPY gradle gradle
 # Build the evaluation
 WORKDIR /home/user
 RUN ./gradlew Cherries || exit
-RUN ./gradlew Composition || exit
 
 FROM alpine:latest
 
@@ -34,7 +33,7 @@ RUN unzip unsplit-mined-cherries
 RUN unzip repo-sample.zip
 WORKDIR /home/user
 
-RUN apk add --no-cache texlive-full
+RUN apk add --no-cache texlive-most
 
 COPY src/main/python ./analysis
 WORKDIR /home/user/analysis
