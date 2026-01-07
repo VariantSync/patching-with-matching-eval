@@ -11,7 +11,7 @@ Our artifact has the following purposes:
 
 ### **Reproducibility**
 We provide replication instructions that allow to replicate the evaluation presented in Sections 4 through 6 in our paper. 
-The replication is executed in a Docker container. To replicate our results, we also provide a dataset of the relevant open-source repositories in the very state we performed our validation on.
+The replication is executed in a Docker container.
 
 ### **Reusability**
 Our evaluation can be extended and reused to evaluate and compare additional patchers with the patchers considered in our paper. 
