@@ -2,6 +2,28 @@
 
 This is the reproduction package for our paper _Decades of GNU Patch and Git Cherry-Pick: Can We Do Better?_ which has been accepted to the 48th International Conference on Software Engineering (ICSE 2026).
 
+## Purpose
+
+The artifact should allow other researchers to reproduce our experiments and confirm the results which reported in our paper.
+We provide instructions that allow reproduction of the evaluation presented in Sections 4 through 6 of our paper.
+The reproduction is executed in a Docker container.
+
+We claim the _Artifacts Available_ badge, as we made our artifacts publicly available on [Zenodo](https://doi.org/10.5281/zenodo.16920961}) under an open-source license.
+Our dataset and the repositories from which we mined it are also publicly available.
+
+We claim the _Artifacts Evaluated Functional_ and _Artifacts Evaluated Reusable_ badges, as both our evaluation framework and our novel patcher can be reused by other researchers and practitioners.
+Our evaluation can be extended and reused to evaluate and compare additional patchers with those considered in our paper.
+Our novel patcher _mpatch_ is a tool that can be used as an alternative to _git cherry-pick_ or GNU _patch_.
+It can also be integrated into other evaluation setups using its library or its CLI.
+We carefully documented and implemented the artifact in a way that should allow future execution and reuse by other research groups.
+
+## Provenance
+
+The Preprint of our paper can be found [online](https://lanpirot.github.io/publications/Decades_of_GNU_Patch_and_Git_Cherry-Pick_Can_We_Do_Better.pdf).
+After official publication, it becomes available under [https://doi.org/10.1145/3744916.3764537](https://doi.org/10.1145/3744916.3764537).
+
+The artifact itself is available on [Zenodo](https://doi.org/10.5281/zenodo.16920961) and [Github](https://github.com/VariantSync/patching-with-matching-eval).
+
 ## Content
 
 The reproduction package consists of three main parts:
@@ -12,19 +34,37 @@ The reproduction package consists of three main parts:
 
 ## Requirements
 
-Software Requirements
+### Hardware Requirements
 
-- [Docker](https://www.docker.com/)
+There are no special requirements regarding the CPU or GPU.
 
-Hardware Requirements
+#### Primary Memory
 
-- We recommend running the evaluation on a system with at least **64GB** of primary memory (RAM).
-- 100GB—2TB of free drive space, depending on the configuration of the Docker image.
+We recommend running the evaluation on a system with at least **64GB** of primary memory (RAM).
+
+#### Secondary Memory
+
+I/O operations have a considerable impact on the total runtime of the evaluation.
+Therefore, we strongly recommend storing the repository on an SSD (M2 technology or better),
+and to configure Docker to store its data (e.g., images and containers) on this SSD as well.
+Using an HDD can lead to severe runtime problems and thereby timeouts that threaten the validity of the results.
+
+The evaluation requires about **1TB** of space as it considers hundreds of repositories, which in turn are copied dozens of times for multi-threaded patcher evaluation.
+The space requirement can be considerably reduced by changing the number of used threads in the [reproduction config](docker/config-reproduction.properties) (e.g., to **20GB**), but then the evaluation will require considerably more time as well.
 
 > [!WARNING]  
 > The used storage medium should be very fast, e.g., M.2 NVMe SSD with 5000 MB/s, otherwise the evaluation may take an extremely long time.
 
-Other Requirements
+### Software Requirements
+
+The artifact does not require a certain operating system or prepared environment.
+Our evaluation can be reproduced on any system supporting [Docker](https://docs.docker.com/get-docker/).
+Docker will take care of all requirements and dependencies to reproduce our evaluation.
+
+- We recommend running the evaluation on a system with at least **64GB** of primary memory (RAM).
+- 100GB—2TB of free drive space, depending on the configuration of the Docker image.
+
+### Other Requirements
 
 - A stable internet connection.
 
