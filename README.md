@@ -1,6 +1,7 @@
 # Decades of GNU Patch and Git Cherry-Pick: Can We Do Better?
 
-This is the reproduction package for our paper _Decades of GNU Patch and Git Cherry-Pick: Can We Do Better?_ which has been accepted to the 48th International Conference on Software Engineering (ICSE 2026).
+This artifact contains the reproduction package for our paper _Decades of GNU Patch and Git Cherry-Pick: Can We Do Better?_ which has been accepted to the 48th International Conference on Software Engineering (ICSE 2026).
+The artifact is licensed under a dual MIT - Apache 2.0 license.
 
 ## Purpose
 
