@@ -31,7 +31,7 @@ The reproduction package consists of three main parts:
 
 1. [**mpatch**](/mpatch/README.md): The implementation of our novel match-based patcher, written in Rust.
 2. [**Mined cherries**](dataset/): Our dataset of cherry picks mined from 5,000 GitHub repositories.
-3. [**Empirical evaluation**](src/main/kotlin/org/variantsync/evaluation/PatcherEvaluationMain.kt): Our empirical evaluation of different language-agnostic patchers.
+3. [**Empirical evaluation**](src/main/kotlin/org/variantsync/evaluation/PatcherEvaluationMain.kt): Our empirical evaluation of various language-agnostic patchers.
 
 ## Requirements
 
@@ -63,20 +63,16 @@ Our evaluation can be reproduced on any system supporting [Docker](https://docs.
 Docker will take care of all requirements and dependencies to reproduce our evaluation.
 
 - We recommend running the evaluation on a system with at least **64GB** of primary memory (RAM).
-- 100GB—2TB of free drive space, depending on the configuration of the Docker image.
-
-### Other Requirements
-
-- A stable internet connection.
+- 100GB — 2TB of free drive space, depending on the configuration of the Docker image.
 
 ## Installation
 
 ### [Optional] Configuration
 
-Before building the Docker image, you may **optionally** configure how the evaluation is executed.
+Before building the Docker image, you may **optionally** configure how the evaluation is executed, if you plan on running the full reproduction.
 To this end, we provide two configuration files: [config-reproduction.properties](docker/config-reproduction.properties) for the configuration of the reproduction of the entire evaluation, and [config-verification.properties](docker/config-verification) for the verification of the correct installation of the reproduction package.
 
-Depending on the available hardware, you may need to adjust the following settings:
+Depending on the available hardware, you may want to adjust the following settings in the [config-reproduction.properties](docker/config-reproduction.properties):
 
 - The number of threads used (i.e., how many repositories are processed in parallel). Please note that each thread requires an additional `40GB` of free space on your drive.
 - Whether all repositories should be cloned before the evaluation. This eliminates the need for a stable internet connection once all repositories have been cloned.
