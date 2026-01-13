@@ -5,7 +5,8 @@ The artifact is licensed under a dual MIT - Apache 2.0 license.
 
 ## TL;DR - Reproducibility Demo
 
-> [!NOTE] Detailed installation and reproduction instructions can be found further below.
+> [!NOTE]
+> Detailed installation and reproduction instructions can be found further below.
 
 We offer a minimal sample demonstration of our artifact which can be built and run with:
 
