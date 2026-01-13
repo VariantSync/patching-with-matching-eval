@@ -120,9 +120,9 @@ Under Windows, you may provide any suitable id (e.g., `1000` for both)
 docker build --network=host --build-arg USER_ID=1000 --build-arg GROUP_ID=1000 -t mpatch-reproduction .
 ```
 
-### Verifying the correct installation
+## Reproducibility Demo (Verification)
 
-Once the building of the Docker image has completed, you can verify its correct installation.
+Once the building of the Docker image has completed, you can verify its correct installation, and the possibility to run the reproduction.
 By default, the verification will be executed within the [evaluation-workdir](evaluation-workdir) directory.
 
 #### Starting the verification
@@ -214,7 +214,7 @@ It should look similar to this:
 > [!NOTE]  
 > The verification results shown are based on only a tiny portion of our dataset and are therefore not representative.
 
-# Starting the reproduction
+## Starting the reproduction
 
 Once you have verified the correct installation, you can start the reproduction similar to how you started the verification.
 You may also change the working directory to a custom directory as described for the verification.
